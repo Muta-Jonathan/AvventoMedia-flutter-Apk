@@ -37,6 +37,8 @@ dependencies:
 
   marquee: ^2.2.3
 
+  http: ^1.1.0
+
   flutter:
     sdk: flutter
 

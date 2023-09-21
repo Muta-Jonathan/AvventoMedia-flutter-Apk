@@ -4,6 +4,7 @@ import 'package:avvento_radio/widgets/explore_details_screen.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
@@ -18,15 +19,27 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   List<dynamic> jobList = [];
 
-  Future<void> readJson() async{
-    final String response = await rootBundle.loadString('assets/temp.json');
-    final data = await json.decode(response);
+  Future<void> readJson() async {
+    // fetch explore from api
+    var url = Uri.https(
+        'raw.githubusercontent.com',
+        '/Muta-Jonathan/AvventoRadio-flutter-Apk/main/assets/temp.json',
+        {'q': '{https}'}
+    );
 
-    setState(() {
-      jobList = data['programs']
-          .map((data) => Programs.fromJson(data)).toList();
-    });
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      print(data);
+      setState(() {
+        jobList = data['programs']
+            .map((data) => Programs.fromJson(data))
+            .toList();
+      });
+    }
   }
+
 
   @override
   void initState() {
