@@ -1,13 +1,13 @@
+import 'package:avvento_radio/apis/fetch_Spreaker_api.dart';
 import 'package:avvento_radio/componets/app_constants.dart';
+import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/models/exploremodels/programs.dart';
-import 'package:avvento_radio/widgets/explore_details_screen.dart';
+import 'package:avvento_radio/widgets/explore/explore_details_screen.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:flutter/services.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -31,7 +31,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
-      print(data);
       setState(() {
         jobList = data['programs']
             .map((data) => Programs.fromJson(data))
@@ -54,7 +53,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
       width: double.infinity,
-      height: calculateHeight(context),
+      height: Utils.calculateHeight(context, 1.2),
       child: Column(
         children: [
           const LabelPlaceHolder(title: AppConstants.missNot),
@@ -66,12 +65,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  double calculateHeight(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double widgetWidth = 1.2 * screenWidth;
-    return widgetWidth * 9.0 / 16.0;
-  }
-
   Widget buildListView(BuildContext context) {
     final int itemCount = jobList.length;
     const int maxItemsToDisplay = 5;
@@ -81,7 +74,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       itemCount: itemCount <= maxItemsToDisplay ? itemCount : maxItemsToDisplay + 1,
       itemBuilder: (BuildContext context, int index) {
         if (index == 0) {
-          return buildFirstItem(context);
+          return buildFirstItem(context, jobList[0]);
         } else if (index < maxItemsToDisplay) {
           return buildExploreDetailsScreen(jobList[index]);
         } else if (index == maxItemsToDisplay) {
@@ -93,10 +86,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
     );
   }
 
-  Widget buildFirstItem(BuildContext context) {
+  Widget buildFirstItem(BuildContext context, index) {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0),
-      child: buildExploreDetailsScreen(jobList[0]),
+      child: buildExploreDetailsScreen(index),
     );
   }
 

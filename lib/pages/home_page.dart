@@ -1,5 +1,5 @@
-import 'package:avvento_radio/componets/routes.dart';
-import 'package:avvento_radio/widgets/explore_screen.dart';
+import 'package:avvento_radio/routes/routes.dart';
+import 'package:avvento_radio/widgets/explore/explore_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,13 +15,6 @@ class HomePage extends StatefulWidget {
 
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
-  //on tap to go to different screens per index
-  void onTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

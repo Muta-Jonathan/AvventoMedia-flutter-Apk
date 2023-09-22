@@ -7,10 +7,10 @@ class ListenPage extends StatefulWidget {
   const ListenPage({Key? key}) : super(key: key);
 
   @override
-  _ListenPageState createState() => _ListenPageState();
+  ListenPageState createState() => ListenPageState();
 }
 
-class _ListenPageState extends State<ListenPage> {
+class ListenPageState extends State<ListenPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,24 +19,24 @@ class _ListenPageState extends State<ListenPage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               height: 30,
               width: double.infinity,
               child: Marquee(
                 text: 'Some sample text e.',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 scrollAxis: Axis.horizontal,
                 blankSpace: 120.0,
                 velocity: 25.0, // Adjust the velocity to a lower value (e.g., 25.0)
-                pauseAfterRound: Duration(seconds: 2),
+                pauseAfterRound: const Duration(seconds: 2),
                 startPadding: 0,
-                accelerationDuration: Duration(seconds: 2),
+                accelerationDuration: const Duration(seconds: 2),
                 accelerationCurve: Curves.linear,
-                decelerationDuration: Duration(milliseconds: 500),
+                decelerationDuration: const Duration(milliseconds: 500),
                 decelerationCurve: Curves.easeOut,
               ),
             ),
-            Text(
+            const Text(
               AppConstants.missNot,
               style: TextStyle(
                 fontSize: 12,
@@ -47,7 +47,7 @@ class _ListenPageState extends State<ListenPage> {
         ),
         backgroundColor: Theme.of(context).colorScheme.background,
       ),
-      body: Column(
+      body: const Column(
         children: [
           Divider(),
 

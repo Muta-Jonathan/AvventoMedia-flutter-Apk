@@ -1,11 +1,9 @@
 import 'package:avvento_radio/componets/app_constants.dart';
-import 'package:avvento_radio/componets/routes.dart';
+import 'package:avvento_radio/routes/routes.dart';
 import 'package:avvento_radio/themes/dark_theme.dart';
 import 'package:avvento_radio/themes/light_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'package:avvento_radio/navpages/main_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: AppConstants.appName,
       theme: lightTheme,
       darkTheme: darkTheme,
-      initialRoute: Routes.getHomeRoute(), // Set the initial route to '/main'
+      initialRoute: Routes.getHomeRoute(), // Set the initial route to '/'
       getPages: Routes.routes,
     );
   }

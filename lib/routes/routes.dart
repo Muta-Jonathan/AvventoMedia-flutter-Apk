@@ -1,9 +1,9 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
-import '../navpages/listen_page.dart';
-import '../navpages/main_page.dart';
-import '../navpages/profile_page.dart';
-import '../navpages/schedule_page.dart';
+import '../pages/listen_page.dart';
+import '../pages/main_page.dart';
+import '../pages/profile_page.dart';
+import '../pages/schedule_page.dart';
 
 class Routes {
   static String home = "/";
@@ -17,9 +17,9 @@ class Routes {
   static  String getProfileRoute() => profile;
 
   static List<GetPage> routes = [
-    GetPage(name: home, page: () => MainPage()),
-    GetPage(name: listen, page: () => ListenPage()),
-    GetPage(name: schedule, page: () => SchedulePage()),
-    GetPage(name: profile, page: () => ProfilePage()),
+    GetPage(name: home, page: () => const MainPage()),
+    GetPage(name: listen, page: () => const ListenPage()),
+    GetPage(name: schedule, page: () => const SchedulePage()),
+    GetPage(name: profile, page: () => const ProfilePage()),
   ];
 }
