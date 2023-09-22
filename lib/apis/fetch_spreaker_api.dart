@@ -16,7 +16,6 @@ class FetchSpreakerAPI {
         'Content-Type': 'application/json',
       },
     );
-    print(response);
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<dynamic> episodesData = data['response']['items'];
@@ -25,7 +24,7 @@ class FetchSpreakerAPI {
       final List<SpreakerEpisode> episodes = episodesData
           .map((data) => SpreakerEpisode.fromJson(data))
           .toList();
-print(episodes);
+
       return episodes;
     } else {
       throw Exception('Failed to load episodes');

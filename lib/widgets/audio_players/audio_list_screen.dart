@@ -1,9 +1,8 @@
 import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../apis/fetch_Spreaker_api.dart';
+import '../../apis/fetch_spreaker_api.dart';
 import '../../models/spreakermodels/spreaker_episodes.dart';
 import 'audio_list_details_screen.dart';
 
@@ -21,7 +20,6 @@ class _ExploreScreenState extends State<AudioListScreen> {
   void initState() {
     super.initState();
     spreakerList = FetchSpreakerAPI.fetchEpisodesForShow();
-    print(spreakerList);
   }
 
   @override
@@ -50,14 +48,16 @@ class _ExploreScreenState extends State<AudioListScreen> {
       future: spreakerList,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(
-            strokeWidth: 3.0, // Adjust the stroke width as needed
-            valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
+          return Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 3.0, // Adjust the stroke width as needed
+              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
+            ),
           ); // Display a loading indicator while fetching data
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Text('No data available'); // Handle the case where no data is available
+          return const Text('No data available'); // Handle the case where no data is available
         } else {
           final episodes = snapshot.data;
           return ListView.builder(

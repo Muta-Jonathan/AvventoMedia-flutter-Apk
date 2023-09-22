@@ -11,7 +11,7 @@ import '../text_overlay_widget.dart';
 
 class AudioListDetailsWidget extends StatefulWidget {
   final SpreakerEpisode spreakerEpisode;
-  const AudioListDetailsWidget({Key? key, required this.spreakerEpisode});
+  const AudioListDetailsWidget({super.key, required this.spreakerEpisode});
 
   @override
   AudioPlayerWidgetState createState() => AudioPlayerWidgetState();
@@ -33,6 +33,7 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
   void initState() {
     super.initState();
     _audioPlayer = AudioPlayer()..setUrl(widget.spreakerEpisode.playbackUrl);
+    //_audioPlayer = AudioPlayer()..setAsset('assets/audio/music.mp3');
   }
 
   @override
@@ -43,18 +44,24 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double widgetWidth = 0.88 * screenWidth;
     return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.0),
-            child: Container(
-              width: double.infinity,
-              color: Theme.of(context).colorScheme.secondary,
-              padding: EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  ClipRRect(
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Container(
+            width: widgetWidth,
+            height: widgetWidth * 0.45,
+            color: Theme.of(context).colorScheme.secondary,
+            padding: const EdgeInsets.all(16.0),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: CachedNetworkImage(
                       imageUrl: widget.spreakerEpisode.imageUrl,
@@ -63,34 +70,50 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                       height: 100,
                       placeholder: (context, url) => Center(
                         child: SizedBox(
-                          width: 40.0, // Adjust the width to control the size
-                          height: 40.0, // Adjust the height to control the size
+                          width: 40.0,
+                          height: 40.0,
                           child: Center(
                             child: CircularProgressIndicator(
-                              strokeWidth: 3.0, // Adjust the stroke width as needed
-                              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
+                              strokeWidth: 3.0,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Theme.of(context).colorScheme.onPrimary,
+                              ),
                             ),
-                          ),),), // Placeholder widget
-                      errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, _, error) => Icon(
+                        Icons.error,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16.0),
-                  Column(
+                ),
+                Positioned(
+                  top: 0,
+                  left: 120, // Adjust the left position as needed
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextOverlay(label: widget.spreakerEpisode.publishedAt, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                      const SizedBox(height: 4.0,),
-                      SizedBox(
-                        child: TextOverlay(label: widget.spreakerEpisode.title, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimaryContainer, fontSize: 15.0,),
-                        width: 170,
+                      TextOverlay(
+                        label: widget.spreakerEpisode.publishedAt,
+                        color: Theme.of(context).colorScheme.onSecondaryContainer,
                       ),
-                      const SizedBox(height: 4.0,),
+                      const SizedBox(height: 4.0),
+                      SizedBox(
+                        width: 170,
+                        child: TextOverlay(
+                          label: widget.spreakerEpisode.title,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          fontSize: 15.0,
+                        ),
+                      ),
+                      const SizedBox(height: 4.0),
                       Row(
                         children: [
                           Controls(audioPlayer: _audioPlayer),
                           SizedBox(
-                            height: 30,
-                            width: 80,
                             child: StreamBuilder<MusicPlayerPosition>(
                               stream: _musicPlayerPositionStream,
                               builder: (context, snapshot) {
@@ -102,24 +125,26 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
 
                                 return Text(
                                   '$formattedPosition / $formattedDuration',
-                                  style:const TextStyle(
-                                    fontStyle: FontStyle.italic
+                                  style: const TextStyle(
+                                    fontStyle: FontStyle.italic,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 );
                               },
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
+      ),
     );
   }
+
 }
