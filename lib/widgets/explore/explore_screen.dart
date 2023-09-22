@@ -57,7 +57,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         children: [
           const LabelPlaceHolder(title: AppConstants.missNot),
           const SizedBox(height: 20),
-          Expanded(child: buildListView(context)),
+          Expanded( flex: 1,child: buildListView(context)),
           const Divider()
         ],
       ),

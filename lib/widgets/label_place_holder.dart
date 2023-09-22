@@ -14,6 +14,7 @@ class LabelPlaceHolder extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
+            flex: 1,
             child: Text(title,
               style: TextStyle(
               fontWeight: FontWeight.bold,
