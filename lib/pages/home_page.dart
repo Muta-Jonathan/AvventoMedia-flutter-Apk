@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../componets/app_constants.dart';
+import '../widgets/audio_players/audio_list_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,13 +26,14 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.background,
         actions: [
           //Notification bell Icon to go to Explore screen
-          IconButton( icon: const Icon(CupertinoIcons.bell), onPressed:(){ Get.toNamed(Routes.getListenRoute());},)
+          IconButton( icon: const Icon(CupertinoIcons.headphones), onPressed:(){ Get.toNamed(Routes.getListenRoute());},)
         ],
       ),
       body: const Column(
         children: [
           Divider(),
-          ExploreScreen()
+          ExploreScreen(),
+          AudioListScreen(),
         ],
       ),
     );

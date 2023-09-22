@@ -6,4 +6,11 @@ class Utils {
     double widgetWidth = width * screenWidth;
     return widgetWidth * 9.0 / 16.0;
   }
+
+  static String formatDuration(Duration duration) {
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
 }
