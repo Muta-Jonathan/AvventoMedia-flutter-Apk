@@ -38,7 +38,8 @@ class _ExploreDetailsScreenState extends State<ExploreDetailsScreen> {
                       child: CircularProgressIndicator(
                         strokeWidth: 3.0, // Adjust the stroke width as needed
                         valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
-                      ),),), // Placeholder widget
+                      ),
+                  ),), // Placeholder widget
               errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
             ),
             // Gradient Decoration in front of the image

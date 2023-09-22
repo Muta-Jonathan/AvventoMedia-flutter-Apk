@@ -1,4 +1,4 @@
-class Episode {
+class SpreakerEpisode {
   final int episodeId;
   final String type;
   final String title;
@@ -16,7 +16,7 @@ class Episode {
   final String downloadUrl;
   final String playbackUrl;
 
-  Episode({
+  SpreakerEpisode({
     required this.episodeId,
     required this.type,
     required this.title,
@@ -35,8 +35,8 @@ class Episode {
     required this.playbackUrl,
   });
 
-  factory Episode.fromJson(Map<String, dynamic> json) {
-    return Episode(
+  factory SpreakerEpisode.fromJson(Map<String, dynamic> json) {
+    return SpreakerEpisode(
       episodeId: json['episode_id'],
       type: json['type'],
       title: json['title'],

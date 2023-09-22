@@ -1,13 +1,17 @@
 import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/widgets/audio_players/controls.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../models/musicplayermodels/music_player_position.dart';
+import '../../models/spreakermodels/spreaker_episodes.dart';
+import '../text_overlay_widget.dart';
 
 class AudioListDetailsWidget extends StatefulWidget {
-  const AudioListDetailsWidget({super.key});
+  final SpreakerEpisode spreakerEpisode;
+  const AudioListDetailsWidget({Key? key, required this.spreakerEpisode});
 
   @override
   AudioPlayerWidgetState createState() => AudioPlayerWidgetState();
@@ -28,7 +32,7 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer()..setAsset('assets/audio/music.mp3');
+    _audioPlayer = AudioPlayer()..setUrl(widget.spreakerEpisode.playbackUrl);
   }
 
   @override
@@ -45,32 +49,48 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Container(
+              width: double.infinity,
               color: Theme.of(context).colorScheme.secondary,
               padding: EdgeInsets.all(16.0),
               child: Row(
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
-                    child: Image.network(
-                      'https://avventohome.org/wp-content/uploads/2023/04/landscapeRadio-11.png',
-                      width: 160,
-                      height: 100,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.spreakerEpisode.imageUrl,
                       fit: BoxFit.cover,
+                      width: 100,
+                      height: 100,
+                      placeholder: (context, url) => Center(
+                        child: SizedBox(
+                          width: 40.0, // Adjust the width to control the size
+                          height: 40.0, // Adjust the height to control the size
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 3.0, // Adjust the stroke width as needed
+                              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
+                            ),
+                          ),),), // Placeholder widget
+                      errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
                     ),
                   ),
                   const SizedBox(width: 16.0),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text("Audio Title", style: TextStyle(fontSize: 18.0)),
-                      const Text("Artist Name", style: TextStyle(fontSize: 16.0)),
-                      const SizedBox(height: 5.0),
+                      TextOverlay(label: widget.spreakerEpisode.publishedAt, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                      const SizedBox(height: 4.0,),
+                      SizedBox(
+                        child: TextOverlay(label: widget.spreakerEpisode.title, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimaryContainer, fontSize: 15.0,),
+                        width: 170,
+                      ),
+                      const SizedBox(height: 4.0,),
                       Row(
                         children: [
                           Controls(audioPlayer: _audioPlayer),
                           SizedBox(
                             height: 30,
-                            width: 60,
+                            width: 80,
                             child: StreamBuilder<MusicPlayerPosition>(
                               stream: _musicPlayerPositionStream,
                               builder: (context, snapshot) {
@@ -82,7 +102,7 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
 
                                 return Text(
                                   '$formattedPosition / $formattedDuration',
-                                  style:TextStyle(
+                                  style:const TextStyle(
                                     fontStyle: FontStyle.italic
                                   ),
                                   maxLines: 1,
@@ -93,7 +113,6 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                           )
                         ],
                       ),
-
                     ],
                   ),
                 ],

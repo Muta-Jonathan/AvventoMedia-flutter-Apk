@@ -1,9 +1,10 @@
 import 'package:avvento_radio/componets/app_constants.dart';
-import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../apis/fetch_Spreaker_api.dart';
+import '../../models/spreakermodels/spreaker_episodes.dart';
 import 'audio_list_details_screen.dart';
 
 class AudioListScreen extends StatefulWidget {
@@ -14,6 +15,14 @@ class AudioListScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<AudioListScreen> {
+  late Future<List<SpreakerEpisode>> spreakerList;
+
+  @override
+  void initState() {
+    super.initState();
+    spreakerList = FetchSpreakerAPI.fetchEpisodesForShow();
+    print(spreakerList);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +33,10 @@ class _ExploreScreenState extends State<AudioListScreen> {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          const LabelPlaceHolder(title: AppConstants.spreaker, ),
-          Padding(
-            padding: const EdgeInsets.only(left: 20,right: 20),
-            child: const Divider(),
+          const LabelPlaceHolder(title: AppConstants.spreaker),
+          const Padding(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Divider(),
           ),
           Expanded(child: buildListView(context)),
           const Divider()
@@ -37,14 +46,34 @@ class _ExploreScreenState extends State<AudioListScreen> {
   }
 
   Widget buildListView(BuildContext context) {
-
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: 10,
-      itemBuilder: (BuildContext context, int index) {
-        return const AudioListDetailsWidget();
+    return FutureBuilder<List<SpreakerEpisode>>(
+      future: spreakerList,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator(
+            strokeWidth: 3.0, // Adjust the stroke width as needed
+            valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
+          ); // Display a loading indicator while fetching data
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Text('No data available'); // Handle the case where no data is available
+        } else {
+          final episodes = snapshot.data;
+          return ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: episodes?.length,
+            itemBuilder: (BuildContext context, int index) {
+              return buildSpreakerDetailsScreen(episodes![index]);
+            },
+          );
+        }
       },
     );
   }
 
+  Widget buildSpreakerDetailsScreen(SpreakerEpisode spreakerEpisode) {
+    return AudioListDetailsWidget(spreakerEpisode: spreakerEpisode);
+  }
 }
+
