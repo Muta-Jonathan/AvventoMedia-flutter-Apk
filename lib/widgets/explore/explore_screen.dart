@@ -3,10 +3,13 @@ import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/models/exploremodels/programs.dart';
 import 'package:avvento_radio/widgets/explore/explore_details_screen.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -19,25 +22,40 @@ class _ExploreScreenState extends State<ExploreScreen> {
   List<dynamic> jobList = [];
 
   Future<void> readJson() async {
-    // fetch explore from api
-    var url = Uri.https(
-        'raw.githubusercontent.com',
-        '/Muta-Jonathan/AvventoRadio-flutter-Apk/main/assets/temp.json',
-        {'q': '{https}'}
-    );
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? cachedData = prefs.getString('cached_data');
 
-    var response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
+    if (cachedData != null) {
+      // If cached data exists, use it.
+      final data = json.decode(cachedData);
       setState(() {
         jobList = data['programs']
             .map((data) => Programs.fromJson(data))
             .toList();
       });
+    } else {
+      // Fetch data from the API if not cached.
+      var url = Uri.https(
+          'raw.githubusercontent.com',
+          '/Muta-Jonathan/AvventoRadio-flutter-Apk/main/assets/temp.json',
+          {'q': '{https}'}
+      );
+
+      var response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+        setState(() {
+          jobList = data['programs']
+              .map((data) => Programs.fromJson(data))
+              .toList();
+        });
+
+        // Cache the fetched data in SharedPreferences.
+        prefs.setString('cached_data', response.body);
+      }
     }
   }
-
 
   @override
   void initState() {
