@@ -42,9 +42,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
-
     readJson();
+    super.initState();
   }
 
   @override
@@ -57,7 +56,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
         children: [
           const LabelPlaceHolder(title: AppConstants.missNot),
           const SizedBox(height: 20),
-          Expanded( flex: 1,child: buildListView(context)),
+          Expanded(child: buildListView(context)),
           const Divider()
         ],
       ),

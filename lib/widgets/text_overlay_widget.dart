@@ -12,9 +12,7 @@ class TextOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 5,bottom: 2),
-      child: Expanded(
-        flex: 1,
-        child: Text(
+      child: Text(
           label,
           maxLines: 3,
           overflow: TextOverflow.ellipsis,
@@ -24,7 +22,6 @@ class TextOverlay extends StatelessWidget {
             color: color,
           ),
         ),
-      ),
     );
   }
 }

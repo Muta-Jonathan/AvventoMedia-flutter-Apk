@@ -36,7 +36,7 @@ class _ExploreScreenState extends State<AudioListScreen> {
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Divider(),
           ),
-          Expanded( flex: 1,child: buildListView(context)),
+          Expanded(child: buildListView(context)),
           const Divider()
         ],
       ),
