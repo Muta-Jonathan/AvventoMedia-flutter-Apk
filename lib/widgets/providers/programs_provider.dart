@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../models/exploremodels/programs.dart';
-import '../explore/explore_fetch_data.dart';
+import '../../apis/explore_fetch_data_api.dart';
 
 class ProgramsProvider with ChangeNotifier {
   List<Programs> _jobList = [];

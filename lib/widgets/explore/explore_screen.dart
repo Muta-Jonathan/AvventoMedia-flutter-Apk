@@ -3,17 +3,11 @@ import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/models/exploremodels/programs.dart';
 import 'package:avvento_radio/widgets/explore/explore_details_screen.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../provider/programs_provider.dart';
-import 'explore_fetch_data.dart';
+import '../providers/programs_provider.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
