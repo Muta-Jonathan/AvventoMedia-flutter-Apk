@@ -55,8 +55,6 @@ class _ExploreScreenState extends State<AudioListScreen> {
               ),
             ),
           );
-        } else if (episodeProvider.episodes.isEmpty) {
-          return const Text('No data available');
         } else {
           return ListView.builder(
             scrollDirection: Axis.vertical,
