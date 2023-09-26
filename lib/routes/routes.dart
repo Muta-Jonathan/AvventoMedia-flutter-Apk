@@ -1,3 +1,4 @@
+import 'package:avvento_radio/pages/podcast_page.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../pages/listen_page.dart';
@@ -10,16 +11,19 @@ class Routes {
   static String listen = "/listen";
   static String schedule = "/schedule";
   static String profile = "/profile";
+  static String podcast = "/podcast";
 
   static  String getHomeRoute() => home;
   static  String getListenRoute() => listen;
   static  String getScheduleRoute() => schedule;
   static  String getProfileRoute() => profile;
+  static  String getPodcastRoute() => podcast;
 
   static List<GetPage> routes = [
     GetPage(name: home, page: () => const MainPage()),
     GetPage(name: listen, page: () => const ListenPage()),
     GetPage(name: schedule, page: () => const SchedulePage()),
     GetPage(name: profile, page: () => const ProfilePage()),
+    GetPage(name: podcast, page: () => const PodcastPage()),
   ];
 }

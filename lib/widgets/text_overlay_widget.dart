@@ -14,7 +14,7 @@ class TextOverlay extends StatelessWidget {
       padding: const EdgeInsets.only(left: 5,bottom: 2),
       child: Text(
           label,
-          maxLines: 3,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: fontSize,

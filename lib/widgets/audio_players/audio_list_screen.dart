@@ -1,9 +1,13 @@
 import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
+import '../../controller/episode_controller.dart';
 import '../../models/spreakermodels/spreaker_episodes.dart';
+import '../../routes/routes.dart';
 import '../providers/spreaker_data_provider.dart';
 import 'audio_list_details_screen.dart';
 
@@ -15,6 +19,7 @@ class AudioListScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<AudioListScreen> {
+  final episodeController = Get.put(EpisodeController());
   @override
   void initState() {
     super.initState();
@@ -69,6 +74,16 @@ class _ExploreScreenState extends State<AudioListScreen> {
   }
 
   Widget buildSpreakerDetailsScreen(SpreakerEpisode spreakerEpisode) {
-    return AudioListDetailsWidget(spreakerEpisode: spreakerEpisode);
+    return GestureDetector(
+      onTap: () {
+        // Set the selected episode using the controller
+        episodeController.setSelectedEpisode(spreakerEpisode);
+
+        // Navigate to the "PodcastPage"
+        Get.toNamed(Routes.getPodcastRoute());
+      },
+      child: AudioListDetailsWidget(spreakerEpisode: spreakerEpisode),
+    );
   }
+
 }
