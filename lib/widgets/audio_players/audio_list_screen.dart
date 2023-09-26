@@ -2,7 +2,6 @@ import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
 import '../../controller/episode_controller.dart';
@@ -15,10 +14,10 @@ class AudioListScreen extends StatefulWidget {
   const AudioListScreen({super.key});
 
   @override
-  State<AudioListScreen> createState() => _ExploreScreenState();
+  State<AudioListScreen> createState() => _AudioListState();
 }
 
-class _ExploreScreenState extends State<AudioListScreen> {
+class _AudioListState extends State<AudioListScreen> {
   final episodeController = Get.put(EpisodeController());
   @override
   void initState() {

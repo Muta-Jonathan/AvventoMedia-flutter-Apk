@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:marquee/marquee.dart';
 
-import '../componets/app_constants.dart';
 import '../controller/episode_controller.dart';
 
 class PodcastPage extends StatefulWidget {
   const PodcastPage({Key? key}) : super(key: key);
 
   @override
-  ListenPageState createState() => ListenPageState();
+  PodcastPageState createState() => PodcastPageState();
 }
 
-class ListenPageState extends State<PodcastPage> {
+class PodcastPageState extends State<PodcastPage> {
   final EpisodeController episodeController = Get.find();
   @override
   Widget build(BuildContext context) {
     final selectedEpisode = episodeController.selectedEpisode.value;
+    double screenWidth = MediaQuery.of(context).size.width;
+    String publishedDate = Jiffy.parse(selectedEpisode!.publishedAt).yMMMMEEEEdjm;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
@@ -28,10 +30,10 @@ class ListenPageState extends State<PodcastPage> {
                 width: double.infinity,
                 child: Marquee(
                   text: selectedEpisode!.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: screenWidth / 19),
                   scrollAxis: Axis.horizontal,
-                  blankSpace: 120.0,
-                  velocity: 25.0, // Adjust the velocity to a lower value (e.g., 25.0)
+                  blankSpace: screenWidth / 1.2,
+                  velocity: 23.0, // Adjust the velocity to a lower value (e.g., 25.0)
                   pauseAfterRound: const Duration(seconds: 2),
                   startPadding: 0,
                   accelerationDuration: const Duration(seconds: 2),
@@ -40,10 +42,10 @@ class ListenPageState extends State<PodcastPage> {
                   decelerationCurve: Curves.easeOut,
                 ),
               ),
-              const Text(
-                AppConstants.missNot,
+              Text(
+                "Published on $publishedDate",
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: screenWidth / 30,
                   fontWeight: FontWeight.normal,
                 ),
               ),
