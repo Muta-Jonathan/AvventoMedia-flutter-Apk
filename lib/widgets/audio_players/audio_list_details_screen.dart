@@ -1,15 +1,8 @@
-import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/widgets/audio_players/controls.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:rxdart/rxdart.dart' as R;
-import 'package:just_audio/just_audio.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:jiffy/jiffy.dart';
 
-import '../../models/musicplayermodels/music_player_position.dart';
 import '../../models/spreakermodels/spreaker_episodes.dart';
-import '../../routes/routes.dart';
 import '../text_overlay_widget.dart';
 
 class AudioListDetailsWidget extends StatefulWidget {
@@ -49,13 +42,7 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double widgetWidth = 0.88 * screenWidth;
-    String publishedDateString = widget.spreakerEpisode.publishedAt;
-    DateTime publishedDate = DateTime.now();
-    try {
-      publishedDate = DateTime.parse(publishedDateString);
-    } catch (e) {
-      print("Error parsing date: $e");
-    }
+    String publishedDate = Jiffy.parse(widget.spreakerEpisode.publishedAt).fromNow();
     return Center(
         child: Padding(
           padding: const EdgeInsets.all(18.0),
@@ -116,7 +103,7 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                         ),
                         const SizedBox(height: 12),
                         TextOverlay(
-                          label: "Published ${timeago.format(publishedDate)}",
+                          label: "Published $publishedDate",
                           color: Theme.of(context).colorScheme.onSecondaryContainer,
                         ),
                       ],
