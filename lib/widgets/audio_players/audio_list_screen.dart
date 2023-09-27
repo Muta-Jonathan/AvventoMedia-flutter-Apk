@@ -77,7 +77,6 @@ class _AudioListState extends State<AudioListScreen> {
       onTap: () {
         // Set the selected episode using the controller
         episodeController.setSelectedEpisode(spreakerEpisode);
-
         // Navigate to the "PodcastPage"
         Get.toNamed(Routes.getPodcastRoute());
       },
