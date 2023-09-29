@@ -1,10 +1,22 @@
 import 'package:flutter/cupertino.dart';
 
 class Utils {
-  static double calculateHeight(BuildContext context, width) {
+  static double calculateAspectHeight(BuildContext context, width) {
     double screenWidth = MediaQuery.of(context).size.width;
     double widgetWidth = width * screenWidth;
     return widgetWidth * 9.0 / 16.0;
+  }
+
+  static double calculateHeight(BuildContext context, height) {
+    double screenWidth = MediaQuery.of(context).size.height;
+    double widgetHeight = height * screenWidth;
+    return  widgetHeight * 0.5;
+  }
+
+  static double calculateWidth(BuildContext context, width) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double widgetWidth = width * screenWidth;
+    return  widgetWidth * 0.5;
   }
 
   static String formatDuration(Duration duration) {

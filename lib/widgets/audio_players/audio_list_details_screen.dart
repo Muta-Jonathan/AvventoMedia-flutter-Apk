@@ -1,7 +1,10 @@
+import 'package:avvento_radio/widgets/audio_players/controls.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:just_audio/just_audio.dart';
 
+import '../../models/musicplayermodels/music_player_position.dart';
 import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../text_overlay_widget.dart';
 
@@ -14,33 +17,11 @@ class AudioListDetailsWidget extends StatefulWidget {
 }
 
 class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
-  // late AudioPlayer _audioPlayer;
-
-  // Stream<MusicPlayerPosition> get _musicPlayerPositionStream =>
-  //     R.Rx.combineLatest3<Duration,Duration,Duration?, MusicPlayerPosition>(
-  //       _audioPlayer.positionStream,
-  //       _audioPlayer.bufferedPositionStream,
-  //       _audioPlayer.durationStream,
-  //         (position, bufferedPosition, duration) => MusicPlayerPosition(
-  //             position, bufferedPosition, duration ?? Duration.zero)
-  //     );
-
-  @override
-  void initState() {
-    super.initState();
-    // _audioPlayer = AudioPlayer()..setUrl(widget.spreakerEpisode.playbackUrl);
-    //_audioPlayer = AudioPlayer()..setAsset('assets/audio/music.mp3');
-  }
-
-  @override
-  void dispose() {
-    // _audioPlayer.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     double widgetWidth = 0.88 * screenWidth;
     String publishedDate = Jiffy.parse(widget.spreakerEpisode.publishedAt).fromNow();
     return Center(
@@ -64,7 +45,7 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                         imageUrl: widget.spreakerEpisode.imageUrl,
                         fit: BoxFit.cover,
                         width: screenWidth * 0.3,
-                        height: screenWidth * 0.3,
+                          height: screenWidth * 0.3,
                         placeholder: (context, url) => Center(
                           child: SizedBox(
                             width: screenWidth * 0.3,

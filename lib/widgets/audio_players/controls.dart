@@ -17,20 +17,26 @@ class Controls extends StatelessWidget {
           if (!(playing ?? false)) {
             return IconButton(
                 onPressed: audioPlayer.play,
-                color: Theme.of(context).iconTheme.color,
+              color: Colors.white,
                 icon: const Icon(CupertinoIcons.play_fill),
             );
           } else if (processingState != ProcessingState.completed) {
             return IconButton(
                 onPressed: audioPlayer.pause,
-                color: Theme.of(context).iconTheme.color,
+              color: Colors.white,
                 icon: const Icon(CupertinoIcons.pause_fill),
+            );
+          } else if (processingState == ProcessingState.completed) {
+            return IconButton(
+              onPressed: audioPlayer.play,
+              color: Colors.white,
+              icon: const Icon(CupertinoIcons.arrow_counterclockwise_circle_fill),
             );
           }
           return IconButton(
             onPressed: audioPlayer.play,
-            color: Theme.of(context).iconTheme.color,
-            icon: const Icon(CupertinoIcons.arrow_counterclockwise_circle_fill),
+            color: Colors.white,
+            icon: const Icon(CupertinoIcons.exclamationmark_circle_fill),
           );
         }
     );

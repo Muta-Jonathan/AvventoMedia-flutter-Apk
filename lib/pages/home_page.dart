@@ -1,5 +1,5 @@
 import 'package:avvento_radio/routes/routes.dart';
-import 'package:avvento_radio/widgets/explore/explore_screen.dart';
+import 'package:avvento_radio/widgets/explore/home_explore_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
       body: const Column(
         children: [
           Divider(),
-          ExploreScreen(),
+          HomeExploreScreen(),
           AudioListScreen(),
         ],
       ),

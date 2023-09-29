@@ -1,18 +1,18 @@
 import 'package:avvento_radio/models/exploremodels/programs.dart';
 import 'package:avvento_radio/widgets/text_overlay_widget.dart';
-import 'package:avvento_radio/widgets/white_boxed_icon_widget.dart';
+import 'package:avvento_radio/widgets/boxed_icon_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-class ExploreDetailsScreen extends StatefulWidget {
+class HomeExploreDetailsScreen extends StatefulWidget {
   final Programs explore;
-  const ExploreDetailsScreen({super.key, required this.explore});
+  const HomeExploreDetailsScreen({super.key, required this.explore});
 
   @override
-  State<ExploreDetailsScreen> createState() => _ExploreDetailsScreenState();
+  State<HomeExploreDetailsScreen> createState() => _HomeExploreDetailsScreenState();
 }
 
-class _ExploreDetailsScreenState extends State<ExploreDetailsScreen> {
+class _HomeExploreDetailsScreenState extends State<HomeExploreDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -56,7 +56,7 @@ class _ExploreDetailsScreenState extends State<ExploreDetailsScreen> {
             const Positioned(
               top: 10.0,
               right: 10.0,
-              child: WhiteBoxedIcon(), // Use the separate Icon Widget
+              child: BoxedIcon(backgroundColor: Colors.white), // Use the separate Icon Widget
             ),
             // Texts at the bottom
             Positioned(
