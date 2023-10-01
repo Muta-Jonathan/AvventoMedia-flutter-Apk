@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
 
 class Controls extends StatefulWidget {
@@ -7,10 +6,10 @@ class Controls extends StatefulWidget {
   const Controls({Key? key, required this.audioPlayer}) : super(key: key);
 
   @override
-  _ControlsState createState() => _ControlsState();
+  ControlsState createState() => ControlsState();
 }
 
-class _ControlsState extends State<Controls> with SingleTickerProviderStateMixin {
+class ControlsState extends State<Controls> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -40,11 +39,22 @@ class _ControlsState extends State<Controls> with SingleTickerProviderStateMixin
           widget.audioPlayer.play();
         }
       },
-      child: AnimatedIcon(
-        icon: AnimatedIcons.play_pause, // Change this to the desired AnimatedIcon
-        progress: _controller,
-        color: Theme.of(context).colorScheme.onPrimary,
-        size: 55.0, // Adjust the size as needed
+      child: Container(
+        width: 60.0, // Adjust the size as needed
+        height: 60.0, // Adjust the size as needed
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.redAccent, // Customize the background color
+        ),
+        child: Align(
+          alignment: Alignment.center,
+          child: AnimatedIcon(
+            icon: AnimatedIcons.play_pause, // Change this to the desired AnimatedIcon
+            progress: _controller,
+            color: Theme.of(context).colorScheme.onPrimary,
+            size: 45.0, // Adjust the icon size as needed
+          ),
+        ),
       ),
     );
   }

@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Future<void> _refreshData() async {
     // Add your data refresh logic here
-    await Future.delayed(Duration(seconds: 2)); // Simulate data loading
+    await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
   }
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
             SliverAppBar(
               backgroundColor: Theme.of(context).colorScheme.background,
               floating: true,
-              title: Text(AppConstants.appName),
+              title: const Text(AppConstants.appName),
               actions: [
                 IconButton(
                   icon: const Icon(CupertinoIcons.headphones),
@@ -46,11 +46,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Divider(),
                   HomeExploreScreen(),
-                  HomeExploreScreen(),
-                  HomeExploreScreen(),
-                  HomeExploreScreen(),
-                  HomeExploreScreen(),
-                  HomeExploreScreen(),
+
                 ],
               ),
             ),

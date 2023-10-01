@@ -1,13 +1,11 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/widgets/glass/frosted_glass_widget.dart';
 import 'package:avvento_radio/widgets/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:marquee/marquee.dart';
 import 'package:rxdart/rxdart.dart' as R;
 
 import '../controller/episode_controller.dart';
@@ -52,24 +50,28 @@ class PodcastPageState extends State<PodcastPage> {
     final selectedEpisode = episodeController.selectedEpisode.value;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    String publishedDate = Jiffy.parse(selectedEpisode!.publishedAt).yMMMMEEEEdjm;
+    //String publishedDate = Jiffy.parse(selectedEpisode!.publishedAt).yMMMMEEEEdjm;
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
           title: SizedBox(
             height: 30,
-            child:  Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                "Published on $publishedDate",
-                style: const TextStyle(
-                  fontSize:12,
-                  fontWeight: FontWeight.normal,
-                ),
+            child: Center(
+              child: TextOverlay(
+                label: AppConstants.nowPlaying,
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: 18,
+              ),
+            ),
           ),
-              ],
-            ),),
+          actions: [
+            IconButton(
+              icon: const Icon(CupertinoIcons.share),
+              onPressed: () {
+
+              },
+            ),
+          ],
           backgroundColor: Theme.of(context).colorScheme.background,
         ),
         body: SingleChildScrollView(
@@ -97,7 +99,7 @@ class PodcastPageState extends State<PodcastPage> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Image.network(
-                                selectedEpisode.imageUrl,
+                                selectedEpisode!.imageUrl,
                                 width: double.infinity,
                                 height: double.infinity,
                                 fit: BoxFit.cover,
@@ -109,7 +111,7 @@ class PodcastPageState extends State<PodcastPage> {
                               top: 10,
                               left: 10,
                               child: Container(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     begin: Alignment.centerLeft,
@@ -120,15 +122,15 @@ class PodcastPageState extends State<PodcastPage> {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       CupertinoIcons.antenna_radiowaves_left_right,
                                       color: Colors.white,
                                       size: 15,
                                     ),
-                                    SizedBox(width: 5),
+                                    const SizedBox(width: 5),
                                     Text(
-                                        selectedEpisode!.type,
-                                      style: TextStyle(color: Colors.white),
+                                        selectedEpisode.type,
+                                      style: const TextStyle(color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -153,10 +155,10 @@ class PodcastPageState extends State<PodcastPage> {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                            child: TextOverlay(label:  selectedEpisode!.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
+                            child: TextOverlay(label:  selectedEpisode.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(height: 10,),
-                          TextOverlay(label:  selectedEpisode!.type, color: Theme.of(context).colorScheme.onPrimary,),
+                          const SizedBox(height: 10,),
+                          TextOverlay(label:  selectedEpisode.type, color: Theme.of(context).colorScheme.onPrimary,),
                         ],
                       ),
                       Padding(
@@ -172,13 +174,14 @@ class PodcastPageState extends State<PodcastPage> {
                           total: positionData?.duration ?? Duration.zero,
                           onSeek: _audioPlayer.seek,),
                       ),
+                      const SizedBox(height: 20,),
+                      Controls(audioPlayer: _audioPlayer),
+                      const SizedBox(height: 60,),
+                      TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer)
                     ],
                   );
                 },
-
-
               ),
-              Controls(audioPlayer: _audioPlayer)
             ],
           ),
         )

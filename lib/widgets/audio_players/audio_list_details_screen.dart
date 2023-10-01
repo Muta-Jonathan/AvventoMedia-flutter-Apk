@@ -1,9 +1,7 @@
 import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/widgets/audio_players/controls.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:just_audio/just_audio.dart';
 
 import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../text_overlay_widget.dart';
