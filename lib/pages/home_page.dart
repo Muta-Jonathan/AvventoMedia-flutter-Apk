@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../componets/app_constants.dart';
-import '../widgets/audio_players/audio_list_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,25 +15,47 @@ class HomePage extends StatefulWidget {
 
 
 class _HomePageState extends State<HomePage> {
-
+  Future<void> _refreshData() async {
+    // Add your data refresh logic here
+    await Future.delayed(Duration(seconds: 2)); // Simulate data loading
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: AppBar(
-        title: const Text(AppConstants.appName),
-        backgroundColor: Theme.of(context).colorScheme.background,
-        actions: [
-          //Notification bell Icon to go to Explore screen
-          IconButton( icon: const Icon(CupertinoIcons.headphones), onPressed:(){ Get.toNamed(Routes.getListenRoute());},)
-        ],
-      ),
-      body: const Column(
-        children: [
-          Divider(),
-          HomeExploreScreen(),
-          AudioListScreen(),
-        ],
+      body: RefreshIndicator(
+        backgroundColor: Colors.white,
+        onRefresh: _refreshData,
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              backgroundColor: Theme.of(context).colorScheme.background,
+              floating: true,
+              title: Text(AppConstants.appName),
+              actions: [
+                IconButton(
+                  icon: const Icon(CupertinoIcons.headphones),
+                  onPressed: () {
+                    Get.toNamed(Routes.getListenRoute());
+                  },
+                ),
+              ],
+            ),
+            const SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  Divider(),
+                  HomeExploreScreen(),
+                  HomeExploreScreen(),
+                  HomeExploreScreen(),
+                  HomeExploreScreen(),
+                  HomeExploreScreen(),
+                  HomeExploreScreen(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

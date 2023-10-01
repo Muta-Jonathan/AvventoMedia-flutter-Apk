@@ -8,15 +8,15 @@ class Utils {
   }
 
   static double calculateHeight(BuildContext context, height) {
-    double screenWidth = MediaQuery.of(context).size.height;
-    double widgetHeight = height * screenWidth;
-    return  widgetHeight * 0.5;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double widgetHeight = height * screenHeight;
+    return  widgetHeight;
   }
 
   static double calculateWidth(BuildContext context, width) {
     double screenWidth = MediaQuery.of(context).size.width;
     double widgetWidth = width * screenWidth;
-    return  widgetWidth * 0.5;
+    return  widgetWidth;
   }
 
   static String formatDuration(Duration duration) {

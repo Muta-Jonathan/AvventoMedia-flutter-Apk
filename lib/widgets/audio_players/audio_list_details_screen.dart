@@ -1,10 +1,10 @@
+import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/widgets/audio_players/controls.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:just_audio/just_audio.dart';
 
-import '../../models/musicplayermodels/music_player_position.dart';
 import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../text_overlay_widget.dart';
 
@@ -20,18 +20,15 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double widgetWidth = 0.88 * screenWidth;
     String publishedDate = Jiffy.parse(widget.spreakerEpisode.publishedAt).fromNow();
     return Center(
         child: Padding(
-          padding: const EdgeInsets.all(18.0),
+          padding: const EdgeInsets.only(bottom: 18.0, left: 18.0,right: 18.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
             child: Container(
-              width: widgetWidth,
-              height: screenWidth * 0.4,
+              width: Utils.calculateWidth(context, 0.88),
+              height:  Utils.calculateWidth(context, 0.4),
               color: Theme.of(context).colorScheme.secondary,
               padding: const EdgeInsets.all(16.0),
               child: Stack(
@@ -44,12 +41,12 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                       child: CachedNetworkImage(
                         imageUrl: widget.spreakerEpisode.imageUrl,
                         fit: BoxFit.cover,
-                        width: screenWidth * 0.3,
-                          height: screenWidth * 0.3,
+                        width: Utils.calculateWidth(context, 0.3),
+                          height:  Utils.calculateWidth(context, 0.3),
                         placeholder: (context, url) => Center(
                           child: SizedBox(
-                            width: screenWidth * 0.3,
-                            height: screenWidth * 0.3,
+                            width:  Utils.calculateWidth(context, 0.3),
+                            height:  Utils.calculateWidth(context, 0.3),
                             child: Center(
                               child: CircularProgressIndicator(
                                 strokeWidth: 3.0,
@@ -68,18 +65,18 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                     ),
                   ),
                   Positioned(
-                    top: screenWidth * 0.05,
-                    left: screenWidth * 0.35, // Adjust the left position as needed
+                    top: Utils.calculateWidth(context,0.05),
+                    left: Utils.calculateWidth(context,0.35),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          width: screenWidth * 0.45,
+                          width: Utils.calculateWidth(context,0.45),
                           child: TextOverlay(
                             label: widget.spreakerEpisode.title,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            fontSize: screenWidth * 0.05,
+                            fontSize: Utils.calculateWidth(context,0.05),
                           ),
                         ),
                         const SizedBox(height: 12),

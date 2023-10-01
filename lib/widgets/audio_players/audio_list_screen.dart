@@ -1,4 +1,5 @@
 import 'package:avvento_radio/componets/app_constants.dart';
+import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/widgets/label_place_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,11 +31,11 @@ class _AudioListState extends State<AudioListScreen> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
-      width: double.infinity,
-      height: 328,
+      width:  Utils.calculateWidth(context, 0.95),
+      height: Utils.calculateHeight(context, 0.5),
       child: Column(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           const LabelPlaceHolder(title: AppConstants.spreaker),
           const Padding(
             padding: EdgeInsets.only(left: 20, right: 20),

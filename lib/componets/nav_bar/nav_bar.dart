@@ -19,15 +19,15 @@ class _NavBarState extends State<NavBar> {
   final controller = Get.put(NavBarController());
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<NavBarController>(builder: (contxt){
+    return GetBuilder<NavBarController>(builder: (_){
       return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         body: IndexedStack(
           index: controller.tabIndex,
           children: const [
             HomePage(),
-            ListenPage(),
             SchedulePage(),
+            ListenPage(),
             ProfilePage(),
           ],
         ),
@@ -46,8 +46,8 @@ class _NavBarState extends State<NavBar> {
         //Bottom Navigation Bar with [Home,Listen,Schedule,Profile]
         items: const [
           BottomNavigationBarItem(label: "Home",icon: Icon(CupertinoIcons.house_alt)),
+          BottomNavigationBarItem(label: "Watch",icon: Icon(CupertinoIcons.tv)),
           BottomNavigationBarItem(label: "Listen",icon: Icon(CupertinoIcons.headphones)),
-          BottomNavigationBarItem(label: "Schedule",icon: Icon(CupertinoIcons.calendar_today)),
           BottomNavigationBarItem(label: "Profile",icon: Icon(CupertinoIcons.person)),
         ],
         ),
