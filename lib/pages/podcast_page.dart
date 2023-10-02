@@ -1,7 +1,8 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/widgets/text_overlay_widget.dart';
+import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -98,11 +99,21 @@ class PodcastPageState extends State<PodcastPage> {
                             // Cached Network Image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                selectedEpisode!.imageUrl,
+                              child: CachedNetworkImage(
+                                imageUrl: selectedEpisode!.imageUrl,
+                                fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
-                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Center(
+                                  child: SizedBox(
+                                    width: 40.0, // Adjust the width to control the size
+                                    height: 40.0, // Adjust the height to control the size
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 3.0, // Adjust the stroke width as needed
+                                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
+                                    ),
+                                  ),), // Placeholder widget
+                                errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
                               ),
                             ),
 

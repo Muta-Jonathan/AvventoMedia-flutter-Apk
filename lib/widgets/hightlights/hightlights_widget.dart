@@ -9,14 +9,14 @@ import 'package:provider/provider.dart';
 
 import '../providers/programs_provider.dart';
 
-class HomeExploreScreen extends StatefulWidget {
-  const HomeExploreScreen({super.key});
+class HightlightsWidget extends StatefulWidget {
+  const HightlightsWidget({super.key});
 
   @override
-  State<HomeExploreScreen> createState() => _ExploreScreenState();
+  State<HightlightsWidget> createState() => _HightlightsWidget();
 }
 
-class _ExploreScreenState extends State<HomeExploreScreen> {
+class _HightlightsWidget extends State<HightlightsWidget> {
   @override
   void initState() {
     super.initState();

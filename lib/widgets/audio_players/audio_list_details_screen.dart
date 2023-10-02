@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../models/spreakermodels/spreaker_episodes.dart';
-import '../text_overlay_widget.dart';
+import '../text/text_overlay_widget.dart';
 
 class AudioListDetailsWidget extends StatefulWidget {
   final SpreakerEpisode spreakerEpisode;
@@ -73,14 +73,14 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                           child: TextOverlay(
                             label: widget.spreakerEpisode.title,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: Utils.calculateWidth(context,0.05),
                           ),
                         ),
                         const SizedBox(height: 12),
                         TextOverlay(
                           label: "Published $publishedDate",
-                          color: Theme.of(context).colorScheme.onSecondaryContainer,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       ],
                     ),
