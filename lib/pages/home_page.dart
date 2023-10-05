@@ -34,14 +34,7 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Theme.of(context).colorScheme.background,
               floating: true,
               title: const Text(AppConstants.appName),
-              actions: [
-                IconButton(
-                  icon: const Icon(CupertinoIcons.headphones),
-                  onPressed: () {
-                    Get.toNamed(Routes.getListenRoute());
-                  },
-                ),
-              ],
+
             ),
             const SliverToBoxAdapter(
               child: Column(

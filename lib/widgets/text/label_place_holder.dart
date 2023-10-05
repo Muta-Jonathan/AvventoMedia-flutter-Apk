@@ -16,7 +16,7 @@ class LabelPlaceHolder extends StatelessWidget {
           Expanded(
             child: Text(title,
               style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.normal,
               fontSize: titleFontSize,
               ),
             ),
