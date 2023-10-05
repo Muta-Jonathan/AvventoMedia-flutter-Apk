@@ -1,5 +1,7 @@
 import 'package:avvento_radio/routes/routes.dart';
-import 'package:avvento_radio/widgets/explore/home_explore_screen.dart';
+import 'package:avvento_radio/widgets/hightlights/hightlights_widget.dart';
+import 'package:avvento_radio/widgets/live/live_tv_widget.dart';
+import 'package:avvento_radio/widgets/radio/live_radio_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,8 +47,11 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   Divider(),
-                  HomeExploreScreen(),
-
+                  HightlightsWidget(),
+                  SizedBox(height: 20,),
+                  LiveTvWidget(),
+                  SizedBox(height: 20,),
+                  LiveRadioWidget()
                 ],
               ),
             ),

@@ -7,4 +7,7 @@ class AppConstants {
   static const String showId = '5820368';
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const String spreaker = 'Podcasts';
+  static const String liveTv = "LIVE TV";
+  static const String liveNow = "LIVE NOW";
+  static const String liveRadio = "Radio";
 }

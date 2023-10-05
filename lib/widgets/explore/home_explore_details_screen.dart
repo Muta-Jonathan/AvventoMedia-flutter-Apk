@@ -1,3 +1,4 @@
+import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/models/exploremodels/programs.dart';
 import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
 import 'package:avvento_radio/widgets/icons/boxed_icon_widget.dart';
@@ -21,7 +22,7 @@ class _HomeExploreDetailsScreenState extends State<HomeExploreDetailsScreen> {
       borderRadius: BorderRadius.circular(20.0), // Rounded corners with radius 15.0
       child: Container(
         width: widgetWidth,
-        height: widgetWidth * 9.0 / 16.0, // 16:9 aspect ratio based on the width
+        height: Utils.calculateHeight(context, 1) , // 16:9 aspect ratio based on the width
         margin: const EdgeInsets.all(5.0),
         child: Stack(
           children: [
@@ -74,7 +75,6 @@ class _HomeExploreDetailsScreenState extends State<HomeExploreDetailsScreen> {
                 ],
               ),
             ),
-
           ],
         ),
       ),

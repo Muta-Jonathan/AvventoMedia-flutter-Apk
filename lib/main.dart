@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Bind the EpisodeController to the app
-    Get.put(EpisodeController()); // Add this line
+    Get.put(EpisodeController());
     return GetMaterialApp( // Use GetMaterialApp instead of MaterialApp
       debugShowCheckedModeBanner: false,
       title: AppConstants.appName,

@@ -1,24 +1,22 @@
 import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/models/exploremodels/programs.dart';
-import 'package:avvento_radio/widgets/hightlights/hightlight_details_widget.dart';
-import 'package:avvento_radio/widgets/images/resizable_image_widget.dart';
-import 'package:avvento_radio/widgets/text/label_place_holder.dart';
+import 'package:avvento_radio/widgets/live/live_tv_details_widget.dart';
 import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/programs_provider.dart';
+import '../text/label_place_holder.dart';
 
-class HightlightsWidget extends StatefulWidget {
-  const HightlightsWidget({super.key});
+class LiveTvWidget extends StatefulWidget {
+  const LiveTvWidget({super.key});
 
   @override
-  State<HightlightsWidget> createState() => _HightlightsWidget();
+  State<LiveTvWidget> createState() => _LiveTvWidget();
 }
 
-class _HightlightsWidget extends State<HightlightsWidget> {
+class _LiveTvWidget extends State<LiveTvWidget> {
   @override
   void initState() {
     super.initState();
@@ -41,9 +39,11 @@ class _HightlightsWidget extends State<HightlightsWidget> {
     return Container(
       margin: const EdgeInsets.only(top: 10.0),
       width: double.infinity,
-      height: Utils.calculateAspectHeight(context, 1.45),
+      height: Utils.calculateAspectHeight(context, 1.3),
       child: Column(
         children: [
+          const LabelPlaceHolder(title: AppConstants.liveTv,titleFontSize: 18),
+          const SizedBox(height: 10),
           Expanded(child: buildListView(context, programsProvider)),
         ],
       ),
@@ -63,7 +63,7 @@ class _HightlightsWidget extends State<HightlightsWidget> {
   }
 
   Widget buildExploreDetailsScreen(Programs explore) {
-    return HightlightsDetailsWidget(explore: explore);
+    return LiveTvDetailsWidget(explore: explore);
   }
 
 
