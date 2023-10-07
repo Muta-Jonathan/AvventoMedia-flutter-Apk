@@ -30,8 +30,8 @@ environment:
 dependencies:
   cached_network_image: ^3.2.3
   # firebase_dependencies
-  firebase_core: ^2.16.0
-  cloud_firestore: ^4.9.2
+  firebase_core: ^2.17.0
+  cloud_firestore: ^4.9.3
 
   get: ^4.6.6
   marquee: ^2.2.3
