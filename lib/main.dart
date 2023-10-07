@@ -1,16 +1,20 @@
 import 'package:avvento_radio/componets/app_constants.dart';
+import 'package:avvento_radio/firebase_options.dart';
 import 'package:avvento_radio/routes/routes.dart';
 import 'package:avvento_radio/themes/dark_theme.dart';
 import 'package:avvento_radio/themes/light_theme.dart';
 import 'package:avvento_radio/widgets/providers/programs_provider.dart';
 import 'package:avvento_radio/widgets/providers/spreaker_data_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import 'controller/episode_controller.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
       providers: [

@@ -6,18 +6,27 @@ import '../models/highlights/highlightModel.dart';
 class FirestoreServiceAPI extends GetxController{
   static FirestoreServiceAPI get instance => Get.find();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final CollectionReference highlights = FirebaseFirestore.instance.collection("highlights");
 
-  Future<List<HighlightModel>> fetchHighlights() async {
+  Stream<QuerySnapshot> fetchHighlights() {
     try {
-      final snapshot = await _firestore.collection("highlights").get();
-      print('highlights: $snapshot');
-      final highlightsData = snapshot.docs.map((e) => HighlightModel.fromSnapShot(e)).toList();
-      return highlightsData;
+      final highlightsStream = highlights.orderBy("publishedAt", descending: true).snapshots();
+      return highlightsStream;
     } catch (e) {
       print('Error fetching highlights: $e');
       throw e;
     }
   }
 
+  Future<Future<DocumentReference<Object?>>> addHighlights() async {
+    try {
+      return highlights.add({
+        'title': "highlight",
+        'timestamp': Timestamp.now()
+      });
+    } catch (e) {
+      print('Error fetching highlights: $e');
+      throw e;
+    }
+  }
 }
