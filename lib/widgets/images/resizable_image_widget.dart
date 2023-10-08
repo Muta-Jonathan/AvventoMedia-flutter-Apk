@@ -4,51 +4,11 @@ import 'package:flutter/material.dart';
 
 class ResizableImageWithOverlay extends StatelessWidget {
   final String imageUrl;
-  final IconData? icon;
-  final String text;
 
   const ResizableImageWithOverlay({
     super.key,
     required this.imageUrl,
-    this.icon,
-    required this.text,
   });
-
-  Widget buildOverlay() {
-    return   Positioned(
-      bottom: 10,
-      right: 10,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(5.0),
-        child: Container(
-          padding: const EdgeInsets.all(8.0),
-          color: Colors.black.withOpacity(0.4),
-          child: icon == null
-              ? Text(
-            text,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          )
-              : Row(
-            children: [
-              Icon(
-                icon,
-                color: Colors.white,
-              ),
-              const SizedBox(width: 8.0),
-              Text(
-                text,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +43,6 @@ class ResizableImageWithOverlay extends StatelessWidget {
                   color: Theme.of(context).colorScheme.error,
                 ),
               ),
-              icon != null ||  text.isNotEmpty ? buildOverlay(): Container()
             ],
           ),
         ),
