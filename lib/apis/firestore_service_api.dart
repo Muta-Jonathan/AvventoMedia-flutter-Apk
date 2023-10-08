@@ -1,32 +1,54 @@
+import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
-import '../models/highlights/highlightModel.dart';
 
 class FirestoreServiceAPI extends GetxController{
   static FirestoreServiceAPI get instance => Get.find();
 
-  final CollectionReference highlights = FirebaseFirestore.instance.collection("highlights");
+  final CollectionReference highlights = FirebaseFirestore.instance.collection(AppConstants.highlightsAPI);
+  final CollectionReference liveTv = FirebaseFirestore.instance.collection(AppConstants.liveTvAPI);
+  final CollectionReference radio = FirebaseFirestore.instance.collection(AppConstants.radioAPI);
 
   Stream<QuerySnapshot> fetchHighlights() {
     try {
       final highlightsStream = highlights.orderBy("publishedAt", descending: true).snapshots();
       return highlightsStream;
     } catch (e) {
-      print('Error fetching highlights: $e');
+      print('Error fetching Highlights : $e');
       throw e;
     }
   }
 
-  Future<Future<DocumentReference<Object?>>> addHighlights() async {
+  Stream<QuerySnapshot> fetchLiveTv() {
     try {
-      return highlights.add({
-        'title': "highlight",
-        'timestamp': Timestamp.now()
-      });
+      final liveTvStream = liveTv.orderBy("publishedAt", descending: true).snapshots();
+      return liveTvStream;
     } catch (e) {
-      print('Error fetching highlights: $e');
+      print('Error fetching Tv : $e');
       throw e;
     }
   }
+
+  Stream<QuerySnapshot> fetchRadio() {
+    try {
+      final liveTvStream = radio.orderBy("publishedAt", descending: true).snapshots();
+      return liveTvStream;
+    } catch (e) {
+      print('Error fetching Radio : $e');
+      throw e;
+    }
+  }
+
+  // Future<Future<DocumentReference<Object?>>> addHighlights() async {
+  //   try {
+  //     return highlights.add({
+  //       'title': "highlight",
+  //       'timestamp': Timestamp.now()
+  //     });
+  //   } catch (e) {
+  //     print('Error fetching highlights: $e');
+  //     throw e;
+  //   }
+  // }
 }

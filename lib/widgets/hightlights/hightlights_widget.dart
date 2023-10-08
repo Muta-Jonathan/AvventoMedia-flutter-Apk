@@ -1,13 +1,13 @@
+import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/models/highlights/highlightModel.dart';
 import 'package:avvento_radio/widgets/hightlights/hightlight_details_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../apis/firestore_service_api.dart';
+import '../../models/highlightmodel/highlightModel.dart';
 
 class HightlightsWidget extends StatefulWidget {
   const HightlightsWidget({super.key});
@@ -17,7 +17,7 @@ class HightlightsWidget extends StatefulWidget {
 }
 
 class _HightlightsWidget extends State<HightlightsWidget> {
-  final _firestoreServiceAPI = Get.put(FirestoreServiceAPI());
+  final _highlightsAPI = Get.put(FirestoreServiceAPI());
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +35,8 @@ class _HightlightsWidget extends State<HightlightsWidget> {
   }
 
   Widget buildListView(BuildContext context) {
-
     return StreamBuilder(
-        stream: _firestoreServiceAPI.fetchHighlights(),
+        stream: _highlightsAPI.fetchHighlights(),
         builder: (_, snapshot)  {
           if (snapshot.hasData) {
             List highlightList = snapshot.data!.docs;
@@ -47,9 +46,7 @@ class _HightlightsWidget extends State<HightlightsWidget> {
               itemCount: highlightList.length,
               itemBuilder: (BuildContext context, int index) {
                 DocumentSnapshot documentSnapshot = highlightList[index];
-                String docID = documentSnapshot.id;
 
-                Map<String, dynamic> data = documentSnapshot.data() as Map<String, dynamic>;
                 HighlightModel highlightModel = HighlightModel.fromSnapShot(documentSnapshot);
 
                 return  buildHighlightDetailsScreen(highlightModel);
@@ -59,8 +56,6 @@ class _HightlightsWidget extends State<HightlightsWidget> {
             return const Text("no data");
           }
         });
-
-
 
   }
 

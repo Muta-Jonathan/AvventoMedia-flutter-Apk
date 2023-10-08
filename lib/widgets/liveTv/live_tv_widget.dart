@@ -1,31 +1,27 @@
 import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/models/exploremodels/programs.dart';
-import 'package:avvento_radio/models/radiomodel/radioModel.dart';
-import 'package:avvento_radio/widgets/radio/live_radio_details_widget.dart';
+import 'package:avvento_radio/models/livetvmodel/liveTvModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:provider/provider.dart';
 
 import '../../apis/firestore_service_api.dart';
-import '../providers/programs_provider.dart';
 import '../text/label_place_holder.dart';
+import 'live_tv_details_widget.dart';
 
-class LiveRadioWidget extends StatefulWidget {
-  const LiveRadioWidget({super.key});
+class LiveTvWidget extends StatefulWidget {
+  const LiveTvWidget({super.key});
 
   @override
-  State<LiveRadioWidget> createState() => _LiveRadioWidget();
+  State<LiveTvWidget> createState() => _LiveTvWidget();
 }
 
-class _LiveRadioWidget extends State<LiveRadioWidget> {
-  final _radioAPI = Get.put(FirestoreServiceAPI());
+class _LiveTvWidget extends State<LiveTvWidget> {
+  final _liveTvAPI = Get.put(FirestoreServiceAPI());
 
   @override
   Widget build(BuildContext context) {
-    final programsProvider = Provider.of<ProgramsProvider>(context);
 
     return Container(
       margin: const EdgeInsets.only(top: 10.0),
@@ -33,9 +29,9 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
       height: Utils.calculateAspectHeight(context, 1.3),
       child: Column(
         children: [
-          const LabelPlaceHolder(title: AppConstants.liveRadio, titleFontSize: 18),
+          const LabelPlaceHolder(title: AppConstants.liveTv,titleFontSize: 18),
           const SizedBox(height: 10),
-          Expanded(child: buildListView(context)),
+          Expanded(child: buildListView(context),)
         ],
       ),
     );
@@ -43,7 +39,7 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
 
   Widget buildListView(BuildContext context) {
     return StreamBuilder(
-        stream: _radioAPI.fetchRadio(),
+        stream: _liveTvAPI.fetchLiveTv(),
         builder: (_, snapshot)  {
           if (snapshot.hasData) {
             List liveTvList = snapshot.data!.docs;
@@ -54,9 +50,9 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
               itemBuilder: (BuildContext context, int index) {
                 DocumentSnapshot documentSnapshot = liveTvList[index];
 
-                RadioModel radioModel = RadioModel.fromSnapShot(documentSnapshot);
+                LiveTvModel liveTvModel = LiveTvModel.fromSnapShot(documentSnapshot);
 
-                return  buildLiveTvDetailsScreen(radioModel);
+                return  buildLiveTvDetailsScreen(liveTvModel);
               },
             );
           } else {
@@ -66,7 +62,7 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
 
   }
 
-  Widget buildLiveTvDetailsScreen(RadioModel radioModel) {
-    return LiveRadioDetailsWidget(radioModel: radioModel);
+  Widget buildLiveTvDetailsScreen(LiveTvModel liveTvModel) {
+    return LiveTvDetailsWidget(liveTvModel: liveTvModel,);
   }
 }

@@ -1,12 +1,12 @@
 import 'package:avvento_radio/routes/routes.dart';
 import 'package:avvento_radio/widgets/hightlights/hightlights_widget.dart';
-import 'package:avvento_radio/widgets/live/live_tv_widget.dart';
 import 'package:avvento_radio/widgets/radio/live_radio_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../componets/app_constants.dart';
+import '../widgets/liveTv/live_tv_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

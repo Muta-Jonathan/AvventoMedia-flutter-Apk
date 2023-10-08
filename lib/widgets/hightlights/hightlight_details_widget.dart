@@ -1,8 +1,7 @@
-import 'package:avvento_radio/models/exploremodels/programs.dart';
-import 'package:avvento_radio/models/highlights/highlightModel.dart';
 import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/highlightmodel/highlightModel.dart';
 import '../images/resizable_image_widget.dart';
 
 class HightlightsDetailsWidget extends StatefulWidget {
