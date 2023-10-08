@@ -100,7 +100,7 @@ class PodcastPageState extends State<PodcastPage> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                imageUrl: selectedEpisode!.imageUrl,
+                                imageUrl: selectedEpisode!.imageOriginalUrl,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,

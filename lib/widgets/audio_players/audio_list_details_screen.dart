@@ -37,7 +37,7 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
                       child: CachedNetworkImage(
-                        imageUrl: widget.spreakerEpisode.imageUrl,
+                        imageUrl: widget.spreakerEpisode.imageOriginalUrl,
                         fit: BoxFit.cover,
                         width: Utils.calculateWidth(context, 0.3),
                           height:  Utils.calculateWidth(context, 0.3),
