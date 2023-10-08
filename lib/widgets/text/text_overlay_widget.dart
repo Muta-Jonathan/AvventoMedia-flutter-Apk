@@ -6,14 +6,23 @@ class TextOverlay extends StatelessWidget {
   final double fontSize;
   final Color color;
   final FontWeight fontWeight;
-  const TextOverlay({super.key, required this.label, this.fontSize = 12.0, required this.color, this.fontWeight = FontWeight.normal,});
+  final bool allCaps;
+
+  const TextOverlay({
+    super.key,
+    required this.label,
+    this.fontSize = 12.0,
+    required this.color,
+    this.fontWeight = FontWeight.normal,
+    this.allCaps = false,});
 
   @override
   Widget build(BuildContext context) {
+    String displayLabel = allCaps ? label.toUpperCase() : label;
     return Padding(
       padding: const EdgeInsets.only(left: 5,bottom: 2),
       child: Text(
-          label,
+        displayLabel,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
