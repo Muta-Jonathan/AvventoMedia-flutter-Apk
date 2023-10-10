@@ -36,7 +36,7 @@ class ListenPageState extends State<ListenPage> {
                 IconButton(
                   icon: const Icon(CupertinoIcons.headphones),
                   onPressed: () {
-                    Get.toNamed(Routes.getListenRoute());
+                    Get.toNamed(Routes.getOnlineRadioRoute());
                   },
                 ),
               ],

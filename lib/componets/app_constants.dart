@@ -7,6 +7,7 @@ class AppConstants {
   static const String spreaker = 'Podcasts';
   static const String liveTv = "LIVE TV";
   static const String liveRadio = "Radio";
+  static const String onAIR = "ON AIR";
 
   /// ***************** API ****************
   static const String highlightsAPI = "highlights";
@@ -14,4 +15,5 @@ class AppConstants {
   static const String radioAPI = "radio";
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const String showId = '5820368';
+  static const azuracastAPI ='https://radio1.avventohome.org/api/nowplaying/avventoradio';
 }
