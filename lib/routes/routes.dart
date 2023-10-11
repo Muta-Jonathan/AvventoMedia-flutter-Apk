@@ -28,6 +28,6 @@ class Routes {
     GetPage(name: watch, page: () => const WatchPage()),
     GetPage(name: profile, page: () => const ProfilePage()),
     GetPage(name: podcast, page: () => const PodcastPage()),
-    GetPage(name: onlineRadio, page: () => OnlineRadioPage()),
+    GetPage(name: onlineRadio, page: () => const OnlineRadioPage()),
   ];
 }

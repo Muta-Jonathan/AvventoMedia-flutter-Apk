@@ -1,16 +1,12 @@
 import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/models/exploremodels/programs.dart';
 import 'package:avvento_radio/models/radiomodel/radioModel.dart';
 import 'package:avvento_radio/widgets/radio/live_radio_details_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:provider/provider.dart';
 
 import '../../apis/firestore_service_api.dart';
-import '../providers/programs_provider.dart';
 import '../text/label_place_holder.dart';
 
 class LiveRadioWidget extends StatefulWidget {
@@ -25,7 +21,6 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final programsProvider = Provider.of<ProgramsProvider>(context);
 
     return Container(
       margin: const EdgeInsets.only(top: 10.0),
@@ -53,7 +48,6 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
               itemCount: liveTvList.length,
               itemBuilder: (BuildContext context, int index) {
                 DocumentSnapshot documentSnapshot = liveTvList[index];
-
                 RadioModel radioModel = RadioModel.fromSnapShot(documentSnapshot);
 
                 return  buildLiveTvDetailsScreen(radioModel);
@@ -63,7 +57,6 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
             return const Text("no data");
           }
         });
-
   }
 
   Widget buildLiveTvDetailsScreen(RadioModel radioModel) {

@@ -3,8 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart' as R;
 
@@ -39,14 +37,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
       _audioPlayerController.setAudioUrl(radioStationProvider.radioStation!.streamUrl);
     }
   }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   final radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
-  //   //_audioPlayer = AudioPlayer(); // Initialize the AudioPlayer
-  //   _audioPlayer = AudioPlayer()..setUrl( radioStationProvider.radioStation!.streamUrl);
-  // }
 
   Duration? parseDuration(dynamic value) {
     if (value is int) {
@@ -113,8 +103,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                     stream: _musicPlayerPositionStream,
                     builder: (_,snapshot) {
                       final positionData = snapshot.data;
-                      // print('StreamBuilder called ${positionData?.bufferedPosition}');
-                     // print('StreamBuilder called'); // Add this line
                       final paddingWidth = Utils.calculateWidth(context, 0.05);
                       final paddingTop = Utils.calculateHeight(context, 0.06);
                       return Column(
@@ -141,7 +129,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: CachedNetworkImage(
-                                        imageUrl: radioProvider.radioStation!.imageUrl!,
+                                        imageUrl: radioProvider.radioStation!.imageUrl,
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                         height: double.infinity,
@@ -153,7 +141,8 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                                               strokeWidth: 3.0, // Adjust the stroke width as needed
                                               valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
                                             ),
-                                          ),), // Placeholder widget
+                                          ),
+                                        ), // Placeholder widget
                                         errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
                                       ),
                                     ),
@@ -199,10 +188,10 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle!, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
+                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10,),
-                              TextOverlay(label:  radioProvider.radioStation!.artist!, color: Theme.of(context).colorScheme.onPrimary,),
+                              TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
                             ],
                           ),
                           Padding(
@@ -214,14 +203,14 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               thumbRadius: 5,
                               progressBarColor: Colors.redAccent,
                               progress: parseDuration(radioProvider.radioStation?.elapsed) ?? positionData?.position ?? Duration.zero,
-                              buffered:  positionData?.bufferedPosition ?? Duration.zero,
                               total: parseDuration(radioProvider.radioStation?.duration) ?? Duration.zero,
                              ),
                           ),
                           const SizedBox(height: 20,),
                           Controls(audioPlayerController: _audioPlayerController,),
-                          const SizedBox(height: 60,),
-                          TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer)
+                          const SizedBox(height: 40,),
+                          TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer),
+                          const SizedBox(height: 20,),
                         ],
                       );
                     },

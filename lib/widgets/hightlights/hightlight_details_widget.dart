@@ -22,7 +22,7 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
           children: [
             ResizableImageWithOverlay(imageUrl: widget.highlightModel.imageUrl),
             const SizedBox(height: 15.0,),
-            TextOverlay(label: widget.highlightModel.title, color: Colors.orangeAccent,allCaps: true),
+            TextOverlay(label: widget.highlightModel.title, color: Colors.orange,allCaps: true),
             const SizedBox(height: 8.0,),
             TextOverlay(label: widget.highlightModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),
             const SizedBox(height: 8.0,),

@@ -55,7 +55,6 @@ class AzuraCastAPI {
 
         return radioStation;
       } catch (e) {
-        print('Error parsing JSON data: $e');
 
         // Load cached data if available, or provide default values
         final cachedRadioStation = await _loadCachedRadioStationData();

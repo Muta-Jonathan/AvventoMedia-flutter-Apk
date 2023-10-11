@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 
 import '../../apis/azuracast_api.dart';
@@ -25,11 +23,11 @@ class RadioStationProvider extends ChangeNotifier {
   }
 
   void fetchRadioStationUpdates() {
-    AzuraCastAPI.getRadioStationUpdates()?.listen((updatedRadioStation) {
+    AzuraCastAPI.getRadioStationUpdates().listen((updatedRadioStation) {
       _radioStation = updatedRadioStation;
       notifyListeners(); // Notify listeners of changes
     }, onError: (error) {
-      print('Error fetching radio station data: $error');
+      throw error;
     });
   }
 

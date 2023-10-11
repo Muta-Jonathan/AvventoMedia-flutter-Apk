@@ -15,8 +15,7 @@ class FirestoreServiceAPI extends GetxController{
       final highlightsStream = highlights.orderBy("publishedAt", descending: true).snapshots();
       return highlightsStream;
     } catch (e) {
-      print('Error fetching Highlights : $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -25,8 +24,7 @@ class FirestoreServiceAPI extends GetxController{
       final liveTvStream = liveTv.orderBy("publishedAt", descending: true).snapshots();
       return liveTvStream;
     } catch (e) {
-      print('Error fetching Tv : $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -35,8 +33,7 @@ class FirestoreServiceAPI extends GetxController{
       final liveTvStream = radio.orderBy("publishedAt", descending: true).snapshots();
       return liveTvStream;
     } catch (e) {
-      print('Error fetching Radio : $e');
-      throw e;
+      rethrow;
     }
   }
 

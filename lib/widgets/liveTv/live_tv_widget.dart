@@ -4,7 +4,6 @@ import 'package:avvento_radio/models/livetvmodel/liveTvModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../apis/firestore_service_api.dart';
 import '../text/label_place_holder.dart';

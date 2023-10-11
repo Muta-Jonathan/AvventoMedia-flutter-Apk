@@ -14,6 +14,7 @@ ThemeData darkTheme = ThemeData(
         primary: Colors.grey[900]!,
         secondary:const Color.fromARGB(255, 46, 44, 61),//rgba(46,44,61,255)
         onPrimary: Colors.white,
+        onSecondary: Colors.grey[400]!,
         onPrimaryContainer:  Colors.white,
         onSecondaryContainer: Colors.grey[400]!,
         onBackground: const Color.fromARGB(255, 22, 20, 36), //rgba(22,20,36,255),
