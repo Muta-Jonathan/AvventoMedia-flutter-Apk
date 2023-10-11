@@ -16,4 +16,5 @@ class AppConstants {
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const String showId = '5820368';
   static const azuracastAPI ='https://radio1.avventohome.org/api/nowplaying/avventoradio';
+  static const azuracastWebSocketAPI ='wss://radio1.avventohome.org/api/live/nowplaying/websocket';
 }

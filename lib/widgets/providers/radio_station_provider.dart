@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
+
 import '../../apis/azuracast_api.dart';
 import '../../models/radiomodel/radio_station_model.dart';
 
@@ -7,9 +10,34 @@ class RadioStationProvider extends ChangeNotifier {
 
   RadioStation? get radioStation => _radioStation;
 
-  Future<void> fetchRadioStation() async {
-    _radioStation = await AzuraCastAPI.fetchRadioStation();
-    notifyListeners();
+  RadioStationProvider() {
+    establishWebSocketConnection();
+    sendInitialMessage(); // Send the initial message
+    fetchRadioStationUpdates();
   }
 
+  void establishWebSocketConnection() {
+    AzuraCastAPI.establishWebsocketConnection();
+  }
+
+  void sendInitialMessage() {
+    AzuraCastAPI.sendInitialMessage();
+  }
+
+  void fetchRadioStationUpdates() {
+    AzuraCastAPI.getRadioStationUpdates()?.listen((updatedRadioStation) {
+      _radioStation = updatedRadioStation;
+      notifyListeners(); // Notify listeners of changes
+    }, onError: (error) {
+      print('Error fetching radio station data: $error');
+    });
+  }
+
+  @override
+  void dispose() {
+    AzuraCastAPI.closeWebsocketConnection();
+    super.dispose();
+  }
 }
+
+

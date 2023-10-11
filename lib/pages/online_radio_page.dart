@@ -20,31 +20,37 @@ class OnlineRadioPage extends StatefulWidget {
 }
 
 class _OnlineRadioPageState extends State<OnlineRadioPage> {
-  late AudioPlayer _audioPlayer;
+  late final AudioPlayer _audioPlayer;
 
-  Stream<MusicPlayerPosition> get _musicPlayerPositionStream =>
-      R.Rx.combineLatest3<Duration,Duration,Duration?, MusicPlayerPosition>(
-          _audioPlayer.positionStream,
-          _audioPlayer.bufferedPositionStream,
-          _audioPlayer.durationStream,
-              (position, bufferedPosition, duration) => MusicPlayerPosition(
-              position, bufferedPosition, duration ?? Duration.zero)
-      );
   @override
   void initState() {
     super.initState();
-    Provider.of<RadioStationProvider>(context, listen: false).fetchRadioStation();
-
+    _audioPlayer = AudioPlayer(); // Initialize the AudioPlayer
   }
+
+  Duration? parseDuration(dynamic value) {
+    if (value is int) {
+      return Duration(seconds: value);
+    }
+    return null;
+  }
+
+  Stream<MusicPlayerPosition> get _musicPlayerPositionStream =>
+      R.Rx.combineLatest3<Duration, Duration, Duration?, MusicPlayerPosition>(
+        _audioPlayer.positionStream,
+        _audioPlayer.bufferedPositionStream,
+        _audioPlayer.durationStream,
+            (position, bufferedPosition, duration) =>
+            MusicPlayerPosition(position, bufferedPosition, duration ?? Duration.zero),
+      );
 
   @override
   Widget build(BuildContext context) {
-    final radioStationProvider = Provider.of<RadioStationProvider>(context);
-    _audioPlayer = AudioPlayer()..setUrl( radioStationProvider.radioStation!.streamUrl);
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         title: SizedBox(
           height: 30,
@@ -66,7 +72,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
         ],
         backgroundColor: Theme.of(context).colorScheme.background,
       ),
-      body: Consumer<RadioStationProvider>(
+      body:Consumer<RadioStationProvider> (
         builder: (context, radioProvider, child) {
           if (radioProvider.radioStation == null) {
             return Center(
@@ -81,98 +87,100 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: screenHeight * 0.02),
-                      child: Container(
-                        width: screenWidth * 0.85,
-                        height: screenHeight * 0.38,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                            ),
-                          ],
-                        ),
-                        child:  Stack(
-                          children: [
-                            // Cached Network Image
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: CachedNetworkImage(
-                                imageUrl: radioProvider.radioStation!.imageUrl,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                                placeholder: (context, url) => Center(
-                                  child: SizedBox(
-                                    width: 40.0, // Adjust the width to control the size
-                                    height: 40.0, // Adjust the height to control the size
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3.0, // Adjust the stroke width as needed
-                                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
-                                    ),
-                                  ),), // Placeholder widget
-                                errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
-                              ),
-                            ),
-
-                            // Top Left Container with Stream Icon and Text
-                            Positioned(
-                              top: 10,
-                              left: 10,
+                  StreamBuilder<MusicPlayerPosition>(
+                    stream: _musicPlayerPositionStream,
+                    builder: (_,snapshot) {
+                      final positionData = snapshot.data;
+                      // print('StreamBuilder called ${positionData?.bufferedPosition}');
+                     // print('StreamBuilder called'); // Add this line
+                      final paddingWidth = Utils.calculateWidth(context, 0.05);
+                      final paddingTop = Utils.calculateHeight(context, 0.06);
+                      return Column(
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: screenHeight * 0.02),
                               child: Container(
-                                padding: const EdgeInsets.all(8),
+                                width: screenWidth * 0.85,
+                                height: screenHeight * 0.38,
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [Colors.redAccent[100]!, Colors.red[500]!, Colors.red[900]!.withOpacity(0.9)],
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: const Row(
-                                  children: [
-                                    Icon(
-                                      CupertinoIcons.antenna_radiowaves_left_right,
-                                      color: Colors.white,
-                                      size: 15,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.3),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
                                     ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      AppConstants.onAIR,
-                                      style: TextStyle(color: Colors.white),
+                                  ],
+                                ),
+                                child:  Stack(
+                                  children: [
+                                    // Cached Network Image
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: CachedNetworkImage(
+                                        imageUrl: radioProvider.radioStation!.imageUrl!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        placeholder: (context, url) => Center(
+                                          child: SizedBox(
+                                            width: 40.0, // Adjust the width to control the size
+                                            height: 40.0, // Adjust the height to control the size
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 3.0, // Adjust the stroke width as needed
+                                              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
+                                            ),
+                                          ),), // Placeholder widget
+                                        errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
+                                      ),
+                                    ),
+
+                                    // Top Left Container with Stream Icon and Text
+                                    Positioned(
+                                      top: 10,
+                                      left: 10,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                            colors: [Colors.redAccent[100]!, Colors.red[500]!, Colors.red[900]!.withOpacity(0.9)],
+                                          ),
+                                          borderRadius: BorderRadius.circular(5),
+                                        ),
+                                        child: const Row(
+                                          children: [
+                                            Icon(
+                                              CupertinoIcons.antenna_radiowaves_left_right,
+                                              color: Colors.white,
+                                              size: 15,
+                                            ),
+                                            SizedBox(width: 5),
+                                            Text(
+                                              AppConstants.onAIR,
+                                              style: TextStyle(color: Colors.white),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 50),
-                  StreamBuilder<MusicPlayerPosition>(
-                    stream: _musicPlayerPositionStream,
-                    builder: (_,snapshot) {
-                      final positionData = snapshot.data;
-                      final paddingWidth = Utils.calculateWidth(context, 0.05);
-                      final paddingTop = Utils.calculateHeight(context, 0.06);
-                      return Column(
-                        children: [
+                          ),
+                          const SizedBox(height: 50),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
+                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle!, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10,),
-                              TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onPrimary,),
+                              TextOverlay(label:  radioProvider.radioStation!.artist!, color: Theme.of(context).colorScheme.onPrimary,),
                             ],
                           ),
                           Padding(
@@ -183,10 +191,10 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               thumbColor: Colors.redAccent,
                               thumbRadius: 5,
                               progressBarColor: Colors.redAccent,
-                              progress: positionData?.position ?? Duration.zero,
+                              progress: parseDuration(radioProvider.radioStation?.elapsed) ?? positionData?.position ?? Duration.zero,
                               buffered:  positionData?.bufferedPosition ?? Duration.zero,
-                              total: positionData?.duration ?? Duration.zero,
-                              onSeek: _audioPlayer.seek,),
+                              total: parseDuration(radioProvider.radioStation?.duration) ?? Duration.zero,
+                             ),
                           ),
                           const SizedBox(height: 20,),
                           Controls(audioPlayer: _audioPlayer),
@@ -202,7 +210,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
           }
         },
       ),
-
 
     );
   }
