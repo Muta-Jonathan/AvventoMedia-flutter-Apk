@@ -2,6 +2,8 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart' as R;
@@ -9,6 +11,7 @@ import 'package:rxdart/rxdart.dart' as R;
 import '../apis/azuracast_api.dart';
 import '../componets/app_constants.dart';
 import '../componets/utils.dart';
+import '../controller/audio_player_controller.dart';
 import '../models/musicplayermodels/music_player_position.dart';
 import '../models/radiomodel/radio_station_model.dart';
 import '../widgets/audio_players/controls.dart';
@@ -24,15 +27,26 @@ class OnlineRadioPage extends StatefulWidget {
 }
 
 class _OnlineRadioPageState extends State<OnlineRadioPage> {
-  late AudioPlayer _audioPlayer;
+  late AudioPlayerController _audioPlayerController;
 
   @override
   void initState() {
     super.initState();
     final radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
-    //_audioPlayer = AudioPlayer(); // Initialize the AudioPlayer
-    _audioPlayer = AudioPlayer()..setUrl( radioStationProvider.radioStation!.streamUrl);
+    _audioPlayerController = Get.find<AudioPlayerController>();
+
+    if (radioStationProvider.radioStation != null) {
+      _audioPlayerController.setAudioUrl(radioStationProvider.radioStation!.streamUrl);
+    }
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   final radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
+  //   //_audioPlayer = AudioPlayer(); // Initialize the AudioPlayer
+  //   _audioPlayer = AudioPlayer()..setUrl( radioStationProvider.radioStation!.streamUrl);
+  // }
 
   Duration? parseDuration(dynamic value) {
     if (value is int) {
@@ -42,9 +56,9 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
   }
 
   Stream<MusicPlayerPosition> get _musicPlayerPositionStream => R.Rx.combineLatest4<Duration, Duration, Duration?, RadioStation, MusicPlayerPosition>(
-    _audioPlayer.positionStream,
-    _audioPlayer.bufferedPositionStream,
-    _audioPlayer.durationStream,
+    _audioPlayerController.audioPlayer.positionStream,
+    _audioPlayerController.audioPlayer.bufferedPositionStream,
+    _audioPlayerController.audioPlayer.durationStream,
     AzuraCastAPI.getRadioStationUpdates(),
         (position, bufferedPosition, duration, radioStation) {
       return MusicPlayerPosition(position, bufferedPosition, duration ?? Duration.zero, radioStation: radioStation);
@@ -205,7 +219,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                              ),
                           ),
                           const SizedBox(height: 20,),
-                          Controls(audioPlayer: _audioPlayer),
+                          Controls(audioPlayerController: _audioPlayerController,),
                           const SizedBox(height: 60,),
                           TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer)
                         ],

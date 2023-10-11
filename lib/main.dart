@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import 'bindings/initial_binding.dart';
 import 'controller/episode_controller.dart';
 
 void main() async {
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
       darkTheme: darkTheme,
       initialRoute: Routes.getHomeRoute(), // Set the initial route to '/'
       getPages: Routes.routes,
+      initialBinding: InitialBinding(),
     );
   }
 }

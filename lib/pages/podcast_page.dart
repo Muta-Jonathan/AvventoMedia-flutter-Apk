@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart' as R;
 
+import '../controller/audio_player_controller.dart';
 import '../controller/episode_controller.dart';
 import '../models/musicplayermodels/music_player_position.dart';
 import '../widgets/audio_players/controls.dart';
@@ -22,13 +23,13 @@ class PodcastPage extends StatefulWidget {
 
 class PodcastPageState extends State<PodcastPage> {
   final EpisodeController episodeController = Get.find();
-  late AudioPlayer _audioPlayer;
+  late AudioPlayerController _audioPlayerController;
 
   Stream<MusicPlayerPosition> get _musicPlayerPositionStream =>
       R.Rx.combineLatest3<Duration,Duration,Duration?, MusicPlayerPosition>(
-          _audioPlayer.positionStream,
-          _audioPlayer.bufferedPositionStream,
-          _audioPlayer.durationStream,
+          _audioPlayerController.audioPlayer.positionStream,
+          _audioPlayerController.audioPlayer.bufferedPositionStream,
+          _audioPlayerController.audioPlayer.durationStream,
               (position, bufferedPosition, duration) => MusicPlayerPosition(
               position, bufferedPosition, duration ?? Duration.zero)
       );
@@ -36,14 +37,9 @@ class PodcastPageState extends State<PodcastPage> {
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer()..setUrl( episodeController.selectedEpisode.value!.playbackUrl);
+    _audioPlayerController = Get.find<AudioPlayerController>();
+    _audioPlayerController.setAudioUrl( episodeController.selectedEpisode.value!.playbackUrl);
     // _audioPlayer = AudioPlayer()..setAsset('assets/audio/music.mp3');
-  }
-
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
   }
 
   @override
@@ -183,10 +179,10 @@ class PodcastPageState extends State<PodcastPage> {
                           progress: positionData?.position ?? Duration.zero,
                           buffered:  positionData?.bufferedPosition ?? Duration.zero,
                           total: positionData?.duration ?? Duration.zero,
-                          onSeek: _audioPlayer.seek,),
+                          onSeek: _audioPlayerController.audioPlayer.seek,),
                       ),
                       const SizedBox(height: 20,),
-                      Controls(audioPlayer: _audioPlayer),
+                      Controls(audioPlayerController: _audioPlayerController,),
                       const SizedBox(height: 60,),
                       TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer)
                     ],

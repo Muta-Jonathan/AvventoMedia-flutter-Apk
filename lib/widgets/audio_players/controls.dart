@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+
+import '../../controller/audio_player_controller.dart';
 
 class Controls extends StatefulWidget {
-  final AudioPlayer audioPlayer;
-  const Controls({Key? key, required this.audioPlayer}) : super(key: key);
+  final AudioPlayerController audioPlayerController;
+
+  const Controls({super.key, required this.audioPlayerController});
 
   @override
   ControlsState createState() => ControlsState();
 }
 
-class ControlsState extends State<Controls> with SingleTickerProviderStateMixin {
+class ControlsState extends State<Controls>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -17,10 +20,10 @@ class ControlsState extends State<Controls> with SingleTickerProviderStateMixin 
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300), // Adjust the animation duration as needed
+      duration: const Duration(milliseconds: 300),
     );
 
-    widget.audioPlayer.playerStateStream.listen((playerState) {
+    widget.audioPlayerController.audioPlayer.playerStateStream.listen((playerState) {
       if (playerState.playing) {
         _controller.forward();
       } else {
@@ -34,9 +37,9 @@ class ControlsState extends State<Controls> with SingleTickerProviderStateMixin 
     return GestureDetector(
       onTap: () {
         if (_controller.isCompleted) {
-          widget.audioPlayer.pause();
+          widget.audioPlayerController.pause();
         } else {
-          widget.audioPlayer.play();
+          widget.audioPlayerController.play();
         }
       },
       child: Container(
@@ -49,10 +52,10 @@ class ControlsState extends State<Controls> with SingleTickerProviderStateMixin 
         child: Align(
           alignment: Alignment.center,
           child: AnimatedIcon(
-            icon: AnimatedIcons.play_pause, // Change this to the desired AnimatedIcon
+            icon: AnimatedIcons.play_pause,
             progress: _controller,
             color: Theme.of(context).colorScheme.onPrimary,
-            size: 45.0, // Adjust the icon size as needed
+            size: 45.0,
           ),
         ),
       ),
