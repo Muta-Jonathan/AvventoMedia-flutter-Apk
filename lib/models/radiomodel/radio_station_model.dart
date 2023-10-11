@@ -15,6 +15,16 @@ class RadioStation {
     required this.elapsed,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'artist': artist,
+      'imageUrl': imageUrl,
+      'nowPlayingTitle': nowPlayingTitle,
+      'streamUrl': streamUrl,
+      'duration': duration,
+      'elapsed': elapsed,
+    };
+  }
   factory RadioStation.fromJson(Map<String, dynamic> json) {
     return RadioStation(
       artist: json['artist'] ?? '',
