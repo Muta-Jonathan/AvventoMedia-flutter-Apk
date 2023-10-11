@@ -1,18 +1,18 @@
 class RadioStation {
-  final String? artist;
-  final String? imageUrl;
-  final String? nowPlayingTitle;
-  final String? streamUrl;
-  final int? duration;
-  final int? elapsed;
+  final String artist;
+  final String imageUrl;
+  final String nowPlayingTitle;
+  final String streamUrl;
+  final int duration;
+  final int elapsed;
 
   RadioStation({
-    this.nowPlayingTitle,
-    this.artist,
-    this.imageUrl,
-    this.streamUrl,
-    this.duration,
-    this.elapsed,
+    required this.nowPlayingTitle,
+    required this.artist,
+    required this.imageUrl,
+    required this.streamUrl,
+    required this.duration,
+    required this.elapsed,
   });
 
   factory RadioStation.fromJson(Map<String, dynamic> json) {

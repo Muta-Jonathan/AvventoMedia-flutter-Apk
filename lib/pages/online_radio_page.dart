@@ -14,18 +14,22 @@ import '../widgets/providers/radio_station_provider.dart';
 import '../widgets/text/text_overlay_widget.dart';
 
 class OnlineRadioPage extends StatefulWidget {
+  const OnlineRadioPage({super.key});
+
   @override
   State<OnlineRadioPage> createState() => _OnlineRadioPageState();
 
 }
 
 class _OnlineRadioPageState extends State<OnlineRadioPage> {
-  late final AudioPlayer _audioPlayer;
+  late AudioPlayer _audioPlayer;
 
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer(); // Initialize the AudioPlayer
+    final radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
+    //_audioPlayer = AudioPlayer(); // Initialize the AudioPlayer
+    _audioPlayer = AudioPlayer()..setUrl( radioStationProvider.radioStation!.streamUrl);
   }
 
   Duration? parseDuration(dynamic value) {
