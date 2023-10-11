@@ -6,9 +6,11 @@ import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart' as R;
 
+import '../apis/azuracast_api.dart';
 import '../componets/app_constants.dart';
 import '../componets/utils.dart';
 import '../models/musicplayermodels/music_player_position.dart';
+import '../models/radiomodel/radio_station_model.dart';
 import '../widgets/audio_players/controls.dart';
 import '../widgets/providers/radio_station_provider.dart';
 import '../widgets/text/text_overlay_widget.dart';
@@ -39,14 +41,16 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     return null;
   }
 
-  Stream<MusicPlayerPosition> get _musicPlayerPositionStream =>
-      R.Rx.combineLatest3<Duration, Duration, Duration?, MusicPlayerPosition>(
-        _audioPlayer.positionStream,
-        _audioPlayer.bufferedPositionStream,
-        _audioPlayer.durationStream,
-            (position, bufferedPosition, duration) =>
-            MusicPlayerPosition(position, bufferedPosition, duration ?? Duration.zero),
-      );
+  Stream<MusicPlayerPosition> get _musicPlayerPositionStream => R.Rx.combineLatest4<Duration, Duration, Duration?, RadioStation, MusicPlayerPosition>(
+    _audioPlayer.positionStream,
+    _audioPlayer.bufferedPositionStream,
+    _audioPlayer.durationStream,
+    AzuraCastAPI.getRadioStationUpdates(),
+        (position, bufferedPosition, duration, radioStation) {
+      return MusicPlayerPosition(position, bufferedPosition, duration ?? Duration.zero, radioStation: radioStation);
+    },
+  );
+
 
   @override
   Widget build(BuildContext context) {

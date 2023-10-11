@@ -25,8 +25,8 @@ class AzuraCastAPI {
     _channel?.sink.add(jsonEncode(message));
   }
 
-  static Stream<RadioStation>? getRadioStationUpdates() {
-    return _channel?.stream.asyncMap((data) async {
+  static Stream<RadioStation> getRadioStationUpdates() {
+    return _channel!.stream.asyncMap((data) async {
       try {
         final jsonResult = json.decode(data);
 
