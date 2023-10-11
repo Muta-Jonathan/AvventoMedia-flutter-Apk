@@ -28,7 +28,7 @@ class AzuraCastAPI {
 
         final np = jsonResult['pub']['data']['np'];
         final stationData = np['station'];
-        final nowPlaying = stationData['now_playing'];
+        final nowPlaying = np['now_playing'];
 
         final artist = nowPlaying['song']['artist'];
         final imageUrl = nowPlaying['song']['art'];
