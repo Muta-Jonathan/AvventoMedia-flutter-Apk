@@ -34,7 +34,6 @@ dependencies:
   cloud_firestore: ^4.9.3
 
   get: ^4.6.6
-  marquee: ^2.2.3
   http: ^0.13.5
   audio_video_progress_bar: ^2.0.0
   just_audio: ^0.9.35
@@ -52,10 +51,12 @@ dependencies:
   provider: ^6.0.5
   flutter_animated_icons: ^1.0.1
   jiffy: ^6.2.1
-  glassmorphism: ^3.0.0
   share_plus: ^6.0.1
   lecle_yoyo_player: ^0.0.6
   web_socket_channel: ^2.4.0
+  chewie: ^1.5.0
+  video_player: ^2.7.2
+  floating: ^2.0.1
 
 dev_dependencies:
   flutter_test:

@@ -14,6 +14,7 @@ class Routes {
   static String profile = "/profile";
   static String podcast = "/podcast";
   static String onlineRadio = "/onlineRadio";
+  static String liveTv = "/liveTv";
 
   static  String getHomeRoute() => home;
   static  String getListenRoute() => listen;
@@ -21,6 +22,7 @@ class Routes {
   static  String getProfileRoute() => profile;
   static  String getPodcastRoute() => podcast;
   static  String getOnlineRadioRoute() => onlineRadio;
+  static  String getLiveTvRoute() => liveTv;
 
   static List<GetPage> routes = [
     GetPage(name: home, page: () => const MainPage()),
@@ -29,5 +31,6 @@ class Routes {
     GetPage(name: profile, page: () => const ProfilePage()),
     GetPage(name: podcast, page: () => const PodcastPage()),
     GetPage(name: onlineRadio, page: () => const OnlineRadioPage()),
+    GetPage(name: liveTv, page: () => const WatchPage()),
   ];
 }

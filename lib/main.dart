@@ -6,6 +6,7 @@ import 'package:avvento_radio/themes/light_theme.dart';
 import 'package:avvento_radio/widgets/providers/programs_provider.dart';
 import 'package:avvento_radio/widgets/providers/radio_station_provider.dart';
 import 'package:avvento_radio/widgets/providers/spreaker_data_provider.dart';
+import 'package:avvento_radio/widgets/providers/video_player_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,7 @@ import 'controller/episode_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  const String videoUrl = "https://3abn-live.akamaized.net/hls/live/2010544/International/master.m3u8";
   runApp(
     MultiProvider(
       providers: [
@@ -27,7 +29,11 @@ void main() async {
           create: (context) => SpreakerEpisodeProvider(),
         ),
         ChangeNotifierProvider(
+
             create: (context) => RadioStationProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => VideoPlayerProvider(videoUrl),
         ),
       ],
       child: const MyApp(),
@@ -36,7 +42,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
