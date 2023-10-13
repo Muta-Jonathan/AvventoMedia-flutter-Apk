@@ -2,12 +2,7 @@ import 'package:avvento_radio/componets/utils.dart';
 import 'package:chewie/chewie.dart';
 import 'package:floating/floating.dart';
 import 'package:flutter/material.dart';
-import 'package:lecle_yoyo_player/lecle_yoyo_player.dart';
-import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
-
-import '../widgets/providers/video_player_provider.dart';
-import '../widgets/video/custom_video_controls.dart';
 
 class WatchPage extends StatefulWidget {
   const WatchPage({super.key});
@@ -17,28 +12,50 @@ class WatchPage extends StatefulWidget {
 }
 
 class _WatchPageState extends State<WatchPage> {
-  late VideoPlayerProvider videoPlayerProvider;
   final String videoUrl = "https://3abn-live.akamaized.net/hls/live/2010544/International/master.m3u8";
   late ChewieController _chewieController;
+  late Floating floating = Floating();
+  late VideoPlayerController _videoPlayerController;
 
+  bool isPiPMode = false;
 
   @override
   void initState() {
     super.initState();
-    videoPlayerProvider = Provider.of<VideoPlayerProvider>(context, listen: false);
-    // videoPlayerProvider = VideoPlayerProvider(videoUrl);
 
-    // Initialize ChewieController using the provider's chewieController
-    _chewieController = videoPlayerProvider.chewieController;
-    videoPlayerProvider.requestPipAvailable();
+    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+    _chewieController = ChewieController(
+      videoPlayerController: _videoPlayerController,
+      aspectRatio: 16 / 9,
+      allowedScreenSleep: false,
+      autoPlay: false,
+      showOptions: false,
+      looping: false,
+      isLive: true,
+      autoInitialize: true,
+      showControlsOnInitialize: true,
+
+
+    );
+
+  requestPipAvailable();
+
   }
 
 
+  void requestPipAvailable() async{
+    isPiPMode = await floating.isPipAvailable;
+  }
+
+  void togglePiPMode() {
+    isPiPMode = !isPiPMode;
+  }
+
   @override
   void dispose() {
-    super.dispose();
     _chewieController.dispose();
-    videoPlayerProvider.dispose();
+    _videoPlayerController.dispose();
+    super.dispose();
   }
 
   @override
@@ -49,7 +66,7 @@ class _WatchPageState extends State<WatchPage> {
         child: Column(
           children: [
             PiPSwitcher(
-              childWhenEnabled: Chewie(controller: _chewieController),
+              childWhenEnabled: Chewie(controller: _chewieController!),
               childWhenDisabled: SizedBox(
                  height: Utils.calculateHeight(context, 0.37),
                  child: Chewie(controller: _chewieController),
@@ -78,7 +95,7 @@ class _WatchPageState extends State<WatchPage> {
                       Column(
                         children: [
                           IconButton(
-                            onPressed: videoPlayerProvider.isPiPMode ? () => videoPlayerProvider.floating.enable(aspectRatio: const Rational(16,9)) : null,
+                            onPressed: isPiPMode ? () => floating.enable(aspectRatio: const Rational(16,9)) : null,
                             icon: const Icon(
                               Icons.picture_in_picture,
                               size: 32,

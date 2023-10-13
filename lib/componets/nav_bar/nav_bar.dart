@@ -26,7 +26,6 @@ class _NavBarState extends State<NavBar> {
           index: controller.tabIndex,
           children: const [
             HomePage(),
-            WatchPage(),
             ListenPage(),
             ProfilePage(),
           ],
@@ -43,10 +42,9 @@ class _NavBarState extends State<NavBar> {
         selectedFontSize: 0,
         unselectedFontSize: 0,
         elevation: 0,
-        //Bottom Navigation Bar with [Home,Listen,Schedule,Profile]
+        //Bottom Navigation Bar with [Home,Listen,Profile]
         items: const [
           BottomNavigationBarItem(label: "Home",icon: Icon(CupertinoIcons.house_alt)),
-          BottomNavigationBarItem(label: "Watch",icon: Icon(CupertinoIcons.tv)),
           BottomNavigationBarItem(label: "Listen",icon: Icon(CupertinoIcons.headphones)),
           BottomNavigationBarItem(label: "Profile",icon: Icon(CupertinoIcons.person)),
         ],
