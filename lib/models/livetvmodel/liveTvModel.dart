@@ -5,12 +5,14 @@ class LiveTvModel {
   late final String imageUrl;
   late final String status;
   late final String streamUrl;
+  late final String description;
   late final Timestamp publishedAt;
 
   LiveTvModel({
     required this.name,
     required this.imageUrl,
     required this.status,
+    required this.description,
     required this.streamUrl,
     required this.publishedAt
   });
@@ -22,6 +24,7 @@ class LiveTvModel {
       imageUrl: data['imageUrl'],
       status: data['status'],
       streamUrl: data['streamUrl'],
+      description: data['description'],
       publishedAt: data['publishedAt'],
     );
   }

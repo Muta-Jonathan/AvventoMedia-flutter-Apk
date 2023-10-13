@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
+import '../widgets/text/show_more_desc.dart';
+
 class WatchPage extends StatefulWidget {
   const WatchPage({super.key});
 
@@ -122,7 +124,7 @@ class _WatchPageState extends State<WatchPage> {
                     ],
                   ),
                   const SizedBox(height: 40,),
-                  TextOverlay(label: selectedTv.streamUrl, color: Theme.of(context).colorScheme.onSecondary, fontSize: 16, maxLines: 15,),
+                  ShowMoreDescription(description: selectedTv.description,),
                 ],
               ),
             ),
