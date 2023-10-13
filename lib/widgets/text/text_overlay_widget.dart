@@ -7,11 +7,13 @@ class TextOverlay extends StatelessWidget {
   final Color color;
   final FontWeight fontWeight;
   final bool allCaps;
+  final int maxLines;
 
   const TextOverlay({
     super.key,
     required this.label,
     this.fontSize = 12.0,
+    this.maxLines = 2,
     required this.color,
     this.fontWeight = FontWeight.normal,
     this.allCaps = false,});
@@ -23,7 +25,7 @@ class TextOverlay extends StatelessWidget {
       padding: const EdgeInsets.only(left: 5,bottom: 2),
       child: Text(
         displayLabel,
-          maxLines: 2,
+          maxLines: maxLines,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: fontSize,

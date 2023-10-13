@@ -1,7 +1,13 @@
+import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/componets/utils.dart';
+import 'package:avvento_radio/controller/live_tv_controller.dart';
+import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:floating/floating.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 class WatchPage extends StatefulWidget {
@@ -12,10 +18,10 @@ class WatchPage extends StatefulWidget {
 }
 
 class _WatchPageState extends State<WatchPage> {
-  final String videoUrl = "https://3abn-live.akamaized.net/hls/live/2010544/International/master.m3u8";
   late ChewieController _chewieController;
   late Floating floating = Floating();
   late VideoPlayerController _videoPlayerController;
+  final LiveTvController liveTvController = Get.find();
 
   bool isPiPMode = false;
 
@@ -23,23 +29,47 @@ class _WatchPageState extends State<WatchPage> {
   void initState() {
     super.initState();
 
-    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
+    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(liveTvController.selectedTv.value!.streamUrl));
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
       aspectRatio: 16 / 9,
       allowedScreenSleep: false,
       autoPlay: false,
-      showOptions: false,
+      showOptions: true,
       looping: false,
       isLive: true,
       autoInitialize: true,
       showControlsOnInitialize: true,
-
-
+      placeholder: imagePlaceHolder(context, liveTvController.selectedTv.value!.imageUrl),
+      additionalOptions: (context) {
+        return <OptionItem>[
+          OptionItem(
+            onTap: () {
+              Navigator.of(context).pop();
+              floating.enable(aspectRatio: const Rational(16,9));
+            } ,
+            iconData: Icons.picture_in_picture_alt_rounded,
+            title: AppConstants.pip,
+          ),
+        ];
+      },
     );
 
   requestPipAvailable();
 
+  }
+
+  Widget imagePlaceHolder(BuildContext context, String imageUrl) {
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      width: double.infinity,
+      height: double.infinity,
+      placeholder: (context, url) => const Center(
+        child: Center(child: CircularProgressIndicator()), // You can use any placeholder widget
+      ),
+      errorWidget: (context, url, error) => const Icon(Icons.error), // Error widget
+      fit: BoxFit.cover, // Adjust this as needed
+    );
   }
 
 
@@ -60,13 +90,14 @@ class _WatchPageState extends State<WatchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedTv = liveTvController.selectedTv.value;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
             PiPSwitcher(
-              childWhenEnabled: Chewie(controller: _chewieController!),
+              childWhenEnabled: Chewie(controller: _chewieController),
               childWhenDisabled: SizedBox(
                  height: Utils.calculateHeight(context, 0.37),
                  child: Chewie(controller: _chewieController),
@@ -75,42 +106,23 @@ class _WatchPageState extends State<WatchPage> {
             Container(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Video Title',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  const SizedBox(height: 20,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                     TextOverlay(label: selectedTv!.name, color: Theme.of(context).colorScheme.onPrimary, fontSize: 20, ),
                       IconButton(
-                        icon: Icon(Icons.share),
+                        icon: const Icon(CupertinoIcons.share),
                         onPressed: () {
                           // Implement share functionality here
                         },
                       ),
-                      Column(
-                        children: [
-                          IconButton(
-                            onPressed: isPiPMode ? () => floating.enable(aspectRatio: const Rational(16,9)) : null,
-                            icon: const Icon(
-                              Icons.picture_in_picture,
-                              size: 32,
-                              color: Colors.white,
-                            ),
-                          )
-
-                        ],
-                      ),
                     ],
                   ),
-                  const Text(
-                    'Video Description goes here. You can make it as long as you need.',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  const SizedBox(height: 40,),
+                  TextOverlay(label: selectedTv.streamUrl, color: Theme.of(context).colorScheme.onSecondary, fontSize: 16, maxLines: 15,),
                 ],
               ),
             ),

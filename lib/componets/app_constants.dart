@@ -8,6 +8,7 @@ class AppConstants {
   static const String liveTv = "LIVE TV";
   static const String liveRadio = "Radio";
   static const String onAIR = "ON AIR";
+  static const String pip = "Picture In Picture";
 
   /// ***************** API ****************
   static const String highlightsAPI = "highlights";

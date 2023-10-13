@@ -1,11 +1,13 @@
 import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/componets/utils.dart';
+import 'package:avvento_radio/controller/live_tv_controller.dart';
 import 'package:avvento_radio/models/livetvmodel/liveTvModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../apis/firestore_service_api.dart';
+import '../../routes/routes.dart';
 import '../text/label_place_holder.dart';
 import 'live_tv_details_widget.dart';
 
@@ -18,6 +20,7 @@ class LiveTvWidget extends StatefulWidget {
 
 class _LiveTvWidget extends State<LiveTvWidget> {
   final _liveTvAPI = Get.put(FirestoreServiceAPI());
+  final liveTvController = Get.put(LiveTvController());
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +65,15 @@ class _LiveTvWidget extends State<LiveTvWidget> {
   }
 
   Widget buildLiveTvDetailsScreen(LiveTvModel liveTvModel) {
-    return LiveTvDetailsWidget(liveTvModel: liveTvModel,);
+    return GestureDetector(
+      onTap: () {
+        // Set the selected tv using the controller
+        liveTvController.setSelectedTv(liveTvModel);
+        // Navigate to the "livetvPage"
+        Get.toNamed(Routes.getLiveTvRoute());
+      },
+        child: LiveTvDetailsWidget(liveTvModel: liveTvModel,
+        ),
+    );
   }
 }

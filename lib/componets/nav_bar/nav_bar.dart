@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import '../../pages/home_page.dart';
 import '../../pages/listen_page.dart';
 import '../../pages/profile_page.dart';
-import '../../pages/watch_page.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
