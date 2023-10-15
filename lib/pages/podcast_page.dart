@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:rxdart/rxdart.dart' as R;
 
 import '../controller/audio_player_controller.dart';
@@ -46,7 +47,7 @@ class PodcastPageState extends State<PodcastPage> {
     final selectedEpisode = episodeController.selectedEpisode.value;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    //String publishedDate = Jiffy.parse(selectedEpisode!.publishedAt).yMMMMEEEEdjm;
+    String publishedDate = Jiffy.parse(selectedEpisode!.publishedAt).fromNow();
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
@@ -54,7 +55,7 @@ class PodcastPageState extends State<PodcastPage> {
             height: 30,
             child: Center(
               child: TextOverlay(
-                label: AppConstants.nowPlaying,
+                label: AppConstants.spreaker,
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 18,
               ),
@@ -164,7 +165,9 @@ class PodcastPageState extends State<PodcastPage> {
                             child: TextOverlay(label:  selectedEpisode.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 10,),
-                          TextOverlay(label:  selectedEpisode.type, color: Theme.of(context).colorScheme.onPrimary,),
+                          TextOverlay(label:  selectedEpisode.type, color: Theme.of(context).colorScheme.onSecondaryContainer,),
+                          const SizedBox(height: 10,),
+                          TextOverlay(label: "Published $publishedDate",color: Theme.of(context).colorScheme.onSecondaryContainer)
                         ],
                       ),
                       Padding(
@@ -183,7 +186,7 @@ class PodcastPageState extends State<PodcastPage> {
                       const SizedBox(height: 20,),
                       Controls(audioPlayerController: _audioPlayerController,),
                       const SizedBox(height: 60,),
-                      TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer)
+                      TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer),
                     ],
                   );
                 },
