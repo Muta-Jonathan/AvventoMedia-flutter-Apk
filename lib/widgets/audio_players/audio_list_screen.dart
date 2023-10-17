@@ -32,7 +32,7 @@ class _AudioListState extends State<AudioListScreen> {
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
       width:  Utils.calculateWidth(context, 0.95),
-      height: Utils.calculateHeight(context, 0.5),
+      height: Utils.calculateHeight(context, 0.9),
       child: Column(
         children: [
           const SizedBox(height: 10),

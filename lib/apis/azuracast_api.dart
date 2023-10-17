@@ -34,6 +34,7 @@ class AzuraCastAPI {
         final stationData = np['station'];
         final nowPlaying = np['now_playing'];
 
+        final id = nowPlaying['sh_id'];
         final artist = nowPlaying['song']['artist'];
         final imageUrl = nowPlaying['song']['art'];
         final streamUrl = stationData['listen_url'];
@@ -42,6 +43,7 @@ class AzuraCastAPI {
         final duration = nowPlaying['duration'];
 
         final radioStation = RadioStation(
+          id: id ?? '',
           artist: artist ?? '',
           imageUrl: imageUrl ?? '',
           nowPlayingTitle: nowPlayingTitle ?? '',
@@ -59,6 +61,7 @@ class AzuraCastAPI {
         // Load cached data if available, or provide default values
         final cachedRadioStation = await _loadCachedRadioStationData();
         return cachedRadioStation ?? RadioStation(
+          id: 0,
           artist: '', // Provide default values in case of an error
           imageUrl: '',
           nowPlayingTitle: '',

@@ -52,7 +52,6 @@ dependencies:
   flutter_animated_icons: ^1.0.1
   jiffy: ^6.2.1
   share_plus: ^6.0.1
-  lecle_yoyo_player: ^0.0.6
   web_socket_channel: ^2.4.0
   chewie: ^1.5.0
   video_player: ^2.7.2

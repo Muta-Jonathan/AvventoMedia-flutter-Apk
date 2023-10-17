@@ -1,4 +1,5 @@
 class RadioStation {
+  final int id;
   final String artist;
   final String imageUrl;
   final String nowPlayingTitle;
@@ -7,6 +8,7 @@ class RadioStation {
   final int elapsed;
 
   RadioStation({
+    required this.id,
     required this.nowPlayingTitle,
     required this.artist,
     required this.imageUrl,
@@ -27,6 +29,7 @@ class RadioStation {
   }
   factory RadioStation.fromJson(Map<String, dynamic> json) {
     return RadioStation(
+      id: json['sh_id'] ?? 0,
       artist: json['artist'] ?? '',
       imageUrl: json['imageUrl'] ?? '',
       nowPlayingTitle: json['nowPlayingTitle'] ?? '',
@@ -35,5 +38,4 @@ class RadioStation {
       duration: json['duration'] ?? 0,
     );
   }
-
 }

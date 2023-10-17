@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart' as R;
 
@@ -26,6 +27,7 @@ class OnlineRadioPage extends StatefulWidget {
 
 class _OnlineRadioPageState extends State<OnlineRadioPage> {
   late AudioPlayerController _audioPlayerController;
+  MediaItem? currentMediaItem;
 
   @override
   void initState() {
@@ -34,7 +36,15 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     _audioPlayerController = Get.find<AudioPlayerController>();
 
     if (radioStationProvider.radioStation != null) {
-      _audioPlayerController.setAudioUrl(radioStationProvider.radioStation!.streamUrl);
+      currentMediaItem = MediaItem(
+        id: radioStationProvider.radioStation!.id.toString(),
+        title: radioStationProvider.radioStation!.nowPlayingTitle,
+        artist: radioStationProvider.radioStation!.artist,
+        artUri: Uri.parse(radioStationProvider.radioStation!.imageUrl),
+      );
+      _audioPlayerController.setAudioSource(
+          radioStationProvider.radioStation!.streamUrl,
+          currentMediaItem!);
     }
   }
 
@@ -103,6 +113,10 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                     stream: _musicPlayerPositionStream,
                     builder: (_,snapshot) {
                       final positionData = snapshot.data;
+                      // if (positionData == null) {
+                      //   // Handle the case where positionData is null
+                      //   return const Center(child: CircularProgressIndicator());
+                      // }
                       final paddingWidth = Utils.calculateWidth(context, 0.05);
                       final paddingTop = Utils.calculateHeight(context, 0.06);
                       return Column(
@@ -129,7 +143,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: CachedNetworkImage(
-                                        imageUrl: radioProvider.radioStation!.imageUrl,
+                                        imageUrl: currentMediaItem?.artUri.toString() ?? '',
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                         height: double.infinity,
@@ -188,10 +202,10 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
+                                child: TextOverlay(label:  currentMediaItem?.title ?? '', color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10,),
-                              TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
+                              TextOverlay(label:  currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
                             ],
                           ),
                           Padding(
