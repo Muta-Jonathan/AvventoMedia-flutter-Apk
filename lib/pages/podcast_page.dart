@@ -58,6 +58,7 @@ class PodcastPageState extends State<PodcastPage> {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     String publishedDate = Jiffy.parse(selectedEpisode!.publishedAt).fromNow();
+
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: AppBar(
