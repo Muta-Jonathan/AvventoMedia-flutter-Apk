@@ -52,6 +52,12 @@ class PodcastPageState extends State<PodcastPage> {
   }
 
   @override
+  void dispose() {
+    _musicPlayerPositionStream.drain(); // Dispose of the stream
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
      final selectedEpisode = episodeController.selectedEpisode.value;
     double screenWidth = MediaQuery.of(context).size.width;

@@ -57,6 +57,7 @@ dependencies:
   video_player: ^2.7.2
   floating: ^2.0.1
   animated_text_kit: ^4.2.2
+  flutter_native_splash: ^2.3.4
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +73,18 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
+flutter_native_splash:
+  color: "#C8c8c8"
+  color_dark: "#161424"
+  image: "assets/icon/icon.png"
+  image_dark: "assets/icon/icon.png"
+
+  android_12:
+    image: "assets/icon/icon.png"
+    icon_background_color: "#C8c8c8"
+    image_dark: "assets/icon/icon.png"
+    icon_background_color_dark: "#161424"
+  web: false
 
 flutter_launcher_icons:
   android: true

@@ -1,4 +1,4 @@
-package radio.avventohome.avvento_radio;
+package media.avventohome.app;
 
 import io.flutter.embedding.android.FlutterActivity;
 

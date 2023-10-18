@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,35 +28,17 @@ class OnlineRadioPage extends StatefulWidget {
 }
 
 class _OnlineRadioPageState extends State<OnlineRadioPage> {
+  // ignore: prefer_typing_uninitialized_variables
+  late final radioStationProvider;
   late AudioPlayerController _audioPlayerController;
   MediaItem? currentMediaItem;
+  StreamSubscription<MusicPlayerPosition>? _positionSubscription;
 
-  @override
-  void initState() {
-    super.initState();
-    final radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
-    _audioPlayerController = Get.find<AudioPlayerController>();
-
-    if (radioStationProvider.radioStation != null) {
-      currentMediaItem = MediaItem(
-        id: radioStationProvider.radioStation!.id.toString(),
-        title: radioStationProvider.radioStation!.nowPlayingTitle,
-        artist: radioStationProvider.radioStation!.artist,
-        artUri: Uri.parse(radioStationProvider.radioStation!.imageUrl),
-      );
-
-      _audioPlayerController.setAudioSource(
-          radioStationProvider.radioStation!.streamUrl,
-          currentMediaItem!);
-    }
-  }
-
-  Duration? parseDuration(dynamic value) {
-    if (value is int) {
-      return Duration(seconds: value);
-    }
-    return null;
-  }
+  double currentPosition = 0;
+  double bufferedPosition = 0;
+  double duration = 0;
+  String title = "";
+  String artist = "";
 
   Stream<MusicPlayerPosition> get _musicPlayerPositionStream => R.Rx.combineLatest4<Duration, Duration, Duration?, RadioStation, MusicPlayerPosition>(
     _audioPlayerController.audioPlayer.positionStream,
@@ -65,6 +49,50 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
       return MusicPlayerPosition(position, bufferedPosition, duration ?? Duration.zero, currentMediaItem!, radioStation: radioStation);
     },
   );
+
+  @override
+  void initState() {
+    super.initState();
+    radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
+    _audioPlayerController = Get.find<AudioPlayerController>();
+    _init();
+    _positionSubscription = _musicPlayerPositionStream.listen((position) {
+      setState(() {
+        currentPosition = position.position.inMilliseconds.toDouble();
+        bufferedPosition = position.bufferedPosition.inMilliseconds.toDouble();
+        duration = position.duration.inMilliseconds.toDouble();
+        currentMediaItem = position.mediaItem;
+      });
+    });
+  }
+
+  Future<void> _init() async {
+    if (radioStationProvider.radioStation != null) {
+      currentMediaItem = MediaItem(
+        id: radioStationProvider.radioStation!.id.toString(),
+        title: radioStationProvider.radioStation!.nowPlayingTitle,
+        artist: radioStationProvider.radioStation!.artist,
+        artUri: Uri.parse(radioStationProvider.radioStation!.imageUrl),
+      );
+
+      await _audioPlayerController.setAudioSource(
+          radioStationProvider.radioStation!.streamUrl,
+          currentMediaItem!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _positionSubscription?.cancel();
+    super.dispose();
+  }
+
+  Duration? parseDuration(dynamic value) {
+    if (value is int) {
+      return Duration(seconds: value);
+    }
+    return null;
+  }
 
 
   @override
@@ -115,6 +143,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                       final positionData = snapshot.data;
                       final paddingWidth = Utils.calculateWidth(context, 0.05);
                       final paddingTop = Utils.calculateHeight(context, 0.06);
+                      print("etr $currentMediaItem");
                       return Column(
                         children: [
                           Center(
