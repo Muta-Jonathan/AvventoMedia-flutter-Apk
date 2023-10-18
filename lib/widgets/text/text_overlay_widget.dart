@@ -8,6 +8,7 @@ class TextOverlay extends StatelessWidget {
   final FontWeight fontWeight;
   final bool allCaps;
   final int maxLines;
+  final bool underline;
 
   const TextOverlay({
     super.key,
@@ -15,6 +16,7 @@ class TextOverlay extends StatelessWidget {
     this.fontSize = 12.0,
     this.maxLines = 2,
     required this.color,
+    this.underline = false,
     this.fontWeight = FontWeight.normal,
     this.allCaps = false,});
 
@@ -31,6 +33,7 @@ class TextOverlay extends StatelessWidget {
             fontSize: fontSize,
             fontWeight: fontWeight,
             color: color,
+            decoration: underline ? TextDecoration.underline : TextDecoration.none,
           ),
         ),
     );

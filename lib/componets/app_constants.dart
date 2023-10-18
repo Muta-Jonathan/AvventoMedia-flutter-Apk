@@ -10,6 +10,8 @@ class AppConstants {
   static const String onAIR = "ON AIR";
   static const String pip = "Picture In Picture";
   static const String readMore = "Read more";
+  static const String about = "About";
+
 
   /// ***************** API ****************
   static const String highlightsAPI = "highlights";

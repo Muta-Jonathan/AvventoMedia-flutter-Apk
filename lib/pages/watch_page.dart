@@ -47,7 +47,7 @@ class _WatchPageState extends State<WatchPage> {
         return <OptionItem>[
           OptionItem(
             onTap: () {
-              Navigator.of(context).pop();
+              Get.back();
               floating.enable(aspectRatio: const Rational(16,9));
             } ,
             iconData: Icons.picture_in_picture_alt_rounded,

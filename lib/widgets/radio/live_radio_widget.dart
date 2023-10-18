@@ -54,7 +54,14 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
               },
             );
           } else {
-            return const Text("no data");
+            return Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 3.0,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            );
           }
         });
   }

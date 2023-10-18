@@ -1,7 +1,6 @@
 import 'package:avvento_radio/componets/utils.dart';
 import 'package:avvento_radio/widgets/hightlights/hightlight_details_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -52,7 +51,14 @@ class _HightlightsWidget extends State<HightlightsWidget> {
               },
             );
           } else {
-            return const Text("no data");
+            return Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 3.0,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+            );
           }
         });
 
