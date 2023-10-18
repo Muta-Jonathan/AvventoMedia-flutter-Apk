@@ -42,6 +42,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
         artist: radioStationProvider.radioStation!.artist,
         artUri: Uri.parse(radioStationProvider.radioStation!.imageUrl),
       );
+
       _audioPlayerController.setAudioSource(
           radioStationProvider.radioStation!.streamUrl,
           currentMediaItem!);
@@ -61,14 +62,13 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     _audioPlayerController.audioPlayer.durationStream,
     AzuraCastAPI.getRadioStationUpdates(),
         (position, bufferedPosition, duration, radioStation) {
-      return MusicPlayerPosition(position, bufferedPosition, duration ?? Duration.zero, radioStation: radioStation);
+      return MusicPlayerPosition(position, bufferedPosition, duration ?? Duration.zero, currentMediaItem!, radioStation: radioStation);
     },
   );
 
 
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -113,10 +113,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                     stream: _musicPlayerPositionStream,
                     builder: (_,snapshot) {
                       final positionData = snapshot.data;
-                      // if (positionData == null) {
-                      //   // Handle the case where positionData is null
-                      //   return const Center(child: CircularProgressIndicator());
-                      // }
                       final paddingWidth = Utils.calculateWidth(context, 0.05);
                       final paddingTop = Utils.calculateHeight(context, 0.06);
                       return Column(
@@ -143,7 +139,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
                                       child: CachedNetworkImage(
-                                        imageUrl: currentMediaItem?.artUri.toString() ?? '',
+                                        imageUrl: radioProvider.radioStation!.imageUrl,
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                         height: double.infinity,
@@ -202,10 +198,10 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                                child: TextOverlay(label:  currentMediaItem?.title ?? '', color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
+                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 10,),
-                              TextOverlay(label:  currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
+                              TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
                             ],
                           ),
                           Padding(

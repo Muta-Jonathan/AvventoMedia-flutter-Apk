@@ -33,14 +33,13 @@ class PodcastPageState extends State<PodcastPage> {
           _audioPlayerController.audioPlayer.bufferedPositionStream,
           _audioPlayerController.audioPlayer.durationStream,
               (position, bufferedPosition, duration) => MusicPlayerPosition(
-              position, bufferedPosition, duration ?? Duration.zero)
+              position, bufferedPosition, duration ?? Duration.zero,  currentMediaItem!)
       );
 
   @override
   void initState() {
     super.initState();
     _audioPlayerController = Get.find<AudioPlayerController>();
-
     currentMediaItem = MediaItem(
       id: episodeController.selectedEpisode.value!.episodeId.toString(),
       title: episodeController.selectedEpisode.value!.title,
@@ -107,7 +106,7 @@ class PodcastPageState extends State<PodcastPage> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                imageUrl: currentMediaItem!.artUri.toString(),
+                                imageUrl: selectedEpisode.imageOriginalUrl,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
