@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
-  appBarTheme: const AppBarTheme(
+  appBarTheme: AppBarTheme(
     backgroundColor: Colors.transparent,
     elevation: 0,
-    iconTheme: IconThemeData(color: Color.fromARGB(255, 22, 20, 36),),
-
+    iconTheme: const IconThemeData(color: Color.fromARGB(255, 22, 20, 36),),
+    systemOverlayStyle: SystemUiOverlayStyle( //<-- SEE HERE
+      // Status bar color
+      statusBarColor:  Colors.grey[200]!,
+      systemNavigationBarColor: Colors.grey[200]!,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark,
+    ),
   ),
   iconTheme: IconThemeData(
     color: Colors.grey[600]!.withOpacity(0.5),

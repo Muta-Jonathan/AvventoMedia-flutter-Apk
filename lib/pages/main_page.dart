@@ -14,12 +14,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        statusBarColor: Theme.of(context).colorScheme.background,
-        systemNavigationBarColor: Theme.of(context).colorScheme.background,
-      ),
-    );
     return const NavBar();
   }
 }
