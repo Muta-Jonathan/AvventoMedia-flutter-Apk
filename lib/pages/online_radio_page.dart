@@ -83,7 +83,10 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
 
   @override
   void dispose() {
-    _positionSubscription?.cancel();
+    if (!_audioPlayerController.audioPlayer.playerState.playing) {
+      _positionSubscription?.cancel();
+      _audioPlayerController.dispose();
+    }
     super.dispose();
   }
 

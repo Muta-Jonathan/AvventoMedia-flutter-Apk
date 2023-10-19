@@ -13,7 +13,6 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
 
 import 'bindings/initial_binding.dart';
-import 'controller/episode_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,8 +47,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // Bind the EpisodeController to the app
-    Get.put(EpisodeController());
     return GetMaterialApp( // Use GetMaterialApp instead of MaterialApp
       navigatorKey: Get.key,
       debugShowCheckedModeBanner: false,

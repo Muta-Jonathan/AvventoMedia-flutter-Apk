@@ -53,7 +53,10 @@ class PodcastPageState extends State<PodcastPage> {
 
   @override
   void dispose() {
-    _musicPlayerPositionStream.drain(); // Dispose of the stream
+    if (!_audioPlayerController.audioPlayer.playerState.playing) {
+      _musicPlayerPositionStream.drain(); // Dispose of the stream
+      _audioPlayerController.dispose();
+    }
     super.dispose();
   }
 
