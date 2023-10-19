@@ -1,4 +1,6 @@
+import 'package:avvento_radio/componets/app_constants.dart';
 import 'package:avvento_radio/controller/nav_bar_controller.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,13 +23,18 @@ class _NavBarState extends State<NavBar> {
     return GetBuilder<NavBarController>(builder: (_){
       return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
-        body: IndexedStack(
-          index: controller.tabIndex,
-          children: const [
-            HomePage(),
-            ListenPage(),
-            ProfilePage(),
-          ],
+        body: DoubleBackToCloseApp(
+          snackBar: const SnackBar(
+            content: Text(AppConstants.exitApp),
+          ),
+            child:IndexedStack(
+              index: controller.tabIndex,
+              children: const [
+                HomePage(),
+                ListenPage(),
+                ProfilePage(),
+              ],
+            ),
         ),
         bottomNavigationBar: BottomNavigationBar(
         currentIndex: controller.tabIndex,

@@ -11,6 +11,7 @@ class AppConstants {
   static const String pip = "Picture In Picture";
   static const String readMore = "Read more";
   static const String about = "About";
+  static const String exitApp = "Tap back again to exit!";
 
 
   /// ***************** API ****************

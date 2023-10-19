@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
     // Bind the EpisodeController to the app
     Get.put(EpisodeController());
     return GetMaterialApp( // Use GetMaterialApp instead of MaterialApp
+      navigatorKey: Get.key,
       debugShowCheckedModeBanner: false,
       title: AppConstants.appName,
       theme: lightTheme,
