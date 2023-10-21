@@ -1,7 +1,7 @@
-import 'package:avvento_radio/componets/app_constants.dart';
-import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/controller/live_tv_controller.dart';
-import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
+import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/controller/live_tv_controller.dart';
+import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:floating/floating.dart';

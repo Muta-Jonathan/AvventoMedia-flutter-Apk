@@ -1,7 +1,7 @@
-import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/models/exploremodels/programs.dart';
-import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
-import 'package:avvento_radio/widgets/icons/boxed_icon_widget.dart';
+import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/models/exploremodels/programs.dart';
+import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
+import 'package:avvento_media/widgets/icons/boxed_icon_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 

@@ -1,5 +1,5 @@
-import 'package:avvento_radio/models/radiomodel/radioModel.dart';
-import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
+import 'package:avvento_media/models/radiomodel/radioModel.dart';
+import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

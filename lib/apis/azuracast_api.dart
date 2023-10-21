@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:avvento_radio/componets/app_constants.dart';
+import 'package:avvento_media/componets/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

@@ -1,6 +1,6 @@
-import 'package:avvento_radio/componets/app_constants.dart';
-import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
+import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

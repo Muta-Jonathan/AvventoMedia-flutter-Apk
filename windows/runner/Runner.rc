@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "radio.avventohome" "\0"
-            VALUE "FileDescription", "avvento_radio" "\0"
+            VALUE "FileDescription", "avvento_media" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "avvento_radio" "\0"
+            VALUE "InternalName", "avvento_media" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 radio.avventohome. All rights reserved." "\0"
-            VALUE "OriginalFilename", "avvento_radio.exe" "\0"
-            VALUE "ProductName", "avvento_radio" "\0"
+            VALUE "OriginalFilename", "avvento_media.exe" "\0"
+            VALUE "ProductName", "avvento_media" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

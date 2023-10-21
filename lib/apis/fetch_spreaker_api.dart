@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:avvento_radio/componets/app_constants.dart';
-import 'package:avvento_radio/models/spreakermodels/spreaker_episodes.dart';
+import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/models/spreakermodels/spreaker_episodes.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

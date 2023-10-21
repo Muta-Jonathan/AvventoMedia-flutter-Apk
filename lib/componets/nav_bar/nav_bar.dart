@@ -1,5 +1,5 @@
-import 'package:avvento_radio/componets/app_constants.dart';
-import 'package:avvento_radio/controller/nav_bar_controller.dart';
+import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/controller/nav_bar_controller.dart';
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

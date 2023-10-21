@@ -1,6 +1,6 @@
 {
-    "name": "avvento_radio",
-    "short_name": "avvento_radio",
+    "name": "avvento_media",
+    "short_name": "avvento_media",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

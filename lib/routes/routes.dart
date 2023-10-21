@@ -1,4 +1,4 @@
-import 'package:avvento_radio/pages/podcast_page.dart';
+import 'package:avvento_media/pages/podcast_page.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../pages/listen_page.dart';

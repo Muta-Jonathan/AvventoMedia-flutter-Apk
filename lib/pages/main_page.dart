@@ -1,4 +1,4 @@
-import 'package:avvento_radio/componets/nav_bar/nav_bar.dart';
+import 'package:avvento_media/componets/nav_bar/nav_bar.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {

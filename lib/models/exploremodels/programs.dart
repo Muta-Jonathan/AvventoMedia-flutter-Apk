@@ -1,4 +1,4 @@
-import 'package:avvento_radio/models/exploremodels/source.dart';
+import 'package:avvento_media/models/exploremodels/source.dart';
 
 class Programs {
   late final Source source;

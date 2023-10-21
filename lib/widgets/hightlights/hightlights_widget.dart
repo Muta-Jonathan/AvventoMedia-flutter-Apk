@@ -1,5 +1,5 @@
-import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/widgets/hightlights/hightlight_details_widget.dart';
+import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/hightlights/hightlight_details_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

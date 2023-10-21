@@ -1,4 +1,4 @@
-import 'package:avvento_radio/models/exploremodels/programs.dart';
+import 'package:avvento_media/models/exploremodels/programs.dart';
 
 class Explore {
   String status;

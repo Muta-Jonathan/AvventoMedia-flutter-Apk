@@ -1,8 +1,8 @@
-import 'package:avvento_radio/componets/app_constants.dart';
-import 'package:avvento_radio/componets/utils.dart';
-import 'package:avvento_radio/models/exploremodels/programs.dart';
-import 'package:avvento_radio/widgets/explore/home_explore_details_screen.dart';
-import 'package:avvento_radio/widgets/text/label_place_holder.dart';
+import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/models/exploremodels/programs.dart';
+import 'package:avvento_media/widgets/explore/home_explore_details_screen.dart';
+import 'package:avvento_media/widgets/text/label_place_holder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

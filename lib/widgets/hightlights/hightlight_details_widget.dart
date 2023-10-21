@@ -1,4 +1,4 @@
-import 'package:avvento_radio/widgets/text/text_overlay_widget.dart';
+import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/highlightmodel/highlightModel.dart';
