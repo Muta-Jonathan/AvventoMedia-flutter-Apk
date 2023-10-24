@@ -6,6 +6,7 @@ import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/providers/programs_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
 import 'package:avvento_media/widgets/providers/spreaker_data_provider.dart';
+import 'package:avvento_media/widgets/providers/theme_provider_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,8 +33,10 @@ Future<void> main() async {
           create: (context) => SpreakerEpisodeProvider(),
         ),
         ChangeNotifierProvider(
-
             create: (context) => RadioStationProvider(),
+        ),
+        ChangeNotifierProvider(
+            create: (context) => ThemeProvider(),
         ),
       ],
       child: const MyApp(),
@@ -51,8 +54,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: Get.key,
       debugShowCheckedModeBanner: false,
       title: AppConstants.appName,
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: Provider.of<ThemeProvider>(context).themeData,
       initialRoute: Routes.getHomeRoute(), // Set the initial route to '/'
       getPages: Routes.routes,
       initialBinding: InitialBinding(),

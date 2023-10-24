@@ -22,4 +22,24 @@ class AppConstants {
   static const String showId = '5820368';
   static const azuracastAPI ='https://radio1.avventohome.org/api/nowplaying/avventoradio';
   static const azuracastWebSocketAPI ='wss://radio1.avventohome.org/api/live/nowplaying/websocket';
+
+
+/// ***************** PROFILE PAGE ****************
+  static const String more = "More";
+  static const String general = "GENERAL";
+  static const String prayerRequest = "Prayer Request";
+  static const String avventoWebsite = "Visit AvventoMedia Website";
+
+  static const String radio = "RADIO";
+  static const String webRadio = "Avvento Web Radio";
+  static const String radioSchedule = "AvventoRadio Schedule";
+  static const String previousBroadcasts = "Previous Broadcasts";
+  static const String avventoRadioTelegram = "Telegram Listeners";
+
+  static const String preferences = "PREFERENCES";
+  static const String notifications = "Allow notifications";
+  static const String darkMode = "Dark Mode";
+
+  static const String feedBack = "FEED BACK";
+  static const String report = "Report a Problem";
 }

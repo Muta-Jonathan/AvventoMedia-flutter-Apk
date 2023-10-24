@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCUwjUkI_Mm0aAy35r1urpGTYmbbR-z-qE',
-    appId: '1:1030511699581:android:2e4525b93c6eaff3d47314',
+    appId: '1:1030511699581:android:e7416257320b3872d47314',
     messagingSenderId: '1030511699581',
     projectId: 'avventoradioflutter',
     storageBucket: 'avventoradioflutter.appspot.com',
@@ -63,19 +63,19 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyB5Dl9Rl47--N0hC3MMFduvCwnRD18VVIo',
-    appId: '1:1030511699581:ios:6bad68758b288e92d47314',
+    appId: '1:1030511699581:ios:cb5f6a8d1089f5d1d47314',
     messagingSenderId: '1030511699581',
     projectId: 'avventoradioflutter',
     storageBucket: 'avventoradioflutter.appspot.com',
-    iosBundleId: 'radio.avventohome.avventoRadio',
+    iosBundleId: 'media.avventohome.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyB5Dl9Rl47--N0hC3MMFduvCwnRD18VVIo',
-    appId: '1:1030511699581:ios:beba8974ec32b8d9d47314',
+    appId: '1:1030511699581:ios:53eba5b7c9be03abd47314',
     messagingSenderId: '1030511699581',
     projectId: 'avventoradioflutter',
     storageBucket: 'avventoradioflutter.appspot.com',
-    iosBundleId: 'radio.avventohome.avventoRadio.RunnerTests',
+    iosBundleId: 'media.avventohome.app.RunnerTests',
   );
 }

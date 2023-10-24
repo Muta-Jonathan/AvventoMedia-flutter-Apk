@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>radio.avventohome.avventoRadio.RunnerTests</string>
+	<string>media.avventohome.app.RunnerTests</string>
 	<key>PROJECT_ID</key>
 	<string>avventoradioflutter</string>
 	<key>STORAGE_BUCKET</key>
