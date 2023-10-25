@@ -1,8 +1,6 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/firebase_options.dart';
 import 'package:avvento_media/routes/routes.dart';
-import 'package:avvento_media/themes/dark_theme.dart';
-import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/providers/programs_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
 import 'package:avvento_media/widgets/providers/spreaker_data_provider.dart';
@@ -21,7 +19,9 @@ Future<void> main() async {
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
+    androidNotificationIcon: 'mipmap/ic_logo_icon',
     androidNotificationOngoing: true,
+    androidStopForegroundOnPause: true,
   );
   runApp(
     MultiProvider(

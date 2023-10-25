@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
-  ThemeData _themeData = lightTheme;
+  ThemeData? _themeData;
 
-  ThemeData get themeData => _themeData;
+  ThemeData get themeData => _themeData ?? lightTheme;
 
   ThemeProvider() {
     _loadThemeMode(); // Load the saved theme mode when the provider is created
@@ -25,8 +25,8 @@ class ThemeProvider with ChangeNotifier {
 
   Future<void> _saveThemeMode() async {
     final prefs = await SharedPreferences.getInstance();
-    final themeModeString = _themeData.brightness.name;
-    prefs.setString('themeMode', themeModeString);
+    final themeModeString = _themeData?.brightness.name;
+    prefs.setString('themeMode', themeModeString!);
   }
 
   void toggleTheme() {
