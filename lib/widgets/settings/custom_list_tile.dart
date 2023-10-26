@@ -1,15 +1,13 @@
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/theme_provider_widget.dart';
 
 class CustomListTile extends StatefulWidget {
   final String label;
   final IconData leadingIcon;
   final bool isSwitch;
   final Function(bool)? onSwitchChanged;
+  final VoidCallback? onTap;
 
   const CustomListTile({
     Key? key,
@@ -17,6 +15,7 @@ class CustomListTile extends StatefulWidget {
     required this.leadingIcon,
     required this.isSwitch,
     this.onSwitchChanged,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -34,8 +33,6 @@ class _CustomListTileState extends State<CustomListTile> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    final isDarkMode = themeProvider.themeData.brightness == Brightness.dark;
     return ListTile(
       leading: Icon(widget.leadingIcon, size: 30),
       title: TextOverlay(
@@ -45,23 +42,18 @@ class _CustomListTileState extends State<CustomListTile> {
       ),
       trailing: widget.isSwitch
           ? Switch.adaptive(
-        value: isDarkMode,
+        value: _isSwitchOn,
         activeColor: Colors.orange,
         onChanged: (value) {
           setState(() {
-            // widget.onSwitchChanged?.call(value);
-            themeProvider.toggleTheme();
+            widget.onSwitchChanged?.call(value);
           });
         },
       )
-          : Icon(CupertinoIcons.chevron_forward), // Change this icon as needed
+          : const Icon(CupertinoIcons.chevron_forward), // Change this icon as needed
       onTap: widget.isSwitch
           ? null // Disable onTap when the switch is enabled
-          : () {
-        if (!_isSwitchOn) {
-          widget.onSwitchChanged?.call(true);
-        }
-      },
+          : widget.onTap,
     );
   }
 }

@@ -28,13 +28,21 @@ class AppConstants {
   static const String more = "More";
   static const String general = "GENERAL";
   static const String prayerRequest = "Prayer Request";
-  static const String avventoWebsite = "Visit AvventoMedia Website";
+  static const String avventoWebsiteTitle = "Visit AvventoMedia Website";
+  static const String avventoWebsite = "https://avventohome.org/avvento/";
+  static const String youtube = "YouTube";
+  static const String youtubeWebsite = "https://www.youtube.com/@AvventoProductions";
 
   static const String radio = "RADIO";
   static const String webRadio = "Avvento Web Radio";
+  static const String webRadioUrl = "https://avventohome.org/media/avventoradio/";
+
   static const String radioSchedule = "AvventoRadio Schedule";
+  static const String radioScheduleUrl = "https://avventohome.org/avvento/avventoradio-schedule/";
+
   static const String previousBroadcasts = "Previous Broadcasts";
   static const String avventoRadioTelegram = "Telegram Listeners";
+  static const String avventoRadioTelegramUrl = "https://t.me/avventoRadio";
 
   static const String preferences = "PREFERENCES";
   static const String notifications = "Allow notifications";

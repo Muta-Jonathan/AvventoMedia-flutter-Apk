@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Utils {
   static double calculateAspectHeight(BuildContext context, width) {
@@ -23,6 +24,16 @@ class Utils {
     final minutes = duration.inMinutes.remainder(60);
     final seconds = duration.inSeconds.remainder(60);
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  static Future openBrowserURL({required String url, bool inApp = false}) async {
+    Uri uriUrl = Uri.parse(url);
+    if(await canLaunchUrl(uriUrl)){
+      await launchUrl(
+        uriUrl,
+        mode: inApp ? LaunchMode.externalApplication : LaunchMode.inAppBrowserView
+      );
+    }
   }
 
 }

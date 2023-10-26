@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../componets/app_constants.dart';
+import '../componets/utils.dart';
 import '../widgets/settings/app_version_widget.dart';
 import '../widgets/settings/custom_list_tile.dart';
 import '../widgets/text/label_place_holder.dart';
@@ -33,41 +35,43 @@ class ProfilePage extends StatelessWidget {
                   leadingIcon: CupertinoIcons.group,
                   isSwitch: false,
                 ),
-                const CustomListTile(
-                  label: AppConstants.avventoWebsite,
+                CustomListTile(
+                  label: AppConstants.avventoWebsiteTitle,
                   leadingIcon: CupertinoIcons.globe,
                   isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.avventoWebsite),
+                ),
+                CustomListTile(
+                  label: AppConstants.youtube,
+                  leadingIcon: FontAwesomeIcons.youtube,
+                  isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.youtubeWebsite, inApp: true),
                 ),
                 const SizedBox(height: 35,),
                 // radio section
                 LabelPlaceHolder(title: AppConstants.radio, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                const CustomListTile(
+                CustomListTile(
                   label: AppConstants.webRadio,
                   leadingIcon: CupertinoIcons.globe,
                   isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.webRadioUrl),
                 ),
-                const CustomListTile(
+                CustomListTile(
                   label: AppConstants.radioSchedule,
                   leadingIcon: CupertinoIcons.calendar_today,
                   isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.radioScheduleUrl),
                 ),
                 const CustomListTile(
                   label: AppConstants.previousBroadcasts,
                   leadingIcon: CupertinoIcons.globe,
                   isSwitch: false,
                 ),
-                const CustomListTile(
+                CustomListTile(
                   label: AppConstants.avventoRadioTelegram,
                   leadingIcon: Icons.telegram_sharp,
                   isSwitch: false,
-                ),
-                const SizedBox(height: 35,),
-                // Preferences section
-                LabelPlaceHolder(title: AppConstants.preferences, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                const CustomListTile(
-                  label: AppConstants.darkMode,
-                  leadingIcon: CupertinoIcons.moon,
-                  isSwitch: true,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.avventoRadioTelegramUrl, inApp: true),
                 ),
                 const SizedBox(height: 35,),
                 // Feedback section
