@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../componets/app_constants.dart';
 import '../componets/utils.dart';
+import '../routes/routes.dart';
 import '../widgets/settings/app_version_widget.dart';
 import '../widgets/settings/custom_list_tile.dart';
 import '../widgets/text/label_place_holder.dart';
@@ -30,10 +33,11 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 20,),
                 // General section
                 LabelPlaceHolder(title: AppConstants.general, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                const CustomListTile(
+                CustomListTile(
                   label: AppConstants.prayerRequest,
                   leadingIcon: CupertinoIcons.group,
                   isSwitch: false,
+                  onTap: () => Get.toNamed(Routes.getPrayerRequestRoute()),
                 ),
                 CustomListTile(
                   label: AppConstants.avventoWebsiteTitle,
