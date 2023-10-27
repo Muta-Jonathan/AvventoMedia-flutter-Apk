@@ -7,14 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
-import 'package:rxdart/rxdart.dart' as R;
 
-import '../apis/azuracast_api.dart';
 import '../componets/app_constants.dart';
 import '../componets/utils.dart';
 import '../controller/audio_player_controller.dart';
 import '../models/musicplayermodels/music_player_position.dart';
-import '../models/radiomodel/radio_station_model.dart';
 import '../widgets/audio_players/controls.dart';
 import '../widgets/providers/radio_station_provider.dart';
 import '../widgets/text/text_overlay_widget.dart';
@@ -50,7 +47,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     super.initState();
     radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
     _audioPlayerController = Get.find<AudioPlayerController>();
-    //_init(radioStationProvider);
     _positionSubscription = _musicPlayerPositionStream.listen((position) {
       setState(() {
         currentPosition = position.position.inMilliseconds.toDouble();
@@ -63,7 +59,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
 
   Future<void> _init(RadioStationProvider radioProvider) async {
     if (radioProvider.radioStation != null) {
-      print("love lifted me");
       currentMediaItem = MediaItem(
         id: radioProvider.radioStation!.id.toString(),
         title: radioProvider.radioStation!.nowPlayingTitle,
