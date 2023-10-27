@@ -47,7 +47,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          TextOverlay(label: "\"Rejoice evermore. Pray without ceasing....1 \" Thessalonians 5:16-23",
+          TextOverlay(label: "\"Rejoice evermore. Pray without ceasing....\" 1 Thessalonians 5:16-23",
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
           ),
