@@ -27,4 +27,8 @@ ThemeData darkTheme = ThemeData(
         onSecondaryContainer: Colors.grey[400]!,
         onBackground: const Color.fromARGB(255, 22, 20, 36), //rgba(22,20,36,255),
     ),
+    textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: Colors.orange,
+        selectionHandleColor: Colors.orange,
+    ),
 );

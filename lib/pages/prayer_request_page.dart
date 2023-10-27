@@ -1,8 +1,6 @@
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:avvento_media/componets/app_constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../widgets/text/name_text_field.dart';
+import '../componets/prayer_request_field.dart';
 
 class PrayerRequestPage extends StatelessWidget {
   const PrayerRequestPage({super.key});
@@ -18,16 +16,16 @@ class PrayerRequestPage extends StatelessWidget {
             floating: true,
             title: const Text(AppConstants.prayerRequest),
           ),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Divider(),
-                  const SizedBox(height: 20,),
-                  NameTextField(name: 'Text',),
-                  const Divider(),
+                  SizedBox(height: 20,),
+                  PrayerRequestField(),
+                  Divider(),
                 ],
               ),
             )

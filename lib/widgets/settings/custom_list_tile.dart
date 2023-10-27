@@ -19,10 +19,9 @@ class CustomListTile extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CustomListTileState createState() => _CustomListTileState();
+  CustomListTileState createState() => CustomListTileState();
 }
-
-class _CustomListTileState extends State<CustomListTile> {
+class CustomListTileState extends State<CustomListTile> {
   late bool _isSwitchOn;
 
   @override

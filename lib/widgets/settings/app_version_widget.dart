@@ -1,13 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AppVersionWidget extends StatefulWidget {
+  const AppVersionWidget({super.key});
+
   @override
-  _AppVersionWidgetState createState() => _AppVersionWidgetState();
+  AppVersionWidgetState createState() => AppVersionWidgetState();
 }
 
-class _AppVersionWidgetState extends State<AppVersionWidget> {
+class AppVersionWidgetState extends State<AppVersionWidget> {
   String _appVersion = 'Loading...';
 
   @override

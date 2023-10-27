@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../componets/app_constants.dart';
 import '../componets/utils.dart';
@@ -88,7 +87,7 @@ class ProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10,),
                 // app version
-                Center(
+                const Center(
                   child: AppVersionWidget(),
                 ),
                 const SizedBox(height: 12,),

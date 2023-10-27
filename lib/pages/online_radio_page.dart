@@ -146,7 +146,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                       final positionData = snapshot.data;
                       final paddingWidth = Utils.calculateWidth(context, 0.05);
                       final paddingTop = Utils.calculateHeight(context, 0.06);
-                      print("etr $currentMediaItem");
                       return Column(
                         children: [
                           Center(
