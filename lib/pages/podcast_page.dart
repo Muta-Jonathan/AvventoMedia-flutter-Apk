@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
@@ -26,7 +28,9 @@ class PodcastPageState extends State<PodcastPage> {
   final EpisodeController episodeController = Get.find();
   late AudioPlayerController _audioPlayerController;
   MediaItem? currentMediaItem;
+  final StreamController<MusicPlayerPosition> _musicPlayerPositionController = StreamController<MusicPlayerPosition>.broadcast();
 
+  //Stream<MusicPlayerPosition> get _musicPlayerPositionStream => _musicPlayerPositionController.stream;
   Stream<MusicPlayerPosition> get _musicPlayerPositionStream =>
       R.Rx.combineLatest3<Duration,Duration,Duration?, MusicPlayerPosition>(
           _audioPlayerController.audioPlayer.positionStream,
@@ -56,6 +60,7 @@ class PodcastPageState extends State<PodcastPage> {
     if (!_audioPlayerController.audioPlayer.playerState.playing) {
       _musicPlayerPositionStream.drain(); // Dispose of the stream
       _audioPlayerController.dispose();
+      _musicPlayerPositionController.close();
     }
     super.dispose();
   }
@@ -83,8 +88,8 @@ class PodcastPageState extends State<PodcastPage> {
           actions: [
             IconButton(
               icon: const Icon(CupertinoIcons.share),
-              onPressed: () {
-
+              onPressed: () async {
+                Utils.share("Come Join Me, Listen to the wonderful Podcast on AvventoMedia 💫, \n ${selectedEpisode.playbackUrl}");
               },
             ),
           ],

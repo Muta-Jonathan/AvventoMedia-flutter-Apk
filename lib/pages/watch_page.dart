@@ -36,12 +36,13 @@ class _WatchPageState extends State<WatchPage> {
       videoPlayerController: _videoPlayerController,
       aspectRatio: 16 / 9,
       allowedScreenSleep: false,
-      autoPlay: false,
+      autoPlay: true,
       showOptions: true,
       looping: false,
       isLive: true,
       autoInitialize: true,
-      showControlsOnInitialize: true,
+     allowMuting: false,
+      showControlsOnInitialize: false,
       placeholder: imagePlaceHolder(context, liveTvController.selectedTv.value!.imageUrl),
       additionalOptions: (context) {
         return <OptionItem>[

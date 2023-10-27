@@ -33,6 +33,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
   late AudioPlayerController _audioPlayerController;
   MediaItem? currentMediaItem;
   StreamSubscription<MusicPlayerPosition>? _positionSubscription;
+  bool isAudioSourceSet = false;
 
   double currentPosition = 0;
   double bufferedPosition = 0;
@@ -40,22 +41,16 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
   String title = "";
   String artist = "";
 
-  Stream<MusicPlayerPosition> get _musicPlayerPositionStream => R.Rx.combineLatest4<Duration, Duration, Duration?, RadioStation, MusicPlayerPosition>(
-    _audioPlayerController.audioPlayer.positionStream,
-    _audioPlayerController.audioPlayer.bufferedPositionStream,
-    _audioPlayerController.audioPlayer.durationStream,
-    AzuraCastAPI.getRadioStationUpdates(),
-        (position, bufferedPosition, duration, radioStation) {
-      return MusicPlayerPosition(position, bufferedPosition, duration ?? Duration.zero, currentMediaItem!, radioStation: radioStation);
-    },
-  );
+  final StreamController<MusicPlayerPosition> _musicPlayerPositionController = StreamController<MusicPlayerPosition>.broadcast();
+
+  Stream<MusicPlayerPosition> get _musicPlayerPositionStream => _musicPlayerPositionController.stream;
 
   @override
   void initState() {
     super.initState();
     radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
     _audioPlayerController = Get.find<AudioPlayerController>();
-    _init();
+    //_init(radioStationProvider);
     _positionSubscription = _musicPlayerPositionStream.listen((position) {
       setState(() {
         currentPosition = position.position.inMilliseconds.toDouble();
@@ -66,18 +61,22 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     });
   }
 
-  Future<void> _init() async {
-    if (radioStationProvider.radioStation != null) {
+  Future<void> _init(RadioStationProvider radioProvider) async {
+    if (radioProvider.radioStation != null) {
+      print("love lifted me");
       currentMediaItem = MediaItem(
-        id: radioStationProvider.radioStation!.id.toString(),
-        title: radioStationProvider.radioStation!.nowPlayingTitle,
-        artist: radioStationProvider.radioStation!.artist,
-        artUri: Uri.parse(radioStationProvider.radioStation!.imageUrl),
+        id: radioProvider.radioStation!.id.toString(),
+        title: radioProvider.radioStation!.nowPlayingTitle,
+        artist: radioProvider.radioStation!.artist,
+        artUri: Uri.parse(radioProvider.radioStation!.imageUrl),
       );
-
-      await _audioPlayerController.setAudioSource(
-          radioStationProvider.radioStation!.streamUrl,
-          currentMediaItem!);
+      if (!isAudioSourceSet) {
+        await _audioPlayerController.setAudioSource(
+          radioProvider.radioStation!.streamUrl,
+          currentMediaItem!,
+        );
+      }
+      isAudioSourceSet = true;
     }
   }
 
@@ -86,7 +85,9 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     if (!_audioPlayerController.audioPlayer.playerState.playing) {
       _positionSubscription?.cancel();
       _audioPlayerController.dispose();
+      _musicPlayerPositionController.close();
     }
+     // stream_controller.close();
     super.dispose();
   }
 
@@ -119,7 +120,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
           IconButton(
             icon: const Icon(CupertinoIcons.share),
             onPressed: () {
-
+              Utils.share("Take a look at AvventoRadio 💫 streaming now, \n ${AppConstants.webRadioUrl}");
             },
           ),
         ],
@@ -137,6 +138,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
               ),
             );
           } else {
+            _init(radioProvider);
             return SingleChildScrollView(
               child: Column(
                 children: [

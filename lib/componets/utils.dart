@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Utils {
@@ -34,6 +35,10 @@ class Utils {
         mode: inApp ? LaunchMode.externalApplication : LaunchMode.inAppBrowserView
       );
     }
+  }
+
+  static void share(String shareBody) async {
+    await Share.share(shareBody);
   }
 
 }
