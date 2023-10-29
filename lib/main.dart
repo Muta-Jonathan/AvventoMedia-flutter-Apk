@@ -11,11 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
+import 'package:upgrader/upgrader.dart';
 
 import 'bindings/initial_binding.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Upgrader.clearSavedSettings(); // clear upgrader settings
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
