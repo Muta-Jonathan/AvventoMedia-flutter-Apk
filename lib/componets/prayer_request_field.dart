@@ -1,4 +1,6 @@
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,7 +18,7 @@ class PrayerRequestField extends StatefulWidget {
 
 class PrayerRequestFieldState extends State<PrayerRequestField> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final SendEmail sendEmailData = SendEmail(
+  SendEmail sendEmailData = SendEmail(
     name: '',
     phoneNumber: '',
     email: '',
@@ -74,7 +76,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
               focusColor: Theme.of(context).colorScheme.onPrimary,
             ),
             validator: (value) {
-              if (value!.isEmpty) {
+              if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
                 return 'Please enter your name';
               }
               return null;
@@ -133,9 +135,9 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
               ),
               focusColor: Theme.of(context).colorScheme.onPrimary,
             ),
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter your email';
+            validator: (email) {
+              if (email!.isEmpty || !EmailValidator.validate(email)) {
+                return 'Please enter a correct email';
               }
               return null;
             },
@@ -219,12 +221,33 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
                   _formKey.currentState?.save();
                   final result = await SendEmailAPI.sendEmail(sendEmailData);
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(result ? 'Hey ${sendEmailData.name}, Prayer Request sent successfully 🎉 ' : 'Error sending your Prayer Request 🚫'),
-                      backgroundColor: result ? Colors.green : Colors.red,
-                    ),
-                  );
+
+                    final snackBar = SnackBar(
+                      elevation: 0,
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: Colors.transparent,
+                      content: AwesomeSnackbarContent(
+                        title: result ? 'Successful' : 'Oops need to try Again',
+                        message:
+                        result ? 'Hey ${sendEmailData.name}, Prayer Request sent successfully 🎉 ' : 'Error sending your Prayer Request 🚫',
+
+                        /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                        contentType: result ? ContentType.success :  ContentType.failure,
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(snackBar);
+                  }
+
+                  if (result) {
+                    sendEmailData.reset();
+                    nameController.clear();
+                    phoneNumberController.clear();
+                    emailController.clear();
+                    prayForController.clear();
+                    prayerRequestController.clear();
                   }
               }
             },

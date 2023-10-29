@@ -24,4 +24,12 @@ class SendEmail {
 
     return data;
   }
+
+  void reset() {
+    name = '';
+    phoneNumber = '';
+    email = '';
+    subject = '';
+    message = '';
+  }
 }
