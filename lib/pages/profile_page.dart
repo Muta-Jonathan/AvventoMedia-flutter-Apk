@@ -80,10 +80,11 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 35,),
                 // Feedback section
                 LabelPlaceHolder(title: AppConstants.feedBack, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                const CustomListTile(
+                CustomListTile(
                   label: AppConstants.report,
                   leadingIcon: CupertinoIcons.flag,
                   isSwitch: false,
+                  onTap: () => Utils.openEmail(),
                 ),
                 const SizedBox(height: 10,),
                 // app version

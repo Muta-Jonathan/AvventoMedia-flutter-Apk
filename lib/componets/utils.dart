@@ -1,3 +1,4 @@
+import 'package:avvento_media/componets/app_constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,6 +35,23 @@ class Utils {
         uriUrl,
         mode: inApp ? LaunchMode.externalApplication : LaunchMode.inAppBrowserView
       );
+    }
+  }
+
+  static Future openEmail() async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: AppConstants.avventoEmail,
+      queryParameters: {
+        'subject': '',
+        'body': '',
+      },
+    );
+
+    if (await canLaunchUrl(emailUri)) {
+      await launchUrl(emailUri);
+    } else {
+      throw 'Could not launch $emailUri';
     }
   }
 
