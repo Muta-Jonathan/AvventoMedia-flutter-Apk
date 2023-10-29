@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/exploremodels/programs.dart';
@@ -10,8 +11,11 @@ class ExploreDataFetcher {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? cachedData = prefs.getString('cached_data');
 
-    if (cachedData != null) {
-      final data = json.decode(cachedData);
+    // Check network connectivity
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      final data = json.decode(cachedData!);
       return List<Programs>.from(data['programs'].map((data) => Programs.fromJson(data)));
     } else {
       final url = Uri.https(

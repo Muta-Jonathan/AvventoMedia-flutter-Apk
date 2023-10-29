@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/models/spreakermodels/spreaker_episodes.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,12 +9,15 @@ class FetchSpreakerAPI {
   static Future<List<SpreakerEpisode>> fetchEpisodesForShow() async {
     final sharedPreferences = await SharedPreferences.getInstance();
 
+    // Check network connectivity
+    final connectivityResult = await Connectivity().checkConnectivity();
+
     // Check if episodes are stored in shared preferences
     final String? cachedEpisodes = sharedPreferences.getString('episodes');
 
-    if (cachedEpisodes != null) {
+    if (connectivityResult == ConnectivityResult.none) {
       // If episodes are cached, parse and return them
-      final List<dynamic> episodesData = json.decode(cachedEpisodes);
+      final List<dynamic> episodesData = json.decode(cachedEpisodes!);
 
       final List<SpreakerEpisode> episodes = episodesData
           .map((data) => SpreakerEpisode.fromJson(data))
