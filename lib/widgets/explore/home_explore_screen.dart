@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/models/exploremodels/programs.dart';
@@ -17,6 +19,8 @@ class HomeExploreScreen extends StatefulWidget {
 }
 
 class _ExploreScreenState extends State<HomeExploreScreen> {
+  int itemsToDisplay = 5;
+
   @override
   void initState() {
     super.initState();
@@ -53,24 +57,22 @@ class _ExploreScreenState extends State<HomeExploreScreen> {
 
   Widget buildListView(BuildContext context, ProgramsProvider programsProvider) {
     final int itemCount = programsProvider.jobList.length;
-    const int maxItemsToDisplay = 5;
 
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: itemCount <= maxItemsToDisplay ? itemCount : maxItemsToDisplay + 1,
+      itemCount: itemCount > 0 ? min(itemsToDisplay, itemCount) + 1 : 0,
       itemBuilder: (BuildContext context, int index) {
-        if (index == 0) {
-          return buildFirstItem(context, programsProvider.jobList[0]);
-        } else if (index < maxItemsToDisplay) {
+        if (index < min(itemsToDisplay, itemCount)) {
           return buildExploreDetailsScreen(programsProvider.jobList[index]);
-        } else if (index == maxItemsToDisplay) {
-          return buildShowMoreItem(context);
+        } else if (index == min(itemsToDisplay, itemCount)) {
+          return itemCount > itemsToDisplay ? buildShowMoreItem(context) : const SizedBox.shrink();
         } else {
-          return const SizedBox.shrink(); // Return an empty SizedBox for any extra items
+          return const SizedBox.shrink();
         }
       },
     );
   }
+
   Widget buildFirstItem(BuildContext context, index) {
     return Padding(
       padding: const EdgeInsets.only(left: 20.0),
@@ -83,11 +85,7 @@ class _ExploreScreenState extends State<HomeExploreScreen> {
   }
 
   Widget buildShowMoreItem(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Handle the "show more" action here
-      },
-      child: Padding(
+    return Padding(
         padding: const EdgeInsets.all(8.0), // Adjust as needed
         child: CupertinoButton(
           padding: const EdgeInsets.all(8.0), // Adjust as needed
@@ -97,10 +95,12 @@ class _ExploreScreenState extends State<HomeExploreScreen> {
             color: Theme.of(context).colorScheme.onPrimary, // Customize the color
           ),
           onPressed: () {
-            // Handle the "show more" action here
+            setState(() {
+              // Increment the number of items to display when "Show More" is clicked
+              itemsToDisplay += 5;
+            });
           },
         ),
-      ),
     );
   }
 
