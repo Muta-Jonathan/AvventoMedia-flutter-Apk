@@ -8,6 +8,7 @@ import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
 import 'package:avvento_media/widgets/providers/spreaker_data_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,12 @@ import 'bindings/initial_binding.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
+
   await Upgrader.clearSavedSettings(); // clear upgrader settings
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await JustAudioBackground.init(
@@ -26,6 +33,7 @@ Future<void> main() async {
     androidNotificationOngoing: true,
     androidStopForegroundOnPause: true,
   );
+
   runApp(
     MultiProvider(
       providers: [

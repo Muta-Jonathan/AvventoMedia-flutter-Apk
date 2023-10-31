@@ -7,9 +7,11 @@ import 'package:chewie/chewie.dart';
 import 'package:floating/floating.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
+import '../componets/custom_video_controls.dart';
 import '../widgets/text/show_more_desc.dart';
 
 class WatchPage extends StatefulWidget {
@@ -34,15 +36,16 @@ class _WatchPageState extends State<WatchPage> {
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(liveTvController.selectedTv.value!.streamUrl));
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
-      aspectRatio: 16 / 9,
+      aspectRatio: 16 / 10,
       allowedScreenSleep: false,
       autoPlay: true,
       showOptions: true,
       looping: false,
       isLive: true,
       autoInitialize: true,
-     allowMuting: false,
-      showControlsOnInitialize: false,
+      allowMuting: false,
+      customControls: const CustomVideoControls(),
+      showControlsOnInitialize: true,
       placeholder: imagePlaceHolder(context, liveTvController.selectedTv.value!.imageUrl),
       additionalOptions: (context) {
         return <OptionItem>[
@@ -63,15 +66,25 @@ class _WatchPageState extends State<WatchPage> {
   }
 
   Widget imagePlaceHolder(BuildContext context, String imageUrl) {
-    return CachedNetworkImage(
-      imageUrl: imageUrl,
-      width: double.infinity,
-      height: double.infinity,
-      placeholder: (context, url) => const Center(
-        child: Center(child: CircularProgressIndicator()), // You can use any placeholder widget
-      ),
-      errorWidget: (context, url, error) => const Icon(Icons.error), // Error widget
-      fit: BoxFit.cover, // Adjust this as needed
+    return Stack(
+      children: <Widget>[
+        CachedNetworkImage(
+          imageUrl: imageUrl,
+          width: double.infinity,
+          height: double.infinity,
+          placeholder: (context, url) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+          fit: BoxFit.cover,
+        ),
+        // Overlay with 45% black background
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black.withOpacity(0.45),
+        ),
+      ],
     );
   }
 
@@ -94,20 +107,45 @@ class _WatchPageState extends State<WatchPage> {
   @override
   Widget build(BuildContext context) {
     final selectedTv = liveTvController.selectedTv.value;
+    if (!_chewieController.isFullScreen) {
+      // Listen to orientation changes
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             PiPSwitcher(
               childWhenEnabled: Chewie(controller: _chewieController),
               childWhenDisabled: SizedBox(
                  height: Utils.calculateHeight(context, 0.37),
-                 child: Chewie(controller: _chewieController),
+                 child: Center(
+                   child: Stack(
+                     children: [
+                       Chewie(controller: _chewieController),
+                       Positioned(
+                         top: 45, // Adjust the top position as needed
+                         left: 5, // Adjust the left position as needed
+                         child: IconButton(
+                           icon: const Icon(Icons.arrow_back_sharp,color: Colors.white),
+                           onPressed: () {
+                             Get.back();
+                           },
+                         ),
+                       ),
+                     ],
+                   ),
+                 ),
                ),
             ),
             Container(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
