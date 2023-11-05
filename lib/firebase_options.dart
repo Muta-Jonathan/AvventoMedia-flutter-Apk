@@ -45,12 +45,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAy3HWqPIsqHvrVwy3xOTyM_adlsrXPUEY',
-    appId: '1:1030511699581:web:604ece7804aa4d0fd47314',
+    appId: '1:1030511699581:web:29c8e9143deeec50d47314',
     messagingSenderId: '1030511699581',
     projectId: 'avventoradioflutter',
     authDomain: 'avventoradioflutter.firebaseapp.com',
     storageBucket: 'avventoradioflutter.appspot.com',
-    measurementId: 'G-EMCMBM3SHQ',
+    measurementId: 'G-VFK1K3PXB8',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyB5Dl9Rl47--N0hC3MMFduvCwnRD18VVIo',
-    appId: '1:1030511699581:ios:53eba5b7c9be03abd47314',
+    appId: '1:1030511699581:ios:5682dc7f4ebe5243d47314',
     messagingSenderId: '1030511699581',
     projectId: 'avventoradioflutter',
     storageBucket: 'avventoradioflutter.appspot.com',

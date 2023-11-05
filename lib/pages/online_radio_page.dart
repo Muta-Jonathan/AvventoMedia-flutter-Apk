@@ -47,14 +47,27 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     super.initState();
     radioStationProvider = Provider.of<RadioStationProvider>(context, listen: false);
     _audioPlayerController = Get.find<AudioPlayerController>();
-    _positionSubscription = _musicPlayerPositionStream.listen((position) {
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // React to changes in dependencies or fetch data here
+    // Listen to the stream for MusicPlayerPosition updates
+    final positionSubscription = _musicPlayerPositionStream.listen((position) {
+      // Update the MediaItem whenever the position changes
       setState(() {
-        currentPosition = position.position.inMilliseconds.toDouble();
-        bufferedPosition = position.bufferedPosition.inMilliseconds.toDouble();
-        duration = position.duration.inMilliseconds.toDouble();
         currentMediaItem = position.mediaItem;
       });
     });
+
+    // Cancel the subscription when the widget is disposed
+    // This ensures that you clean up the subscription properly
+    _positionSubscription?.cancel();
+    _positionSubscription = positionSubscription;
+
+    // Initialize or update other data as needed
+    _init(radioStationProvider);
   }
 
   Future<void> _init(RadioStationProvider radioProvider) async {
@@ -98,6 +111,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    _init(radioStationProvider);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
