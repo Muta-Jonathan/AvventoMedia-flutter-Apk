@@ -29,7 +29,7 @@ class AppVersionWidgetState extends State<AppVersionWidget> {
     return Text(
         _appVersion,
         style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             color: Theme.of(context).colorScheme.onSecondaryContainer),
     );
   }

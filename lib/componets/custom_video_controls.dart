@@ -271,7 +271,13 @@ class _CustomVideoControlsState extends State<CustomVideoControls>
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     if (chewieController.isLive)
-                      const Expanded(child: Text('LIVE'))
+                      const Expanded(child: Text(
+                        'LIVE',
+                        style: TextStyle(
+                          color: Colors.orange,
+                        ),
+                      ),
+                      )
                     else
                       _buildPosition(iconColor),
                     if (chewieController.allowMuting)
