@@ -1,4 +1,5 @@
 import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -26,16 +27,11 @@ class ResizableImageWithOverlay extends StatelessWidget {
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
-                placeholder: (context, url) => Center(
+                placeholder: (context, url) => const Center(
                   child: SizedBox(
                     width: 100,
                     height: 100,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 3.0,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    ),
+                    child: LoadingWidget()
                   ),
                 ),
                 errorWidget: (context, _, error) => Icon(

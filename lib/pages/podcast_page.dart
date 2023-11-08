@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -124,14 +125,11 @@ class PodcastPageState extends State<PodcastPage> {
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
-                                placeholder: (context, url) => Center(
+                                placeholder: (context, url) => const Center(
                                   child: SizedBox(
                                     width: 40.0, // Adjust the width to control the size
                                     height: 40.0, // Adjust the height to control the size
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3.0, // Adjust the stroke width as needed
-                                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).colorScheme.onPrimary), // Change the color here
-                                    ),
+                                    child: LoadingWidget()
                                   ),), // Placeholder widget
                                 errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
                               ),

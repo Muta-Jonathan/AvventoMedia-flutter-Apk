@@ -1,4 +1,5 @@
 import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
@@ -45,14 +46,7 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                           child: SizedBox(
                             width:  Utils.calculateWidth(context, 0.3),
                             height:  Utils.calculateWidth(context, 0.3),
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3.0,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Theme.of(context).colorScheme.onPrimary,
-                                ),
-                              ),
-                            ),
+                            child: const LoadingWidget()
                           ),
                         ),
                         errorWidget: (context, _, error) => Icon(

@@ -1,6 +1,7 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/controller/live_tv_controller.dart';
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
@@ -72,9 +73,7 @@ class _WatchPageState extends State<WatchPage> {
           imageUrl: imageUrl,
           width: double.infinity,
           height: double.infinity,
-          placeholder: (context, url) => const Center(
-            child: CircularProgressIndicator(),
-          ),
+          placeholder: (context, url) => const LoadingWidget(),
           errorWidget: (context, url, error) => const Icon(Icons.error),
           fit: BoxFit.cover,
         ),

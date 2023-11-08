@@ -1,4 +1,5 @@
 import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/hightlights/hightlight_details_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -51,14 +52,7 @@ class _HightlightsWidget extends State<HightlightsWidget> {
               },
             );
           } else {
-            return Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 3.0,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
-            );
+            return LoadingWidget();
           }
         });
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:chewie/src/center_play_button.dart';
 import 'package:chewie/src/chewie_player.dart';
 import 'package:chewie/src/chewie_progress_colors.dart';
@@ -85,9 +86,7 @@ class _CustomVideoControlsState extends State<CustomVideoControls>
           child: Stack(
             children: [
               if (_displayBufferingIndicator)
-                Center(
-                  child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onPrimaryContainer),
-                )
+             const LoadingWidget()
               else
                 _buildHitArea(),
               _buildActionBar(),

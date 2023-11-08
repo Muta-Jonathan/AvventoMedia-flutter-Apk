@@ -1,6 +1,7 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/models/radiomodel/radioModel.dart';
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/radio/live_radio_details_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -54,14 +55,7 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
               },
             );
           } else {
-            return Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 3.0,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
-            );
+            return const LoadingWidget();
           }
         });
   }

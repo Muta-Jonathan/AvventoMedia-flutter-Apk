@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../controller/episode_controller.dart';
 import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../../routes/routes.dart';
+import '../common/loading_widget.dart';
 import '../providers/spreaker_data_provider.dart';
 import 'audio_list_details_screen.dart';
 
@@ -52,14 +53,7 @@ class _AudioListState extends State<AudioListScreen> {
     return Consumer<SpreakerEpisodeProvider>(
       builder: (context, episodeProvider, child) {
         if (episodeProvider.episodes.isEmpty) {
-          return Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 3.0,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-          );
+          return const LoadingWidget();
         } else {
           return ListView.builder(
             scrollDirection: Axis.vertical,
