@@ -1,6 +1,9 @@
+import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_donation_buttons/donationButtons/paypalButton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../componets/app_constants.dart';
@@ -50,7 +53,43 @@ class ProfilePage extends StatelessWidget {
                   isSwitch: false,
                   onTap: () => Utils.openBrowserURL(url: AppConstants.youtubeWebsite, inApp: true),
                 ),
-                const SizedBox(height: 35,),
+                const SizedBox(height: 12,),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: double.infinity,
+                      height: Utils.calculateHeight(context, 0.2),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            TextOverlay(label: "Give a Lift to the Gospel 🚀🌍",
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              fontSize: Utils.calculateWidth(context,0.05),
+                            ),
+                            const Gap(10),
+                            TextOverlay(label: "Every contribution matters in our mission to fly the gospel to the whole world. Join us today!.",
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontSize: Utils.calculateWidth(context,0.04),
+                              maxLines: 3,
+                            ),
+                            const Gap(10),
+                            const PayPalButton(
+                              paypalButtonId: "T6NT2YYTVX6VS",
+                              color: Colors.orange,
+                            ),
+                          ],
+                        ),
+                      )
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12,),
                 // radio section
                 LabelPlaceHolder(title: AppConstants.radio, color: Theme.of(context).colorScheme.onSecondaryContainer),
                 CustomListTile(

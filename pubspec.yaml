@@ -68,6 +68,8 @@ dependencies:
   email_validator: ^2.1.17
   upgrader: ^6.5.0
   onesignal_flutter: ^5.0.3
+  flutter_donation_buttons: ^0.4.8
+  gap: ^3.0.1
 
 dev_dependencies:
   flutter_test:
