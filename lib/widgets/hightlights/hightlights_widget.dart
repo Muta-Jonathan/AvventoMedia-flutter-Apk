@@ -52,7 +52,7 @@ class _HightlightsWidget extends State<HightlightsWidget> {
               },
             );
           } else {
-            return LoadingWidget();
+            return const LoadingWidget();
           }
         });
 

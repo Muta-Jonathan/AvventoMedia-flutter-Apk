@@ -139,7 +139,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
       body:Consumer<RadioStationProvider> (
         builder: (context, radioProvider, child) {
           if (radioProvider.radioStation == null) {
-            return LoadingWidget();
+            return const LoadingWidget();
           } else {
             _init(radioProvider);
             return SingleChildScrollView(
