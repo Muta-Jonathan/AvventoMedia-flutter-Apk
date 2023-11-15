@@ -6,6 +6,7 @@ class AppConstants {
   static const String missNot = "Programs You shouldn't miss This Week";
   static const String spreaker = 'Podcasts';
   static const String liveTv = "LIVE TV";
+  static const String liveNow = "LIVE NOW";
   static const String liveRadio = "Radio";
   static const String onAIR = "ON AIR";
   static const String pip = "Picture In Picture";

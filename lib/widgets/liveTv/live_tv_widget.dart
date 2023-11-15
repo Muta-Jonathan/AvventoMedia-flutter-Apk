@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import '../../apis/firestore_service_api.dart';
 import '../../routes/routes.dart';
+import '../dialog/coming_soon_widget.dart';
 import '../text/label_place_holder.dart';
 import 'live_tv_details_widget.dart';
 
@@ -68,10 +69,24 @@ class _LiveTvWidget extends State<LiveTvWidget> {
   Widget buildLiveTvDetailsScreen(LiveTvModel liveTvModel) {
     return GestureDetector(
       onTap: () {
+        if (liveTvModel.status == AppConstants.liveNow ) {
         // Set the selected tv using the controller
         liveTvController.setSelectedTv(liveTvModel);
         // Navigate to the "livetvPage"
         Get.toNamed(Routes.getLiveTvRoute());
+        } else {
+          showGeneralDialog(
+              context: context,
+              barrierDismissible: true,
+              barrierLabel: '',
+              transitionDuration: const Duration(microseconds: 400),
+              pageBuilder: (context,animation1, animation2) {
+                return Container();
+              },
+          transitionBuilder: (context,a1,a2,widget) {
+                return ComingSoonDialog(animation: a1,);
+          });
+        }
       },
         child: LiveTvDetailsWidget(liveTvModel: liveTvModel,
         ),

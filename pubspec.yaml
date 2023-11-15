@@ -70,6 +70,7 @@ dependencies:
   onesignal_flutter: ^5.0.3
   flutter_donation_buttons: ^0.4.8
   gap: ^3.0.1
+  lottie: ^1.4.3
 
 dev_dependencies:
   flutter_test:
@@ -117,7 +118,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/audio/
+    - assets/animations/comingSoon.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
