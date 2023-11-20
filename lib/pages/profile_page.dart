@@ -61,29 +61,32 @@ class ProfilePage extends StatelessWidget {
                     child: Container(
                       color: Theme.of(context).colorScheme.secondary,
                       width: double.infinity,
-                      height: Utils.calculateHeight(context, 0.2),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextOverlay(label: "Give a Lift to the Gospel 🚀🌍",
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              fontSize: Utils.calculateWidth(context,0.05),
-                            ),
-                            const Gap(10),
-                            TextOverlay(label: "Every contribution matters in our mission to fly the gospel to the whole world. Join us today!.",
-                              color: Theme.of(context).colorScheme.onSecondary,
-                              fontSize: Utils.calculateWidth(context,0.04),
-                              maxLines: 3,
-                            ),
-                            const Gap(10),
-                            const PayPalButton(
-                              paypalButtonId: "T6NT2YYTVX6VS",
-                              color: Colors.orange,
-                            ),
-                          ],
+                      height: Utils.calculateWidth(context, 0.38),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextOverlay(label: "Give a Lift to the Gospel 🚀🌍",
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                fontSize: Utils.calculateWidth(context,0.04),
+                              ),
+                              const Gap(10),
+                              TextOverlay(label: "Every contribution matters in our mission to fly the gospel to the whole world. Join us today!.",
+                                color: Theme.of(context).colorScheme.onSecondary,
+                                fontSize: Utils.calculateWidth(context,0.03),
+                                maxLines: 3,
+                              ),
+                              const Gap(10),
+                              const PayPalButton(
+                                paypalButtonId: "T6NT2YYTVX6VS",
+                                color: Colors.orange,
+                              ),
+                            ],
+                          ),
                         ),
                       )
                     ),
