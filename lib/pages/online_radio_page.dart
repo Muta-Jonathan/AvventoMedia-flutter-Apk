@@ -31,7 +31,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
   late AudioPlayerController _audioPlayerController;
   MediaItem? currentMediaItem;
   StreamSubscription<MusicPlayerPosition>? _positionSubscription;
-  bool isAudioSourceSet = false;
 
   double currentPosition = 0;
   double bufferedPosition = 0;
@@ -79,13 +78,12 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
         artist: radioProvider.radioStation!.artist,
         artUri: Uri.parse(radioProvider.radioStation!.imageUrl),
       );
-      if (!isAudioSourceSet) {
+      if (!_audioPlayerController.audioPlayer.playerState.playing) {
         await _audioPlayerController.setAudioSource(
           radioProvider.radioStation!.streamUrl,
           currentMediaItem!,
         );
       }
-      isAudioSourceSet = true;
     }
   }
 
@@ -96,7 +94,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
       _audioPlayerController.dispose();
       _musicPlayerPositionController.close();
     }
-     // stream_controller.close();
     super.dispose();
   }
 
