@@ -61,7 +61,7 @@ class ProfilePage extends StatelessWidget {
                     child: Container(
                       color: Theme.of(context).colorScheme.secondary,
                       width: double.infinity,
-                      height: Utils.calculateWidth(context, 0.38),
+                      height: Utils.calculateWidth(context, 0.39),
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(12),
