@@ -82,7 +82,7 @@ class ProfilePage extends StatelessWidget {
                               ),
                               const Gap(10),
                               const PayPalButton(
-                                paypalButtonId: "T6NT2YYTVX6VS",
+                                paypalButtonId: "UYJVUZRSBUCYY",
                                 color: Colors.orange,
                               ),
                             ],
