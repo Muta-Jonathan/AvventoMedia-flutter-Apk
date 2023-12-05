@@ -1,16 +1,13 @@
-import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/controller/live_tv_controller.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
+import 'package:better_player/better_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chewie/chewie.dart';
 import 'package:floating/floating.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:video_player/video_player.dart';
 
 import '../componets/custom_video_controls.dart';
 import '../widgets/text/show_more_desc.dart';
@@ -23,46 +20,57 @@ class WatchPage extends StatefulWidget {
 }
 
 class _WatchPageState extends State<WatchPage> {
-  late ChewieController _chewieController;
   late Floating floating = Floating();
-  late VideoPlayerController _videoPlayerController;
   final LiveTvController liveTvController = Get.find();
+  late BetterPlayerController _betterPlayerController;
+  final GlobalKey _betterPlayerKey = GlobalKey();
 
   bool isPiPMode = false;
 
   @override
   void initState() {
     super.initState();
-
-    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(liveTvController.selectedTv.value!.streamUrl));
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      aspectRatio: 16 / 10,
-      allowedScreenSleep: false,
-      autoPlay: true,
-      showOptions: true,
-      looping: false,
-      isLive: true,
-      autoInitialize: true,
-      allowMuting: false,
-      customControls: const CustomVideoControls(),
-      showControlsOnInitialize: true,
-      placeholder: imagePlaceHolder(context, liveTvController.selectedTv.value!.imageUrl),
-      additionalOptions: (context) {
-        return <OptionItem>[
-          OptionItem(
-            onTap: () {
-              Get.back();
-              floating.enable(aspectRatio: const Rational(16,9));
-            } ,
-            iconData: Icons.picture_in_picture_alt_rounded,
-            title: AppConstants.pip,
-          ),
-        ];
-      },
+    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      liveTvController.selectedTv.value!.streamUrl,
+      videoFormat: BetterPlayerVideoFormat.hls,
+      notificationConfiguration: BetterPlayerNotificationConfiguration(
+        showNotification: true,
+        title: liveTvController.selectedTv.value!.name,
+        author: "3ABN & Avvento",
+        imageUrl: liveTvController.selectedTv.value!.imageUrl,
+        activityName: "MainActivity",
+      ),
+      liveStream: true,
+      drmConfiguration: BetterPlayerDrmConfiguration(
+        drmType: BetterPlayerDrmType.token,
+        token: "Bearer=token",
+      ),
     );
+    _betterPlayerController = BetterPlayerController(
+        BetterPlayerConfiguration(
+          // placeholder: imagePlaceHolder(context, liveTvController.selectedTv.value!.imageUrl),
+          autoPlay: true,
+          allowedScreenSleep: false,
+          expandToFill: false,
+          controlsConfiguration: BetterPlayerControlsConfiguration(
+            enablePip: true,
+            loadingWidget: LoadingWidget(),
+            showControls: true,
+            playerTheme: BetterPlayerTheme.custom,
+            customControlsBuilder: (controller, onPlayerVisibilityChanged) {
+              return CustomPlayerControlsWidget(
+                controller: controller,
+              );
+            },
+          ),
+        ),
+        betterPlayerDataSource: betterPlayerDataSource);
+    // Get.back();
+    // floating.enable(aspectRatio: const Rational(16,9));
 
-  requestPipAvailable();
+
+    requestPipAvailable();
 
   }
 
@@ -88,85 +96,81 @@ class _WatchPageState extends State<WatchPage> {
   }
 
 
-  void requestPipAvailable() async{
-    isPiPMode = await floating.isPipAvailable;
+  Future<void> requestPipAvailable() async {
+    if(await _betterPlayerController.isPictureInPictureSupported()) {
+      _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
+      isPiPMode = true;
+    } else {
+      _betterPlayerController.disablePictureInPicture();
+    }
   }
-
   void togglePiPMode() {
     isPiPMode = !isPiPMode;
   }
 
   @override
   void dispose() {
-    _chewieController.dispose();
-    _videoPlayerController.dispose();
+   _betterPlayerController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final selectedTv = liveTvController.selectedTv.value;
-    if (!_chewieController.isFullScreen) {
-      // Listen to orientation changes
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
-    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            PiPSwitcher(
-              childWhenEnabled: Chewie(controller: _chewieController),
-              childWhenDisabled: SizedBox(
-                 height: Utils.calculateHeight(context, 0.37),
-                 child: Center(
-                   child: Stack(
-                     children: [
-                       Chewie(controller: _chewieController),
-                       Positioned(
-                         top: 45, // Adjust the top position as needed
-                         left: 5, // Adjust the left position as needed
-                         child: IconButton(
-                           icon: const Icon(Icons.arrow_back_sharp,color: Colors.white),
-                           onPressed: () {
-                             Get.back();
-                           },
-                         ),
-                       ),
-                     ],
-                   ),
-                 ),
-               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
                 children: [
-                  const SizedBox(height: 20,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                     TextOverlay(label: selectedTv!.name, color: Theme.of(context).colorScheme.onPrimary, fontSize: 20, ),
-                      IconButton(
-                        icon: const Icon(CupertinoIcons.share),
-                        onPressed: () {
-                          // Implement share functionality here
-                        },
-                      ),
-                    ],
+                  AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child:  BetterPlayer(
+                      controller: _betterPlayerController,
+                      key: _betterPlayerKey,
+                    ),
                   ),
-                  const SizedBox(height: 40,),
-                  ShowMoreDescription(description: selectedTv.description,),
+                  Positioned(
+                    top: 5, // Adjust the top position as needed
+                    left: 5, // Adjust the left position as needed
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_sharp,color: Colors.white),
+                      onPressed: () {
+                        Get.back();
+                      },
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                       TextOverlay(label: selectedTv!.name, color: Theme.of(context).colorScheme.onPrimary, fontSize: 20, ),
+                        IconButton(
+                          icon: const Icon(CupertinoIcons.share),
+                          onPressed: () {
+                            // Implement share functionality here
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20,),
+                    ShowMoreDescription(description: selectedTv.description,),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
