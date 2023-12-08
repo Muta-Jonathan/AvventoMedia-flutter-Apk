@@ -25,7 +25,7 @@ class _WatchPageState extends State<WatchPage> {
   late BetterPlayerController _betterPlayerController;
   final GlobalKey _betterPlayerKey = GlobalKey();
 
-  bool isPiPMode = false;
+
 
   @override
   void initState() {
@@ -55,12 +55,13 @@ class _WatchPageState extends State<WatchPage> {
           expandToFill: false,
           controlsConfiguration: BetterPlayerControlsConfiguration(
             enablePip: true,
-            loadingWidget: LoadingWidget(),
+            loadingWidget: const LoadingWidget(),
             showControls: true,
             playerTheme: BetterPlayerTheme.custom,
             customControlsBuilder: (controller, onPlayerVisibilityChanged) {
               return CustomPlayerControlsWidget(
                 controller: controller,
+                betterPlayerKey: _betterPlayerKey,
               );
             },
           ),
@@ -68,9 +69,6 @@ class _WatchPageState extends State<WatchPage> {
         betterPlayerDataSource: betterPlayerDataSource);
     // Get.back();
     // floating.enable(aspectRatio: const Rational(16,9));
-
-
-    requestPipAvailable();
 
   }
 
@@ -93,19 +91,6 @@ class _WatchPageState extends State<WatchPage> {
         ),
       ],
     );
-  }
-
-
-  Future<void> requestPipAvailable() async {
-    if(await _betterPlayerController.isPictureInPictureSupported()) {
-      _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
-      isPiPMode = true;
-    } else {
-      _betterPlayerController.disablePictureInPicture();
-    }
-  }
-  void togglePiPMode() {
-    isPiPMode = !isPiPMode;
   }
 
   @override
