@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../componets/custom_video_controls.dart';
 import '../widgets/text/show_more_desc.dart';
 
 class WatchPage extends StatefulWidget {
