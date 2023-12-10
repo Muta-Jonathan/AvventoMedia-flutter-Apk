@@ -1,10 +1,10 @@
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:better_player/better_player.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomPlayerControlsWidget extends StatefulWidget {
   final BetterPlayerController? controller;
-  final GlobalKey betterPlayerKey;
+  final GlobalKey<BetterPlayerControlsState> betterPlayerKey;
 
   const CustomPlayerControlsWidget({
     Key? key,
@@ -13,12 +13,12 @@ class CustomPlayerControlsWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CustomPlayerControlsWidgetState createState() => _CustomPlayerControlsWidgetState();
+  CustomPlayerControlsWidgetState createState() => CustomPlayerControlsWidgetState();
 }
 
-class _CustomPlayerControlsWidgetState extends State<CustomPlayerControlsWidget> with SingleTickerProviderStateMixin {
-late AnimationController _animationController;
-
+class CustomPlayerControlsWidgetState extends State<CustomPlayerControlsWidget> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  bool _isBuffering = false;
 
   @override
   void initState() {
@@ -28,6 +28,22 @@ late AnimationController _animationController;
       duration: const Duration(milliseconds: 300),
     );
     _controlVisibility();
+    // Listen to buffering updates
+    widget.controller?.videoPlayerController!.addListener(_onBufferingUpdate);
+  }
+
+  void _onBufferingUpdate() {
+    final isBuffering = widget.controller?.videoPlayerController!.value.isBuffering ?? false;
+    if (isBuffering != _isBuffering) {
+      setState(() {
+        _isBuffering = isBuffering;
+      });
+    }
+  }
+
+  void _showModal() {
+    widget.betterPlayerKey.currentState?.onShowMoreClicked();
+print("trying yup");
   }
 
     void _onTap() {
@@ -39,13 +55,21 @@ late AnimationController _animationController;
       widget.controller?.play();
       _animationController.forward(); // Start the animation for play
     }
+    _controlVisibility();
   }
 
-  void _controlVisibility() {
+void _controlVisibility() {
+  if (widget.controller!.isPlaying()!) {
     widget.controller?.setControlsVisibility(true);
-    Future.delayed(const Duration(seconds: 7))
-          .then((value) => widget.controller?.setControlsVisibility(false));
+    Future.delayed(const Duration(seconds: 3), () {
+      if (widget.controller!.isPlaying()!) {
+        widget.controller?.setControlsVisibility(false);
+      }
+    });
+  } else {
+    widget.controller?.setControlsVisibility(true);
   }
+}
 
 String _formatDuration(Duration? duration) {
     if (duration != null) {
@@ -60,6 +84,7 @@ String _formatDuration(Duration? duration) {
   @override
   void dispose() {
     _animationController.dispose();
+    widget.controller?.videoPlayerController!.removeListener(_onBufferingUpdate);
     super.dispose();
   }
 
@@ -69,7 +94,6 @@ String _formatDuration(Duration? duration) {
         initialData: false,
         stream: widget.controller?.controlsVisibilityStream,
         builder: (context, snapshot) {
-          bool isPlaying = widget.controller!.isPlaying() ?? false;
           return  InkWell(
             onTap: _controlVisibility,
             child: Visibility(
@@ -90,6 +114,12 @@ String _formatDuration(Duration? duration) {
                         ),
                       ),
                     ),
+                  Visibility(
+                    visible: _isBuffering,
+                    child: const Center(
+                      child: LoadingWidget(), // Show LoadingWidget if buffering
+                    ),
+                  ),
                   Positioned(
                     left: 10,
                     right: 10,
@@ -144,7 +174,7 @@ String _formatDuration(Duration? duration) {
                                     size: 24,
                                   ),
                                   onTap: () {
-
+                                    _showModal();
                                   },
                                 ),
                                 const SizedBox(width: 12),

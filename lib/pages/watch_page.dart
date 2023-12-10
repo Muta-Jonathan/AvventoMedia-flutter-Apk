@@ -1,4 +1,3 @@
-import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/controller/live_tv_controller.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
@@ -54,16 +53,20 @@ class _WatchPageState extends State<WatchPage> {
           allowedScreenSleep: false,
           expandToFill: false,
           controlsConfiguration: BetterPlayerControlsConfiguration(
+            showControlsOnInitialize: true,
+            enableSubtitles: false,
+            enablePlayPause: true,
+            enableOverflowMenu: true,
             enablePip: true,
+            playerTheme: BetterPlayerTheme.material,
             loadingWidget: const LoadingWidget(),
-            showControls: true,
-            playerTheme: BetterPlayerTheme.custom,
-            customControlsBuilder: (controller, onPlayerVisibilityChanged) {
-              return CustomPlayerControlsWidget(
-                controller: controller,
-                betterPlayerKey: _betterPlayerKey,
-              );
-            },
+            overflowMenuCustomItems: [
+              BetterPlayerOverflowMenuItem(
+                Icons.picture_in_picture_alt_rounded,
+                "Picture In Picture",
+                    () => _betterPlayerController.enablePictureInPicture(_betterPlayerKey)
+              )
+            ],
           ),
         ),
         betterPlayerDataSource: betterPlayerDataSource);
