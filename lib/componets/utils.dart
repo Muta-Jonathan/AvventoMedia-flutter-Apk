@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../widgets/dialog/coming_soon_widget.dart';
+
 class Utils {
   static double calculateAspectHeight(BuildContext context, width) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -57,6 +59,20 @@ class Utils {
 
   static void share(String shareBody) async {
     await Share.share(shareBody);
+  }
+
+  static void showComingSoonDialog(BuildContext context) {
+    showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: '',
+        transitionDuration: const Duration(microseconds: 400),
+        pageBuilder: (context,animation1, animation2) {
+          return Container();
+        },
+        transitionBuilder: (context,a1,a2,widget) {
+          return ComingSoonDialog(animation: a1,);
+        });
   }
 
 }

@@ -1,5 +1,6 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/dialog/coming_soon_widget.dart';
 import 'package:avvento_media/widgets/text/label_place_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,11 +34,11 @@ class _AudioListState extends State<AudioListScreen> {
     return Container(
       margin: const EdgeInsets.only(top: 16.0),
       width:  Utils.calculateWidth(context, 0.95),
-      height: Utils.calculateHeight(context, 0.9),
+      height: Utils.calculateHeight(context, 0.6),
       child: Column(
         children: [
           const SizedBox(height: 10),
-          const LabelPlaceHolder(title: AppConstants.spreaker),
+          LabelPlaceHolder(title: AppConstants.spreaker, moreLabel: "Show More", onMoreTap: () => Utils.showComingSoonDialog(context)),
           const Padding(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Divider(),

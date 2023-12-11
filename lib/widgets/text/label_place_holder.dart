@@ -4,8 +4,9 @@ class LabelPlaceHolder extends StatelessWidget {
   final String title;
   final String moreLabel;
   final Color? color;
+  final VoidCallback? onMoreTap;
   final double titleFontSize;
-  const LabelPlaceHolder({super.key, required this.title, this.titleFontSize = 15, this.moreLabel='', this.color});
+  const LabelPlaceHolder({super.key, required this.title, this.titleFontSize = 15, this.moreLabel='', this.color, this.onMoreTap});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +25,13 @@ class LabelPlaceHolder extends StatelessWidget {
               ),
             ),
           ),
-          Text(moreLabel,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.blue
+          GestureDetector(
+            onTap: onMoreTap,
+            child: Text(moreLabel,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.orange
+              ),
             ),
           ),
         ],)

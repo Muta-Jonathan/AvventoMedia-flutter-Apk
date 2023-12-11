@@ -75,21 +75,10 @@ class _LiveTvWidget extends State<LiveTvWidget> {
         // Navigate to the "livetvPage"
         Get.toNamed(Routes.getLiveTvRoute());
         } else {
-          showGeneralDialog(
-              context: context,
-              barrierDismissible: true,
-              barrierLabel: '',
-              transitionDuration: const Duration(microseconds: 400),
-              pageBuilder: (context,animation1, animation2) {
-                return Container();
-              },
-          transitionBuilder: (context,a1,a2,widget) {
-                return ComingSoonDialog(animation: a1,);
-          });
+          Utils.showComingSoonDialog(context);
         }
       },
-        child: LiveTvDetailsWidget(liveTvModel: liveTvModel,
-        ),
+        child: LiveTvDetailsWidget(liveTvModel: liveTvModel,),
     );
   }
 }
