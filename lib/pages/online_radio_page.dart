@@ -127,7 +127,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
           IconButton(
             icon: const Icon(CupertinoIcons.share),
             onPressed: () {
-              Utils.share("Take a look at AvventoRadio 💫 streaming now, \n ${AppConstants.webRadioUrl}");
+              Utils.share("${AppConstants.shareStream}, \n ${AppConstants.webRadioUrl}");
             },
           ),
         ],

@@ -31,7 +31,6 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Theme.of(context).colorScheme.background,
               floating: true,
               title: const Text(AppConstants.appName),
-
             ),
             const SliverToBoxAdapter(
               child: Column(

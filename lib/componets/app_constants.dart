@@ -54,6 +54,31 @@ class AppConstants {
   static const String feedBack = "FEED BACK";
   static const String report = "Report a Problem";
 
+  static const String paypalButtonId = "UYJVUZRSBUCYY";
+  static const String donateTitle = "Give a Lift to the Gospel 🚀🌍";
+  static const String donateMessage = "Every contribution matters in our mission to fly the gospel to the whole world. Join us today!.";
+
+
   /// ***************** PRAYER REQUEST PAGE ****************
+  static const String prayerRequestTitle = "\"Rejoice evermore. Pray without ceasing....\" 1 Thessalonians 5:16-23";
+  static const String prayerRequestHintName = "Enter your name";
+  static const String prayerRequestName = "Please enter your name";
+  static const String prayerRequestHintPhone = "Phone Number";
+  static const String prayerRequestPhone = "Please enter your correct number";
+  static const String prayerRequestHintEmail = "Enter your email";
+  static const String prayerRequestEmail = "Please enter a correct email";
+  static const String prayerRequestHintPrayFor = "Pray For";
+  static const String prayerRequestPrayFor = "Please enter what you want to join with you in Prayer";
+  static const String prayerRequestMessage = "Please enter your Prayer Request";
+
+  static const String suceessful = "Successful";
+  static const String prayerRequestError = "Error sending your Prayer Request 🚫";
+  static const String error = "Oops need to try Again";
+  static const String send = "SEND";
+
+
+  /// ***************** SHARE MESSAGE ****************
+  static const String shareStream = "Take a look at AvventoRadio 💫 streaming now";
+  static const String webTvUrl = "https://avventohome.org/media/tv/";
 
 }

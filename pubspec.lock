@@ -102,7 +102,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: c641e80ce883e1b4248887ef7bb3d909386713b3
+      resolved-ref: ecc727a35ba7b74d3efa2893f604f07dda36b797
       url: "https://github.com/Muta-Jonathan/betterplayer.git"
     source: git
     version: "0.0.83"
@@ -598,6 +598,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.9"
+  like_button:
+    dependency: "direct main"
+    description:
+      name: like_button
+      sha256: "08e6a45b78888412df5d351786c550205ad3a677e72a0820d5bbc0b063c8a463"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   lints:
     dependency: transitive
     description:

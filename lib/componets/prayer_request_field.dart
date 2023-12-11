@@ -1,3 +1,4 @@
+import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:email_validator/email_validator.dart';
@@ -49,7 +50,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          TextOverlay(label: "\"Rejoice evermore. Pray without ceasing....\" 1 Thessalonians 5:16-23",
+          TextOverlay(label: AppConstants.prayerRequestTitle,
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
           ),
@@ -64,7 +65,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
                 CupertinoIcons.person,
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              hintText: 'Enter your name',
+              hintText: AppConstants.prayerRequestHintName,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Theme.of(context).colorScheme.onPrimary,
@@ -77,7 +78,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
             ),
             validator: (value) {
               if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
-                return 'Please enter your name';
+                return AppConstants.prayerRequestName;
               }
               return null;
             },
@@ -92,7 +93,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
               hoverColor: Theme.of(context).colorScheme.onPrimary,
               filled: true,
               fillColor: Theme.of(context).colorScheme.secondary,
-              hintText: 'Phone Number',
+              hintText: AppConstants.prayerRequestHintPhone,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Theme.of(context).colorScheme.onPrimary,
@@ -105,7 +106,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
             ),
             validator: (value) {
               if (value == null) {
-                return 'Please enter your correct number';
+                return AppConstants.prayerRequestPhone;
               }
               return null;
             },
@@ -124,7 +125,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
                 CupertinoIcons.mail,
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              hintText: 'Enter your email',
+              hintText: AppConstants.prayerRequestHintEmail,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Theme.of(context).colorScheme.onPrimary,
@@ -137,7 +138,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
             ),
             validator: (email) {
               if (email!.isEmpty || !EmailValidator.validate(email)) {
-                return 'Please enter a correct email';
+                return AppConstants.prayerRequestEmail;
               }
               return null;
             },
@@ -156,7 +157,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
                 FontAwesomeIcons.personPraying,
                 color: Theme.of(context).colorScheme.onPrimary,
               ),
-              hintText: 'Pray For',
+              hintText: AppConstants.prayerRequestHintPrayFor,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Theme.of(context).colorScheme.onPrimary,
@@ -169,7 +170,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
             ),
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter what you want to join with you in Prayer';
+                return AppConstants.prayerRequestPrayFor;
               }
               return null;
             },
@@ -191,7 +192,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
               ),
-              hintText: 'Prayer Request',
+              hintText: AppConstants.prayerRequest,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(
                   color: Theme.of(context).colorScheme.onPrimary,
@@ -205,7 +206,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
             maxLines: 6,
             validator: (value) {
               if (value!.isEmpty) {
-                return 'Please enter your Prayer Request';
+                return AppConstants.prayerRequestMessage;
               }
               return null;
             },
@@ -227,9 +228,9 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
                       behavior: SnackBarBehavior.floating,
                       backgroundColor: Colors.transparent,
                       content: AwesomeSnackbarContent(
-                        title: result ? 'Successful' : 'Oops need to try Again',
+                        title: result ? AppConstants.suceessful : AppConstants.error,
                         message:
-                        result ? 'Hey ${sendEmailData.name}, Prayer Request sent successfully 🎉 ' : 'Error sending your Prayer Request 🚫',
+                        result ? 'Hey ${sendEmailData.name}, Prayer Request sent successfully 🎉 ' :  AppConstants.prayerRequestError,
 
                         /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
                         contentType: result ? ContentType.success :  ContentType.failure,
@@ -255,7 +256,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
                 minimumSize: MaterialStateProperty.all(const Size(double.infinity, 40)),
                 backgroundColor: MaterialStateProperty.all(Colors.orange),
               ),
-              child: const Text('SEND'),
+              child: const Text(AppConstants.send),
           ),
         ],
       ),
