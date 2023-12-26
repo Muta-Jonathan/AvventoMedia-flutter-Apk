@@ -21,8 +21,8 @@ class AppConstants {
   static const String radioAPI = "radio";
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const String showId = '5820368';
-  static const azuracastAPI ='https://radio1.avventohome.org/api/nowplaying/avventoradio';
-  static const azuracastWebSocketAPI ='wss://radio1.avventohome.org/api/live/nowplaying/websocket';
+  static const azuracastAPI ='https://radio1.avventomedia.org/api/nowplaying/avventoradio';
+  static const azuracastWebSocketAPI ='wss://radio1.avventomedia.org/api/live/nowplaying/websocket';
   static const avventoEmail ='avventohomeproductions@gmail.com';
 
 
@@ -31,19 +31,19 @@ class AppConstants {
   static const String general = "GENERAL";
   static const String prayerRequest = "Prayer Request";
   static const String avventoWebsiteTitle = "Visit AvventoMedia Website";
-  static const String avventoWebsite = "https://avventohome.org/avvento/";
+  static const String avventoWebsite = "https://avventomedia.org/avvento/";
   static const String youtube = "YouTube";
   static const String youtubeWebsite = "https://www.youtube.com/@AvventoProductions";
 
   static const String radio = "RADIO";
   static const String webRadio = "Avvento Web Radio";
-  static const String webRadioUrl = "https://avventohome.org/media/avventoradio/";
+  static const String webRadioUrl = "https://avventomedia.org/media/avventoradio/";
 
   static const String radioSchedule = "AvventoRadio Schedule";
-  static const String radioScheduleUrl = "https://avventohome.org/avvento/avventoradio-schedule/";
+  static const String radioScheduleUrl = "https://avventomedia.org/avventoradio-schedule/";
 
   static const String previousBroadcasts = "Previous Broadcasts";
-  static const String previousBroadcastsUrl = "https://avventohome.org/avvento/previous-broadcasts/";
+  static const String previousBroadcastsUrl = "https://avventomedia.org/previous-broadcasts/";
   static const String avventoRadioTelegram = "Telegram Listeners";
   static const String avventoRadioTelegramUrl = "https://t.me/avventoRadio";
 
@@ -55,6 +55,7 @@ class AppConstants {
   static const String report = "Report a Problem";
 
   static const String paypalButtonId = "UYJVUZRSBUCYY";
+  static const String patreonName = "avventomedia";
   static const String donateTitle = "Give a Lift to the Gospel 🚀🌍";
   static const String donateMessage = "Every contribution matters in our mission to fly the gospel to the whole world. Join us today!.";
 
@@ -79,6 +80,7 @@ class AppConstants {
 
   /// ***************** SHARE MESSAGE ****************
   static const String shareStream = "Take a look at AvventoRadio 💫 streaming now";
-  static const String webTvUrl = "https://avventohome.org/media/tv/";
+  static const String shareTvStream = "Come watch with me";
+  static const String webTvUrl = "https://avventomedia.org/media/tv/";
 
 }

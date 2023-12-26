@@ -175,7 +175,7 @@ class _WatchPageState extends State<WatchPage> {
                           icon: const Icon(CupertinoIcons.share),
                           onPressed: () {
                             // Implement share functionality here
-                            Utils.share("${AppConstants.shareStream}, \n ${AppConstants.webTvUrl}");
+                            Utils.share("${AppConstants.shareTvStream} _ ${liveTvController.selectedTv.value!.name} , \n ${AppConstants.webTvUrl}");
                           },
                         ),
                       ],
