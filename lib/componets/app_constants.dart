@@ -44,7 +44,7 @@ class AppConstants {
 
   static const String previousBroadcasts = "Previous Broadcasts";
   static const String previousBroadcastsUrl = "https://avventomedia.org/previous-broadcasts/";
-  static const String avventoRadioTelegram = "Telegram Listeners";
+  static const String avventoRadioTelegram = "Join Us on Telegram";
   static const String avventoRadioTelegramUrl = "https://t.me/avventoRadio";
 
   static const String preferences = "PREFERENCES";
