@@ -8,8 +8,6 @@ import 'package:floating/floating.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:like_button/like_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../componets/utils.dart';
 import '../widgets/text/show_more_desc.dart';
@@ -73,9 +71,6 @@ class _WatchPageState extends State<WatchPage> {
           ),
         ),
         betterPlayerDataSource: betterPlayerDataSource);
-    // Get.back();
-    // floating.enable(aspectRatio: const Rational(16,9));
-    _loadLikeState();
   }
 
   Widget imagePlaceHolder(BuildContext context, String imageUrl) {
@@ -98,29 +93,6 @@ class _WatchPageState extends State<WatchPage> {
       ],
     );
   }
-
-  // Load the previous like state from SharedPreferences
-  _loadLikeState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isLiked = prefs.getBool('isLiked') ?? false;
-    });
-  }
-
-  Future<bool> onLikeButtonTapped(bool value) async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    /// send your request here
-    // final bool success= await sendRequest();
-    isLiked = !value;
-    prefs.setBool('isLiked', isLiked);
-
-    /// if failed, you can do nothing
-    //return value? !isLiked:isLiked;
-
-    return !value;
-  }
-
 
   @override
   void dispose() {
@@ -181,19 +153,6 @@ class _WatchPageState extends State<WatchPage> {
                       ],
                     ),
                     const SizedBox(height: 12,),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        LikeButton(
-                          onTap: onLikeButtonTapped,
-                          likeBuilder: (isTapped) => Icon(
-                            Icons.favorite_rounded,
-                            color: isTapped || isLiked ? Colors.red : Colors.grey,
-                            size: 30,
-                            ),
-                        ),
-                      ],
-                    ),
                     ShowMoreDescription(description: selectedTv.description,),
                   ],
                 ),
