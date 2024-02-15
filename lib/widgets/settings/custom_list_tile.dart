@@ -10,13 +10,13 @@ class CustomListTile extends StatefulWidget {
   final VoidCallback? onTap;
 
   const CustomListTile({
-    Key? key,
+    super.key,
     required this.label,
     required this.leadingIcon,
     required this.isSwitch,
     this.onSwitchChanged,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   CustomListTileState createState() => CustomListTileState();

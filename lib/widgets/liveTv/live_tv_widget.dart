@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 
 import '../../apis/firestore_service_api.dart';
 import '../../routes/routes.dart';
-import '../dialog/coming_soon_widget.dart';
 import '../text/label_place_holder.dart';
 import 'live_tv_details_widget.dart';
 

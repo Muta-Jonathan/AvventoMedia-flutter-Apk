@@ -19,7 +19,7 @@ import '../models/musicplayermodels/music_player_position.dart';
 import '../widgets/audio_players/controls.dart';
 
 class PodcastPage extends StatefulWidget {
-  const PodcastPage({Key? key}) : super(key: key);
+  const PodcastPage({super.key});
 
   @override
   PodcastPageState createState() => PodcastPageState();

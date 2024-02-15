@@ -8,7 +8,7 @@ import '../routes/routes.dart';
 import '../widgets/explore/home_explore_screen.dart';
 
 class ListenPage extends StatefulWidget {
-  const ListenPage({Key? key}) : super(key: key);
+  const ListenPage({super.key});
 
   @override
   ListenPageState createState() => ListenPageState();

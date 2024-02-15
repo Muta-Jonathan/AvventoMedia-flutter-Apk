@@ -8,13 +8,13 @@ class BoxedIcon extends StatelessWidget {
   final Color backgroundColor;
 
   const BoxedIcon({
-    Key? key,
+    super.key,
     this.icon = CupertinoIcons.mic,
     this.iconColor = const Color.fromARGB(255, 22, 20, 36),
     this.borderRadius = 5.0,
     this.iconSize = 20.5,
     required this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,5 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
-import 'package:avvento_media/widgets/dialog/coming_soon_widget.dart';
 import 'package:avvento_media/widgets/text/label_place_holder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
