@@ -121,6 +121,27 @@ class ProfilePage extends StatelessWidget {
                   onTap: () => Utils.openBrowserURL(url: AppConstants.avventoRadioTelegramUrl, inApp: true),
                 ),
                 const SizedBox(height: 35,),
+                // Social media section
+                LabelPlaceHolder(title: AppConstants.socialMedia, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                CustomListTile(
+                  label: AppConstants.instagram,
+                  leadingIcon: FontAwesomeIcons.instagram,
+                  isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.instagramWebsite, inApp: true),
+                ),
+                CustomListTile(
+                  label: AppConstants.tiktok,
+                  leadingIcon: FontAwesomeIcons.tiktok,
+                  isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.tiktokWebsite, inApp: true),
+                ),
+                CustomListTile(
+                  label: AppConstants.facebook,
+                  leadingIcon: FontAwesomeIcons.facebook,
+                  isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.facebookWebsite, inApp: true),
+                ),
+                const SizedBox(height: 35,),
                 // Feedback section
                 LabelPlaceHolder(title: AppConstants.feedBack, color: Theme.of(context).colorScheme.onSecondaryContainer),
                 CustomListTile(

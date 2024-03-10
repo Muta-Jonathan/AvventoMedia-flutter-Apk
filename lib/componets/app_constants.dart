@@ -53,6 +53,14 @@ class AppConstants {
   static const String notifications = "Allow notifications";
   static const String darkMode = "Dark Mode";
 
+  static const String socialMedia = "SOCIAL MEDIA";
+  static const String instagram = "Follow us on Instagram";
+  static const String instagramWebsite = "https://www.instagram.com/avventomedia_official/";
+  static const String tiktok = "Follow us on Tiktok";
+  static const String tiktokWebsite = "https://www.tiktok.com/@avventomedia_official";
+  static const String facebook = "Like us on Facebook";
+  static const String facebookWebsite = "https://www.facebook.com/AvventoProductions/";
+
   static const String feedBack = "FEED BACK";
   static const String report = "Report a Problem";
 
@@ -83,6 +91,6 @@ class AppConstants {
   /// ***************** SHARE MESSAGE ****************
   static const String shareStream = "Take a look at AvventoRadio 💫 streaming now";
   static const String shareTvStream = "Come watch with me";
-  static const String webTvUrl = "https://avventomedia.org/media/tv/";
+  static const String webTvUrl = "https://avventomedia.org/watch-live";
 
 }
