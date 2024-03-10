@@ -25,9 +25,13 @@ class ControlsState extends State<Controls>
 
     widget.audioPlayerController.audioPlayer.playerStateStream.listen((playerState) {
       if (playerState.playing) {
-        _controller.forward();
+        if(mounted) {
+          _controller.forward();
+        }
       } else {
-        _controller.reverse();
+        if(mounted) {
+          _controller.reverse();
+        }
       }
     });
   }
