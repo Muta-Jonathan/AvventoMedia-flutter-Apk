@@ -71,14 +71,16 @@ class ShowMoreDescriptionState extends State<ShowMoreDescription> {
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              SingleChildScrollView(
-                                child: Container(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: TextOverlay(
-                                    label: widget.description,
-                                    fontSize: 16,
-                                    maxLines: 150, // Show all lines in the bottom sheet
-                                    color: Theme.of(context).colorScheme.onSecondary,
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: TextOverlay(
+                                      label: widget.description,
+                                      fontSize: 16,
+                                      maxLines: 150, // Show all lines in the bottom sheet
+                                      color: Theme.of(context).colorScheme.onSecondary,
+                                    ),
                                   ),
                                 ),
                               ),

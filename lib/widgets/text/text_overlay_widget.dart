@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TextOverlay extends StatelessWidget {
   final String label;
@@ -25,17 +27,27 @@ class TextOverlay extends StatelessWidget {
     String displayLabel = allCaps ? label.toUpperCase() : label;
     return Padding(
       padding: const EdgeInsets.only(left: 5,bottom: 2),
-      child: Text(
-        displayLabel,
-          maxLines: maxLines,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: fontWeight,
-            color: color,
-            decoration: underline ? TextDecoration.underline : TextDecoration.none,
-          ),
+      child: Linkify(
+        onOpen: (link) async {
+          if (!await launchUrl(Uri.parse(link.url))) {
+            throw Exception('Could not launch ${link.url}');
+          }
+        },
+        text: displayLabel,
+        overflow: TextOverflow.ellipsis,
+        maxLines: maxLines,
+        style: TextStyle(
+          fontSize: fontSize,
+          fontWeight: fontWeight,
+          color: color,
+          decoration: underline ? TextDecoration.underline : TextDecoration.none,
         ),
+        options: const LinkifyOptions(humanize: true),
+        linkStyle: const TextStyle(
+            color: Colors.orange,
+            fontStyle: FontStyle.italic
+        ),
+      )
     );
   }
 }
