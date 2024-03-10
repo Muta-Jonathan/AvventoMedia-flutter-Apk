@@ -2,10 +2,13 @@ import 'package:avvento_media/widgets/audio_players/audio_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import '../componets/app_constants.dart';
 import '../routes/routes.dart';
 import '../widgets/explore/home_explore_screen.dart';
+import '../widgets/providers/programs_provider.dart';
+import '../widgets/providers/spreaker_data_provider.dart';
 
 class ListenPage extends StatefulWidget {
   const ListenPage({super.key});
@@ -18,13 +21,19 @@ class ListenPageState extends State<ListenPage> {
   @override
   Widget build(BuildContext context) {
     Future<void> refreshData() async {
-      // Add your data refresh logic here
+      // Fetch fresh data for HomeExploreScreen
+      await Provider.of<ProgramsProvider>(context, listen: false).fetchData();
+      if (!context.mounted) return;
+      // Fetch fresh data for AudioListScreen
+      await Provider.of<SpreakerEpisodeProvider>(context, listen: false).fetchEpisodes();
+
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: RefreshIndicator(
         backgroundColor: Colors.white,
+        color: Colors.orange,
         onRefresh: refreshData,
         child: CustomScrollView(
           slivers: <Widget>[

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/models/exploremodels/programs.dart';
+import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/explore/home_explore_details_screen.dart';
 import 'package:avvento_media/widgets/text/label_place_holder.dart';
 import 'package:flutter/cupertino.dart';
@@ -58,19 +59,23 @@ class _ExploreScreenState extends State<HomeExploreScreen> {
   Widget buildListView(BuildContext context, ProgramsProvider programsProvider) {
     final int itemCount = programsProvider.jobList.length;
 
-    return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemCount: itemCount > 0 ? min(itemsToDisplay, itemCount) + 1 : 0,
-      itemBuilder: (BuildContext context, int index) {
-        if (index < min(itemsToDisplay, itemCount)) {
-          return buildExploreDetailsScreen(programsProvider.jobList[index]);
-        } else if (index == min(itemsToDisplay, itemCount)) {
-          return itemCount > itemsToDisplay ? buildShowMoreItem(context) : const SizedBox.shrink();
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
-    );
+    if (itemCount > 0) {
+      return ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: itemCount > 0 ? min(itemsToDisplay, itemCount) + 1 : 0,
+        itemBuilder: (BuildContext context, int index) {
+          if (index < min(itemsToDisplay, itemCount)) {
+            return buildExploreDetailsScreen(programsProvider.jobList[index]);
+          } else if (index == min(itemsToDisplay, itemCount)) {
+            return itemCount > itemsToDisplay ? buildShowMoreItem(context) : const SizedBox.shrink();
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      );
+    } else {
+      return const LoadingWidget();
+    }
   }
 
   Widget buildFirstItem(BuildContext context, index) {
