@@ -44,16 +44,20 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
           if (snapshot.hasData) {
             List liveTvList = snapshot.data!.docs;
 
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: liveTvList.length,
-              itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot documentSnapshot = liveTvList[index];
-                RadioModel radioModel = RadioModel.fromSnapShot(documentSnapshot);
+            if (liveTvList.isNotEmpty) {
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: liveTvList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  DocumentSnapshot documentSnapshot = liveTvList[index];
+                  RadioModel radioModel = RadioModel.fromSnapShot(documentSnapshot);
 
-                return  buildLiveTvDetailsScreen(radioModel);
-              },
-            );
+                  return  buildLiveTvDetailsScreen(radioModel);
+                },
+              );
+            } else {
+              return const LoadingWidget();
+            }
           } else {
             return const LoadingWidget();
           }

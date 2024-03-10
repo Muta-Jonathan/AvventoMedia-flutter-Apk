@@ -39,18 +39,21 @@ class _HightlightsWidget extends State<HightlightsWidget> {
         builder: (_, snapshot)  {
           if (snapshot.hasData) {
             List highlightList = snapshot.data!.docs;
+            if (highlightList.isNotEmpty) {
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: highlightList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  DocumentSnapshot documentSnapshot = highlightList[index];
 
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: highlightList.length,
-              itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot documentSnapshot = highlightList[index];
+                  HighlightModel highlightModel = HighlightModel.fromSnapShot(documentSnapshot);
 
-                HighlightModel highlightModel = HighlightModel.fromSnapShot(documentSnapshot);
-
-                return  buildHighlightDetailsScreen(highlightModel);
-              },
-            );
+                  return  buildHighlightDetailsScreen(highlightModel);
+                },
+              );
+            } else {
+              return const LoadingWidget();
+            }
           } else {
             return const LoadingWidget();
           }

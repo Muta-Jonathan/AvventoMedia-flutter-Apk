@@ -47,17 +47,22 @@ class _LiveTvWidget extends State<LiveTvWidget> {
           if (snapshot.hasData) {
             List liveTvList = snapshot.data!.docs;
 
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: liveTvList.length,
-              itemBuilder: (BuildContext context, int index) {
-                DocumentSnapshot documentSnapshot = liveTvList[index];
+            if (liveTvList.isNotEmpty) {
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: liveTvList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  DocumentSnapshot documentSnapshot = liveTvList[index];
 
-                LiveTvModel liveTvModel = LiveTvModel.fromSnapShot(documentSnapshot);
+                  LiveTvModel liveTvModel = LiveTvModel.fromSnapShot(documentSnapshot);
 
-                return  buildLiveTvDetailsScreen(liveTvModel);
-              },
-            );
+                  return  buildLiveTvDetailsScreen(liveTvModel);
+                },
+              );
+            } else {
+              return const LoadingWidget();
+            }
+
           } else {
             return const LoadingWidget();
           }
