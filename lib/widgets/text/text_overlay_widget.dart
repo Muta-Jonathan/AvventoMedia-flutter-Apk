@@ -25,6 +25,7 @@ class TextOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String displayLabel = allCaps ? label.toUpperCase() : label;
+    displayLabel = displayLabel.replaceAll('/n', '\n\n');
     return Padding(
       padding: const EdgeInsets.only(left: 5,bottom: 2),
       child: Linkify(
