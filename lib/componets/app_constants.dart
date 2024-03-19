@@ -64,8 +64,7 @@ class AppConstants {
   static const String feedBack = "FEED BACK";
   static const String report = "Report a Problem";
 
-  static const String paypalButtonId = "UYJVUZRSBUCYY";
-  static const String patreonName = "avventomedia";
+  static const String kofiName = "avventomedia";
   static const String donateTitle = "Give a Lift to the Gospel 🚀🌍";
   static const String donateMessage = "Every contribution matters in our mission to fly the gospel to the whole world. Join us today!.";
 
