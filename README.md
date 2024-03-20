@@ -3,7 +3,7 @@
 
 ### AvventoMedia is Flying the Gospel to the Whole World
 
-AvventoMedia is dedicated to spreading the gospel globally. Its content is branded as AvventoProductions on various platforms including YouTube, Facebook, SoundCloud, and Mixcloud. Additionally, it can be accessed on AvventoRadio at [avventomedia.org](https://avventomedia.org) and on free-to-air 3ABN Uganda Television.
+AvventoMedia is dedicated to spreading the gospel globally. Its content is branded as AvventoProductions on various platforms including YouTube, Facebook, SoundCloud, and Mixcloud. Additionally, it can be accessed on AvventoRadio at [radio.avventomedia.org](https://radio.avventomedia.org) and on free-to-air 3ABN Uganda Television.
 
 ## Features
 
@@ -31,6 +31,8 @@ You can download the AvventoMedia app from the Play Store [here](playstore_link_
 - Added social media links
 - Added PrayerRequest section and feedback
 - Included AvventoMedia website links
+
+---
 
 ### Todos
 - [ ] Improve user interface design.
