@@ -66,7 +66,7 @@ class AppConstants {
 
   static const String kofiName = "avventomedia";
   static const String donateTitle = "Give a Lift to the Gospel 🚀🌍";
-  static const String donateMessage = "Every contribution matters in our mission to fly the gospel to the whole world. Join us today!.";
+  static const String donateMessage = "Your contribution means a lot as we fly the gospel to the whole world. Please consider donating to us today.";
 
 
   /// ***************** PRAYER REQUEST PAGE ****************
