@@ -26,6 +26,11 @@ You can download the AvventoMedia app from the Play Store [here](playstore_link_
 - Added AvventoRadio feature.
 - Included 3ABN streaming TV sections.
 - Implemented AvventoRadio updates.
+- Implemented AvventoRadio podcast programs | recorded (Spreaker)
+- Added Donate option by kofi
+- Added social media links
+- Added PrayerRequest section and feedback
+- Included AvventoMedia website links
 
 ### Todos
 - [ ] Improve user interface design.
