@@ -67,7 +67,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1030511699581',
     projectId: 'avventoradioflutter',
     storageBucket: 'avventoradioflutter.appspot.com',
-    iosBundleId: 'media.avventohome.app',
+    iosBundleId: 'tv.avventomedia.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -76,6 +76,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1030511699581',
     projectId: 'avventoradioflutter',
     storageBucket: 'avventoradioflutter.appspot.com',
-    iosBundleId: 'media.avventohome.app.RunnerTests',
+    iosBundleId: 'tv.avventomedia.app.RunnerTests',
   );
 }

@@ -1,4 +1,4 @@
-package media.avventohome.app;
+package tv.avventomedia.app;
 
 import io.flutter.embedding.android.FlutterActivity;
 

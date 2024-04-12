@@ -37,7 +37,7 @@ class _AudioListState extends State<AudioListScreen> {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          LabelPlaceHolder(title: AppConstants.spreaker, moreLabel: AppConstants.showMore, onMoreTap: () => Utils.showComingSoonDialog(context)),
+          const LabelPlaceHolder(title: AppConstants.spreaker,),
           const Padding(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Divider(),
