@@ -15,6 +15,7 @@ class AppConstants {
   static const String exitApp = "Tap back again to exit!";
   static const String noInternet = "OOPS! IT SEEMS YOU'RE NOT CONNECTED TO THE INTERNET.";
   static const String showMore = "Show More";
+  static const String from = "from";
 
 
   /// ***************** API ****************

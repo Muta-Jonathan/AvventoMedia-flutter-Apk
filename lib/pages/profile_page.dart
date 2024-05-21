@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../componets/app_constants.dart';
 import '../componets/utils.dart';
 import '../routes/routes.dart';
+import '../widgets/settings/app_creaters_widget.dart';
 import '../widgets/settings/app_version_widget.dart';
 import '../widgets/settings/custom_list_tile.dart';
 import '../widgets/text/label_place_holder.dart';
@@ -145,6 +146,11 @@ class ProfilePage extends StatelessWidget {
                   leadingIcon: CupertinoIcons.flag,
                   isSwitch: false,
                   onTap: () => Utils.openEmail(),
+                ),
+                const SizedBox(height: 20,),
+                //app creaters
+                const Center(
+                  child: AppCreatorsWidget(),
                 ),
                 const SizedBox(height: 10,),
                 // app version
