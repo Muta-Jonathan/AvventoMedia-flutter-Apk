@@ -1,6 +1,8 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:flutter/material.dart';
 
+import '../text/text_coloriser_widget.dart';
+
 class AppCreatorsWidget extends StatelessWidget {
   const AppCreatorsWidget({super.key});
 
@@ -20,14 +22,7 @@ class AppCreatorsWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4,),
-          const Text(
-            AppConstants.appName,
-            style: TextStyle(
-              fontSize: 15.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
-            ),
-          ),
+          const TextColoriser(text: AppConstants.appName,),
         ],
       ),
     );

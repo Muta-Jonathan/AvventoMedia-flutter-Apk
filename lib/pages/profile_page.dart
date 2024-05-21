@@ -148,11 +148,13 @@ class ProfilePage extends StatelessWidget {
                   onTap: () => Utils.openEmail(),
                 ),
                 const SizedBox(height: 20,),
+
+                const SizedBox(height: 10,),
                 //app creaters
                 const Center(
                   child: AppCreatorsWidget(),
                 ),
-                const SizedBox(height: 10,),
+                const SizedBox(height: 12,),
                 // app version
                 const Center(
                   child: AppVersionWidget(),
