@@ -52,7 +52,7 @@ Future<void> main() async {
     ),
   );
 
-  DependencyInjection.init();
+  //DependencyInjection.init();
 }
 
 class MyApp extends StatelessWidget {

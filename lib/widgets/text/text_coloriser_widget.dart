@@ -32,7 +32,7 @@ class TextColoriser extends StatelessWidget {
         displayFullTextOnTap: true,
         repeatForever: true,
         stopPauseOnTap: true,
-        pause: const Duration(seconds: 5),
+        pause: const Duration(seconds: 2),
     );
   }
 }
