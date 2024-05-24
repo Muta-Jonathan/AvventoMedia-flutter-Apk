@@ -25,7 +25,7 @@ class ListenPageState extends State<ListenPage> {
       await Provider.of<ProgramsProvider>(context, listen: false).fetchData();
       if (!context.mounted) return;
       // Fetch fresh data for AudioListScreen
-      await Provider.of<SpreakerEpisodeProvider>(context, listen: false).fetchEpisodes();
+      await Provider.of<SpreakerEpisodeProvider>(context, listen: false).fetchEpisodesWithLimits();
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }

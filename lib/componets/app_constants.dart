@@ -4,7 +4,7 @@ class AppConstants {
   static const String nowPlaying = "Now Playing";
   static const String avventoSlogan = "Flying the Gospel to the Whole World!";
   static const String missNot = "Programs You shouldn't miss This Week";
-  static const String spreaker = 'Podcasts';
+  static const String podcasts = 'Podcasts';
   static const String liveTv = "LIVE TV";
   static const String liveNow = "LIVE NOW";
   static const String liveRadio = "Radio";
@@ -17,6 +17,9 @@ class AppConstants {
   static const String showMore = "Show More";
   static const String from = "from";
 
+  /// ***************** PADDING ****************
+  static const double left_main = 20;
+  static const double right_main = 12;
 
   /// ***************** API ****************
   static const String highlightsAPI = "highlights";

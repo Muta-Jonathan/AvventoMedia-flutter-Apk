@@ -80,7 +80,7 @@ class PodcastPageState extends State<PodcastPage> {
             height: 30,
             child: Center(
               child: TextOverlay(
-                label: AppConstants.spreaker,
+                label: AppConstants.podcasts,
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 18,
               ),

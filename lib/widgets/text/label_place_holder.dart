@@ -1,17 +1,27 @@
+import 'package:avvento_media/componets/app_constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LabelPlaceHolder extends StatelessWidget {
   final String title;
-  final String moreLabel;
+  final bool? moreIcon; // Corrected Bool to bool
   final Color? color;
   final VoidCallback? onMoreTap;
   final double titleFontSize;
-  const LabelPlaceHolder({super.key, required this.title, this.titleFontSize = 15, this.moreLabel='', this.color, this.onMoreTap});
+
+  const LabelPlaceHolder({
+    super.key,
+    required this.title,
+    this.titleFontSize = 15,
+    this.moreIcon,
+    this.color,
+    this.onMoreTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.only(left: 20),
+        padding: const EdgeInsets.only(left: AppConstants.left_main, right: AppConstants.right_main),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -25,16 +35,17 @@ class LabelPlaceHolder extends StatelessWidget {
               ),
             ),
           ),
-          GestureDetector(
-            onTap: onMoreTap,
-            child: Text(moreLabel,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.orange
+          // check for true value
+          if (moreIcon != null && moreIcon!)
+            GestureDetector(
+              onTap: onMoreTap,
+              child: Icon(
+                CupertinoIcons.arrow_up_right,
+                color: Theme.of(context).colorScheme.onPrimary,
               ),
             ),
-          ),
-        ],)
-      );
+        ],
+      ),
+    );
   }
 }

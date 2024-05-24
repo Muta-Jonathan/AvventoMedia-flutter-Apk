@@ -7,9 +7,18 @@ class SpreakerEpisodeProvider extends ChangeNotifier {
 
   List<SpreakerEpisode> get episodes => _episodes;
 
-  Future<void> fetchEpisodes() async {
+  Future<void> fetchAllEpisodes() async {
     try {
       _episodes = await FetchSpreakerAPI.fetchEpisodesForShow();
+      notifyListeners();
+    } catch (error) {
+      // Handle error
+    }
+  }
+
+  Future<void> fetchEpisodesWithLimits() async {
+    try {
+      _episodes = await FetchSpreakerAPI.fetchEpisodesForShow(4);
       notifyListeners();
     } catch (error) {
       // Handle error

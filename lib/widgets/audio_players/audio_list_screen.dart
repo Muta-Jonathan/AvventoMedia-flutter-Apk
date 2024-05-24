@@ -25,21 +25,21 @@ class _AudioListState extends State<AudioListScreen> {
   void initState() {
     super.initState();
     // Fetch episodes using the provider and listen to changes
-    Provider.of<SpreakerEpisodeProvider>(context, listen: false).fetchEpisodes();
+    Provider.of<SpreakerEpisodeProvider>(context, listen: false).fetchEpisodesWithLimits();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 16.0),
+      margin: const EdgeInsets.only(top: 8.0),
       width:  Utils.calculateWidth(context, 0.95),
-      height: Utils.calculateHeight(context, 0.6),
+      height: Utils.calculateHeight(context, 0.42),
       child: Column(
         children: [
           const SizedBox(height: 10),
-          const LabelPlaceHolder(title: AppConstants.spreaker,),
+          LabelPlaceHolder(title: AppConstants.podcasts, moreIcon: true, onMoreTap: () => Utils.showComingSoonDialog(context)),
           const Padding(
-            padding: EdgeInsets.only(left: 20, right: 20),
+            padding: EdgeInsets.only(left: AppConstants.left_main, right: AppConstants.right_main),
             child: Divider(),
           ),
           Expanded(child: buildListView(context)),
@@ -56,7 +56,7 @@ class _AudioListState extends State<AudioListScreen> {
           return const LoadingWidget();
         } else {
           return ListView.builder(
-            scrollDirection: Axis.vertical,
+            scrollDirection: Axis.horizontal,
             itemCount: episodeProvider.episodes.length,
             itemBuilder: (BuildContext context, int index) {
               return buildSpreakerDetailsScreen(episodeProvider.episodes[index]);

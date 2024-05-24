@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FetchSpreakerAPI {
-  static Future<List<SpreakerEpisode>> fetchEpisodesForShow() async {
+  static Future<List<SpreakerEpisode>> fetchEpisodesForShow([int? limit]) async {
     final sharedPreferences = await SharedPreferences.getInstance();
 
     // Check network connectivity
@@ -29,7 +29,7 @@ class FetchSpreakerAPI {
       const showId = AppConstants.showId;
       const spreakerUrl = AppConstants.spreakerUrl;
 
-      final url = Uri.parse('$spreakerUrl/$showId/episodes');
+      final url = Uri.parse('$spreakerUrl/$showId/episodes${limit != null ? '?limit=$limit' : ''}');
 
       final response = await http.get(
         url,
