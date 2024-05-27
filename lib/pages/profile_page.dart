@@ -20,19 +20,21 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor:   Theme.of(context).colorScheme.surface,
       body:  CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor:   Theme.of(context).colorScheme.surface,
               floating: true,
-              title: const Text(AppConstants.more),
+              title: Text(AppConstants.more,style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary
+              ),),
+              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
             ),
             SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Divider(),
                 const SizedBox(height: 20,),
                 // General section
                 LabelPlaceHolder(title: AppConstants.general, color: Theme.of(context).colorScheme.onSecondaryContainer),
@@ -55,6 +57,13 @@ class ProfilePage extends StatelessWidget {
                   onTap: () => Utils.openBrowserURL(url: AppConstants.youtubeWebsite, inApp: true),
                 ),
                 const SizedBox(height: 12,),
+                CustomListTile(
+                  label: AppConstants.shareApp,
+                  leadingIcon: FontAwesomeIcons.shareFromSquare,
+                  isSwitch: false,
+                  onTap: () => Utils.share("${AppConstants.shareAppMessage} 📱, \n ${AppConstants.shareAppLink}"),
+                ),
+                const SizedBox(height: 12,),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ClipRRect(
@@ -62,7 +71,7 @@ class ProfilePage extends StatelessWidget {
                     child: Container(
                       color: Theme.of(context).colorScheme.secondary,
                       width: double.infinity,
-                      height: Utils.calculateWidth(context, 0.39),
+                      height: Utils.calculateHeight(context, 0.21),
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(12),
@@ -82,7 +91,7 @@ class ProfilePage extends StatelessWidget {
                                 maxLines: 3,
                               ),
                               const Gap(10),
-                              const KofiButton(kofiName: AppConstants.kofiName,kofiColor: KofiColor.Red),
+                              const KofiButton(text:AppConstants.kofiText,kofiName: AppConstants.kofiName,kofiColor: KofiColor.Red),
                             ],
                           ),
                         ),
@@ -160,7 +169,6 @@ class ProfilePage extends StatelessWidget {
                   child: AppVersionWidget(),
                 ),
                 const SizedBox(height: 12,),
-                const Divider(),
               ],
             ),
             ),

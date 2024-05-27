@@ -4,6 +4,7 @@ import 'package:avvento_media/routes/routes.dart';
 import 'package:avvento_media/themes/dark_theme.dart';
 import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/providers/programs_provider.dart';
+import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
 import 'package:avvento_media/widgets/providers/spreaker_data_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,14 +39,17 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
+        ChangeNotifierProvider<ProgramsProvider>(
         create: (context) => ProgramsProvider(),
         ),
         ChangeNotifierProvider<SpreakerEpisodeProvider>(
           create: (context) => SpreakerEpisodeProvider(),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProvider<RadioStationProvider>(
             create: (context) => RadioStationProvider(),
+        ),
+        ChangeNotifierProvider<RadioPodcastProvider>(
+          create: (context) => RadioPodcastProvider(),
         ),
       ],
       child: const MyApp(),

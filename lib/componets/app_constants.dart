@@ -4,7 +4,6 @@ class AppConstants {
   static const String nowPlaying = "Now Playing";
   static const String avventoSlogan = "Flying the Gospel to the Whole World!";
   static const String missNot = "Programs You shouldn't miss This Week";
-  static const String podcasts = 'Podcasts';
   static const String liveTv = "LIVE TV";
   static const String liveNow = "LIVE NOW";
   static const String liveRadio = "Radio";
@@ -28,6 +27,8 @@ class AppConstants {
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const String showId = '5820368';
   static const azuracastAPI ='https://radio1.avventomedia.org/api/nowplaying/avventoradio';
+  static const azuracastAPIKey ='ab752d0ee6df5e38:1455e5d2ec68c412f761c19297b84a5b';
+  static const azuracastPodcastAPI ='https://radio1.avventomedia.org/api/station/avventoradio/podcasts';
   static const azuracastWebSocketAPI ='wss://radio1.avventomedia.org/api/live/nowplaying/websocket';
   static const avventoEmail ='avventohomeproductions@gmail.com';
 
@@ -40,6 +41,9 @@ class AppConstants {
   static const String avventoWebsite = "https://avventomedia.org/avvento/";
   static const String youtube = "YouTube";
   static const String youtubeWebsite = "https://www.youtube.com/@AvventoProductions";
+  static const String shareApp = "Share App";
+  static const String shareAppLink = "https://play.google.com/store/apps/details?id=tv.avventomedia.app";
+  static const String shareAppMessage = "Experience the joy of uplifting gospel music and inspiring stories with the AvventoMedia app! Download now and let your heart sing!";
 
   static const String radio = "RADIO";
   static const String webRadio = "Avvento Web Radio";
@@ -69,6 +73,7 @@ class AppConstants {
   static const String report = "Report a Problem";
 
   static const String kofiName = "avventomedia";
+  static const String kofiText = "Donate to AvventoMedia";
   static const String donateTitle = "Give a Lift to the Gospel 🚀🌍";
   static const String donateMessage = "Your contribution means a lot as we fly the gospel to the whole world. Please consider donating to us today.";
 
@@ -85,7 +90,7 @@ class AppConstants {
   static const String prayerRequestPrayFor = "Please enter what you want to join with you in Prayer";
   static const String prayerRequestMessage = "Please enter your Prayer Request";
 
-  static const String suceessful = "Successful";
+  static const String successful = "Successful";
   static const String prayerRequestError = "Error sending your Prayer Request 🚫";
   static const String error = "Oops need to try Again";
   static const String send = "SEND";
@@ -95,5 +100,10 @@ class AppConstants {
   static const String shareStream = "Take a look at AvventoRadio 💫 streaming now";
   static const String shareTvStream = "Come watch with me";
   static const String webTvUrl = "https://avventomedia.org/watch-live";
+
+  /// ***************** PODCAST PAGE ****************
+  static const String podcastThumbImage = "https://avventomedia.org/wp-content/uploads/2024/05/podcast_thumbnail.png";
+  static const String podcasts = 'Podcasts';
+
 
 }

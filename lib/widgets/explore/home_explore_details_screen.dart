@@ -45,7 +45,7 @@ class _HomeExploreDetailsScreenState extends State<HomeExploreDetailsScreen> {
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Theme.of(context).colorScheme.onBackground, Colors.transparent], // Black gradient from bottom
+                  colors: [  Theme.of(context).colorScheme.onSurface, Colors.transparent], // Black gradient from bottom
                   begin: Alignment.bottomCenter,
                   end: Alignment.center,
                 ),

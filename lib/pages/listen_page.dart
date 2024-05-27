@@ -30,7 +30,7 @@ class ListenPageState extends State<ListenPage> {
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor:   Theme.of(context).colorScheme.surface,
       body: RefreshIndicator(
         backgroundColor: Colors.white,
         color: Colors.orange,
@@ -38,9 +38,14 @@ class ListenPageState extends State<ListenPage> {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor:   Theme.of(context).colorScheme.surface,
+              iconTheme:IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
               floating: true,
-              title: const Text(AppConstants.radioName),
+              title: Text(AppConstants.radioName,
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary
+                ),
+              ),
               actions: [
                 IconButton(
                   icon: const Icon(CupertinoIcons.headphones),
@@ -53,7 +58,6 @@ class ListenPageState extends State<ListenPage> {
             const SliverToBoxAdapter(
               child: Column(
                 children: [
-                  Divider(),
                   HomeExploreScreen(),
                   AudioListScreen()
                 ],

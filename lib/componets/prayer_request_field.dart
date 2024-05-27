@@ -228,7 +228,7 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
                       behavior: SnackBarBehavior.floating,
                       backgroundColor: Colors.transparent,
                       content: AwesomeSnackbarContent(
-                        title: result ? AppConstants.suceessful : AppConstants.error,
+                        title: result ? AppConstants.successful : AppConstants.error,
                         message:
                         result ? 'Hey ${sendEmailData.name}, Prayer Request sent successfully 🎉 ' :  AppConstants.prayerRequestError,
 

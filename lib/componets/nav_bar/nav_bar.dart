@@ -25,7 +25,7 @@ class _NavBarState extends State<NavBar> {
       return UpgradeAlert(
         // Check for updates from Store according to the build number
         child: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           body: DoubleBackToCloseApp(
             snackBar: const SnackBar(
               content: Text(AppConstants.exitApp),
@@ -43,7 +43,7 @@ class _NavBarState extends State<NavBar> {
           currentIndex: controller.tabIndex,
           onTap: controller.changeTabIndex,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           selectedItemColor: Theme.of(context).colorScheme.onPrimary,
           unselectedItemColor: Theme.of(context).iconTheme.color,
           showSelectedLabels: false,

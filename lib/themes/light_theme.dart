@@ -19,14 +19,15 @@ ThemeData lightTheme = ThemeData(
     color: Colors.grey[600]!.withOpacity(0.5),
   ) ,
   colorScheme: ColorScheme.light(
-    background: Colors.grey[200]!,
+    surface: Colors.grey[200]!,
     primary: Colors.grey[100]!,
     secondary: Colors.grey[350]!,
     onPrimary: const Color.fromARGB(255, 22, 20, 36), //rgba(22,20,36,255)
     onSecondary: Colors.black45,
     onPrimaryContainer:  Colors.white,
     onSecondaryContainer: Colors.grey[400]!,
-    onBackground: const Color.fromARGB(255, 22, 20, 36), //rgba(22,20,36,255)
+    onSurface: const Color.fromARGB(255, 22, 20, 36), //rgba(22,20,36,255)
+    tertiaryContainer: Colors.grey[600]!.withOpacity(0.5),
   ),
   textSelectionTheme: const TextSelectionThemeData(
     cursorColor: Colors.orange,

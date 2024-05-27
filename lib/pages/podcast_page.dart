@@ -74,7 +74,7 @@ class PodcastPageState extends State<PodcastPage> {
     String publishedDate = Jiffy.parse(selectedEpisode!.publishedAt).fromNow();
 
     return Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor:   Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           title: SizedBox(
             height: 30,
@@ -94,7 +94,7 @@ class PodcastPageState extends State<PodcastPage> {
               },
             ),
           ],
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor:   Theme.of(context).colorScheme.surface,
         ),
         body: SingleChildScrollView(
           child: Column(

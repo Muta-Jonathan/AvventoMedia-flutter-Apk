@@ -6,13 +6,17 @@ import 'package:flutter/material.dart';
 class ResizableImageContainerWithOverlay extends StatelessWidget {
   final String imageUrl;
   final IconData? icon;
-  final String text;
+  final String? text;
+  final String? token;
+  final double? borderRadius;
 
   const ResizableImageContainerWithOverlay({
     super.key,
     required this.imageUrl,
     this.icon,
-    required this.text,
+    this.text,
+    this.token,
+    this.borderRadius = 5
   });
 
   Widget buildOverlay() {
@@ -28,7 +32,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
             color: Colors.red,
             child: icon == null
                 ? Text(
-              text,
+              text!,
               style: const TextStyle(
                 color: Colors.white,
               ),
@@ -42,7 +46,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
                 ),
                 const SizedBox(width: 8.0),
                 Text(
-                  text,
+                  text!,
                   style: const TextStyle(
                     color: Colors.white,
                   ),
@@ -58,7 +62,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(5.0),
+      borderRadius: BorderRadius.circular(borderRadius!),
       child: SizedBox(
         width: Utils.calculateWidth(context, 0.80), // Constrain width to match parent
         height: Utils.calculateHeight(context, 0.1), // Constrain height to match parent
@@ -68,6 +72,9 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
             children: [
               CachedNetworkImage(
                 imageUrl: imageUrl,
+                httpHeaders: token != null ? {
+                  'Authorization': 'Bearer $token',
+                } : null ,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -83,7 +90,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
                   color: Theme.of(context).colorScheme.error,
                 ),
               ),
-              icon != null ||  text.isNotEmpty ? buildOverlay(): Container()
+              icon != null || text != null ? buildOverlay(): Container()
             ],
           ),
         ),

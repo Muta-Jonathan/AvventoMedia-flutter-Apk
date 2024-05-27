@@ -1,5 +1,9 @@
+import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/images/resizable_image_widget_2.dart';
 import '../widgets/music/music_list_screen.dart';
@@ -14,44 +18,55 @@ class PodcastListPage extends StatefulWidget {
 class _PodcastListPageState extends State<PodcastListPage> {
   @override
   Widget build(BuildContext context) {
+    Future<void> refreshData() async {
+      // Fetch fresh data for HomeExploreScreen
+      await Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllEpisodes();
+
+      await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
+    }
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            expandedHeight: 310,
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: TextOverlay(
-                label: 'PODCASTS',
-                color: Theme.of(context).colorScheme.onPrimary,
-                maxLines: 1,
-                fontSize: 18,
-              ),
-              centerTitle: true,
-              expandedTitleScale: 1,
-              collapseMode: CollapseMode.pin,
-              background: const SizedBox(
-                height: 250,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 105, right: 20, left: 20, bottom: 60),
-                  child: ResizableImageContainerWithOverlay(
-                    imageUrl:
-                    'https://avventomedia.org/home/old/wp-content/uploads/2022/10/3ABN_UG_app.png',
-                    borderRadius: 10,
+      backgroundColor:   Theme.of(context).colorScheme.surface,
+      body: RefreshIndicator(
+        backgroundColor: Colors.white,
+        color: Colors.orange,
+        onRefresh: refreshData,
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              backgroundColor:   Theme.of(context).colorScheme.surface,
+              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+              expandedHeight: Utils.calculateHeight(context, 0.4),
+              floating: false,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: TextOverlay(
+                  label: AppConstants.podcasts,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  maxLines: 1,
+                  fontSize: 18,
+                ),
+                centerTitle: true,
+                expandedTitleScale: 1,
+                collapseMode: CollapseMode.pin,
+                background: const SizedBox(
+                  height: 250,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 105, right: 20, left: 20, bottom: 60),
+                    child: ResizableImageContainerWithOverlay(
+                      imageUrl: AppConstants. podcastThumbImage,
+                      borderRadius: 10,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          const SliverToBoxAdapter(
-              child: MusicListScreen()
-          ),
+            const SliverToBoxAdapter(
+                child: MusicListScreen()
+            ),
 
-        ],
+          ],
+        ),
       ),
     );
   }

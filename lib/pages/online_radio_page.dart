@@ -97,13 +97,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     super.dispose();
   }
 
-  Duration? parseDuration(dynamic value) {
-    if (value is int) {
-      return Duration(seconds: value);
-    }
-    return null;
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +104,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
     double screenHeight = MediaQuery.of(context).size.height;
     _init(radioStationProvider);
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor:   Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: SizedBox(
           height: 30,
@@ -125,13 +118,14 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(CupertinoIcons.share),
+            icon: Icon(CupertinoIcons.share,color: Theme.of(context).colorScheme.onPrimary,),
             onPressed: () {
               Utils.share("${AppConstants.shareStream}, \n ${AppConstants.webRadioUrl}");
             },
           ),
         ],
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor:   Theme.of(context).colorScheme.surface,
+        iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
       ),
       body:Consumer<RadioStationProvider> (
         builder: (context, radioProvider, child) {
@@ -242,8 +236,8 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               thumbColor: Colors.redAccent,
                               thumbRadius: 5,
                               progressBarColor: Colors.redAccent,
-                              progress: parseDuration(radioProvider.radioStation?.elapsed) ?? positionData?.position ?? Duration.zero,
-                              total: parseDuration(radioProvider.radioStation?.duration) ?? Duration.zero,
+                              progress: Utils.parseDuration(radioProvider.radioStation?.elapsed) ?? positionData?.position ?? Duration.zero,
+                              total: Utils.parseDuration(radioProvider.radioStation?.duration) ?? Duration.zero,
                              ),
                           ),
                           const SizedBox(height: 20,),

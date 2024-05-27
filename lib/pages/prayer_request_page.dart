@@ -8,13 +8,16 @@ class PrayerRequestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor:   Theme.of(context).colorScheme.surface,
       body:  CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor:   Theme.of(context).colorScheme.surface,
             floating: true,
-            title: const Text(AppConstants.prayerRequest),
+            iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+            title: Text(AppConstants.prayerRequest,style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary
+            ),),
           ),
           const SliverToBoxAdapter(
             child: Padding(
@@ -22,10 +25,8 @@ class PrayerRequestPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Divider(),
                   SizedBox(height: 20,),
                   PrayerRequestField(),
-                  Divider(),
                 ],
               ),
             )

@@ -33,7 +33,7 @@ class CustomListTileState extends State<CustomListTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(widget.leadingIcon, size: 30),
+      leading: Icon(widget.leadingIcon, size: 30,color: Theme.of(context).colorScheme.onSecondaryContainer),
       title: TextOverlay(
         label: widget.label,
         color: Theme.of(context).colorScheme.onPrimary,
@@ -49,7 +49,9 @@ class CustomListTileState extends State<CustomListTile> {
           });
         },
       )
-          : const Icon(CupertinoIcons.chevron_forward), // Change this icon as needed
+          : Icon(
+          CupertinoIcons.chevron_forward,
+          color: Theme.of(context).colorScheme.onSecondaryContainer), // Change this icon as needed
       onTap: widget.isSwitch
           ? null // Disable onTap when the switch is enabled
           : widget.onTap,

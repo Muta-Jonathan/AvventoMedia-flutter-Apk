@@ -37,13 +37,12 @@ class _AudioListState extends State<AudioListScreen> {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          LabelPlaceHolder(title: AppConstants.podcasts, moreIcon: true, onMoreTap: () => Utils.showComingSoonDialog(context)),
-          const Padding(
+          LabelPlaceHolder(title: AppConstants.podcasts, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getPodcastListRoute())),
+          Padding(
             padding: EdgeInsets.only(left: AppConstants.left_main, right: AppConstants.right_main),
-            child: Divider(),
+            child: Divider(color: Theme.of(context).colorScheme.tertiaryContainer,),
           ),
           Expanded(child: buildListView(context)),
-          const Divider()
         ],
       ),
     );

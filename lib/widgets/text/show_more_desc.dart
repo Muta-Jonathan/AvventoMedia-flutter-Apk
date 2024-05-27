@@ -42,7 +42,7 @@ class ShowMoreDescriptionState extends State<ShowMoreDescription> {
                 GestureDetector(
                   onTap: () {
                     showModalBottomSheet(
-                      backgroundColor: Theme.of(context).colorScheme.background,
+                      backgroundColor:   Theme.of(context).colorScheme.surface,
                       context: context,
                       builder: (context) {
                         return Column(

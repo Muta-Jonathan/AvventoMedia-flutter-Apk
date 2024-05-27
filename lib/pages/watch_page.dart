@@ -105,7 +105,7 @@ class _WatchPageState extends State<WatchPage> {
     final selectedTv = liveTvController.selectedTv.value;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor:   Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
