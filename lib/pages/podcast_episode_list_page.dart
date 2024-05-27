@@ -1,26 +1,33 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/widgets/episode/episode_list_screen.dart';
 import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:provider/provider.dart';
 
+import '../controller/episode_controller.dart';
+import '../controller/podcast_controller.dart';
 import '../widgets/images/resizable_image_widget_2.dart';
 import '../widgets/podcast/podcast_list_screen.dart';
+import '../widgets/text/show_more_desc.dart';
 
-class PodcastListPage extends StatefulWidget {
-  const PodcastListPage({super.key});
+class PodcastEpisodeListPage extends StatefulWidget {
+  const PodcastEpisodeListPage({super.key});
 
   @override
-  State<PodcastListPage> createState() => _PodcastListPageState();
+  State<PodcastEpisodeListPage> createState() => _PodcastEpisodeListPageState();
 }
 
-class _PodcastListPageState extends State<PodcastListPage> {
+class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
+  final PodcastController podcastController = Get.find();
   @override
   Widget build(BuildContext context) {
     Future<void> refreshData() async {
       // Fetch fresh data for PodcastScreen
-      await Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllPodcasts();
+      //await Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllPodcasts();
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }
@@ -43,7 +50,7 @@ class _PodcastListPageState extends State<PodcastListPage> {
                   StretchMode.blurBackground
                 ],
                 title: TextOverlay(
-                  label: AppConstants.podcasts,
+                  label: podcastController.selectedEpisode.value!.title,
                   color: Theme.of(context).colorScheme.onPrimary,
                   maxLines: 1,
                   fontSize: 18,
@@ -51,21 +58,35 @@ class _PodcastListPageState extends State<PodcastListPage> {
                 centerTitle: true,
                 expandedTitleScale: 1,
                 collapseMode: CollapseMode.pin,
-                background: const SizedBox(
+                background: SizedBox(
                   height: 250,
                   child: Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                         top: 105, right: 20, left: 20, bottom: 60),
                     child: ResizableImageContainerWithOverlay(
-                      imageUrl: AppConstants. podcastThumbImage,
+                      imageUrl: podcastController.selectedEpisode.value!.art,
                       borderRadius: 10,
                     ),
                   ),
                 ),
               ),
             ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16,right: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20,fontWeight: FontWeight.bold,),
+                    const SizedBox(height: 5),
+                    ShowMoreDescription(description: podcastController.selectedEpisode.value!.description,modalTitle: AppConstants.description,),
+                    Divider(color: Theme.of(context).colorScheme.tertiaryContainer,),
+                  ],
+                ),
+              ),
+            ),
             const SliverToBoxAdapter(
-                child: PodcastListScreen()
+                child: EpisodeListScreen()
             ),
 
           ],

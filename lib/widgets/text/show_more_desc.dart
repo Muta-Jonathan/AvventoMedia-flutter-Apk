@@ -8,8 +8,9 @@ import '../icons/boxed_icon_widget.dart';
 
 class ShowMoreDescription extends StatefulWidget {
   final String description;
+  final String modalTitle;
 
-  const ShowMoreDescription({super.key, required this.description});
+  const ShowMoreDescription({super.key, required this.description, this.modalTitle = AppConstants.about});
 
   @override
   ShowMoreDescriptionState createState() => ShowMoreDescriptionState();
@@ -17,85 +18,84 @@ class ShowMoreDescription extends StatefulWidget {
 
 class ShowMoreDescriptionState extends State<ShowMoreDescription> {
   bool isExpanded = false;
-  final int wordLimit = 20; // Set the word limit here
+  final int wordLimit = 20;
 
   @override
   Widget build(BuildContext context) {
     final words = widget.description.split(' ');
     final showReadMoreLink = words.length > wordLimit;
-    return SizedBox(
-      height: Utils.calculateHeight(context, 0.4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 20),
-              Flexible(
-                child: TextOverlay(
-                  label: widget.description,
-                  fontSize: 16,
-                  maxLines: 6, // Show all lines if expanded
-                  color: Theme.of(context).colorScheme.onSecondary,
+    return IntrinsicHeight(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+                Flexible(
+                  child: TextOverlay(
+                    label: widget.description,
+                    fontSize: 16,
+                    maxLines: 6, // Show all lines if expanded
+                    color: Theme.of(context).colorScheme.onSecondary,
+                  ),
                 ),
-              ),
-          const SizedBox(height: 20),
-              if (showReadMoreLink)
-                GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      backgroundColor:   Theme.of(context).colorScheme.surface,
-                      context: context,
-                      builder: (context) {
-                        return Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 12, right: 12),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextOverlay(
-                                        label: AppConstants.about,
-                                        color: Theme.of(context).colorScheme.onSecondary,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                    GestureDetector(
-                                      onTap: () =>  Get.back(),
-                                      child: BoxedIcon(
-                                        backgroundColor: Colors.white.withOpacity(0.2),
-                                        icon: Icons.close_rounded,
-                                        borderRadius: 20,
-                                        iconColor: Theme.of(context).colorScheme.onSecondary,
-                                      ),
-                                    )
-                                  ],
+            const SizedBox(height: 15),
+                if (showReadMoreLink)
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        backgroundColor:   Theme.of(context).colorScheme.surface,
+                        context: context,
+                        builder: (context) {
+                          return Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12, right: 12),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextOverlay(
+                                          label: widget.modalTitle,
+                                          color: Theme.of(context).colorScheme.onSecondary,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                      GestureDetector(
+                                        onTap: () =>  Get.back(),
+                                        child: BoxedIcon(
+                                          backgroundColor: Colors.white.withOpacity(0.2),
+                                          icon: Icons.close_rounded,
+                                          borderRadius: 20,
+                                          iconColor: Theme.of(context).colorScheme.onSecondary,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 10),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: TextOverlay(
-                                      label: widget.description,
-                                      fontSize: 16,
-                                      maxLines: 150, // Show all lines in the bottom sheet
-                                      color: Theme.of(context).colorScheme.onSecondary,
+                                const SizedBox(height: 10),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: TextOverlay(
+                                        label: widget.description,
+                                        fontSize: 16,
+                                        maxLines: widget.description.length, // Show all lines in the bottom sheet
+                                        color: Theme.of(context).colorScheme.onSecondary,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                        );
-                      },
-                    );
-                  },
-                  child: const TextOverlay(
-                      label: AppConstants.readMore,
-                      color: Colors.orange, fontSize: 14,
-                      underline: true),
-                  ),
-            ],
-      ),
+                              ],
+                          );
+                        },
+                      );
+                    },
+                    child: const TextOverlay(
+                        label: AppConstants.readMore,
+                        color: Colors.orange, fontSize: 14,
+                        underline: true),
+                    ),
+              ],
+        ),
     );
   }
 }

@@ -1,6 +1,7 @@
 class RadioPodcast {
   final String id;
   final String title;
+  final String description;
   final String author;
   final String email;
   final String art;
@@ -12,6 +13,7 @@ class RadioPodcast {
   RadioPodcast({
     required this.id,
     required this.title,
+    required this.description,
     required this.author,
     required this.email,
     required this.art,
@@ -26,6 +28,7 @@ class RadioPodcast {
     return {
       'id': id,
       'title': title,
+      'description': description,
       'author': author,
       'email': email,
       'art': art,
@@ -43,6 +46,7 @@ class RadioPodcast {
     return RadioPodcast(
       id: json['id'],
       title: json['title'],
+      description: json['description'],
       author: json['author'],
       email: json['email'] ?? '',
       art: json['links']['art'],

@@ -11,6 +11,7 @@ class AppConstants {
   static const String pip = "Picture In Picture";
   static const String readMore = "Read more";
   static const String about = "About";
+  static const String description = "Description";
   static const String exitApp = "Tap back again to exit!";
   static const String noInternet = "OOPS! IT SEEMS YOU'RE NOT CONNECTED TO THE INTERNET.";
   static const String showMore = "Show More";
@@ -41,7 +42,7 @@ class AppConstants {
   static const String avventoWebsite = "https://avventomedia.org/avvento/";
   static const String youtube = "YouTube";
   static const String youtubeWebsite = "https://www.youtube.com/@AvventoProductions";
-  static const String shareApp = "Share App";
+  static const String shareApp = "Share AvventoMedia App";
   static const String shareAppLink = "https://play.google.com/store/apps/details?id=tv.avventomedia.app";
   static const String shareAppMessage = "Experience the joy of uplifting gospel music and inspiring stories with the AvventoMedia app! Download now and let your heart sing!";
 
@@ -73,7 +74,8 @@ class AppConstants {
   static const String report = "Report a Problem";
 
   static const String kofiName = "avventomedia";
-  static const String kofiText = "Donate to AvventoMedia";
+  static const String kofiText = "Donate to AvventoMedia"
+      "";
   static const String donateTitle = "Give a Lift to the Gospel 🚀🌍";
   static const String donateMessage = "Your contribution means a lot as we fly the gospel to the whole world. Please consider donating to us today.";
 

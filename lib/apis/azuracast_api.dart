@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +15,7 @@ class AzuraCastAPI {
   // SharedPreferences key for caching
   static const _cachedRadioStationKey = 'cachedRadioStationKey';
   static const _cachedRadioPodcastKey = 'cachedRadioPodcastKey';
+  static const _cachedPodcastEpisodeKey = 'cachedPodcastEpisodeKey';
 
   static void establishWebsocketConnection() {
     _channel = WebSocketChannel.connect(
@@ -132,6 +134,46 @@ class AzuraCastAPI {
 
 
         return radioPodcasts;
+      } else {
+        throw Exception('Failed to load radio podcast data');
+      }
+    }
+  }
+
+  //fetch radio podcasts episodes from avventoRadio
+  static Future<List<PodcastEpisode>> fetchRadioPodcastsEpisodes(String apiUrl) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? cachedData = prefs.getString(_cachedRadioPodcastKey);
+
+    // Check network connectivity
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      final data = json.decode(cachedData!);
+      return List<PodcastEpisode>.from(data.map((data) => RadioPodcast.fromJson(data)));
+    } else {
+      final url = Uri.parse(apiUrl);
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${AppConstants.azuracastAPIKey}'
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonResult = json.decode(response.body);
+
+
+        // Cache the fetched data in SharedPreferences.
+        prefs.setString(_cachedRadioPodcastKey, response.body);
+
+        // Create a list of RadioPodcast objects from the JSON data
+        final podcastEpisodes = jsonResult.map((json) => PodcastEpisode.fromJson(json)).toList();
+
+
+        return podcastEpisodes;
       } else {
         throw Exception('Failed to load radio podcast data');
       }

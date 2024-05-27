@@ -8,27 +8,31 @@ import 'package:provider/provider.dart';
 import '../../componets/utils.dart';
 import '../../controller/episode_controller.dart';
 import '../../controller/podcast_controller.dart';
+import '../../controller/podcast_episode_controller.dart';
+import '../../models/radiomodel/podcast_episode_model.dart';
 import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../../routes/routes.dart';
 import '../common/loading_widget.dart';
 import '../podcast/podcast_list_details_screen.dart';
+import 'episode_list_details_screen.dart';
 import '../providers/radio_podcast_provider.dart';
 import '../providers/spreaker_data_provider.dart';
 
-class MusicListScreen extends StatefulWidget {
-  const MusicListScreen({super.key});
+class EpisodeListScreen extends StatefulWidget {
+  const EpisodeListScreen({super.key});
 
   @override
-  State<MusicListScreen> createState() => _MusicListState();
+  State<EpisodeListScreen> createState() => _EpisodeListState();
 }
 
-class _MusicListState extends State<MusicListScreen> {
-  final podcastController = Get.put(PodcastController());
+class _EpisodeListState extends State<EpisodeListScreen> {
+  final PodcastController podcastController = Get.find();
+
   @override
   void initState() {
     super.initState();
     // Fetch episodes using the provider and listen to changes
-    Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllEpisodes();
+    Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllEpisodes(podcastController.selectedEpisode.value!.episodesLink);
   }
 
   @override
@@ -39,7 +43,7 @@ class _MusicListState extends State<MusicListScreen> {
   Widget buildGridView(BuildContext context) {
     return Consumer<RadioPodcastProvider>(
       builder: (context, podcastProvider, child) {
-        if (podcastProvider.podcasts.isEmpty) {
+        if (podcastProvider.podcastEpisodes.isEmpty) {
           return const LoadingWidget();
         } else {
           return GridView.builder(
@@ -49,12 +53,12 @@ class _MusicListState extends State<MusicListScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 10.0,
               mainAxisSpacing: 10.0,
-              childAspectRatio: Utils.calculateHeight(context, 0.00085),
+              childAspectRatio: Utils.calculateHeight(context, 0.0008),
             ),
-            itemCount: podcastProvider.podcasts.length,
+            itemCount: podcastProvider.podcastEpisodes.length,
             semanticChildCount: 2,
             itemBuilder: (BuildContext context, int index) {
-              return  buildRadioPodcastDetailsScreen(podcastProvider.podcasts[index]);
+              return  buildRadioPodcastDetailsScreen(podcastProvider.podcastEpisodes[index]);
             },
           );
         }
@@ -62,17 +66,15 @@ class _MusicListState extends State<MusicListScreen> {
     );
   }
 
-  Widget buildRadioPodcastDetailsScreen(RadioPodcast radioPodcast) {
-    return Expanded(
-      child: GestureDetector(
+  Widget buildRadioPodcastDetailsScreen(PodcastEpisode podcastEpisode) {
+    return GestureDetector(
         onTap: () {
           // Set the selected episode using the controller
           //episodeController.setSelectedEpisode(r);
           // Navigate to the "PodcastPage"
-          Get.toNamed(Routes.getPodcastRoute());
+          //Get.toNamed(Routes.getPodcastRoute());
         },
-        child: PodcastListDetailsWidget(radioPodcast: radioPodcast,),
-      ),
+        child: EpisodeListDetailsWidget(episode: podcastEpisode,),
     );
   }
 

@@ -41,6 +41,7 @@ class TextOverlay extends StatelessWidget {
           fontWeight: fontWeight,
           color: color,
           decoration: underline ? TextDecoration.underline : TextDecoration.none,
+          decorationColor: Colors.orange,
         ),
         options: const LinkifyOptions(humanize: true),
         linkStyle: const TextStyle(

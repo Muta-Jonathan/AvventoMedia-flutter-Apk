@@ -1,5 +1,6 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -81,6 +82,11 @@ class Utils {
         transitionBuilder: (context,a1,a2,widget) {
           return ComingSoonDialog(animation: a1,);
         });
+  }
+
+  static String formatTimestamp({required int timestamp, required String format}) {
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    return DateFormat(format).format(dateTime);
   }
 
 }
