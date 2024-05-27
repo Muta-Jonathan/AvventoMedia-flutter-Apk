@@ -26,6 +26,7 @@ class EpisodeListScreen extends StatefulWidget {
 }
 
 class _EpisodeListState extends State<EpisodeListScreen> {
+  final podcastEpisodeController = Get.put(PodcastEpisodeController());
   final PodcastController podcastController = Get.find();
 
   @override
@@ -69,10 +70,10 @@ class _EpisodeListState extends State<EpisodeListScreen> {
   Widget buildRadioPodcastDetailsScreen(PodcastEpisode podcastEpisode) {
     return GestureDetector(
         onTap: () {
-          // Set the selected episode using the controller
-          //episodeController.setSelectedEpisode(r);
-          // Navigate to the "PodcastPage"
-          //Get.toNamed(Routes.getPodcastRoute());
+          //Set the selected episode using the controller
+          podcastEpisodeController.setSelectedEpisode(podcastEpisode);
+          //Navigate to the "PodcastPage"
+          Get.toNamed(Routes.getPodcastRoute());
         },
         child: EpisodeListDetailsWidget(episode: podcastEpisode,),
     );

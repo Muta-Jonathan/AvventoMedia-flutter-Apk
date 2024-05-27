@@ -9,6 +9,7 @@ class PodcastEpisode {
   final String publicLink;
   final bool isPublished;
   final String art;
+  final String media;
 
   PodcastEpisode({
     required this.id,
@@ -21,6 +22,7 @@ class PodcastEpisode {
     required this.publicLink,
     required this.isPublished,
     required this.art,
+    required this.media
   });
 
   factory PodcastEpisode.fromJson(Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class PodcastEpisode {
       publicLink: json['links']['public'],
       isPublished: json['is_published'],
       art: json['art'],
+      media: json['links']['media'],
     );
   }
 
@@ -52,6 +55,7 @@ class PodcastEpisode {
       'links': {
         'download': downloadLink,
         'public': publicLink,
+        'media': media,
       },
       'is_published': isPublished,
       'art': art,

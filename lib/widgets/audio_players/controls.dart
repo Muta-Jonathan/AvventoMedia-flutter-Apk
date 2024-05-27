@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../../controller/audio_player_controller.dart';
 
@@ -11,8 +12,7 @@ class Controls extends StatefulWidget {
   ControlsState createState() => ControlsState();
 }
 
-class ControlsState extends State<Controls>
-    with SingleTickerProviderStateMixin {
+class ControlsState extends State<Controls> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -55,7 +55,18 @@ class ControlsState extends State<Controls>
         ),
         child: Align(
           alignment: Alignment.center,
-          child: AnimatedIcon(
+          child:    widget.audioPlayerController.audioPlayer.processingState == ProcessingState.completed && widget.audioPlayerController.audioPlayer.position != Duration.zero
+              ? IconButton(
+            key: const ValueKey<String>('replay_button'),
+            icon: Icon(Icons.replay_rounded, color: Theme.of(context).colorScheme.onPrimary),
+            onPressed: () {
+              widget.audioPlayerController.audioPlayer.seek(Duration.zero);
+              widget.audioPlayerController.play();
+            },
+            iconSize: 45.0,
+          )
+              : AnimatedIcon(
+            key: const ValueKey<String>('play_pause_icon'),
             icon: AnimatedIcons.play_pause,
             progress: _controller,
             color: Theme.of(context).colorScheme.onPrimary,

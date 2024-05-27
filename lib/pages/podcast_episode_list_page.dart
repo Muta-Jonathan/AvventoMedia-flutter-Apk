@@ -26,8 +26,8 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
   @override
   Widget build(BuildContext context) {
     Future<void> refreshData() async {
-      // Fetch fresh data for PodcastScreen
-      //await Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllPodcasts();
+      // Fetch fresh data for a specific podcast
+      await Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllEpisodes(podcastController.selectedEpisode.value!.episodesLink);
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }

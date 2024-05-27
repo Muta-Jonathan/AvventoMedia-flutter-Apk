@@ -15,6 +15,7 @@ import 'package:rxdart/rxdart.dart' as R;
 
 import '../controller/audio_player_controller.dart';
 import '../controller/episode_controller.dart';
+import '../controller/podcast_episode_controller.dart';
 import '../models/musicplayermodels/music_player_position.dart';
 import '../widgets/audio_players/controls.dart';
 
@@ -26,7 +27,7 @@ class PodcastPage extends StatefulWidget {
 }
 
 class PodcastPageState extends State<PodcastPage> {
-  final EpisodeController episodeController = Get.find();
+  final PodcastEpisodeController episodeController = Get.find();
   late AudioPlayerController _audioPlayerController;
   MediaItem? currentMediaItem;
   final StreamController<MusicPlayerPosition> _musicPlayerPositionController = StreamController<MusicPlayerPosition>.broadcast();
@@ -46,13 +47,13 @@ class PodcastPageState extends State<PodcastPage> {
     super.initState();
     _audioPlayerController = Get.find<AudioPlayerController>();
     currentMediaItem = MediaItem(
-      id: episodeController.selectedEpisode.value!.episodeId.toString(),
+      id: episodeController.selectedEpisode.value!.id,
       title: episodeController.selectedEpisode.value!.title,
-      artist: episodeController.selectedEpisode.value!.type,
-      artUri: Uri.parse(episodeController.selectedEpisode.value!.imageOriginalUrl),
+      artist: episodeController.selectedEpisode.value!.playlistMediaArtist,
+      artUri: Uri.parse(episodeController.selectedEpisode.value!.art),
     );
     _audioPlayerController.setAudioSource(
-        episodeController.selectedEpisode.value!.playbackUrl,
+        episodeController.selectedEpisode.value!.downloadLink,
         currentMediaItem!);
   }
 
@@ -71,10 +72,10 @@ class PodcastPageState extends State<PodcastPage> {
      final selectedEpisode = episodeController.selectedEpisode.value;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    String publishedDate = Jiffy.parse(selectedEpisode!.publishedAt).fromNow();
+    String publishedDate = Jiffy.parse(Utils.formatTimestamp(timestamp: selectedEpisode!.publishedAt, format: 'yyyy-MM-dd HH:mm:ss',)).fromNow();
 
     return Scaffold(
-        backgroundColor:   Theme.of(context).colorScheme.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: AppBar(
           title: SizedBox(
             height: 30,
@@ -88,13 +89,14 @@ class PodcastPageState extends State<PodcastPage> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(CupertinoIcons.share),
+              icon: const Icon(CupertinoIcons.share,),
               onPressed: () async {
-                Utils.share("Come Join Me, Listen to the wonderful Podcast on AvventoMedia 💫, \n ${selectedEpisode.playbackUrl}");
+                Utils.share("Come Join Me, Listen to the wonderful Podcast on AvventoMedia 💫, \n ${selectedEpisode.publicLink}");
               },
             ),
           ],
-          backgroundColor:   Theme.of(context).colorScheme.surface,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -121,7 +123,7 @@ class PodcastPageState extends State<PodcastPage> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: CachedNetworkImage(
-                                imageUrl: selectedEpisode.imageOriginalUrl,
+                                imageUrl: selectedEpisode.art,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
@@ -158,7 +160,7 @@ class PodcastPageState extends State<PodcastPage> {
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
-                                        selectedEpisode.type,
+                                        selectedEpisode.playlistMediaAlbum,
                                       style: const TextStyle(color: Colors.white),
                                     ),
                                   ],
@@ -170,7 +172,7 @@ class PodcastPageState extends State<PodcastPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 50),
+              SizedBox(height: Utils.calculateHeight(context, 0.04)),
               StreamBuilder<MusicPlayerPosition>(
                 stream: _musicPlayerPositionStream,
                 builder: (_,snapshot) {
@@ -186,9 +188,9 @@ class PodcastPageState extends State<PodcastPage> {
                             padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
                             child: TextOverlay(label: currentMediaItem!.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 10,),
-                          TextOverlay(label:  currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondaryContainer,),
-                          const SizedBox(height: 10,),
+                          const SizedBox(height: 5,),
+                          TextOverlay(label:  currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondaryContainer,fontSize: 16,),
+                          const SizedBox(height: 5,),
                           TextOverlay(label: "Published $publishedDate",color: Theme.of(context).colorScheme.onSecondaryContainer)
                         ],
                       ),
@@ -203,13 +205,14 @@ class PodcastPageState extends State<PodcastPage> {
                           progress: positionData?.position ?? Duration.zero,
                           buffered:  positionData?.bufferedPosition ?? Duration.zero,
                           total: positionData?.duration ?? Duration.zero,
+                          timeLabelTextStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                           onSeek: _audioPlayerController.audioPlayer.seek,),
                       ),
-                      const SizedBox(height: 20,),
+                      SizedBox(height: Utils.calculateHeight(context, 0.02)),
                       Controls(audioPlayerController: _audioPlayerController,),
-                      const SizedBox(height: 40,),
+                      SizedBox(height: Utils.calculateHeight(context, 0.04),),
                       TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer),
-                      const SizedBox(height: 20,),
+                      SizedBox(height: Utils.calculateHeight(context, 0.02),),
                     ],
                   );
                 },

@@ -65,9 +65,9 @@ class _PodcastListState extends State<PodcastListScreen> {
   Widget buildRadioPodcastDetailsScreen(RadioPodcast radioPodcast) {
     return GestureDetector(
         onTap: () {
-          // Set the selected episode using the controller
+          // Set the selected podcast using the controller
           podcastController.setSelectedEpisode(radioPodcast);
-          // Navigate to the "PodcastPage"
+          // Navigate to the "PodcastEpisodePage"
           Get.toNamed(Routes.getPodcastEpisodeListRoute());
         },
         child: PodcastListDetailsWidget(radioPodcast: radioPodcast,),
