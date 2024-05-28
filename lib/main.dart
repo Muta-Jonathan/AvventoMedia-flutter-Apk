@@ -64,19 +64,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Shortcuts(
-      shortcuts: <LogicalKeySet, Intent>{
-        LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
-      },
-      child: GetMaterialApp( // Use GetMaterialApp instead of MaterialApp
-        navigatorKey: Get.key,
-        debugShowCheckedModeBanner: false,
-        title: AppConstants.appName,
-        theme: lightTheme,
-        darkTheme: darkTheme,
-        initialRoute: Routes.getHomeRoute(), // Set the initial route to '/'
-        getPages: Routes.routes,
-        initialBinding: InitialBinding(),
+    return UpgradeAlert(
+      child: Shortcuts(
+        shortcuts: <LogicalKeySet, Intent>{
+          LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
+        },
+        child: GetMaterialApp( // Use GetMaterialApp instead of MaterialApp
+          navigatorKey: Get.key,
+          debugShowCheckedModeBanner: false,
+          title: AppConstants.appName,
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          initialRoute: Routes.getHomeRoute(), // Set the initial route to '/'
+          getPages: Routes.routes,
+          initialBinding: InitialBinding(),
+        ),
       ),
     );
   }

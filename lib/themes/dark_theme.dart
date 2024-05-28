@@ -32,4 +32,9 @@ ThemeData darkTheme = ThemeData(
         cursorColor: Colors.orange,
         selectionHandleColor: Colors.orange,
     ),
+    textTheme: const TextTheme(
+        bodyMedium: TextStyle(
+        color: Colors.white, 
+        ),
+    )
 );
