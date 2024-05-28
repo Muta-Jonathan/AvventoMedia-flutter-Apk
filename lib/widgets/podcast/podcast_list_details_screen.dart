@@ -6,8 +6,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/radiomodel/podcast_episode_model.dart';
-import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../text/text_overlay_widget.dart';
 
 class PodcastListDetailsWidget extends StatefulWidget {

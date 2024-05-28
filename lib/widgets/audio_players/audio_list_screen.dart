@@ -5,16 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../controller/episode_controller.dart';
 import '../../controller/podcast_controller.dart';
 import '../../models/radiomodel/radio_podcast_model.dart';
-import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../../routes/routes.dart';
 import '../common/loading_widget.dart';
 import '../podcast/podcast_list_details_screen.dart';
 import '../providers/radio_podcast_provider.dart';
-import '../providers/spreaker_data_provider.dart';
-import 'audio_list_details_screen.dart';
 
 class AudioListScreen extends StatefulWidget {
   const AudioListScreen({super.key});
@@ -43,7 +39,7 @@ class _AudioListState extends State<AudioListScreen> {
           const SizedBox(height: 10),
           LabelPlaceHolder(title: AppConstants.podcasts, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getPodcastListRoute())),
           Padding(
-            padding: EdgeInsets.only(left: AppConstants.left_main, right: AppConstants.right_main),
+            padding: const EdgeInsets.only(left: AppConstants.leftMain, right: AppConstants.rightMain),
             child: Divider(color: Theme.of(context).colorScheme.tertiaryContainer,),
           ),
           Expanded(child: buildListView(context)),

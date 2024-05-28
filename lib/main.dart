@@ -15,7 +15,6 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 
-import 'bindings/dependency_injection.dart';
 import 'bindings/initial_binding.dart';
 
 Future<void> main() async {

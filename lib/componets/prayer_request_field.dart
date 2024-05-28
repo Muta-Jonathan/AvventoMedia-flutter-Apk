@@ -253,8 +253,8 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
               }
             },
               style: ButtonStyle(
-                minimumSize: MaterialStateProperty.all(const Size(double.infinity, 40)),
-                backgroundColor: MaterialStateProperty.all(Colors.orange),
+                minimumSize: WidgetStateProperty.all(const Size(double.infinity, 40)),
+                backgroundColor: WidgetStateProperty.all(Colors.orange),
               ),
               child: const Text(AppConstants.send),
           ),

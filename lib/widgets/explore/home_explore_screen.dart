@@ -80,7 +80,7 @@ class _ExploreScreenState extends State<HomeExploreScreen> {
 
   Widget buildFirstItem(BuildContext context, index) {
     return Padding(
-      padding: const EdgeInsets.only(left: AppConstants.left_main),
+      padding: const EdgeInsets.only(left: AppConstants.leftMain),
       child: buildExploreDetailsScreen(index),
     );
   }

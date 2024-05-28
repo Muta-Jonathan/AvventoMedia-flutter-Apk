@@ -139,7 +139,6 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                   StreamBuilder<MusicPlayerPosition>(
                     stream: _musicPlayerPositionStream,
                     builder: (_,snapshot) {
-                      final positionData = snapshot.data;
                       final paddingWidth = Utils.calculateWidth(context, 0.05);
                       final paddingTop = Utils.calculateHeight(context, 0.06);
                       return Column(
@@ -236,8 +235,8 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               thumbColor: Colors.redAccent,
                               thumbRadius: 5,
                               progressBarColor: Colors.redAccent,
-                              progress: Utils.parseDuration(radioProvider.radioStation?.elapsed) ?? positionData?.position ?? Duration.zero,
-                              total: Utils.parseDuration(radioProvider.radioStation?.duration) ?? Duration.zero,
+                              progress: Utils.parseDuration(radioProvider.radioStation?.elapsed),
+                              total: Utils.parseDuration(radioProvider.radioStation?.duration),
                              ),
                           ),
                           const SizedBox(height: 20,),

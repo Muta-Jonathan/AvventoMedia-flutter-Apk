@@ -143,7 +143,7 @@ class AzuraCastAPI {
   //fetch radio podcasts episodes from avventoRadio
   static Future<List<PodcastEpisode>> fetchRadioPodcastsEpisodes(String apiUrl) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? cachedData = prefs.getString(_cachedRadioPodcastKey);
+    final String? cachedData = prefs.getString(_cachedPodcastEpisodeKey);
 
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -167,7 +167,7 @@ class AzuraCastAPI {
 
 
         // Cache the fetched data in SharedPreferences.
-        prefs.setString(_cachedRadioPodcastKey, response.body);
+        prefs.setString(_cachedPodcastEpisodeKey, response.body);
 
         // Create a list of RadioPodcast objects from the JSON data
         final podcastEpisodes = jsonResult.map((json) => PodcastEpisode.fromJson(json)).toList();

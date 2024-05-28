@@ -1,22 +1,15 @@
-import 'dart:developer';
-
-import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../componets/utils.dart';
-import '../../controller/episode_controller.dart';
 import '../../controller/podcast_controller.dart';
 import '../../controller/podcast_episode_controller.dart';
 import '../../models/radiomodel/podcast_episode_model.dart';
-import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../../routes/routes.dart';
 import '../common/loading_widget.dart';
-import '../podcast/podcast_list_details_screen.dart';
 import 'episode_list_details_screen.dart';
 import '../providers/radio_podcast_provider.dart';
-import '../providers/spreaker_data_provider.dart';
 
 class EpisodeListScreen extends StatefulWidget {
   const EpisodeListScreen({super.key});

@@ -18,8 +18,8 @@ class AppConstants {
   static const String from = "from";
 
   /// ***************** PADDING ****************
-  static const double left_main = 20;
-  static const double right_main = 12;
+  static const double leftMain = 20;
+  static const double rightMain = 12;
 
   /// ***************** API ****************
   static const String highlightsAPI = "highlights";

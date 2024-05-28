@@ -21,13 +21,13 @@ class MusicPlayerWidgetState extends State<MusicListDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0, left: AppConstants.left_main,right: 8.0,top: 2),
+      padding: const EdgeInsets.only(bottom: 10.0, left: AppConstants.leftMain,right: 8.0,top: 2),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
         child:Column(
           children: [
             const Padding(
-              padding: EdgeInsets.only(right: AppConstants.right_main),
+              padding: EdgeInsets.only(right: AppConstants.rightMain),
               child: Divider(),
             ),
             const SizedBox(height: 10,),

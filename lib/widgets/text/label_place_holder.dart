@@ -21,7 +21,7 @@ class LabelPlaceHolder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.only(left: AppConstants.left_main, right: AppConstants.right_main),
+        padding: const EdgeInsets.only(left: AppConstants.leftMain, right: AppConstants.rightMain),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

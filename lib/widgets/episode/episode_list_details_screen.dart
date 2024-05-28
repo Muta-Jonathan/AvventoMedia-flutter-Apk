@@ -1,14 +1,11 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
-import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
-import '../../models/spreakermodels/spreaker_episodes.dart';
 import '../text/text_overlay_widget.dart';
 
 class EpisodeListDetailsWidget extends StatefulWidget {

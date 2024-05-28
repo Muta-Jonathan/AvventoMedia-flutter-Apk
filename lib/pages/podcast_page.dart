@@ -14,7 +14,6 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:rxdart/rxdart.dart' as R;
 
 import '../controller/audio_player_controller.dart';
-import '../controller/episode_controller.dart';
 import '../controller/podcast_episode_controller.dart';
 import '../models/musicplayermodels/music_player_position.dart';
 import '../widgets/audio_players/controls.dart';
