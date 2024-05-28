@@ -17,10 +17,6 @@ class AppConstants {
   static const String showMore = "Show More";
   static const String from = "from";
 
-  /// ***************** PADDING ****************
-  static const double leftMain = 20;
-  static const double rightMain = 12;
-
   /// ***************** API ****************
   static const String highlightsAPI = "highlights";
   static const String liveTvAPI = "liveTv";
@@ -107,5 +103,19 @@ class AppConstants {
   static const String podcastThumbImage = "https://avventomedia.org/wp-content/uploads/2024/05/podcast_thumbnail.png";
   static const String podcasts = 'Podcasts';
 
+  /// ***************** PADDING ****************
+  static const double leftMain = 20;
+  static const double rightMain = 12;
 
+  /// ***************** HEIGHT ****************
+  static const double height30 = 30;
+  static const double height40 = 40;
+  static const double height250 = 250;
+
+  /// ***************** WIDTH ****************
+  static const double width40 = 40;
+
+  /// ***************** FONT SIZE ****************
+  static const double fontSize18 = 18;
+  static const double fontSize20 = 20;
 }

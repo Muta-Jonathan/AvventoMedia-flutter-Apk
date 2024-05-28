@@ -142,7 +142,7 @@ class _WatchPageState extends State<WatchPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                       TextOverlay(label: selectedTv!.name, color: Theme.of(context).colorScheme.onPrimary, fontSize: 20, ),
+                       TextOverlay(label: selectedTv!.name, color: Theme.of(context).colorScheme.onPrimary, fontSize: AppConstants.fontSize20, ),
                         IconButton(
                           icon: const Icon(CupertinoIcons.share),
                           onPressed: () {

@@ -52,7 +52,7 @@ class _PodcastListPageState extends State<PodcastListPage> {
                 expandedTitleScale: 1,
                 collapseMode: CollapseMode.pin,
                 background: const SizedBox(
-                  height: 250,
+                  height: AppConstants.height250,
                   child: Padding(
                     padding: EdgeInsets.only(
                         top: 105, right: 20, left: 20, bottom: 60),

@@ -4,6 +4,7 @@ class Programs {
   late final Source source;
   late final String author;
   late final String title;
+  late final bool showIcon;
   late final String description;
   late final String urlToImage;
   late final String publishedAt;
@@ -12,6 +13,7 @@ class Programs {
     required this.source,
     required this.author,
     required this.title,
+    required this.showIcon,
     required this.description,
     required this.urlToImage,
     required this.publishedAt
@@ -22,6 +24,7 @@ class Programs {
       source: Source.fromJson(json['source']),
       author: json['author'] ?? "",
       title: json['title'],
+      showIcon: json['showIcon'] ?? true,
       description: json['description'],
       urlToImage: json['urlToImage'],
       publishedAt: json['publishedAt'],

@@ -27,7 +27,7 @@ class _HomeExploreDetailsScreenState extends State<HomeExploreDetailsScreen> {
         margin: const EdgeInsets.all(5.0),
         child: Stack(
           children: [
-            // Add your GIF or photo here (replace with your actual image)
+            // Add your GIF or photo
             CachedNetworkImage(
               imageUrl: widget.explore.urlToImage,
               fit: BoxFit.cover,
@@ -45,18 +45,18 @@ class _HomeExploreDetailsScreenState extends State<HomeExploreDetailsScreen> {
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [  Theme.of(context).colorScheme.onSurface, Colors.transparent], // Black gradient from bottom
+                  colors: [Theme.of(context).colorScheme.onSurface, Colors.transparent], // Black gradient from bottom
                   begin: Alignment.bottomCenter,
                   end: Alignment.center,
                 ),
               ),
             ),
             // Icon Widget
-            const Positioned(
+            widget.explore.showIcon ? const Positioned(
               top: 10.0,
               right: 10.0,
               child: BoxedIcon(backgroundColor: Colors.white), // Use the separate Icon Widget
-            ),
+            ) :  const SizedBox.shrink(),
             // Texts at the bottom
             Positioned(
               bottom: 10.0,

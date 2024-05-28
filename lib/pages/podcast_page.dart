@@ -128,8 +128,8 @@ class PodcastPageState extends State<PodcastPage> {
                                 height: double.infinity,
                                 placeholder: (context, url) => const Center(
                                   child: SizedBox(
-                                    width: 40.0, // Adjust the width to control the size
-                                    height: 40.0, // Adjust the height to control the size
+                                    width: AppConstants.width40, // Adjust the width to control the size
+                                    height: AppConstants.height40, // Adjust the height to control the size
                                     child: LoadingWidget()
                                   ),), // Placeholder widget
                                 errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
@@ -185,7 +185,7 @@ class PodcastPageState extends State<PodcastPage> {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                            child: TextOverlay(label: currentMediaItem!.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
+                            child: TextOverlay(label: currentMediaItem!.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 5,),
                           TextOverlay(label:  currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondaryContainer,fontSize: 16,),

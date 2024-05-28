@@ -56,7 +56,7 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                 expandedTitleScale: 1,
                 collapseMode: CollapseMode.pin,
                 background: SizedBox(
-                  height: 250,
+                  height: AppConstants.height250,
                   child: Padding(
                     padding: const EdgeInsets.only(
                         top: 105, right: 20, left: 20, bottom: 60),
@@ -74,7 +74,7 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20,fontWeight: FontWeight.bold,),
+                    TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20,fontWeight: FontWeight.bold,),
                     const SizedBox(height: 5),
                     ShowMoreDescription(description: podcastController.selectedEpisode.value!.description,modalTitle: AppConstants.description,),
                     Divider(color: Theme.of(context).colorScheme.tertiaryContainer,),

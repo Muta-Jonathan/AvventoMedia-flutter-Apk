@@ -22,12 +22,12 @@ class AudioPlayerController extends GetxController {
     await audioPlayer.setAudioSource(audioSource);
   }
 
-  void play() {
-    audioPlayer.play();
+  Future<void> play() async {
+    await audioPlayer.play();
   }
 
-  void pause() {
-    audioPlayer.pause();
+  Future<void> pause() async {
+    await audioPlayer.pause();
   }
 
   @override

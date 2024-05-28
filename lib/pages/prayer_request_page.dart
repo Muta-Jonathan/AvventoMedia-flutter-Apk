@@ -1,6 +1,7 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:flutter/material.dart';
 import '../componets/prayer_request_field.dart';
+import '../componets/utils.dart';
 
 class PrayerRequestPage extends StatelessWidget {
   const PrayerRequestPage({super.key});
@@ -19,14 +20,14 @@ class PrayerRequestPage extends StatelessWidget {
                 color: Theme.of(context).colorScheme.onPrimary
             ),),
           ),
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
               padding: EdgeInsets.only(left: AppConstants.leftMain, right: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20,),
-                  PrayerRequestField(),
+                  SizedBox(height: Utils.calculateHeight(context, 0.03)),
+                  const PrayerRequestField(),
                 ],
               ),
             )

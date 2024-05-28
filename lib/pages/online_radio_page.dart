@@ -107,12 +107,12 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
       backgroundColor:   Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: SizedBox(
-          height: 30,
+          height: AppConstants.height30,
           child: Center(
             child: TextOverlay(
               label: AppConstants.nowPlaying,
               color: Theme.of(context).colorScheme.onPrimary,
-              fontSize: 18,
+              fontSize: AppConstants.fontSize18,
             ),
           ),
         ),
@@ -171,8 +171,8 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                                         height: double.infinity,
                                         placeholder: (context, url) => const Center(
                                           child: SizedBox(
-                                            width: 40.0, // Adjust the width to control the size
-                                            height: 40.0, // Adjust the height to control the size
+                                            width: AppConstants.width40, // Adjust the width to control the size
+                                            height: AppConstants.height40, // Adjust the height to control the size
                                             child: LoadingWidget()
                                           ),
                                         ), // Placeholder widget
@@ -215,15 +215,15 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 50),
+                          SizedBox(height: Utils.calculateHeight(context, 0.04)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: 20, fontWeight: FontWeight.bold),
+                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold),
                               ),
-                              const SizedBox(height: 10,),
+                              const SizedBox(height: 5,),
                               TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
                             ],
                           ),
@@ -234,16 +234,17 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               bufferedBarColor: Colors.grey,
                               thumbColor: Colors.redAccent,
                               thumbRadius: 5,
+                              buffered: Utils.parseDuration(radioProvider.radioStation?.elapsed),
                               progressBarColor: Colors.redAccent,
                               progress: Utils.parseDuration(radioProvider.radioStation?.elapsed),
                               total: Utils.parseDuration(radioProvider.radioStation?.duration),
                              ),
                           ),
-                          const SizedBox(height: 20,),
+                          SizedBox(height: Utils.calculateHeight(context, 0.02)),
                           Controls(audioPlayerController: _audioPlayerController,),
-                          const SizedBox(height: 40,),
+                          SizedBox(height: Utils.calculateHeight(context, 0.04)),
                           TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer),
-                          const SizedBox(height: 20,),
+                          SizedBox(height: Utils.calculateHeight(context, 0.02)),
                         ],
                       );
                     },
