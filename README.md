@@ -7,29 +7,11 @@ AvventoMedia is dedicated to spreading the gospel globally. Its content is brand
 
 
 ## 📱 Screenshots
+|  <div style="flex: 1 1 100%; margin: 10px;"><img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240522-072911.png" alt="Home Screen" style="width: 100%;"></div>|  <div style="flex: 1 1 100%; margin: 10px;"><img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240529-084446.png" alt="Listen Screen" style="width: 100%;"></div>|<div style="flex: 1 1 100%; margin: 10px;"> <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240529-091338.png" alt="Dark mode Screen" style="width: 100%;"></div>|
+|-|-|-|
 
-<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;">
-  <div style="padding: 10px;">
-    <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240522-072911.png" alt="Home Screen" style="width: 100%;">
-  </div>
-  <div style="padding: 10px;">
-    <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240529-084446.png" alt="Listen Screen" style="width: 100%;">
-  </div>
-  <div style="padding: 10px;">
-    <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240529-091338.png" alt="Dark mode Screen" style="width: 100%;">
-  </div>
-  <div style="padding: 10px;">
-    <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240529-091405.png" alt="Selected Podcast Screen" style="width: 100%;">
-  </div>
-  <div style="padding: 10px;">
-    <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240522-073053.png" alt="Podcast listen Screen" style="width: 100%;">
-  </div>
-  <div style="padding: 10px;">
-    <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240522-072937.png" alt="Tv screen" style="width: 100%;">
-  </div>
-  <!-- Add more images as needed -->
-</div>
-
+|  <div style="flex: 1 1 100%; margin: 10px;"> <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240529-091405.png" alt="Selected Podcast Screen" style="width: 100%;">|  <div style="flex: 1 1 100%; margin: 10px;"> <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240522-073053.png" alt="Podcast listen Screen" style="width: 100%;"></div>|<div style="flex: 1 1 100%; margin: 10px;"> <img src="https://avventomedia.org/wp-content/uploads/2024/05/Screenshot_20240522-072937.png" alt="Tv screen" style="width: 100%;"></div>|
+|-|-|-|
 
 ## Features
 
