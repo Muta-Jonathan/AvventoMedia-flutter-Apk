@@ -57,7 +57,7 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 
 ### Todos
 - [ ] Enhance search functionality.
-- [ ] Added Speakers | Presenters
+- [ ] Add Speakers | Presenters
 
 ### Completed
 
