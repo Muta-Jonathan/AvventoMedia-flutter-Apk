@@ -25,59 +25,61 @@ class PodcastPlayerWidgetState extends State<PodcastListDetailsWidget> {
         padding: const EdgeInsets.only(bottom: 10.0, left: 8.0,right: 8.0,top: 8),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
-          child:Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: CachedNetworkImage(
-                  imageUrl: widget.radioPodcast.art,
-                  httpHeaders: const {
-                    'Authorization': 'Bearer ${AppConstants.azuracastAPIKey}',
-                  },
-                  fit: BoxFit.cover,
-                  width: Utils.calculateWidth(context, 0.44),
-                  height:  Utils.calculateHeight(context, 0.2),
-                  placeholder: (context, url) => Center(
-                    child: SizedBox(
-                        width:  Utils.calculateWidth(context, 0.3),
-                        height:  Utils.calculateWidth(context, 0.3),
-                        child: const LoadingWidget()
+          child:SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: CachedNetworkImage(
+                    imageUrl: widget.radioPodcast.art,
+                    httpHeaders: const {
+                      'Authorization': 'Bearer ${AppConstants.azuracastAPIKey}',
+                    },
+                    fit: BoxFit.cover,
+                    width: Utils.calculateWidth(context, 0.44),
+                    height:  Utils.calculateHeight(context, 0.2),
+                    placeholder: (context, url) => Center(
+                      child: SizedBox(
+                          width:  Utils.calculateWidth(context, 0.3),
+                          height:  Utils.calculateWidth(context, 0.3),
+                          child: const LoadingWidget()
+                      ),
                     ),
-                  ),
-                  errorWidget: (context, _, error) => Icon(
-                    Icons.error,
-                    color: Theme.of(context).colorScheme.error,
+                    errorWidget: (context, _, error) => Icon(
+                      Icons.error,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: Utils.calculateWidth(context,0.44),
-                    child: TextOverlay(
-                      label: widget.radioPodcast.title,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: Utils.calculateWidth(context,0.042),
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                    children: [
-                      Icon(CupertinoIcons.folder_fill,color: Theme.of(context).colorScheme.onSecondaryContainer),
-                      TextOverlay(
-                        label: '${widget.radioPodcast.episodes.toString()} Episodes',
-                        fontSize: 14,
+                const SizedBox(height: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: Utils.calculateWidth(context,0.44),
+                      child: TextOverlay(
+                        label: widget.radioPodcast.title,
+                        fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: Utils.calculateWidth(context,0.042),
                       ),
-                    ],
-                  )
-                ],
-              ),
-            ],
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(CupertinoIcons.folder_fill,color: Theme.of(context).colorScheme.onSecondaryContainer),
+                        TextOverlay(
+                          label: '${widget.radioPodcast.episodes.toString()} Episodes',
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

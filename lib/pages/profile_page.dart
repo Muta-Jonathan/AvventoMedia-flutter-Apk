@@ -75,24 +75,26 @@ class ProfilePage extends StatelessWidget {
                       child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              TextOverlay(label: AppConstants.donateTitle,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontSize: Utils.calculateWidth(context,0.04),
-                              ),
-                              const Gap(10),
-                              TextOverlay(label: AppConstants.donateMessage,
-                                color: Theme.of(context).colorScheme.onSecondary,
-                                fontSize: Utils.calculateWidth(context,0.03),
-                                maxLines: 3,
-                              ),
-                              const Gap(10),
-                              const KofiButton(text:AppConstants.kofiText,kofiName: AppConstants.kofiName,kofiColor: KofiColor.Red),
-                            ],
+                          child: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TextOverlay(label: AppConstants.donateTitle,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                                  fontSize: Utils.calculateWidth(context,0.04),
+                                ),
+                                const Gap(10),
+                                TextOverlay(label: AppConstants.donateMessage,
+                                  color: Theme.of(context).colorScheme.onSecondary,
+                                  fontSize: Utils.calculateWidth(context,0.03),
+                                  maxLines: 3,
+                                ),
+                                const Gap(10),
+                                const KofiButton(text:AppConstants.kofiText,kofiName: AppConstants.kofiName,kofiColor: KofiColor.Red),
+                              ],
+                            ),
                           ),
                         ),
                       )
