@@ -89,6 +89,8 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
           const SizedBox(height: 10,),
           IntlPhoneField(
             controller: phoneNumberController,
+            initialCountryCode: 'UG',
+            dropdownTextStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
             decoration: InputDecoration(
               hoverColor: Theme.of(context).colorScheme.onPrimary,
               filled: true,

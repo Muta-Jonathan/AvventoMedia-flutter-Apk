@@ -22,7 +22,7 @@ class PrayerRequestPage extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(left: AppConstants.leftMain, right: 20),
+              padding: const EdgeInsets.only(left: AppConstants.leftMain, right: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

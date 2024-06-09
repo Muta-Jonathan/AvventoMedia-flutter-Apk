@@ -1,4 +1,4 @@
-import 'package:avvento_media/models/livetvmodel/liveTvModel.dart';
+import 'package:avvento_media/models/livetvmodel/livetv_model.dart';
 import 'package:get/get.dart';
 
 class LiveTvController extends GetxController {

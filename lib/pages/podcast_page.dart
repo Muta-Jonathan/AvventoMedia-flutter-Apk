@@ -11,12 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:rxdart/rxdart.dart' as R;
+import 'package:rxdart/rxdart.dart' as r_x;
 
 import '../controller/audio_player_controller.dart';
 import '../controller/podcast_episode_controller.dart';
 import '../models/musicplayermodels/music_player_position.dart';
 import '../widgets/audio_players/controls.dart';
+import '../widgets/audio_players/speed_control.dart';
 
 class PodcastPage extends StatefulWidget {
   const PodcastPage({super.key});
@@ -28,33 +29,39 @@ class PodcastPage extends StatefulWidget {
 class PodcastPageState extends State<PodcastPage> {
   final PodcastEpisodeController episodeController = Get.find();
   late AudioPlayerController _audioPlayerController;
-  MediaItem? currentMediaItem;
   final StreamController<MusicPlayerPosition> _musicPlayerPositionController = StreamController<MusicPlayerPosition>.broadcast();
 
   //Stream<MusicPlayerPosition> get _musicPlayerPositionStream => _musicPlayerPositionController.stream;
   Stream<MusicPlayerPosition> get _musicPlayerPositionStream =>
-      R.Rx.combineLatest3<Duration,Duration,Duration?, MusicPlayerPosition>(
+      r_x.Rx.combineLatest3<Duration,Duration,Duration?, MusicPlayerPosition>(
           _audioPlayerController.audioPlayer.positionStream,
           _audioPlayerController.audioPlayer.bufferedPositionStream,
           _audioPlayerController.audioPlayer.durationStream,
               (position, bufferedPosition, duration) => MusicPlayerPosition(
-              position, bufferedPosition, duration ?? Duration.zero,  currentMediaItem!)
+              position, bufferedPosition, duration ?? Duration.zero,  _audioPlayerController.currentMediaItem!)
       );
 
   @override
   void initState() {
     super.initState();
     _audioPlayerController = Get.find<AudioPlayerController>();
-    currentMediaItem = MediaItem(
-      id: episodeController.selectedEpisode.value!.id,
-      title: episodeController.selectedEpisode.value!.title,
-      artist: episodeController.selectedEpisode.value!.playlistMediaArtist,
-      artUri: Uri.parse(episodeController.selectedEpisode.value!.art),
-    );
-    _audioPlayerController.setAudioSource(
-        episodeController.selectedEpisode.value!.downloadLink,
-        currentMediaItem!);
-  }
+    // Check if the selected episode is different from the current media item
+    final selectedEpisode = episodeController.selectedEpisode.value!;
+    // Check if the selected episode is different from the current media item
+    // var currentMediaItem = _audioPlayerController.currentMediaItem.value;
+
+    if (_audioPlayerController.currentMediaItem == null || _audioPlayerController.currentMediaItem!.id != selectedEpisode.id) {
+      _audioPlayerController.currentMediaItem = MediaItem(
+        id: selectedEpisode.id,
+        title: selectedEpisode.title,
+        artist: selectedEpisode.playlistMediaArtist,
+        artUri: Uri.parse(selectedEpisode.art),
+      );
+      _audioPlayerController.setAudioSource(
+          selectedEpisode.downloadLink,
+          _audioPlayerController.currentMediaItem!);
+      }
+    }
 
   @override
   void dispose() {
@@ -97,26 +104,28 @@ class PodcastPageState extends State<PodcastPage> {
           backgroundColor: Theme.of(context).colorScheme.surface,
           iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: screenHeight * 0.02),
-                  child: Container(
-                    width: screenWidth * 0.85,
-                    height: screenHeight * 0.38,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 5,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: screenHeight * 0.02),
+                      child: Container(
+                        width: screenWidth * 0.85,
+                        height: screenHeight * 0.38,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child:  Stack(
+                        child:  Stack(
                           children: [
                             // Cached Network Image
                             ClipRRect(
@@ -128,9 +137,9 @@ class PodcastPageState extends State<PodcastPage> {
                                 height: double.infinity,
                                 placeholder: (context, url) => const Center(
                                   child: SizedBox(
-                                    width: AppConstants.width40, // Adjust the width to control the size
-                                    height: AppConstants.height40, // Adjust the height to control the size
-                                    child: LoadingWidget()
+                                      width: AppConstants.width40, // Adjust the width to control the size
+                                      height: AppConstants.height40, // Adjust the height to control the size
+                                      child: LoadingWidget()
                                   ),), // Placeholder widget
                                 errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
                               ),
@@ -159,7 +168,7 @@ class PodcastPageState extends State<PodcastPage> {
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
-                                        selectedEpisode.playlistMediaAlbum,
+                                      selectedEpisode.playlistMediaAlbum,
                                       style: const TextStyle(color: Colors.white),
                                     ),
                                   ],
@@ -167,57 +176,71 @@ class PodcastPageState extends State<PodcastPage> {
                               ),
                             ),
                           ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              SizedBox(height: Utils.calculateHeight(context, 0.04)),
-              StreamBuilder<MusicPlayerPosition>(
-                stream: _musicPlayerPositionStream,
-                builder: (_,snapshot) {
-                  final positionData = snapshot.data;
-                  final paddingWidth = Utils.calculateWidth(context, 0.05);
-                  final paddingTop = Utils.calculateHeight(context, 0.06);
-                  return Column(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                  SizedBox(height: Utils.calculateHeight(context, 0.04)),
+                  StreamBuilder<MusicPlayerPosition>(
+                    stream: _musicPlayerPositionStream,
+                    builder: (_,snapshot) {
+                      final positionData = snapshot.data;
+                      final paddingWidth = Utils.calculateWidth(context, 0.05);
+                      final paddingTop = Utils.calculateHeight(context, 0.06);
+                      return Column(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                            child: TextOverlay(label: currentMediaItem!.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
+                                child: TextOverlay(label: _audioPlayerController.currentMediaItem!.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 5,),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextOverlay(label:  _audioPlayerController.currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondaryContainer,fontSize: 16,),
+                              ),
+                              const SizedBox(height: 5,),
+                              TextOverlay(label: "Published $publishedDate",color: Theme.of(context).colorScheme.onSecondaryContainer)
+                            ],
                           ),
-                          const SizedBox(height: 5,),
-                          TextOverlay(label:  currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondaryContainer,fontSize: 16,),
-                          const SizedBox(height: 5,),
-                          TextOverlay(label: "Published $publishedDate",color: Theme.of(context).colorScheme.onSecondaryContainer)
+                          Padding(
+                            padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth, top: paddingTop),
+                            child: ProgressBar(
+                              baseBarColor: Colors.grey[600],
+                              bufferedBarColor: Colors.grey,
+                              thumbColor: Colors.redAccent,
+                              thumbRadius: 5,
+                              progressBarColor: Colors.redAccent,
+                              progress: positionData?.position ?? Duration.zero,
+                              buffered:  positionData?.bufferedPosition ?? Duration.zero,
+                              total: positionData?.duration ?? Duration.zero,
+                              timeLabelTextStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                              onSeek: _audioPlayerController.audioPlayer.seek,),
+                          ),
+                          SizedBox(height: Utils.calculateHeight(context, 0.02)),
+                          Controls(audioPlayerController: _audioPlayerController,),
+                          SizedBox(height: Utils.calculateHeight(context, 0.04),),
+                          TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer),
+                          SizedBox(height: Utils.calculateHeight(context, 0.02),),
                         ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth, top: paddingTop),
-                        child: ProgressBar(
-                          baseBarColor: Colors.grey[600],
-                          bufferedBarColor: Colors.grey,
-                          thumbColor: Colors.redAccent,
-                          thumbRadius: 5,
-                          progressBarColor: Colors.redAccent,
-                          progress: positionData?.position ?? Duration.zero,
-                          buffered:  positionData?.bufferedPosition ?? Duration.zero,
-                          total: positionData?.duration ?? Duration.zero,
-                          timeLabelTextStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                          onSeek: _audioPlayerController.audioPlayer.seek,),
-                      ),
-                      SizedBox(height: Utils.calculateHeight(context, 0.02)),
-                      Controls(audioPlayerController: _audioPlayerController,),
-                      SizedBox(height: Utils.calculateHeight(context, 0.04),),
-                      TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer),
-                      SizedBox(height: Utils.calculateHeight(context, 0.02),),
-                    ],
-                  );
-                },
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Row(
+                children: [SpeedControl(audioPlayer: _audioPlayerController.audioPlayer),
+                ],
+              ),
+            ),
+          ],
         )
 
     );

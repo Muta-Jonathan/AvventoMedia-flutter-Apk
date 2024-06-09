@@ -1,7 +1,7 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/controller/live_tv_controller.dart';
-import 'package:avvento_media/models/livetvmodel/liveTvModel.dart';
+import 'package:avvento_media/models/livetvmodel/livetv_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

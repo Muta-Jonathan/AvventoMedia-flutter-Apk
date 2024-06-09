@@ -237,6 +237,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               buffered: Utils.parseDuration(radioProvider.radioStation?.elapsed),
                               progressBarColor: Colors.redAccent,
                               progress: Utils.parseDuration(radioProvider.radioStation?.elapsed),
+                              timeLabelTextStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                               total: Utils.parseDuration(radioProvider.radioStation?.duration),
                              ),
                           ),

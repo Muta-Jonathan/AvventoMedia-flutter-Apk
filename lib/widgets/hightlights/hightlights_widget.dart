@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../apis/firestore_service_api.dart';
-import '../../models/highlightmodel/highlightModel.dart';
+import '../../models/highlightmodel/highlight_model.dart';
 
 class HightlightsWidget extends StatefulWidget {
   const HightlightsWidget({super.key});

@@ -5,6 +5,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 class AudioPlayerController extends GetxController {
   late AudioPlayer audioPlayer;
   late AudioSource audioSource;
+  MediaItem? currentMediaItem;
 
   @override
   void onInit() {
@@ -19,6 +20,7 @@ class AudioPlayerController extends GetxController {
       tag: mediaItemTag,
     );
 
+    currentMediaItem = mediaItemTag; // Set the current media item
     await audioPlayer.setAudioSource(audioSource);
   }
 

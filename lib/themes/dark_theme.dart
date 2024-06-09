@@ -34,7 +34,7 @@ ThemeData darkTheme = ThemeData(
     ),
     textTheme: const TextTheme(
         bodyMedium: TextStyle(
-        color: Colors.white, 
+            color: Colors.white,
         ),
     )
 );
