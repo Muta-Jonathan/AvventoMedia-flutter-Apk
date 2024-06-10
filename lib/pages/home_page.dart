@@ -30,14 +30,14 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: Column(
                 children: [
-                  const HightlightsWidget(),
-                  SizedBox(height: Utils.calculateHeight(context, 0.02),),
-                  const LiveTvWidget(),
-                  SizedBox(height: Utils.calculateHeight(context, 0.02),),
-                  const LiveRadioWidget()
+                  HightlightsWidget(),
+                  SizedBox(height: 10,),
+                  LiveTvWidget(),
+                  SizedBox(height: 10,),
+                  LiveRadioWidget()
                 ],
               ),
             ),

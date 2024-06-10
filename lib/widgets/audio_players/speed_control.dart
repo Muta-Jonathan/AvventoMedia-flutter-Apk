@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 
 import '../../componets/utils.dart';
+import '../../controller/audio_player_controller.dart';
 
 class SpeedControl extends StatefulWidget {
-  final AudioPlayer audioPlayer;
+  final AudioPlayerController audioPlayerController;
 
-  const SpeedControl({super.key, required this.audioPlayer});
+  const SpeedControl({super.key, required this.audioPlayerController});
 
   @override
   SpeedControlState createState() => SpeedControlState();
 }
 
 class SpeedControlState extends State<SpeedControl> {
-  List<double> speeds = [1.0, 1.25, 1.5, 1.75, 2.0];
-  int currentSpeedIndex = 0;
-
   void _changeSpeed() {
     setState(() {
-      currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
-      widget.audioPlayer.setSpeed(speeds[currentSpeedIndex]);
+      widget.audioPlayerController.currentSpeedIndex = (widget.audioPlayerController.currentSpeedIndex + 1) % widget.audioPlayerController.speeds.length;
+      widget. audioPlayerController.audioPlayer.setSpeed( widget.audioPlayerController.speeds[widget.audioPlayerController.currentSpeedIndex]);
     });
   }
 
@@ -28,7 +25,7 @@ class SpeedControlState extends State<SpeedControl> {
     return GestureDetector(
       onTap: _changeSpeed,
       child: Container(
-        margin: const EdgeInsets.only(left: 10),
+        margin: const EdgeInsets.only(left: 10,bottom: 10),
         padding: const EdgeInsets.all(5.0),
         width: Utils.calculateWidth(context, 0.16),
         height: Utils.calculateHeight(context, 0.045),
@@ -40,10 +37,10 @@ class SpeedControlState extends State<SpeedControl> {
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Text(
-          '${speeds[currentSpeedIndex]}x',
+          '${widget.audioPlayerController.speeds[widget.audioPlayerController.currentSpeedIndex]}x',
           style: TextStyle(
             color:  Theme.of(context).colorScheme.onPrimary,
-            fontSize: Utils.calculateHeight(context, 0.023),
+            fontSize: Utils.calculateWidth(context, 0.05),
           ),
         ),
       ),

@@ -236,7 +236,7 @@ class PodcastPageState extends State<PodcastPage> {
               left: 0,
               right: 0,
               child: Row(
-                children: [SpeedControl(audioPlayer: _audioPlayerController.audioPlayer),
+                children: [SpeedControl(audioPlayerController: _audioPlayerController,),
                 ],
               ),
             ),

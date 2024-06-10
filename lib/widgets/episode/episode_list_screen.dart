@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../componets/utils.dart';
+import '../../controller/audio_player_controller.dart';
 import '../../controller/podcast_controller.dart';
 import '../../controller/podcast_episode_controller.dart';
 import '../../models/radiomodel/podcast_episode_model.dart';
@@ -20,7 +21,8 @@ class EpisodeListScreen extends StatefulWidget {
 
 class _EpisodeListState extends State<EpisodeListScreen> {
   final podcastEpisodeController = Get.put(PodcastEpisodeController());
-  final PodcastController podcastController = Get.find();
+  final PodcastController podcastController = Get.find<PodcastController>();
+  final AudioPlayerController audioPlayerController= Get.find<AudioPlayerController>();
 
   @override
   void initState() {
@@ -46,11 +48,12 @@ class _EpisodeListState extends State<EpisodeListScreen> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: Utils.calculateHeight(context, 0.00077),
+              mainAxisExtent: Utils.calculateHeight(context, 0.372),
             ),
             itemCount: podcastProvider.podcastEpisodes.length,
             semanticChildCount: 2,
             itemBuilder: (BuildContext context, int index) {
-              return  buildRadioPodcastDetailsScreen(podcastProvider.podcastEpisodes[index]);
+              return  buildRadioPodcastDetailsScreen(podcastProvider.podcastEpisodes[index], index);
             },
           );
         }
@@ -58,7 +61,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
     );
   }
 
-  Widget buildRadioPodcastDetailsScreen(PodcastEpisode podcastEpisode) {
+  Widget buildRadioPodcastDetailsScreen(PodcastEpisode podcastEpisode,  int index) {
     return GestureDetector(
         onTap: () {
           //Set the selected episode using the controller
@@ -66,7 +69,9 @@ class _EpisodeListState extends State<EpisodeListScreen> {
           //Navigate to the "PodcastPage"
           Get.toNamed(Routes.getPodcastRoute());
         },
-        child: EpisodeListDetailsWidget(episode: podcastEpisode,),
+        child: EpisodeListDetailsWidget(episode: podcastEpisode,
+          audioPlayerController: audioPlayerController,
+        ),
     );
   }
 

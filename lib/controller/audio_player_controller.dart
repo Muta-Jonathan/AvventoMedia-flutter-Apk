@@ -6,6 +6,8 @@ class AudioPlayerController extends GetxController {
   late AudioPlayer audioPlayer;
   late AudioSource audioSource;
   MediaItem? currentMediaItem;
+  List<double> speeds = [1.0, 1.25, 1.5, 1.75, 2.0];
+  int currentSpeedIndex = 0;
 
   @override
   void onInit() {
