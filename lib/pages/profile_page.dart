@@ -161,7 +161,7 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 20,),
 
                 const SizedBox(height: 10,),
-                //app creaters
+                //app_creaters
                 const Center(
                   child: AppCreatorsWidget(),
                 ),

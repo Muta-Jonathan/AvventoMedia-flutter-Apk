@@ -42,9 +42,7 @@ class _PodcastListState extends State<PodcastListScreen> {
             shrinkWrap: true,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 10.0,
-              mainAxisSpacing: 10.0,
-              childAspectRatio: Utils.calculateHeight(context, 0.00085),
+              childAspectRatio: Utils.calculateHeight(context, 0.0009),
             ),
             itemCount: podcastProvider.podcasts.length,
             semanticChildCount: 2,
