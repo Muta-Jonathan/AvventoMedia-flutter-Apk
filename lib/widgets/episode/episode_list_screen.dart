@@ -48,7 +48,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: Utils.calculateHeight(context, 0.00077),
-              mainAxisExtent: Utils.calculateHeight(context, 0.372),
+              mainAxisExtent: Utils.calculateHeight(context, 0.38),
             ),
             itemCount: podcastProvider.podcastEpisodes.length,
             semanticChildCount: 2,
