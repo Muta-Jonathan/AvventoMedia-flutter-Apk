@@ -8,7 +8,7 @@ import '../componets/app_constants.dart';
 import '../routes/routes.dart';
 import '../widgets/explore/home_explore_screen.dart';
 import '../widgets/providers/programs_provider.dart';
-import '../widgets/providers/spreaker_data_provider.dart';
+import '../widgets/providers/radio_podcast_provider.dart';
 
 class ListenPage extends StatefulWidget {
   const ListenPage({super.key});
@@ -25,7 +25,7 @@ class ListenPageState extends State<ListenPage> {
       await Provider.of<ProgramsProvider>(context, listen: false).fetchData();
       if (!context.mounted) return;
       // Fetch fresh data for AudioListScreen
-      await Provider.of<SpreakerEpisodeProvider>(context, listen: false).fetchEpisodesWithLimits();
+      await Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllPodcasts();
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }

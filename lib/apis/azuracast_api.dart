@@ -172,6 +172,8 @@ class AzuraCastAPI {
         // Create a list of RadioPodcast objects from the JSON data
         final podcastEpisodes = jsonResult.map((json) => PodcastEpisode.fromJson(json)).toList();
 
+        // Sort episodes by publish_at timestamp
+        podcastEpisodes.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
 
         return podcastEpisodes;
       } else {

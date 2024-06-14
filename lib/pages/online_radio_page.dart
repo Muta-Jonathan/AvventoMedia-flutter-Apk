@@ -224,7 +224,10 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                                 child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 5,),
-                              TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
+                              ),
                             ],
                           ),
                           Padding(
