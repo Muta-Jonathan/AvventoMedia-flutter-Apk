@@ -69,7 +69,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                       ),
                     ),
                   ),
-                  widget.audioPlayerController.currentMediaItem?.id == widget.episode.id  ? Positioned(
+                  widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Positioned(
                     top: -25.0,
                     right: -18.0,
                     child:  AudioIndicator(isPlaying: widget.audioPlayerController.audioPlayer.playing,),
@@ -85,7 +85,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                     child: TextOverlay(
                       label: widget.episode.title,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color:  widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.orange : Theme.of(context).colorScheme.onPrimary,
                       fontSize: Utils.calculateWidth(context,0.042),
                     ),
                   ),
@@ -95,7 +95,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                     child: TextOverlay(
                       label: widget.episode.playlistMediaArtist,
                       fontSize: 14,
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.orange : Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 1),
@@ -105,7 +105,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                       label: "Published $publishedDate",
                       fontSize: 11,
                       maxLines: 1,
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.orange : Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ],
