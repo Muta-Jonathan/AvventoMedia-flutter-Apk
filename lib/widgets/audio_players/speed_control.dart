@@ -40,7 +40,7 @@ class SpeedControlState extends State<SpeedControl> {
           '${widget.audioPlayerController.speeds[widget.audioPlayerController.currentSpeedIndex]}x',
           style: TextStyle(
             color:  Theme.of(context).colorScheme.onPrimary,
-            fontSize: Utils.calculateWidth(context, 0.05),
+            fontSize: Utils.calculateHeight(context, 0.023),
           ),
         ),
       ),

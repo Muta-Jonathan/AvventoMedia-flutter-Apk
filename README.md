@@ -58,11 +58,18 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 ### Todos
 - [ ] Enhance search functionality.
 - [ ] Add Speakers | Presenters
+- [ ] Add Youtube api for videos
+- [ ] support podcast download
 
 ### Completed
 
 ##### May 2024
-- [x] Improve user interface design.
+- [x] Improved podcast page
+- [x] Added speed controls on playing podcast
+- [x] fixed some bugs
+
+##### May 2024
+- [x] Improved user interface design.
 - [x] Added podcasts page
 - [x] Share app
 - [x] Added ability to update on new Release from PlayStore | Apple store
