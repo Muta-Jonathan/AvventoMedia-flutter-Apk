@@ -63,7 +63,7 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 
 ### Completed
 
-##### May 2024
+##### June 2024
 - [x] Improved podcast page
 - [x] Added speed controls on playing podcast
 - [x] fixed some bugs
