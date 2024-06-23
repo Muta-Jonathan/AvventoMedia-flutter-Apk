@@ -26,11 +26,7 @@ class _PodcastListPageState extends State<PodcastListPage> {
     }
     return Scaffold(
       backgroundColor:   Theme.of(context).colorScheme.surface,
-      body: RefreshIndicator(
-        backgroundColor: Colors.white,
-        color: Colors.orange,
-        onRefresh: refreshData,
-        child: CustomScrollView(
+      body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
               backgroundColor:   Theme.of(context).colorScheme.surface,
@@ -38,6 +34,7 @@ class _PodcastListPageState extends State<PodcastListPage> {
               expandedHeight: Utils.calculateHeight(context, 0.4),
               floating: false,
               pinned: true,
+              onStretchTrigger: () => refreshData(),
               flexibleSpace: FlexibleSpaceBar(
                 stretchModes: const [
                   StretchMode.blurBackground
@@ -69,7 +66,6 @@ class _PodcastListPageState extends State<PodcastListPage> {
             ),
 
           ],
-        ),
       ),
     );
   }

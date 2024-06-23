@@ -6,6 +6,7 @@ import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/providers/programs_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
+import 'package:avvento_media/widgets/providers/youtube_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +46,9 @@ Future<void> main() async {
         ),
         ChangeNotifierProvider<RadioPodcastProvider>(
           create: (context) => RadioPodcastProvider(),
+        ),
+        ChangeNotifierProvider<YoutubeProvider>(
+          create: (context) => YoutubeProvider(),
         ),
       ],
       child: const MyApp(),

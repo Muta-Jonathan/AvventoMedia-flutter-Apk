@@ -5,6 +5,7 @@ class AppConstants {
   static const String avventoSlogan = "Flying the Gospel to the Whole World!";
   static const String missNot = "Programs You shouldn't miss This Week";
   static const String liveTv = "LIVE TV";
+  static const String avventoMusic = "Music";
   static const String liveNow = "LIVE NOW";
   static const String liveRadio = "Radio";
   static const String onAIR = "ON AIR";
@@ -28,6 +29,8 @@ class AppConstants {
   static const azuracastPodcastAPI ='https://radio1.avventomedia.org/api/station/avventoradio/podcasts';
   static const azuracastWebSocketAPI ='wss://radio1.avventomedia.org/api/live/nowplaying/websocket';
   static const avventoEmail ='avventohomeproductions@gmail.com';
+  static const avventomusicYoutubeApiKey ='AIzaSyA_vHgI0-W-2nT2nX2ou6gWNwtULWaAAU8';
+  static const avventomusicYoutubeChannelID ='UC-xVlvRnqlQIjyBnmbj07nA';
 
 
 /// ***************** PROFILE PAGE ****************

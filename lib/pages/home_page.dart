@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../componets/app_constants.dart';
 import '../widgets/liveTv/live_tv_widget.dart';
+import '../widgets/youtube/playlist/youtube_playlist_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -36,7 +37,9 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(height: 10,),
                   LiveTvWidget(),
                   SizedBox(height: 10,),
-                  LiveRadioWidget()
+                  LiveRadioWidget(),
+                  SizedBox(height: 10,),
+                  YoutubePlaylistWidget(),
                 ],
               ),
             ),

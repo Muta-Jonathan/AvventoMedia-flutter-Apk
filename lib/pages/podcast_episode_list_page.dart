@@ -30,16 +30,13 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
     }
     return Scaffold(
       backgroundColor:   Theme.of(context).colorScheme.surface,
-      body: RefreshIndicator(
-        backgroundColor: Colors.white,
-        color: Colors.orange,
-        onRefresh: refreshData,
-        child: CustomScrollView(
+      body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
               backgroundColor:   Theme.of(context).colorScheme.surface,
               iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
               expandedHeight: Utils.calculateHeight(context, 0.4),
+              onStretchTrigger: () => refreshData(),
               floating: false,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
@@ -74,7 +71,7 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20,fontWeight: FontWeight.bold,),
+                    TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize18,fontWeight: FontWeight.bold,),
                     const SizedBox(height: 5),
                     ShowMoreDescription(description: podcastController.selectedEpisode.value!.description,modalTitle: AppConstants.description,),
                     Divider(color: Theme.of(context).colorScheme.tertiaryContainer,),
@@ -88,7 +85,6 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
 
           ],
         ),
-      ),
     );
   }
 }

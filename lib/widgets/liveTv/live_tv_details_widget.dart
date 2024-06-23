@@ -17,22 +17,22 @@ class _LiveTvDetailsWidget extends State<LiveTvDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: ResizableImageContainerWithOverlay(
-                imageUrl: widget.liveTvModel.imageUrl,
-                icon: CupertinoIcons.dot_radiowaves_left_right,
-                text: widget.liveTvModel.status,
-                ),
-              ),
-              const SizedBox(height: 15.0,),
-              TextOverlay(label: widget.liveTvModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),
-              const SizedBox(height: 8.0,),
-            ],
-        ),
+      padding: const EdgeInsets.only(top: 15,bottom: 15,left: 15,right: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ResizableImageContainerWithOverlay(
+              imageUrl: widget.liveTvModel.imageUrl,
+              icon: CupertinoIcons.dot_radiowaves_left_right,
+              text: widget.liveTvModel.status,
+            ),
+          ),
+          const SizedBox(height: 15.0,),
+          TextOverlay(label: widget.liveTvModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),
+          const SizedBox(height: 8.0,),
+        ],
+      ),
     );
   }
 }

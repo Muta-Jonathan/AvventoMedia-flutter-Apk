@@ -89,4 +89,13 @@ class Utils {
     return DateFormat(format).format(dateTime);
   }
 
+  static void shareYouTubeVideo(String videoId) {
+    String videoUrl = 'https://www.youtube.com/watch?v=$videoId \n shared from ${AppConstants.appName} app';
+    Share.share(videoUrl);
+  }
+
+  static void shareYouTubePlaylist(String playlistId) {
+    String playlistUrl = 'https://www.youtube.com/playlist?list=$playlistId \n shared from ${AppConstants.appName} app';
+    Share.share(playlistUrl);
+  }
 }

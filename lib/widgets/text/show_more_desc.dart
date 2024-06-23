@@ -55,7 +55,7 @@ class ShowMoreDescriptionState extends State<ShowMoreDescription> {
                                       TextOverlay(
                                           label: widget.modalTitle,
                                           color: Theme.of(context).colorScheme.onSecondary,
-                                          fontSize: AppConstants.fontSize20,
+                                          fontSize: AppConstants.fontSize18,
                                           fontWeight: FontWeight.bold),
                                       GestureDetector(
                                         onTap: () =>  Get.back(),
@@ -83,6 +83,7 @@ class ShowMoreDescriptionState extends State<ShowMoreDescription> {
                                     ),
                                   ),
                                 ),
+                                const SizedBox(height: 20),
                               ],
                           );
                         },

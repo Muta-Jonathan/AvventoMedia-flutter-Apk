@@ -53,7 +53,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
             itemCount: podcastProvider.podcastEpisodes.length,
             semanticChildCount: 2,
             itemBuilder: (BuildContext context, int index) {
-              return  buildRadioPodcastDetailsScreen(podcastProvider.podcastEpisodes[index], index);
+              return  buildRadioPodcastDetailsScreen(podcastProvider.podcastEpisodes[index]);
             },
           );
         }
@@ -61,7 +61,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
     );
   }
 
-  Widget buildRadioPodcastDetailsScreen(PodcastEpisode podcastEpisode,  int index) {
+  Widget buildRadioPodcastDetailsScreen(PodcastEpisode podcastEpisode) {
     return GestureDetector(
         onTap: () {
           //Set the selected episode using the controller

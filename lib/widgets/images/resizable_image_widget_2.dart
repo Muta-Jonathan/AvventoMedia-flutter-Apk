@@ -7,6 +7,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
   final String imageUrl;
   final IconData? icon;
   final String? text;
+  final Color? containerColor;
   final String? token;
   final double? borderRadius;
 
@@ -15,6 +16,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
     required this.imageUrl,
     this.icon,
     this.text,
+    this.containerColor,
     this.token,
     this.borderRadius = 5
   });
@@ -29,7 +31,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
           height: 30,
           child: Container(
             padding: const EdgeInsets.all(6),
-            color: Colors.red,
+            color: containerColor ?? Colors.red,
             child: icon == null
                 ? Text(
               text!,

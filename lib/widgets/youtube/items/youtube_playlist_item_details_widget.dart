@@ -5,18 +5,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/spreakermodels/spreaker_episodes.dart';
-import '../text/text_overlay_widget.dart';
+import '../../../models/youtubemodels/youtube_playlist_item_model.dart';
+import '../../text/text_overlay_widget.dart';
 
-class MusicListDetailsWidget extends StatefulWidget {
-  final SpreakerEpisode spreakerEpisode;
-  const MusicListDetailsWidget({super.key, required this.spreakerEpisode});
+class YoutubePlaylistItemDetailsWidget extends StatefulWidget {
+  final YouTubePlaylistItemModel youTubePlaylistItemModel;
+  const YoutubePlaylistItemDetailsWidget({super.key, required this.youTubePlaylistItemModel});
 
   @override
-  MusicPlayerWidgetState createState() => MusicPlayerWidgetState();
+  YoutubePlaylistItemDetailsWidgetState createState() => YoutubePlaylistItemDetailsWidgetState();
 }
 
-class MusicPlayerWidgetState extends State<MusicListDetailsWidget> {
+class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
@@ -28,19 +28,18 @@ class MusicPlayerWidgetState extends State<MusicListDetailsWidget> {
           children: [
             const Padding(
               padding: EdgeInsets.only(right: AppConstants.rightMain),
-              child: Divider(),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(height: 5,),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
-                    imageUrl: widget.spreakerEpisode.imageOriginalUrl,
+                    imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
                     fit: BoxFit.cover,
-                    width: Utils.calculateWidth(context, 0.3),
-                    height:  Utils.calculateHeight(context, 0.14),
+                    width: Utils.calculateWidth(context, 0.36),
+                    height:  Utils.calculateHeight(context, 0.094),
                     placeholder: (context, url) => Center(
                       child: SizedBox(
                           width:  Utils.calculateWidth(context, 0.1),
@@ -54,27 +53,26 @@ class MusicPlayerWidgetState extends State<MusicListDetailsWidget> {
                     ),
                   ),
                 ),
-                SizedBox(width:Utils.calculateWidth(context, 0.06),),
+                const SizedBox(width: 6,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: Utils.calculateHeight(context, 0.02)),
                     SizedBox(
-                      width: Utils.calculateWidth(context,0.5),
+                      width: Utils.calculateWidth(context,0.52),
                       child: TextOverlay(
-                        label: widget.spreakerEpisode.title,
+                        label: widget.youTubePlaylistItemModel.title,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: Utils.calculateWidth(context,0.042),
                       ),
                     ),
-                    SizedBox(height: Utils.calculateHeight(context, 0.01)),
+                    const SizedBox(height: 2),
                     Row(
                       children: [
-                        Icon(CupertinoIcons.folder_fill,color: Theme.of(context).colorScheme.onSecondaryContainer),
                         TextOverlay(
-                          label: widget.spreakerEpisode.episodeId.toString(),
-                          color: Theme.of(context).colorScheme.onPrimary,
+                          label: widget.youTubePlaylistItemModel.duration,
+                          fontSize: 15,
+                          color: Theme.of(context).colorScheme.onSecondary,
                         ),
                       ],
                     )

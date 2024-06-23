@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 class ExploreDataFetcher {
   static Future<List<Programs>> fetchPrograms() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? cachedData = prefs.getString('cached_data');
+    final String? cachedData = prefs.getString('radio_advert_cache');
 
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -30,7 +30,7 @@ class ExploreDataFetcher {
         final data = json.decode(response.body);
 
         // Cache the fetched data in SharedPreferences.
-        prefs.setString('cached_data', response.body);
+        prefs.setString('radio_advert_cache', response.body);
 
         return List<Programs>.from(data['programs'].map((data) => Programs.fromJson(data)));
       } else {

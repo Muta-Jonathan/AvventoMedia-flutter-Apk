@@ -68,7 +68,7 @@ class PodcastPlayerWidgetState extends State<PodcastListDetailsWidget> {
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        Icon(CupertinoIcons.folder_fill,color: Theme.of(context).colorScheme.onSecondaryContainer),
+                        Icon(CupertinoIcons.folder_solid,color: Theme.of(context).colorScheme.onSecondaryContainer),
                         TextOverlay(
                           label: '${widget.radioPodcast.episodes.toString()} Episodes',
                           fontSize: 14,

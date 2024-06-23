@@ -16,7 +16,7 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.only(top: 10,left: 10,right: 5),
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -25,7 +25,6 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
             TextOverlay(label: widget.highlightModel.title, color: Colors.orange,allCaps: true),
             const SizedBox(height: 8.0,),
             TextOverlay(label: widget.highlightModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),
-            const SizedBox(height: 8.0,),
           ],
       ),
     );
