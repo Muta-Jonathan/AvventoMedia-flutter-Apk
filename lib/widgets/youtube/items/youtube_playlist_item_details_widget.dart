@@ -2,7 +2,6 @@ import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/youtubemodels/youtube_playlist_item_model.dart';

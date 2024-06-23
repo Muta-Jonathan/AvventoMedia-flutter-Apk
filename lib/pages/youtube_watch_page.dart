@@ -64,14 +64,14 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
       SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     } else {
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     }
   }
 
   void _exitFullscreenAndSetPortrait() {
     _controller.toggleFullScreenMode(); // Exit fullscreen
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]); // Set orientation to portrait
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]); // Set orientation to portrait
   }
 
   @override
