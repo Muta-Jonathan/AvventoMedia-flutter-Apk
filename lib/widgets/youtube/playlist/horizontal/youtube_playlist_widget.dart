@@ -41,11 +41,10 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
     return Container(
       margin: const EdgeInsets.only(top: 10.0),
       width: double.infinity,
-      height: Utils.calculateAspectHeight(context, 1.3),
+      height: Utils.calculateAspectHeight(context, 1.25),
       child: Column(
         children: [
           LabelPlaceHolder(title: AppConstants.avventoMusic,titleFontSize: 18, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getYoutubePlaylistRoute(),)),
-          const SizedBox(height: 10),
           Expanded(child: buildListView(context, youtubeProvider),)
         ],
       ),
