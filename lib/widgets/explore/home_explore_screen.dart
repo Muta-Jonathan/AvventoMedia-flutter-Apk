@@ -83,26 +83,23 @@ class _ExploreScreenState extends State<HomeExploreScreen> {
   }
 
   Widget buildShowMoreItem(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0), // Adjust as needed
-      child: CupertinoButton(
-        padding: const EdgeInsets.all(12.0), // Adjust as needed
-        child: CircleAvatar(
-          radius: 24, // Adjust the radius to fit the icon size
-          backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-          child: const Icon(
-            CupertinoIcons.forward, // Cupertino "forward" icon
-            size: 24,
-            color: Colors.white, // Customize the color
-          ),
+    return CupertinoButton(
+      padding: const EdgeInsets.all(40.0), // Adjust as needed
+      child: CircleAvatar(
+        radius: 22, // Adjust the radius to fit the icon size
+        backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+        child: const Icon(
+          CupertinoIcons.forward, // Cupertino "forward" icon
+          size: 18,
+          color: Colors.white, // Customize the color
         ),
-        onPressed: () {
-          // Increment the number of items to display when "Show More" is clicked
-          setState(() {
-            itemsToDisplay += 5;
-          });
-        },
       ),
+      onPressed: () {
+        // Increment the number of items to display when "Show More" is clicked
+        setState(() {
+          itemsToDisplay += 5;
+        });
+      },
     );
   }
 

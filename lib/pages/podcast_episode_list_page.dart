@@ -22,6 +22,9 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
   final PodcastController podcastController = Get.find();
   @override
   Widget build(BuildContext context) {
+    final int itemCount = podcastController.selectedEpisode.value!.episodes;
+    String episodeCountLabel = itemCount == 1 ? '$itemCount episode' : '$itemCount episodes';
+
     Future<void> refreshData() async {
       // Fetch fresh data for a specific podcast
       await Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllEpisodes(podcastController.selectedEpisode.value!.episodesLink);
@@ -71,9 +74,22 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize18,fontWeight: FontWeight.bold,),
-                    const SizedBox(height: 5),
-                    ShowMoreDescription(description: podcastController.selectedEpisode.value!.description,modalTitle: AppConstants.description,),
+                    podcastController.selectedEpisode.value!.description.trim() != '' ?
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize18,fontWeight: FontWeight.bold,),
+                        const SizedBox(height: 5),
+                        ShowMoreDescription(description: podcastController.selectedEpisode.value!.description,modalTitle: AppConstants.description,),
+                      ],
+                    )
+                    : const SizedBox.shrink(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextOverlay(label: episodeCountLabel, color: Theme.of(context).colorScheme.onPrimary,fontSize: 15),
+                      ],
+                    ),
                     Divider(color: Theme.of(context).colorScheme.tertiaryContainer,),
                   ],
                 ),

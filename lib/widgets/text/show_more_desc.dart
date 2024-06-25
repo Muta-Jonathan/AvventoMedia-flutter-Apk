@@ -83,7 +83,7 @@ class ShowMoreDescriptionState extends State<ShowMoreDescription> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 50),
                               ],
                           );
                         },
