@@ -34,11 +34,11 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   HightlightsWidget(),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 35,),
                   LiveTvWidget(),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 35,),
                   LiveRadioWidget(),
-                  SizedBox(height:20,),
+                  SizedBox(height: 35,),
                   YoutubePlaylistWidget(),
                 ],
               ),
