@@ -4,7 +4,6 @@ import 'package:avvento_media/controller/youtube_playlist_controller.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -26,11 +25,6 @@ class _YoutubePlaylistPageState extends State<YoutubePlaylistPage> {
   @override
   void initState() {
     super.initState();
-    // Set initial orientation to portrait
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
   }
   @override
   Widget build(BuildContext context) {

@@ -2,6 +2,7 @@ import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class ResizableImageContainerWithOverlay extends StatelessWidget {
   final String imageUrl;
@@ -10,6 +11,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
   final Color? containerColor;
   final String? token;
   final double? borderRadius;
+  final String? svgPath;
 
   const ResizableImageContainerWithOverlay({
     super.key,
@@ -18,7 +20,8 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
     this.text,
     this.containerColor,
     this.token,
-    this.borderRadius = 5
+    this.borderRadius = 5,
+    this.svgPath
   });
 
   Widget buildOverlay() {
@@ -29,31 +32,51 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
         borderRadius: BorderRadius.circular(5.0),
         child: SizedBox(
           height: 30,
-          child: Container(
-            padding: const EdgeInsets.all(6),
-            color: containerColor ?? Colors.red,
-            child: icon == null
-                ? Text(
-              text!,
-              style: const TextStyle(
-                color: Colors.white,
-              ),
-            )
-                : Row(
-              children: [
-                Icon(
-                  icon,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: 8.0),
-                Text(
-                  text!,
-                  style: const TextStyle(
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(6),
+              color: containerColor ?? Colors.red,
+              child:icon != null
+                  ? Row(
+                children: [
+                  Icon(
+                    icon,
                     color: Colors.white,
+                    size: 20,
                   ),
+                  const SizedBox(width: 8.0),
+                  Text(
+                    text!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              )
+                  : svgPath != null
+                  ? Row(
+                children: [
+                  SvgPicture.asset(
+                    svgPath!,
+                    color: Colors.white,
+                    width: 20,
+                    height: 20,
+                  ),
+                  const SizedBox(width: 8.0),
+                  Text(
+                    text!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              )
+                  : Text(
+                text!,
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -92,7 +115,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
                   color: Theme.of(context).colorScheme.error,
                 ),
               ),
-              icon != null || text != null ? buildOverlay(): Container()
+              icon != null || text != null || svgPath != null ? buildOverlay(): Container()
             ],
           ),
         ),

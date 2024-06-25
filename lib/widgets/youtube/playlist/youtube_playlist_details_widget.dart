@@ -1,7 +1,5 @@
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 
 import '../../../models/youtubemodels/youtube_playlist_model.dart';
 import '../../images/resizable_image_widget_2.dart';
@@ -25,9 +23,9 @@ class _YoutubePlaylistDetailsWidget extends State<YoutubePlaylistDetailsWidget> 
           Expanded(
             child: ResizableImageContainerWithOverlay(
               imageUrl: widget.youtubePlaylistModel.thumbnailUrl,
-              icon: CupertinoIcons.folder_solid,
+              svgPath: 'assets/icon/folder.svg',
               text: widget.youtubePlaylistModel.itemCount.toString(),
-              containerColor: Colors.black54.withOpacity(0.45),
+              containerColor: Colors.black38,
             ),
           ),
           const SizedBox(height: 15.0,),

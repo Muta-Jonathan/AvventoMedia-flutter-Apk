@@ -3,8 +3,8 @@ import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../text/text_overlay_widget.dart';
 
@@ -68,7 +68,12 @@ class PodcastPlayerWidgetState extends State<PodcastListDetailsWidget> {
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        Icon(CupertinoIcons.folder_solid,color: Theme.of(context).colorScheme.onSecondaryContainer),
+                        SvgPicture.asset(
+                          'assets/icon/folder.svg',
+                          color:  Theme.of(context).colorScheme.onSecondaryContainer,
+                          width: 20,
+                          height: 20,
+                        ),
                         TextOverlay(
                           label: '${widget.radioPodcast.episodes.toString()} Episodes',
                           fontSize: 14,
