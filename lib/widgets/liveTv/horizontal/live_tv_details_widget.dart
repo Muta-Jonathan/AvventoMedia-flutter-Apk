@@ -3,7 +3,7 @@ import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../images/resizable_image_widget_2.dart';
+import '../../images/resizable_image_widget_2.dart';
 
 class LiveTvDetailsWidget extends StatefulWidget {
   final LiveTvModel liveTvModel;
@@ -17,7 +17,7 @@ class _LiveTvDetailsWidget extends State<LiveTvDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 15,bottom: 15,left: 15,right: 2),
+      padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

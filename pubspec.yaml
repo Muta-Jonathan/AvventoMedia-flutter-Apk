@@ -130,6 +130,7 @@ flutter:
     - assets/animations/comingSoon.json
     - assets/animations/audio_indicator.json
     - assets/icon/folder.svg
+    - assets/icon/podcast.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

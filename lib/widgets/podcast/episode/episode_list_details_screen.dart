@@ -6,9 +6,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
-import '../../controller/audio_player_controller.dart';
-import '../audio_players/audio_animation.dart';
-import '../text/text_overlay_widget.dart';
+import '../../../controller/audio_player_controller.dart';
+import '../../audio_players/audio_animation.dart';
+import '../../text/text_overlay_widget.dart';
 
 class EpisodeListDetailsWidget extends StatefulWidget {
   final PodcastEpisode episode;
@@ -42,7 +42,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
           child:Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Stack(
                 children: [

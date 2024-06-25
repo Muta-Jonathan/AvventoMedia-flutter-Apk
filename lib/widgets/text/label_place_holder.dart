@@ -40,9 +40,15 @@ class LabelPlaceHolder extends StatelessWidget {
             GestureDetector(
               onTap: onMoreTap,
               child: SizedBox(
-                child: Icon(
-                  CupertinoIcons.arrow_up_right,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                width: 100,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(
+                      CupertinoIcons.chevron_right,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ],
                 ),
               ),
             ),

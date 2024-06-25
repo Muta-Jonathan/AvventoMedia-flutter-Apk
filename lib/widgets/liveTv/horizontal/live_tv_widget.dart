@@ -7,9 +7,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../apis/firestore_service_api.dart';
-import '../../routes/routes.dart';
-import '../text/label_place_holder.dart';
+import '../../../apis/firestore_service_api.dart';
+import '../../../routes/routes.dart';
+import '../../text/label_place_holder.dart';
 import 'live_tv_details_widget.dart';
 
 class LiveTvWidget extends StatefulWidget {
@@ -31,7 +31,7 @@ class _LiveTvWidget extends State<LiveTvWidget> {
       height: Utils.calculateAspectHeight(context, 1.3),
       child: Column(
         children: [
-          const LabelPlaceHolder(title: AppConstants.liveTv,titleFontSize: 18),
+          LabelPlaceHolder(title: AppConstants.liveTv,titleFontSize: 18, moreIcon: true ,onMoreTap: () => Get.toNamed(Routes.getLiveTvListRoute())),
           const SizedBox(height: 10),
           Expanded(child: buildListView(context),)
         ],

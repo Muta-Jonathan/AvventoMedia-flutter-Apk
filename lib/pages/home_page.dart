@@ -3,8 +3,8 @@ import 'package:avvento_media/widgets/radio/live_radio_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../componets/app_constants.dart';
-import '../widgets/liveTv/live_tv_widget.dart';
-import '../widgets/youtube/playlist/youtube_playlist_widget.dart';
+import '../widgets/liveTv/horizontal/live_tv_widget.dart';
+import '../widgets/youtube/playlist/horizontal/youtube_playlist_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,11 +34,11 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   HightlightsWidget(),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 20,),
                   LiveTvWidget(),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 20,),
                   LiveRadioWidget(),
-                  SizedBox(height: 10,),
+                  SizedBox(height:20,),
                   YoutubePlaylistWidget(),
                 ],
               ),

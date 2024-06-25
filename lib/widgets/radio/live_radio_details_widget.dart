@@ -19,7 +19,7 @@ class _LiveRadioDetailsWidget extends State<LiveRadioDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 15,bottom: 15,left: 15,right: 2),
+      padding: const EdgeInsets.all(15),
       child: GestureDetector(
         onTap: () => Get.toNamed(Routes.getOnlineRadioRoute()),
         child: Column(

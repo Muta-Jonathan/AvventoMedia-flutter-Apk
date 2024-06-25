@@ -6,14 +6,14 @@ import 'package:avvento_media/controller/youtube_playlist_controller.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/providers/youtube_provider.dart';
-import 'package:avvento_media/widgets/youtube/playlist/youtube_playlist_details_widget.dart';
+import 'package:avvento_media/widgets/youtube/playlist/horizontal/youtube_playlist_details_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../../routes/routes.dart';
-import '../../text/label_place_holder.dart';
+import '../../../../routes/routes.dart';
+import '../../../text/label_place_holder.dart';
 
 
 class YoutubePlaylistWidget extends StatefulWidget {
@@ -25,7 +25,7 @@ class YoutubePlaylistWidget extends StatefulWidget {
 
 class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
   final youtubePlaylistController = Get.put(YoutubePlaylistController());
-  int itemsToDisplay = 5;
+  int itemsToDisplay = 12;
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
       height: Utils.calculateAspectHeight(context, 1.3),
       child: Column(
         children: [
-          const LabelPlaceHolder(title: AppConstants.avventoMusic,titleFontSize: 18),
+          LabelPlaceHolder(title: AppConstants.avventoMusic,titleFontSize: 18, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getYoutubePlaylistRoute(),)),
           const SizedBox(height: 10),
           Expanded(child: buildListView(context, youtubeProvider),)
         ],
@@ -89,10 +89,8 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
           ),
         ),
         onPressed: () {
-          // Increment the number of items to display when "Show More" is clicked
-          setState(() {
-            itemsToDisplay += 5;
-          });
+          // Go to the full playlist page
+          Get.toNamed(Routes.getYoutubePlaylistRoute());
         },
     );
   }
@@ -101,9 +99,9 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
     return GestureDetector(
       onTap: () {
         // Set the selected youtube playlist using the controller
-        youtubePlaylistController.setSelectedEpisode(youtubePlaylistModel);
+        youtubePlaylistController.setSelectedPlaylist(youtubePlaylistModel);
         // Navigate to the "YoutubePlaylistPage"
-        Get.toNamed(Routes.getYoutubePlaylistRoute());
+        Get.toNamed(Routes.getYoutubePlaylistItemRoute());
       },
         child: YoutubePlaylistDetailsWidget(youtubePlaylistModel: youtubePlaylistModel,),
     );

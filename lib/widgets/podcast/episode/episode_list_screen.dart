@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../componets/utils.dart';
-import '../../controller/audio_player_controller.dart';
-import '../../controller/podcast_controller.dart';
-import '../../controller/podcast_episode_controller.dart';
-import '../../models/radiomodel/podcast_episode_model.dart';
-import '../../routes/routes.dart';
-import '../common/loading_widget.dart';
+import '../../../componets/utils.dart';
+import '../../../controller/audio_player_controller.dart';
+import '../../../controller/podcast_controller.dart';
+import '../../../controller/podcast_episode_controller.dart';
+import '../../../models/radiomodel/podcast_episode_model.dart';
+import '../../../routes/routes.dart';
+import '../../common/loading_widget.dart';
+import '../../providers/radio_podcast_provider.dart';
 import 'episode_list_details_screen.dart';
-import '../providers/radio_podcast_provider.dart';
 
 class EpisodeListScreen extends StatefulWidget {
   const EpisodeListScreen({super.key});

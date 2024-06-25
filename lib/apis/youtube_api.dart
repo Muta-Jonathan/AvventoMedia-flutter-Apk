@@ -127,9 +127,9 @@ class YouTubeApiService {
 
     // Format the duration based on hours, minutes, and seconds
     if (hours > 0) {
-      formattedDuration = '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      formattedDuration = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     } else {
-      formattedDuration = '$minutes:${seconds.toString().padLeft(2, '0')}';
+      formattedDuration = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     }
 
     return formattedDuration;

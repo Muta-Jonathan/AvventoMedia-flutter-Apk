@@ -1,6 +1,5 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
-import 'package:avvento_media/widgets/episode/episode_list_screen.dart';
 import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../controller/podcast_controller.dart';
 import '../widgets/images/resizable_image_widget_2.dart';
+import '../widgets/podcast/episode/episode_list_screen.dart';
 import '../widgets/text/show_more_desc.dart';
 
 class PodcastEpisodeListPage extends StatefulWidget {

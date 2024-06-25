@@ -27,7 +27,7 @@ class PodcastPlayerWidgetState extends State<PodcastListDetailsWidget> {
           borderRadius: BorderRadius.circular(8.0),
           child:SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),

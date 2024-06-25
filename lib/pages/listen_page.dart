@@ -1,4 +1,4 @@
-import 'package:avvento_media/widgets/audio_players/audio_list_screen.dart';
+import 'package:avvento_media/widgets/podcast/audio_list_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

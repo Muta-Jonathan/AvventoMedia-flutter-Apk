@@ -8,6 +8,7 @@ import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -161,10 +162,11 @@ class PodcastPageState extends State<PodcastPage> {
                                 ),
                                 child: Row(
                                   children: [
-                                    const Icon(
-                                      CupertinoIcons.antenna_radiowaves_left_right,
+                                    SvgPicture.asset(
+                                      'assets/icon/podcast.svg',
                                       color: Colors.white,
-                                      size: 15,
+                                      width: 20,
+                                      height: 20,
                                     ),
                                     const SizedBox(width: 5),
                                     Text(

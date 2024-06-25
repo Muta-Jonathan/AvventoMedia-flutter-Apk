@@ -108,7 +108,7 @@ class AppConstants {
 
   /// ***************** PADDING ****************
   static const double leftMain = 20;
-  static const double rightMain = 12;
+  static const double rightMain = 20;
 
   /// ***************** HEIGHT ****************
   static const double height30 = 30;

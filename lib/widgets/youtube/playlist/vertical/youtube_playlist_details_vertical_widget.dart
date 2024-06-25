@@ -1,21 +1,23 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/models/youtubemodels/youtube_playlist_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
-import '../../../models/youtubemodels/youtube_playlist_item_model.dart';
-import '../../text/text_overlay_widget.dart';
+import '../../../../models/youtubemodels/youtube_playlist_item_model.dart';
+import '../../../text/text_overlay_widget.dart';
 
-class YoutubePlaylistItemDetailsWidget extends StatefulWidget {
-  final YouTubePlaylistItemModel youTubePlaylistItemModel;
-  const YoutubePlaylistItemDetailsWidget({super.key, required this.youTubePlaylistItemModel});
+class YoutubePlaylistDetailsVerticalWidget extends StatefulWidget {
+  final YoutubePlaylistModel youtubePlaylistModel;
+  const YoutubePlaylistDetailsVerticalWidget({super.key, required this.youtubePlaylistModel});
 
   @override
-  YoutubePlaylistItemDetailsWidgetState createState() => YoutubePlaylistItemDetailsWidgetState();
+  YoutubePlaylistDetailsVerticalWidgetState createState() => YoutubePlaylistDetailsVerticalWidgetState();
 }
 
-class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDetailsWidget> {
+class YoutubePlaylistDetailsVerticalWidgetState extends State<YoutubePlaylistDetailsVerticalWidget> {
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
-                    imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
+                    imageUrl: widget.youtubePlaylistModel.thumbnailUrl,
                     fit: BoxFit.cover,
                     width: Utils.calculateWidth(context, 0.36),
                     height:  Utils.calculateHeight(context, 0.094),
@@ -59,7 +61,7 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                     SizedBox(
                       width: Utils.calculateWidth(context,0.52),
                       child: TextOverlay(
-                        label: widget.youTubePlaylistItemModel.title,
+                        label: widget.youtubePlaylistModel.title,
                         color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: Utils.calculateWidth(context,0.042),
                       ),
@@ -67,8 +69,14 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                     const SizedBox(height: 2),
                     Row(
                       children: [
+                        SvgPicture.asset(
+                          'assets/icon/folder.svg',
+                          color:  Theme.of(context).colorScheme.onSecondaryContainer,
+                          width: 20,
+                          height: 20,
+                        ),
                         TextOverlay(
-                          label: widget.youTubePlaylistItemModel.duration,
+                          label: widget.youtubePlaylistModel.itemCount.toString(),
                           fontSize: 15,
                           color: Theme.of(context).colorScheme.onSecondary,
                         ),
