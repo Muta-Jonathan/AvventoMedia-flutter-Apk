@@ -39,78 +39,82 @@ class _YoutubePlaylistPageState extends State<YoutubePlaylistPage> {
     }
     return Scaffold(
       backgroundColor:   Theme.of(context).colorScheme.surface,
-      body: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              backgroundColor:   Theme.of(context).colorScheme.surface,
-              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-              expandedHeight: Utils.calculateHeight(context, 0.4),
-              onStretchTrigger: () => refreshData(),
-              floating: false,
-              pinned: true,
-              actions: [
-                IconButton(
-                  icon: Icon(CupertinoIcons.share,color: Theme.of(context).colorScheme.onPrimary,),
-                  onPressed: () {
-                    Utils.shareYouTubePlaylist(youtubePlaylistController.selectedPlaylist.value!.id);
-                  },
-                ),
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                stretchModes: const [
-                  StretchMode.blurBackground
+      body: RefreshIndicator(
+          backgroundColor: Colors.white,
+          color: Colors.orange,
+          onRefresh: refreshData,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor:   Theme.of(context).colorScheme.surface,
+                iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+                expandedHeight: Utils.calculateHeight(context, 0.4),
+                floating: false,
+                pinned: true,
+                actions: [
+                  IconButton(
+                    icon: Icon(CupertinoIcons.share,color: Theme.of(context).colorScheme.onPrimary,),
+                    onPressed: () {
+                      Utils.shareYouTubePlaylist(youtubePlaylistController.selectedPlaylist.value!.id);
+                    },
+                  ),
                 ],
-                title: TextOverlay(
-                  label: youtubePlaylistController.selectedPlaylist.value!.title,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  maxLines: 1,
-                  fontSize: 18,
-                ),
-                centerTitle: true,
-                expandedTitleScale: 1,
-                collapseMode: CollapseMode.pin,
-                background: SizedBox(
-                  height: AppConstants.height250,
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        top: 105, right: 20, left: 20, bottom: 60),
-                    child: ResizableImageContainerWithOverlay(
-                      imageUrl: youtubePlaylistController.selectedPlaylist.value!.thumbnailUrl,
-                      borderRadius: 10,
+                flexibleSpace: FlexibleSpaceBar(
+                  stretchModes: const [
+                    StretchMode.blurBackground
+                  ],
+                  title: TextOverlay(
+                    label: youtubePlaylistController.selectedPlaylist.value!.title,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    maxLines: 1,
+                    fontSize: 18,
+                  ),
+                  centerTitle: true,
+                  expandedTitleScale: 1,
+                  collapseMode: CollapseMode.pin,
+                  background: SizedBox(
+                    height: AppConstants.height250,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          top: 105, right: 20, left: 20, bottom: 60),
+                      child: ResizableImageContainerWithOverlay(
+                        imageUrl: youtubePlaylistController.selectedPlaylist.value!.thumbnailUrl,
+                        borderRadius: 10,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16,right: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    youtubePlaylistController.selectedPlaylist.value?.description.trim() != '' ?
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize18,fontWeight: FontWeight.bold,),
-                        const SizedBox(height: 5),
-                        ShowMoreDescription(description: youtubePlaylistController.selectedPlaylist.value!.description,modalTitle: AppConstants.description,),
-                      ],
-                    ) : const SizedBox.shrink(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextOverlay(label: videoCountLabel, color: Theme.of(context).colorScheme.onPrimary,fontSize: 15),
-                      ],
-                    ),
-                    Divider(color: Theme.of(context).colorScheme.tertiaryContainer,),
-                  ],
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16,right: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      youtubePlaylistController.selectedPlaylist.value?.description.trim() != '' ?
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextOverlay(label: AppConstants.description, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize18,fontWeight: FontWeight.bold,),
+                          const SizedBox(height: 5),
+                          ShowMoreDescription(description: youtubePlaylistController.selectedPlaylist.value!.description,modalTitle: AppConstants.description,),
+                        ],
+                      ) : const SizedBox.shrink(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextOverlay(label: videoCountLabel, color: Theme.of(context).colorScheme.onPrimary,fontSize: 15),
+                        ],
+                      ),
+                      Divider(color: Theme.of(context).colorScheme.tertiaryContainer,),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const YoutubePlaylistItemWidget(),
-          ],
-        ),
+              const YoutubePlaylistItemWidget(),
+            ],
+          ),
+      ),
     );
   }
 }

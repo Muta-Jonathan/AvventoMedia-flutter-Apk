@@ -26,46 +26,50 @@ class _PodcastListPageState extends State<PodcastListPage> {
     }
     return Scaffold(
       backgroundColor:   Theme.of(context).colorScheme.surface,
-      body: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              backgroundColor:   Theme.of(context).colorScheme.surface,
-              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-              expandedHeight: Utils.calculateHeight(context, 0.4),
-              floating: false,
-              pinned: true,
-              onStretchTrigger: () => refreshData(),
-              flexibleSpace: FlexibleSpaceBar(
-                stretchModes: const [
-                  StretchMode.blurBackground
-                ],
-                title: TextOverlay(
-                  label: AppConstants.podcasts,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  maxLines: 1,
-                  fontSize: 18,
-                ),
-                centerTitle: true,
-                expandedTitleScale: 1,
-                collapseMode: CollapseMode.pin,
-                background: const SizedBox(
-                  height: AppConstants.height250,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        top: 105, right: 20, left: 20, bottom: 60),
-                    child: ResizableImageContainerWithOverlay(
-                      imageUrl: AppConstants. podcastThumbImage,
-                      borderRadius: 10,
+      body: RefreshIndicator(
+          backgroundColor: Colors.white,
+          color: Colors.orange,
+          onRefresh: refreshData,
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor:   Theme.of(context).colorScheme.surface,
+                iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+                expandedHeight: Utils.calculateHeight(context, 0.4),
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  stretchModes: const [
+                    StretchMode.blurBackground
+                  ],
+                  title: TextOverlay(
+                    label: AppConstants.podcasts,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    maxLines: 1,
+                    fontSize: 18,
+                  ),
+                  centerTitle: true,
+                  expandedTitleScale: 1,
+                  collapseMode: CollapseMode.pin,
+                  background: const SizedBox(
+                    height: AppConstants.height250,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: 105, right: 20, left: 20, bottom: 60),
+                      child: ResizableImageContainerWithOverlay(
+                        imageUrl: AppConstants. podcastThumbImage,
+                        borderRadius: 10,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            const SliverToBoxAdapter(
-                child: PodcastListScreen()
-            ),
+              const SliverToBoxAdapter(
+                  child: PodcastListScreen()
+              ),
 
-          ],
+            ],
+        ),
       ),
     );
   }
