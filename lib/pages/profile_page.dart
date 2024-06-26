@@ -51,10 +51,10 @@ class ProfilePage extends StatelessWidget {
                   onTap: () => Utils.openBrowserURL(url: AppConstants.avventoWebsite),
                 ),
                 CustomListTile(
-                  label: AppConstants.youtube,
+                  label: AppConstants.avventoYoutubeChannel,
                   leadingIcon: FontAwesomeIcons.youtube,
                   isSwitch: false,
-                  onTap: () => Utils.openBrowserURL(url: AppConstants.youtubeWebsite, inApp: true),
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.avventoYoutubeChannelLink, inApp: true),
                 ),
                 const SizedBox(height: 12,),
                 CustomListTile(
@@ -127,6 +127,26 @@ class ProfilePage extends StatelessWidget {
                   leadingIcon: Icons.telegram_sharp,
                   isSwitch: false,
                   onTap: () => Utils.openBrowserURL(url: AppConstants.avventoRadioTelegramUrl, inApp: true),
+                ),
+                const SizedBox(height: 35,),
+                LabelPlaceHolder(title: AppConstants.youtubeChannels, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                CustomListTile(
+                  label: AppConstants.avventoYoutubeChannel,
+                  leadingIcon: FontAwesomeIcons.youtube,
+                  isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.avventoYoutubeChannelLink, inApp: true),
+                ),
+                CustomListTile(
+                  label: AppConstants.musicYoutubeChannel,
+                  leadingIcon: FontAwesomeIcons.youtube,
+                  isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.musicYoutubeChannelLink, inApp: true),
+                ),
+                CustomListTile(
+                  label: AppConstants.kidsYoutubeChannel,
+                  leadingIcon: FontAwesomeIcons.youtube,
+                  isSwitch: false,
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.kidsYoutubeChannelLink, inApp: true),
                 ),
                 const SizedBox(height: 35,),
                 // Social media section

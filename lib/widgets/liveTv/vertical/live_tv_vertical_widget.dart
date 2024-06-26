@@ -11,13 +11,12 @@ import '../../../componets/app_constants.dart';
 import '../../../componets/utils.dart';
 import '../../../controller/live_tv_controller.dart';
 import '../../../models/livetvmodel/livetv_model.dart';
-import '../horizontal/live_tv_details_widget.dart';
 
 class LiveTvVerticalWidget extends StatefulWidget {
   const LiveTvVerticalWidget({super.key});
 
   @override
-  _LiveTvVerticalWidgetState createState() => _LiveTvVerticalWidgetState();
+  State<LiveTvVerticalWidget>  createState() => _LiveTvVerticalWidgetState();
 }
 
 class _LiveTvVerticalWidgetState extends State<LiveTvVerticalWidget> {

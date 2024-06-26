@@ -18,8 +18,8 @@ AvventoMedia is dedicated to spreading the gospel globally. Its content is brand
 #### AvventoRadio
  Listen to uplifting music and sermons 24/7.
 
-#### 3ABN Streaming TV Sections
- Access various live programs and shows from 3ABN Uganda Television.
+#### AvventoMedia and 3ABN Streaming TV Sections
+ Access various live programs, shows, and music from Avventomedia and 3ABN Uganda Television.
 
 #### AvventoRadio Updates
 Stay informed with the latest updates and releases from AvventoRadio.
@@ -32,6 +32,14 @@ Listen to wonderful Podcasts from AvventoRadio
 You can download the AvventoMedia app from the Play Store [here](https://play.google.com/store/apps/details?id=tv.avventomedia.app).
 
 ## Changelogs
+### Version 0.4.0 (June 2024)
+- Music section Added
+- Support svg icons
+- Support Youtube api for videos
+- More screens (Live tv list, music list)
+
+---
+
 ### Version 0.3.0 (June 2024)
 - Improved Podcasts displays
 - Added speed controls on playing podcast.
@@ -65,10 +73,15 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 ### Todos
 - [ ] Enhance search functionality.
 - [ ] Add Speakers | Presenters
-- [ ] Add Youtube api for videos
 - [ ] support podcast download
 
 ### Completed
+
+##### June 2024
+- [x] Music section Added
+- [x] Support svg icons
+- [x] Support Youtube api for videos
+- [x] More screens (Live tv list, music list)
 
 ##### June 2024
 - [x] Improved podcast page

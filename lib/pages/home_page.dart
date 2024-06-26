@@ -24,21 +24,26 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Theme.of(context).colorScheme.surface,
               floating: true,
               iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-              title: Text(AppConstants.appName,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary
-                ),
+              title: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Text(AppConstants.appName,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary
+                    ),
+                  ),
+                ],
               ),
             ),
             const SliverToBoxAdapter(
               child: Column(
                 children: [
                   HightlightsWidget(),
-                  SizedBox(height: 35,),
+                  SizedBox(height: 30,),
                   LiveTvWidget(),
-                  SizedBox(height: 35,),
+                  SizedBox(height: 30,),
                   LiveRadioWidget(),
-                  SizedBox(height: 35,),
+                  SizedBox(height: 30,),
                   YoutubePlaylistWidget(),
                 ],
               ),

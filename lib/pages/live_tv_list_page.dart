@@ -1,18 +1,9 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
-import 'package:avvento_media/controller/youtube_playlist_controller.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
-import '../widgets/images/resizable_image_widget_2.dart';
 import '../widgets/liveTv/vertical/live_tv_vertical_widget.dart';
-import '../widgets/providers/youtube_provider.dart';
-import '../widgets/text/show_more_desc.dart';
-import '../widgets/youtube/items/youtube_playlist_item_widget.dart';
-import '../widgets/youtube/playlist/vertical/youtube_playlist_vertical_widget.dart';
 
 class LiveTvListPage extends StatefulWidget {
   const LiveTvListPage({super.key});

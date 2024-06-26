@@ -20,11 +20,11 @@ class _HomeExploreDetailsScreenState extends State<HomeExploreDetailsScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     double widgetWidth = 0.85 * screenWidth; // 80% of the screen width
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20.0), // Rounded corners with radius 15.0
+      borderRadius: BorderRadius.circular(30.0), // Rounded corners with radius 15.0
       child: Container(
         width: widgetWidth,
         height: Utils.calculateHeight(context, 1) , // 16:9 aspect ratio based on the width
-        margin: const EdgeInsets.all(5.0),
+        margin: const EdgeInsets.all(8.0),
         child: Stack(
           children: [
             // Add your GIF or photo

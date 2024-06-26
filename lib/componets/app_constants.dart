@@ -39,8 +39,8 @@ class AppConstants {
   static const String prayerRequest = "Prayer Request";
   static const String avventoWebsiteTitle = "Visit AvventoMedia Website";
   static const String avventoWebsite = "https://avventomedia.org/avvento/";
-  static const String youtube = "YouTube";
-  static const String youtubeWebsite = "https://www.youtube.com/@AvventoProductions";
+  static const String avventoYoutubeChannel = "AvventoProductions";
+  static const String avventoYoutubeChannelLink = "https://www.youtube.com/@AvventoProductions";
   static const String shareApp = "Share AvventoMedia App";
   static const String shareAppLink = "https://play.google.com/store/apps/details?id=tv.avventomedia.app";
   static const String shareAppMessage = "Experience the joy of uplifting gospel music and inspiring stories with the AvventoMedia app! Download now and let your heart sing!";
@@ -56,6 +56,12 @@ class AppConstants {
   static const String previousBroadcastsUrl = "https://avventomedia.org/previous-broadcasts/";
   static const String avventoRadioTelegram = "Join Us on Telegram";
   static const String avventoRadioTelegramUrl = "https://t.me/avventoRadio";
+
+  static const String youtubeChannels = "YOUTUBE CHANNELS";
+  static const String musicYoutubeChannel = "AvventoMusic";
+  static const String musicYoutubeChannelLink = "https://www.youtube.com/@avventomusic";
+  static const String kidsYoutubeChannel = "AvventoKids";
+  static const String kidsYoutubeChannelLink = "https://www.youtube.com/@avventokids";
 
   static const String preferences = "PREFERENCES";
   static const String notifications = "Allow notifications";

@@ -20,7 +20,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
     this.text,
     this.containerColor,
     this.token,
-    this.borderRadius = 5,
+    this.borderRadius = 8,
     this.svgPath
   });
 
@@ -89,7 +89,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius!),
       child: SizedBox(
-        width: Utils.calculateWidth(context, 0.80), // Constrain width to match parent
+        width: Utils.calculateWidth(context, 0.76), // Constrain width to match parent
         height: Utils.calculateHeight(context, 0.1), // Constrain height to match parent
         child: AspectRatio(
           aspectRatio: 16 / 9,

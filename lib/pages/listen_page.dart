@@ -41,10 +41,15 @@ class ListenPageState extends State<ListenPage> {
               backgroundColor:   Theme.of(context).colorScheme.surface,
               iconTheme:IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
               floating: true,
-              title: Text(AppConstants.radioName,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary
-                ),
+              title: Column(
+                children: [
+                  const SizedBox(height: 15),
+                  Text(AppConstants.radioName,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary
+                    ),
+                  ),
+                ],
               ),
               actions: [
                 IconButton(

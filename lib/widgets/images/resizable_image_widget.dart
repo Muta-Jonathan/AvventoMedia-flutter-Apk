@@ -14,10 +14,10 @@ class ResizableImageWithOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(5.0),
+      borderRadius: BorderRadius.circular(8.0),
       child: SizedBox(
-        width: Utils.calculateWidth(context, 0.90), // Constrain width to match parent
-        height: Utils.calculateHeight(context, 0.25), // Constrain height to match parent
+        width: Utils.calculateWidth(context, 0.9), // Constrain width to match parent
+        height: Utils.calculateHeight(context, 0.24), // Constrain height to match parent
         child: AspectRatio(
           aspectRatio: 16 / 9,
           child: Stack(

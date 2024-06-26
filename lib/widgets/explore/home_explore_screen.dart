@@ -50,7 +50,7 @@ class _ExploreScreenState extends State<HomeExploreScreen> {
           const LabelPlaceHolder(title: AppConstants.missNot),
           const SizedBox(height: 20),
           Expanded(child: buildListView(context, programsProvider)),
-          const SizedBox(height: 20),
+          const SizedBox(height: 5),
         ],
       ),
     );
