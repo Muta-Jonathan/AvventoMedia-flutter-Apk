@@ -108,7 +108,6 @@ class AppConstants {
 
   /// ***************** SHARE MESSAGE ****************
   static const String shareStream = "Take a look at AvventoRadio 💫 streaming now";
-  static const String shareTvStream = "Come watch with me";
   static const String webTvUrl = "https://avventomedia.org/watch-live";
 
   /// ***************** PODCAST PAGE ****************

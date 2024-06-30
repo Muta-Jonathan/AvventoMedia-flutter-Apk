@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LiveTvModel {
   late final String name;
-  late final int likes;
+  late final int? likes;
   late final String imageUrl;
   late final String status;
   late final String streamUrl;
+  late final String webUrl;
   late final String description;
   late final Timestamp publishedAt;
 
@@ -15,7 +16,8 @@ class LiveTvModel {
     required this.status,
     required this.description,
     required this.streamUrl,
-    required this.likes,
+    required this.webUrl,
+    this.likes = 0,
     required this.publishedAt
   });
 
@@ -26,6 +28,7 @@ class LiveTvModel {
       imageUrl: data['imageUrl'],
       status: data['status'],
       streamUrl: data['streamUrl'],
+      webUrl: data['webUrl'],
       description: data['description'],
       publishedAt: data['publishedAt'],
       likes: data['likes'],
