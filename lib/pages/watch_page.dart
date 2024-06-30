@@ -24,7 +24,6 @@ class _WatchPageState extends State<WatchPage> {
   final LiveTvController liveTvController = Get.find();
   late BetterPlayerController _betterPlayerController;
   final GlobalKey _betterPlayerKey = GlobalKey();
-  bool isLiked = false;
 
   @override
   void initState() {
