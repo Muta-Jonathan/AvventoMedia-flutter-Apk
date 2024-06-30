@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../componets/utils.dart';
 import '../../routes/routes.dart';
 import '../images/resizable_image_widget_2.dart';
 
@@ -29,7 +30,12 @@ class _LiveRadioDetailsWidget extends State<LiveRadioDetailsWidget> {
                 imageUrl: widget.radioModel.imageUrl,
                 text: widget.radioModel.status, icon: CupertinoIcons.dot_radiowaves_left_right,)),
               const SizedBox(height: 15.0,),
-              TextOverlay(label: widget.radioModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),
+              SizedBox(
+                width: Utils.calculateWidth(context, 0.76),
+                child:  TextOverlay(
+                  label: widget.radioModel.name,
+                  fontWeight: FontWeight.bold ,
+                  color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),),
               const SizedBox(height: 8.0,),
             ],
         ),

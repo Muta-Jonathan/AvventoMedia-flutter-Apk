@@ -4,6 +4,7 @@ import 'package:avvento_media/controller/youtube_playlist_controller.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +26,11 @@ class _YoutubePlaylistItemPageState extends State<YoutubePlaylistItemPage> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
   }
   @override
   Widget build(BuildContext context) {
@@ -55,7 +61,7 @@ class _YoutubePlaylistItemPageState extends State<YoutubePlaylistItemPage> {
                   IconButton(
                     icon: Icon(CupertinoIcons.share,color: Theme.of(context).colorScheme.onPrimary,),
                     onPressed: () {
-                      Utils.shareYouTubePlaylist(youtubePlaylistController.selectedPlaylist.value!.id);
+                      Utils.shareYouTubePlaylist(playlistId: youtubePlaylistController.selectedPlaylist.value!.id, playlistTitle:youtubePlaylistController.selectedPlaylist.value!.title);
                     },
                   ),
                 ],

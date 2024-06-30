@@ -25,8 +25,12 @@ class YoutubePlaylistItemWidgetState extends State<YoutubePlaylistItemWidget> {
   @override
   void initState() {
     super.initState();
-    // Fetch music playlist item using the provider and listen to changes
-    Provider.of<YoutubeProvider>(context, listen: false).fetchAllMusicPlaylistItem(playlistId: youtubePlaylistController.selectedPlaylist.value!.id);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        // Fetch music playlist item using the provider and listen to changes
+        Provider.of<YoutubeProvider>(context, listen: false).fetchAllMusicPlaylistItem(playlistId: youtubePlaylistController.selectedPlaylist.value!.id);
+      }
+    });
   }
 
   @override

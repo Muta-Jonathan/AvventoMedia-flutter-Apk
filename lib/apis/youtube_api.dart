@@ -15,9 +15,17 @@ class YouTubeApiService {
     final connectivityResult = await Connectivity().checkConnectivity();
 
     if (connectivityResult == ConnectivityResult.none) {
-      final data = json.decode(avventoMusicCachedData!);
-
-      return List<YoutubePlaylistModel>.from(data['items'].map((data) => YoutubePlaylistModel.fromJson(data)));
+      if (avventoMusicCachedData != null) {
+        final data = json.decode(avventoMusicCachedData);
+        final List<YoutubePlaylistModel> cachedPlaylists = List<YoutubePlaylistModel>.from(
+            data['items'].map((data) => YoutubePlaylistModel.fromJson(data))
+        );
+        // Sort cached playlists by publishedAt date
+        cachedPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+        return cachedPlaylists;
+      } else {
+        throw Exception('No cached data available');
+      }
     } else {
       final response = await http.get(
         Uri.parse(
@@ -32,7 +40,11 @@ class YouTubeApiService {
         prefs.setString('avvento_music_cache', response.body);
 
         final List<dynamic> items = data['items'];
-        return items.map((json) => YoutubePlaylistModel.fromJson(json)).toList();
+        final List<YoutubePlaylistModel> playlists = items.map((json) => YoutubePlaylistModel.fromJson(json)).toList();
+
+        // Sort playlists by publishedAt date
+        playlists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+        return playlists;
       } else {
         throw Exception('Failed to load playlists');
       }
@@ -47,9 +59,18 @@ class YouTubeApiService {
     final connectivityResult = await Connectivity().checkConnectivity();
 
     if (connectivityResult == ConnectivityResult.none) {
-      final data = json.decode(avventoMusicItemCachedData!);
+      if (avventoMusicItemCachedData != null) {
+        final data = json.decode(avventoMusicItemCachedData);
+        final List<YouTubePlaylistItemModel> cachedItems = List<YouTubePlaylistItemModel>.from(
+            data['items'].map((data) => YouTubePlaylistItemModel.fromJson(data))
+        );
 
-      return List<YouTubePlaylistItemModel>.from(data['items'].map((data) => YouTubePlaylistItemModel.fromJson(data)));
+        // Sort cached items by publish date
+        cachedItems.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+        return cachedItems;
+      } else {
+        throw Exception('No cached data available');
+      }
     } else {}
     final url = Uri.parse(
       'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=$playlistId&key=$apiKey',
@@ -70,6 +91,8 @@ class YouTubeApiService {
       // Cache the fetched data in SharedPreferences.
       prefs.setString('avvento_music_item_cache', response.body);
 
+      // Sort items by publish date
+      items.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
 
       return items;
     } else {

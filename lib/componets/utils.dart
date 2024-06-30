@@ -94,8 +94,8 @@ class Utils {
     Share.share(videoUrl);
   }
 
-  static void shareYouTubePlaylist(String playlistId) {
-    String playlistUrl = 'https://www.youtube.com/playlist?list=$playlistId \n shared from ${AppConstants.appName} app';
-    Share.share(playlistUrl);
+  static void shareYouTubePlaylist({playlistId, playlistTitle}) {
+    final playlistUrl = 'https://www.youtube.com/playlist?list=$playlistId';
+    Share.share('Check out this playlist: $playlistTitle\n$playlistUrl \n shared from ${AppConstants.appName} app');
   }
 }

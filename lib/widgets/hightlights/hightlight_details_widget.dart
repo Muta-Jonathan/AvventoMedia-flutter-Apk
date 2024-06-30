@@ -1,6 +1,7 @@
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../componets/utils.dart';
 import '../../models/highlightmodel/highlight_model.dart';
 import '../images/resizable_image_widget.dart';
 
@@ -22,7 +23,9 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
           children: [
             ResizableImageWithOverlay(imageUrl: widget.highlightModel.imageUrl),
             const SizedBox(height: 10.0,),
-            TextOverlay(label: widget.highlightModel.title, color: Colors.orange,allCaps: true),
+            SizedBox(
+                width: Utils.calculateWidth(context, 0.76),
+                child: TextOverlay(label: widget.highlightModel.title, color: Colors.orange,allCaps: true)),
             const SizedBox(height: 5.0,),
             TextOverlay(label: widget.highlightModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),
           ],
