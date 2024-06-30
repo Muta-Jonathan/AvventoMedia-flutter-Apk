@@ -30,6 +30,7 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
         showFullscreenButton: true,
         strictRelatedVideos: true,
         playsInline: false,
+        showVideoAnnotations: true,
         loop: false,
         color: 'red'
       ),

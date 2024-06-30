@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/providers/youtube_provider.dart';
-import '../widgets/youtube/playlist/vertical/youtube_playlist_vertical_widget.dart';
+import '../widgets/youtube/playlist/vertical/youtube_kids_playlist_vertical_widget.dart';
 
-class YoutubePlaylistPage extends StatefulWidget {
-  const YoutubePlaylistPage({super.key});
+class YoutubeKidsPlaylistPage extends StatefulWidget {
+  const YoutubeKidsPlaylistPage({super.key});
 
   @override
-  State<YoutubePlaylistPage> createState() => _YoutubePlaylistPageState();
+  State<YoutubeKidsPlaylistPage> createState() => _YoutubeKidsPlaylistPageState();
 }
 
-class _YoutubePlaylistPageState extends State<YoutubePlaylistPage> {
+class _YoutubeKidsPlaylistPageState extends State<YoutubeKidsPlaylistPage> {
 
   @override
   void initState() {
@@ -25,7 +25,7 @@ class _YoutubePlaylistPageState extends State<YoutubePlaylistPage> {
 
     Future<void> refreshData() async {
       // Fetch fresh data for a specific all playlist
-     await Provider.of<YoutubeProvider>(context, listen: false).fetchAllMusicPlaylists();
+     await Provider.of<YoutubeProvider>(context, listen: false).fetchAllKidsPlaylists();
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }
@@ -48,7 +48,7 @@ class _YoutubePlaylistPageState extends State<YoutubePlaylistPage> {
                     StretchMode.blurBackground
                   ],
                   title: TextOverlay(
-                    label: AppConstants.avventoMusic,
+                    label: AppConstants.avventoKids,
                     color: Theme.of(context).colorScheme.onPrimary,
                     maxLines: 1,
                     fontSize: AppConstants.fontSize20,
@@ -59,7 +59,7 @@ class _YoutubePlaylistPageState extends State<YoutubePlaylistPage> {
                   titlePadding: const EdgeInsets.only(left: 48,bottom: 14),
                 ),
               ),
-              const YoutubePlaylistVerticalWidget(),
+              const YoutubeKidsPlaylistVerticalWidget(),
             ],
           ),
       ),

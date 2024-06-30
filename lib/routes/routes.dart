@@ -10,8 +10,10 @@ import '../pages/podcast_list_page.dart';
 import '../pages/prayer_request_page.dart';
 import '../pages/profile_page.dart';
 import '../pages/watch_page.dart';
-import '../pages/youtube_playlist_item_page.dart';
-import '../pages/youtube_playlist_page.dart';
+import '../pages/youtube_kids_playlist_item_page.dart';
+import '../pages/youtube_kids_playlist_page.dart';
+import '../pages/youtube_music_playlist_item_page.dart';
+import '../pages/youtube_music_playlist_page.dart';
 import '../pages/youtube_watch_page.dart';
 
 class Routes {
@@ -25,9 +27,11 @@ class Routes {
   static String liveTv = "/liveTv";
   static String liveTvList = "/liveTv/list";
   static String prayerRequest = "/prayerRequest";
-  static String youtubePlaylist = "/youtubePlaylist";
-  static String youtubePlaylistItem = "/youtubePlaylist/Item";
-  static String watchYoutube = "/watch/YoutubeVideo";
+  static String youtubeMusicPlaylist = "/youtube/music/playlist";
+  static String youtubeMusicPlaylistItem = "/youtube/music/playlist/item";
+  static String youtubeKidsPlaylist = "/youtube/kids/playlist";
+  static String youtubeKidsPlaylistItem = "/youtube/kids/playlist/item";
+  static String watchYoutube = "/watch/youtube/video";
 
   static  String getHomeRoute() => home;
   static  String getListenRoute() => listen;
@@ -39,8 +43,10 @@ class Routes {
   static  String getLiveTvRoute() => liveTv;
   static  String getLiveTvListRoute() => liveTvList;
   static  String getPrayerRequestRoute() => prayerRequest;
-  static  String getYoutubePlaylistRoute() => youtubePlaylist;
-  static  String getYoutubePlaylistItemRoute() => youtubePlaylistItem;
+  static  String getYoutubeMusicPlaylistRoute() => youtubeMusicPlaylist;
+  static  String getYoutubeMusicPlaylistItemRoute() => youtubeMusicPlaylistItem;
+  static  String getYoutubeKidsPlaylistRoute() => youtubeKidsPlaylist;
+  static  String getYoutubeKidsPlaylistItemRoute() => youtubeKidsPlaylistItem;
   static  String getWatchYoutubeRoute() => watchYoutube;
 
   static List<GetPage> routes = [
@@ -54,8 +60,10 @@ class Routes {
     GetPage(name: liveTv, page: () => const WatchPage()),
     GetPage(name: liveTvList, page: () => const LiveTvListPage()),
     GetPage(name: prayerRequest, page: () => const PrayerRequestPage()),
-    GetPage(name: youtubePlaylist, page: () => const YoutubePlaylistPage()),
-    GetPage(name: youtubePlaylistItem, page: () => const YoutubePlaylistItemPage()),
+    GetPage(name: youtubeMusicPlaylist, page: () => const YoutubeMusicPlaylistPage()),
+    GetPage(name: youtubeMusicPlaylistItem, page: () => const YoutubeMusicPlaylistItemPage()),
+    GetPage(name: youtubeKidsPlaylist, page: () => const YoutubeKidsPlaylistPage()),
+    GetPage(name: youtubeKidsPlaylistItem, page: () => const YoutubeKidsPlaylistItemPage()),
     GetPage(name: watchYoutube, page: () => const YoutubeWatchPage()),
   ];
 }

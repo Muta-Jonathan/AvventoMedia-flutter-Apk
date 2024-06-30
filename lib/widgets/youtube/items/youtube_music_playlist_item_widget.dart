@@ -11,14 +11,14 @@ import '../../../controller/youtube_playlist_item_controller.dart';
 import '../../../routes/routes.dart';
 import '../../providers/youtube_provider.dart';
 
-class YoutubePlaylistItemWidget extends StatefulWidget {
-  const YoutubePlaylistItemWidget({super.key,});
+class YoutubeMusicPlaylistItemWidget extends StatefulWidget {
+  const YoutubeMusicPlaylistItemWidget({super.key,});
 
   @override
-  YoutubePlaylistItemWidgetState createState() => YoutubePlaylistItemWidgetState();
+  YoutubeMusicPlaylistItemWidgetState createState() => YoutubeMusicPlaylistItemWidgetState();
 }
 
-class YoutubePlaylistItemWidgetState extends State<YoutubePlaylistItemWidget> {
+class YoutubeMusicPlaylistItemWidgetState extends State<YoutubeMusicPlaylistItemWidget> {
   final youtubePlaylistItemController = Get.put(YoutubePlaylistItemController());
   final YoutubePlaylistController youtubePlaylistController = Get.find();
 
@@ -39,7 +39,7 @@ class YoutubePlaylistItemWidgetState extends State<YoutubePlaylistItemWidget> {
       builder: (context, youtubeProvider, child) {
         if (youtubeProvider.isLoading) {
           return const SliverToBoxAdapter(child: Center(child:LoadingWidget()));
-        } else if (youtubeProvider.youtubePlaylistItems.isEmpty) {
+        } else if (youtubeProvider.youtubeMusicPlaylistItems.isEmpty) {
           return const SliverToBoxAdapter(child: Center(child: Text('No items found')));
         } else {
           return buildSliverList(youtubeProvider);
@@ -51,10 +51,10 @@ class YoutubePlaylistItemWidgetState extends State<YoutubePlaylistItemWidget> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-          final item = youtubeProvider.youtubePlaylistItems[index];
+          final item = youtubeProvider.youtubeMusicPlaylistItems[index];
           return buildYoutubePlaylistItemDetailsScreen(item);
         },
-        childCount: youtubeProvider.youtubePlaylistItems.length,
+        childCount: youtubeProvider.youtubeMusicPlaylistItems.length,
       ),
     );
   }

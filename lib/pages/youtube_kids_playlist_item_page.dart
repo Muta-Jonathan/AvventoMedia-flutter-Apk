@@ -11,16 +11,16 @@ import 'package:provider/provider.dart';
 import '../widgets/images/resizable_image_widget_2.dart';
 import '../widgets/providers/youtube_provider.dart';
 import '../widgets/text/show_more_desc.dart';
-import '../widgets/youtube/items/youtube_playlist_item_widget.dart';
+import '../widgets/youtube/items/youtube_kids_playlist_item_widget.dart';
 
-class YoutubePlaylistItemPage extends StatefulWidget {
-  const YoutubePlaylistItemPage({super.key});
+class YoutubeKidsPlaylistItemPage extends StatefulWidget {
+  const YoutubeKidsPlaylistItemPage({super.key});
 
   @override
-  State<YoutubePlaylistItemPage> createState() => _YoutubePlaylistItemPageState();
+  State<YoutubeKidsPlaylistItemPage> createState() => _YoutubePlaylistItemPageState();
 }
 
-class _YoutubePlaylistItemPageState extends State<YoutubePlaylistItemPage> {
+class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
   final YoutubePlaylistController youtubePlaylistController = Get.find();
 
   @override
@@ -117,7 +117,7 @@ class _YoutubePlaylistItemPageState extends State<YoutubePlaylistItemPage> {
                   ),
                 ),
               ),
-              const YoutubePlaylistItemWidget(),
+              const YoutubeKidsPlaylistItemWidget(),
             ],
           ),
       ),

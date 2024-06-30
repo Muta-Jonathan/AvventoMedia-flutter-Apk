@@ -16,21 +16,21 @@ import '../../../../routes/routes.dart';
 import '../../../text/label_place_holder.dart';
 
 
-class YoutubePlaylistWidget extends StatefulWidget {
-  const YoutubePlaylistWidget({super.key});
+class YoutubeMusicPlaylistWidget extends StatefulWidget {
+  const YoutubeMusicPlaylistWidget({super.key});
 
   @override
-  State<YoutubePlaylistWidget> createState() => _YoutubePlaylistWidget();
+  State<YoutubeMusicPlaylistWidget> createState() => _YoutubeMusicPlaylistWidget();
 }
 
-class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
+class _YoutubeMusicPlaylistWidget extends State<YoutubeMusicPlaylistWidget> {
   final youtubePlaylistController = Get.put(YoutubePlaylistController());
   int itemsToDisplay = 12;
 
   @override
   void initState() {
     super.initState();
-    // Fetch musicplaylist using the provider and listen to changes
+    // Fetch music playlist using the provider and listen to changes
     Provider.of<YoutubeProvider>(context, listen: false).fetchAllMusicPlaylists();
   }
 
@@ -44,7 +44,7 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
       height: Utils.calculateAspectHeight(context, 1.25),
       child: Column(
         children: [
-          LabelPlaceHolder(title: AppConstants.avventoMusic,titleFontSize: 18, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getYoutubePlaylistRoute(),)),
+          LabelPlaceHolder(title: AppConstants.avventoMusic,titleFontSize: 18, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getYoutubeMusicPlaylistRoute(),)),
           Expanded(child: buildListView(context, youtubeProvider),)
         ],
       ),
@@ -53,7 +53,7 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
 
 
   Widget buildListView(BuildContext context, YoutubeProvider youtubeProvider) {
-    final int itemCount = youtubeProvider.youtubePlaylists.length;
+    final int itemCount = youtubeProvider.youtubeMusicPlaylists.length;
 
     if (itemCount > 0) {
       return ListView.builder(
@@ -61,7 +61,7 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
         itemCount: itemCount > 0 ? min(itemsToDisplay, itemCount) + 1 : 0,
         itemBuilder: (BuildContext context, int index) {
           if (index < min(itemsToDisplay, itemCount)) {
-            return buildYoutubeMusicPlaylistDetailsScreen(youtubeProvider.youtubePlaylists[index]);
+            return buildYoutubeMusicPlaylistDetailsScreen(youtubeProvider.youtubeMusicPlaylists[index]);
           } else if (index == min(itemsToDisplay, itemCount)) {
             return itemCount > itemsToDisplay ? buildShowMoreItem(context) : const SizedBox.shrink();
           } else {
@@ -89,7 +89,7 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
         ),
         onPressed: () {
           // Go to the full playlist page
-          Get.toNamed(Routes.getYoutubePlaylistRoute());
+          Get.toNamed(Routes.getYoutubeMusicPlaylistRoute());
         },
     );
   }
@@ -100,7 +100,7 @@ class _YoutubePlaylistWidget extends State<YoutubePlaylistWidget> {
         // Set the selected youtube playlist using the controller
         youtubePlaylistController.setSelectedPlaylist(youtubePlaylistModel);
         // Navigate to the "YoutubePlaylistPage"
-        Get.toNamed(Routes.getYoutubePlaylistItemRoute());
+        Get.toNamed(Routes.getYoutubeMusicPlaylistItemRoute());
       },
         child: YoutubePlaylistDetailsWidget(youtubePlaylistModel: youtubePlaylistModel,),
     );

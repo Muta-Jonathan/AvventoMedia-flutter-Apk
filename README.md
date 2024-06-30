@@ -32,6 +32,10 @@ Listen to wonderful Podcasts from AvventoRadio
 You can download the AvventoMedia app from the Play Store [here](https://play.google.com/store/apps/details?id=tv.avventomedia.app).
 
 ## Changelogs
+### Version 0.5.0 (June 2024)
+- Kids section Added
+- fixed bugs
+
 ### Version 0.4.0 (June 2024)
 - Music section Added
 - Support svg icons
@@ -78,12 +82,11 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 ### Completed
 
 ##### June 2024
+- [x] Kids Section Added
 - [x] Music section Added
 - [x] Support svg icons
 - [x] Support Youtube api for videos
 - [x] More screens (Live tv list, music list)
-
-##### June 2024
 - [x] Improved podcast page
 - [x] Added speed controls on playing podcast
 - [x] fixed some bugs

@@ -10,14 +10,14 @@ import '../../../../controller/youtube_playlist_controller.dart';
 import '../../../../routes/routes.dart';
 import '../../../providers/youtube_provider.dart';
 
-class YoutubePlaylistVerticalWidget extends StatefulWidget {
-  const  YoutubePlaylistVerticalWidget({super.key,});
+class YoutubeMusicPlaylistVerticalWidget extends StatefulWidget {
+  const YoutubeMusicPlaylistVerticalWidget({super.key,});
 
   @override
-   YoutubePlaylistVerticalWidgetState createState() =>  YoutubePlaylistVerticalWidgetState();
+  State<YoutubeMusicPlaylistVerticalWidget> createState() => _YoutubeMusicPlaylistVerticalWidgetState();
 }
 
-class  YoutubePlaylistVerticalWidgetState extends State< YoutubePlaylistVerticalWidget> {
+class _YoutubeMusicPlaylistVerticalWidgetState extends State<YoutubeMusicPlaylistVerticalWidget> {
   final youtubePlaylistController = Get.put(YoutubePlaylistController());
 
   @override
@@ -33,7 +33,7 @@ class  YoutubePlaylistVerticalWidgetState extends State< YoutubePlaylistVertical
       builder: (context, youtubeProvider, child) {
         if (youtubeProvider.isLoading) {
           return const SliverToBoxAdapter(child: Center(child:LoadingWidget()));
-        } else if (youtubeProvider.youtubePlaylists.isEmpty) {
+        } else if (youtubeProvider.youtubeMusicPlaylists.isEmpty) {
           return const SliverToBoxAdapter(child: Center(child: Text('No items found')));
         } else {
           return buildSliverList(youtubeProvider);
@@ -45,10 +45,10 @@ class  YoutubePlaylistVerticalWidgetState extends State< YoutubePlaylistVertical
     return SliverList(
       delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-          final item = youtubeProvider.youtubePlaylists[index];
+          final item = youtubeProvider.youtubeMusicPlaylists[index];
           return buildYoutubePlaylistDetailsScreen(item);
         },
-        childCount: youtubeProvider.youtubePlaylists.length,
+        childCount: youtubeProvider.youtubeMusicPlaylists.length,
       ),
     );
   }
@@ -59,7 +59,7 @@ class  YoutubePlaylistVerticalWidgetState extends State< YoutubePlaylistVertical
         // Set the selected youtube playlist using the controller
         youtubePlaylistController.setSelectedPlaylist(youtubePlaylist);
         // Navigate to the "YoutubePlaylistPage"
-        Get.toNamed(Routes.getYoutubePlaylistItemRoute());
+        Get.toNamed(Routes.getYoutubeMusicPlaylistItemRoute());
       },
       child: YoutubePlaylistDetailsVerticalWidget(youtubePlaylistModel: youtubePlaylist,),
     );
