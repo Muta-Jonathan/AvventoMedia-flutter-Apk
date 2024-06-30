@@ -36,6 +36,8 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 - Kids section Added
 - fixed bugs
 
+---
+
 ### Version 0.4.0 (June 2024)
 - Music section Added
 - Support svg icons
