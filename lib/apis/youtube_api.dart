@@ -102,7 +102,7 @@ class YouTubeApiService {
 
   Future<List<YouTubePlaylistItemModel>> _fetchVideoDetails(List<YouTubePlaylistItemModel> items, apiKey) async {
     final videoIds = items.map((item) => item.videoId).join(',');
-    final url = 'https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=$videoIds&key=$apiKey';
+    final url = 'https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id=$videoIds&key=$apiKey';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -112,8 +112,9 @@ class YouTubeApiService {
       items = items.map((item) {
         final videoDetails = videoDetailsMap[item.videoId];
         final duration = videoDetails['contentDetails']['duration'];
+        final liveBroadcastContent = videoDetails['snippet']['liveBroadcastContent'];
         final formattedDuration = _formatDuration(duration);
-        return item.copyWith(duration: formattedDuration);
+        return item.copyWith(duration: formattedDuration,liveBroadcastContent: liveBroadcastContent);
       }).toList();
 
       return items;

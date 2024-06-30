@@ -6,6 +6,7 @@ class YouTubePlaylistItemModel {
   final String videoId;
   final String duration;
   final DateTime publishedAt;
+  final String liveBroadcastContent;
 
   YouTubePlaylistItemModel({
     required this.id,
@@ -14,7 +15,8 @@ class YouTubePlaylistItemModel {
     required this.thumbnailUrl,
     required this.videoId,
     this.duration = '',
-    required this.publishedAt
+    required this.publishedAt,
+    this.liveBroadcastContent = '',
   });
 
   factory YouTubePlaylistItemModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class YouTubePlaylistItemModel {
     String? thumbnailUrl,
     String? duration,
     DateTime? publishedAt,
+    String? liveBroadcastContent,
   }) {
     return YouTubePlaylistItemModel(
       id: id ?? this.id,
@@ -49,6 +52,7 @@ class YouTubePlaylistItemModel {
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       duration: duration ?? this.duration,
       publishedAt: publishedAt ?? this.publishedAt,
+      liveBroadcastContent: liveBroadcastContent ?? this.liveBroadcastContent,
     );
   }
 }

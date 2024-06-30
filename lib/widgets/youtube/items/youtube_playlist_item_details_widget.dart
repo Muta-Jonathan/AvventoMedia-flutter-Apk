@@ -68,7 +68,7 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                     Row(
                       children: [
                         TextOverlay(
-                          label: widget.youTubePlaylistItemModel.duration,
+                          label: _getVideoStatusLabel(widget.youTubePlaylistItemModel),
                           fontSize: 15,
                           color: Theme.of(context).colorScheme.onSecondary,
                         ),
@@ -82,5 +82,15 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
         ),
       ),
     );
+  }
+
+  String _getVideoStatusLabel(YouTubePlaylistItemModel item) {
+    if (item.liveBroadcastContent == 'live') {
+      return 'Live';
+    } else if (item.liveBroadcastContent == 'upcoming') {
+      return 'Premiering';
+    } else {
+      return item.duration;
+    }
   }
 }
