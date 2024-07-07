@@ -18,6 +18,7 @@ class ComingSoonDialog extends StatelessWidget {
       child: FadeTransition(
         opacity: Tween<double>(begin: 0.5,end: 1.0).animate(animation),
         child: AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
           title: SizedBox(
             height: 120,
             child: Center(
