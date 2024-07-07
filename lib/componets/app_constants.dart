@@ -23,6 +23,8 @@ class AppConstants {
   static const String highlightsAPI = "highlights";
   static const String liveTvAPI = "liveTv";
   static const String radioAPI = "radio";
+  static const String apiKeysAPI = "apiKeys";
+  static const String youtube = "youtube";
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const String showId = '5820368';
   static const azuracastAPI ='https://radio1.avventomedia.org/api/nowplaying/avventoradio';
@@ -30,8 +32,6 @@ class AppConstants {
   static const azuracastPodcastAPI ='https://radio1.avventomedia.org/api/station/avventoradio/podcasts';
   static const azuracastWebSocketAPI ='wss://radio1.avventomedia.org/api/live/nowplaying/websocket';
   static const avventoEmail ='avventohomeproductions@gmail.com';
-  static const avventomusicYoutubeApiKey ='AIzaSyA_vHgI0-W-2nT2nX2ou6gWNwtULWaAAU8';
-  static const avventoKidsYoutubeApiKey ='AIzaSyA5WE2ANy8HMteb1QwmADBljsxKHHABrzI';
   static const avventomusicYoutubeChannelID ='UC-xVlvRnqlQIjyBnmbj07nA';
   static const avventoKidsYoutubeChannelID ='UCeQnz5VVY-6NWv1HzaXSiKg';
 

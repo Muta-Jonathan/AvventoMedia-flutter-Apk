@@ -9,7 +9,8 @@ import '../models/youtubemodels/youtube_playlist_model.dart';
 class YouTubeApiService {
   Future<List<YoutubePlaylistModel>> fetchPlaylists({apiKey,channelId}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? avventoMusicCachedData = prefs.getString('avvento_music_cache');
+    final String cacheKey = 'avvento_$channelId';
+    final String? avventoMusicCachedData = prefs.getString(cacheKey);
 
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -37,7 +38,7 @@ class YouTubeApiService {
         final data = json.decode(response.body);
 
         // Cache the fetched data in SharedPreferences.
-        prefs.setString('avvento_music_cache', response.body);
+        prefs.setString(cacheKey, response.body);
 
         final List<dynamic> items = data['items'];
         final List<YoutubePlaylistModel> playlists = items.map((json) => YoutubePlaylistModel.fromJson(json)).toList();
@@ -53,7 +54,8 @@ class YouTubeApiService {
 
   Future<List<YouTubePlaylistItemModel>> fetchPlaylistItems({apiKey,playlistId}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? avventoMusicItemCachedData = prefs.getString('avvento_music_item_cache');
+    final String cacheKey = 'avvento_$playlistId';
+    final String? avventoMusicItemCachedData = prefs.getString(cacheKey);
 
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -89,7 +91,7 @@ class YouTubeApiService {
       items = await _fetchVideoDetails(items, apiKey);
 
       // Cache the fetched data in SharedPreferences.
-      prefs.setString('avvento_music_item_cache', response.body);
+      prefs.setString(cacheKey, response.body);
 
       // Sort items by publish date
       items.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
@@ -130,30 +132,52 @@ class YouTubeApiService {
     // Remove the 'PT' prefix and 'S' suffix
     duration = duration.replaceAll('PT', '').replaceAll('S', '');
 
-    // Split the duration into components (hours, minutes, seconds)
-    List<String> components = duration.split(RegExp(r'[H,M]'));
-
+    // Initialize hours, minutes, and seconds
     int hours = 0, minutes = 0, seconds = 0;
 
-    // Parse hours, minutes, and seconds from components
-    if (components.isNotEmpty) {
-      if (components.length == 3) {
-        hours = int.parse(components[0]);
-        minutes = int.parse(components[1]);
-        seconds = int.parse(components[2]);
-      } else if (components.length == 2) {
-        minutes = int.parse(components[0]);
-        seconds = int.parse(components[1]);
-      } else if (components.length == 1) {
-        seconds = int.parse(components[0]);
+    // Parse hours, minutes, and seconds
+    if (duration.contains('H')) {
+      // Format includes hours
+      List<String> parts = duration.split('H');
+      hours = int.parse(parts[0]);
+
+      if (parts.length > 1) {
+        // There are minutes and/or seconds
+        String remainder = parts[1];
+        if (remainder.contains('M')) {
+          List<String> minuteParts = remainder.split('M');
+          minutes = int.parse(minuteParts[0]);
+          if (minuteParts.length > 1) {
+            // There are seconds
+            seconds = int.parse(minuteParts[1]);
+          }
+        } else if (remainder.contains('S')) {
+          // Only seconds
+          seconds = int.parse(remainder.replaceAll('S', ''));
+        }
       }
+    } else if (duration.contains('M')) {
+      // Format includes minutes and seconds, but no hours
+      List<String> parts = duration.split('M');
+      minutes = int.parse(parts[0]);
+
+      if (parts.length > 1) {
+        // There are seconds
+        seconds = int.parse(parts[1].replaceAll('S', ''));
+      }
+    } else {
+      // Only seconds
+      seconds = int.parse(duration);
     }
 
-    // Format the duration based on hours, minutes, and seconds
+    // Format the duration
     if (hours > 0) {
-      formattedDuration = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      formattedDuration =
+      '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+    } else if (minutes > 0) {
+      formattedDuration = '${minutes.toString()}:${seconds.toString().padLeft(2, '0')}';
     } else {
-      formattedDuration = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+      formattedDuration = seconds.toString();
     }
 
     return formattedDuration;

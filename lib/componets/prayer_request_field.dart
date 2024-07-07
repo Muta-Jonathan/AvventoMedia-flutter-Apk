@@ -57,6 +57,9 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
           const SizedBox(height: 20,),
           TextFormField(
             controller: nameController,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             decoration: InputDecoration(
               hoverColor: Theme.of(context).colorScheme.onPrimary,
               filled: true,
@@ -91,9 +94,13 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
             controller: phoneNumberController,
             initialCountryCode: 'UG',
             dropdownTextStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             decoration: InputDecoration(
-              hoverColor: Theme.of(context).colorScheme.onPrimary,
+              prefixIconColor: Theme.of(context).colorScheme.onPrimary,
               filled: true,
+              iconColor: Theme.of(context).colorScheme.onPrimary,
               fillColor: Theme.of(context).colorScheme.secondary,
               hintText: AppConstants.prayerRequestHintPhone,
               focusedBorder: OutlineInputBorder(
@@ -119,6 +126,9 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
           const SizedBox(height: 10,),
           TextFormField(
             controller: emailController,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             decoration: InputDecoration(
               hoverColor: Theme.of(context).colorScheme.onPrimary,
               filled: true,
@@ -151,6 +161,9 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
           const SizedBox(height: 10,),
           TextFormField(
             controller: prayForController,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             decoration: InputDecoration(
               hoverColor: Theme.of(context).colorScheme.onPrimary,
               filled: true,
@@ -183,6 +196,9 @@ class PrayerRequestFieldState extends State<PrayerRequestField> {
           const SizedBox(height: 10,),
           TextFormField(
             controller: prayerRequestController,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
             decoration: InputDecoration(
               hoverColor: Theme.of(context).colorScheme.onPrimary,
               filled: true,

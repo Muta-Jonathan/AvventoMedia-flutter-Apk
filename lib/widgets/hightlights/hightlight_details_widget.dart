@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../componets/utils.dart';
 import '../../models/highlightmodel/highlight_model.dart';
-import '../images/resizable_image_widget.dart';
+import '../images/resizable_image_widget_2.dart';
 
 class HightlightsDetailsWidget extends StatefulWidget {
   final HighlightModel highlightModel;
@@ -21,13 +21,21 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ResizableImageWithOverlay(imageUrl: widget.highlightModel.imageUrl),
+            SizedBox(
+              height:  Utils.calculateAspectHeight(context, 0.92),
+              width:  Utils.calculateAspectHeight(context, 1.61),
+              child: ResizableImageContainerWithOverlay(
+                imageUrl: widget.highlightModel.imageUrl,
+              ),
+            ),
             const SizedBox(height: 10.0,),
             SizedBox(
-                width: Utils.calculateWidth(context, 0.76),
+                width: Utils.calculateWidth(context, 0.8),
                 child: TextOverlay(label: widget.highlightModel.title, color: Colors.orange,allCaps: true)),
             const SizedBox(height: 5.0,),
-            TextOverlay(label: widget.highlightModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),
+            SizedBox(
+                width: Utils.calculateWidth(context, 0.8),
+                child: TextOverlay(label: widget.highlightModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,)),
           ],
       ),
     );

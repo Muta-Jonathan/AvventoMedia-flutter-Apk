@@ -27,8 +27,9 @@ class _NavBarState extends State<NavBar> {
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
           body: DoubleBackToCloseApp(
-            snackBar: const SnackBar(
-              content: Text(AppConstants.exitApp),
+            snackBar: SnackBar(
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              content: const Text(AppConstants.exitApp),
             ),
               child:IndexedStack(
                 index: controller.tabIndex,
