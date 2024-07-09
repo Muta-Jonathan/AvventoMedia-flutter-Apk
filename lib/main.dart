@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/firebase_options.dart';
 import 'package:avvento_media/routes/routes.dart';
@@ -19,6 +21,7 @@ import 'bindings/initial_binding.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -54,8 +57,15 @@ Future<void> main() async {
       child: const MyApp(),
     ),
   );
-
   //DependencyInjection.init();
+}
+
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
 }
 
 class MyApp extends StatelessWidget {

@@ -9,6 +9,7 @@ class RadioPodcast {
   final int episodes;
   final List<Category> categories;
   final String episodesLink;
+  final DateTime lastUpdated;
 
   RadioPodcast({
     required this.id,
@@ -21,6 +22,7 @@ class RadioPodcast {
     required this.episodes,
     required this.categories,
     required this.episodesLink,
+    required this.lastUpdated,
   });
 
 
@@ -36,6 +38,7 @@ class RadioPodcast {
       'episodes': episodes,
       'categories': categories,
       'episodesLink': episodesLink,
+      'lastUpdated': lastUpdated.millisecondsSinceEpoch ~/ 1000,
     };
   }
 
@@ -54,6 +57,7 @@ class RadioPodcast {
       episodes: json['episodes'],
       categories: categoriesList,
       episodesLink: json['links']['episodes'],
+      lastUpdated: DateTime.fromMillisecondsSinceEpoch(json['art_updated_at'] * 1000),
     );
   }
 }

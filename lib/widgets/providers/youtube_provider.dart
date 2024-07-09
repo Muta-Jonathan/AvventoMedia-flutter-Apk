@@ -24,7 +24,7 @@ class YoutubeProvider extends ChangeNotifier {
 
 
   Future<void> fetchAllMusicPlaylists() async {
-    final String musicApiKey = await FirestoreServiceAPI().fetchApiKey('avventoMusicApi');
+    final String musicApiKey = await FirestoreServiceAPI().fetchApiKey('avventoMusicApiKey');
     try {
       _youtubeMusicPlaylists = await YouTubeApiService().fetchPlaylists(
           apiKey: musicApiKey,
@@ -36,7 +36,7 @@ class YoutubeProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAllMusicPlaylistItem({playlistId}) async {
-    final String musicApiKey = await FirestoreServiceAPI().fetchApiKey('avventoMusicApi');
+    final String musicApiKey = await FirestoreServiceAPI().fetchApiKey('avventoMusicApiKey');
     _isLoadingItems = true;
     notifyListeners();
 
@@ -54,7 +54,7 @@ class YoutubeProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAllKidsPlaylists() async {
-    final String kidsApiKey = await FirestoreServiceAPI().fetchApiKey('avventoKidsApi');
+    final String kidsApiKey = await FirestoreServiceAPI().fetchApiKey('avventoKidsApiKey');
     try {
       _youtubeKidsPlaylists = await YouTubeApiService().fetchPlaylists(
           apiKey: kidsApiKey,
@@ -66,7 +66,7 @@ class YoutubeProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAllKidsPlaylistItem({playlistId}) async {
-    final String kidsApiKey = await FirestoreServiceAPI().fetchApiKey('avventoKidsApi');
+    final String kidsApiKey = await FirestoreServiceAPI().fetchApiKey('avventoKidsApiKey');
     _isLoadingItems = true;
     notifyListeners();
 

@@ -130,8 +130,8 @@ class AzuraCastAPI {
         prefs.setString(_cachedRadioPodcastKey, response.body);
 
         // Create a list of RadioPodcast objects from the JSON data
-        final radioPodcasts = jsonResult.map((json) => RadioPodcast.fromJson(json)).toList();
-
+        final radioPodcasts = jsonResult.map((json) => RadioPodcast.fromJson(json)).toList()
+          ..sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
 
         return radioPodcasts;
       } else {
