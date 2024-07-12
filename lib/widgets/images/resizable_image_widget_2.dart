@@ -3,6 +3,7 @@ import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 
 class ResizableImageContainerWithOverlay extends StatelessWidget {
   final String? imageUrl;
@@ -84,6 +85,28 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
     );
   }
 
+  Widget imageContainer() {
+    return CachedNetworkImage(
+      imageUrl: imageUrl!,
+      httpHeaders: token != null ? {
+        'Authorization': 'Bearer $token',
+      } : null ,
+      fit: text != null || containerColor != null ? BoxFit.cover : BoxFit.fitWidth,
+      width: double.infinity,
+      height: double.infinity,
+      placeholder: (context, url) => const Center(
+        child: SizedBox(
+            width: 100,
+            height: 100,
+            child: LoadingWidget()
+        ),
+      ),
+    errorWidget: (context, _, error) => Icon(
+      Icons.error,
+      color: Theme.of(context).colorScheme.error,
+    ),
+  );
+  }
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -95,26 +118,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
           aspectRatio: 16 / 9,
           child: Stack(
             children: [
-              CachedNetworkImage(
-                imageUrl: imageUrl!,
-                httpHeaders: token != null ? {
-                  'Authorization': 'Bearer $token',
-                } : null ,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-                placeholder: (context, url) => const Center(
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: LoadingWidget()
-                  ),
-                ),
-                errorWidget: (context, _, error) => Icon(
-                  Icons.error,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
+              text != null || containerColor != null ? imageContainer() : InstaImageViewer(child: imageContainer()),
               icon != null || text != null || svgPath != null ? buildOverlay(): Container()
             ],
           ),

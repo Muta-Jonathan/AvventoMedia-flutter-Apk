@@ -80,6 +80,7 @@ dependencies:
   audio_service: ^0.18.13
   youtube_player_iframe: ^4.0.4
   flutter_svg: ^2.0.9
+  insta_image_viewer: ^1.0.4
 
 dev_dependencies:
   flutter_test:
