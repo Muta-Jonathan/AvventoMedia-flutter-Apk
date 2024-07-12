@@ -110,7 +110,10 @@ class AzuraCastAPI {
 
     if (connectivityResult == ConnectivityResult.none) {
       final data = json.decode(cachedData!);
-      return List<RadioPodcast>.from(data.map((data) => RadioPodcast.fromJson(data)));
+      final List<RadioPodcast> cachedPodcasts = List<RadioPodcast>.from(data.map((data) => RadioPodcast.fromJson(data)));
+      // Resort the cached episodes
+      cachedPodcasts.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+      return cachedPodcasts;
     } else {
       final url = Uri.parse(apiUrl);
 
@@ -124,7 +127,6 @@ class AzuraCastAPI {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResult = json.decode(response.body);
-
 
         // Cache the fetched data in SharedPreferences.
         prefs.setString(_cachedRadioPodcastKey, response.body);
@@ -150,7 +152,10 @@ class AzuraCastAPI {
 
     if (connectivityResult == ConnectivityResult.none) {
       final data = json.decode(cachedData!);
-      return List<PodcastEpisode>.from(data.map((data) => RadioPodcast.fromJson(data)));
+      final List<PodcastEpisode> cachedEpisodes = List<PodcastEpisode>.from(data.map((item) => PodcastEpisode.fromJson(item)));
+      // Resort the cached episodes
+      cachedEpisodes.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+      return cachedEpisodes;
     } else {
       final url = Uri.parse(apiUrl);
 
@@ -164,7 +169,6 @@ class AzuraCastAPI {
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonResult = json.decode(response.body);
-
 
         // Cache the fetched data in SharedPreferences.
         prefs.setString(_cachedPodcastEpisodeKey, response.body);

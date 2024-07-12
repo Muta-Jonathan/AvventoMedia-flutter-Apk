@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class YoutubePlaylistController extends GetxController {
   Rx<YoutubePlaylistModel?> selectedPlaylist = Rx<YoutubePlaylistModel?>(null);
 
-  void setSelectedPlaylist(YoutubePlaylistModel playlist) {
+  void setSelectedPlaylist(YoutubePlaylistModel? playlist) {
     selectedPlaylist.value = playlist;
   }
 }

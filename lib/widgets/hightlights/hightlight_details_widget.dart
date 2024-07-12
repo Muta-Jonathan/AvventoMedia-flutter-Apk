@@ -1,6 +1,7 @@
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../apis/youtube_api.dart';
 import '../../componets/utils.dart';
 import '../../models/highlightmodel/highlight_model.dart';
 import '../images/resizable_image_widget_2.dart';
@@ -16,6 +17,50 @@ class HightlightsDetailsWidget extends StatefulWidget {
 class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
   @override
   Widget build(BuildContext context) {
+    final model =  widget.highlightModel;
+    final youtubeItem =  widget.highlightModel.youtubePlaylistItem;
+    final youtubePlaylist =  widget.highlightModel.youtubePlaylist;
+
+    // Determine imageUrl
+    String? imageUrl;
+    if (youtubeItem != null) {
+      imageUrl = youtubeItem.thumbnailUrl;
+    } else if (youtubePlaylist != null) {
+      imageUrl = youtubePlaylist.thumbnailUrl;
+    } else {
+      imageUrl = model.imageUrl;
+    }
+
+    // Determine title
+    String? name;
+    if (youtubeItem != null) {
+      name = youtubeItem.title;
+    } else if (youtubePlaylist != null) {
+      name = youtubePlaylist.title;
+    } else {
+      name = model.name;
+    }
+
+    // Determine text
+    String? text;
+    if (youtubeItem != null) {
+      text = YouTubeApiService().formatDuration(youtubeItem.duration);
+    } else if (youtubePlaylist != null) {
+      text = youtubePlaylist.itemCount.toString();
+    } else {
+      text = null;
+    }
+
+    // Determine containerColor
+    Color? containerColor;
+    if (youtubeItem != null) {
+      containerColor = Colors.black38;
+    } else if (youtubePlaylist != null) {
+      containerColor = Colors.black38; // Adjust logic as needed
+    } else {
+      containerColor = null;
+    }
+
     return Padding(
       padding: const EdgeInsets.only(top: 10,left: 10,right: 5),
       child: Column(
@@ -25,17 +70,20 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
               height:  Utils.calculateAspectHeight(context, 0.92),
               width:  Utils.calculateAspectHeight(context, 1.61),
               child: ResizableImageContainerWithOverlay(
-                imageUrl: widget.highlightModel.imageUrl,
+                imageUrl: imageUrl,
+                text: text,
+                containerColor: containerColor,
+                svgPath: youtubePlaylist != null ? 'assets/icon/folder.svg' : null,
               ),
             ),
             const SizedBox(height: 10.0,),
             SizedBox(
                 width: Utils.calculateWidth(context, 0.8),
-                child: TextOverlay(label: widget.highlightModel.title, color: Colors.orange,allCaps: true)),
+                child: TextOverlay(label: model.title, color: Colors.orange,allCaps: true, maxLines: 1,)),
             const SizedBox(height: 5.0,),
             SizedBox(
                 width: Utils.calculateWidth(context, 0.8),
-                child: TextOverlay(label: widget.highlightModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,)),
+                child: TextOverlay(label: name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,maxLines: 1,)),
           ],
       ),
     );

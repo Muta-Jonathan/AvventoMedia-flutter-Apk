@@ -50,13 +50,13 @@ class AppConstants {
 
   static const String radio = "RADIO";
   static const String webRadio = "Avvento Web Radio";
-  static const String webRadioUrl = "https://avventomedia.org/media/avventoradio/";
+  static const String webRadioUrl = "https://avventomedia.org/home/old/media/avventoradio/";
 
   static const String radioSchedule = "AvventoRadio Schedule";
   static const String radioScheduleUrl = "https://avventomedia.org/avventoradio-schedule/";
 
-  static const String previousBroadcasts = "Previous Broadcasts";
-  static const String previousBroadcastsUrl = "https://avventomedia.org/previous-broadcasts/";
+  static const String podcastBroadcasts = "Podcasts Website";
+  static const String podcastBroadcastsUrl = "https://radio1.avventomedia.org/public/1/podcasts";
   static const String avventoRadioTelegram = "Join Us on Telegram";
   static const String avventoRadioTelegramUrl = "https://t.me/avventoRadio";
 

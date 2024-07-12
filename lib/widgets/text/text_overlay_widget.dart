@@ -3,7 +3,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TextOverlay extends StatelessWidget {
-  final String label;
+  final String? label;
   final double fontSize;
   final Color color;
   final FontWeight fontWeight;
@@ -23,8 +23,8 @@ class TextOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String displayLabel = allCaps ? label.toUpperCase() : label;
-    displayLabel = displayLabel.replaceAll('/n', '\n\n');
+    String? displayLabel = allCaps ? label?.toUpperCase() : label;
+    displayLabel = displayLabel?.replaceAll('/n', '\n\n');
     return Padding(
       padding: const EdgeInsets.only(left: 5,bottom: 2),
       child: Linkify(
@@ -33,7 +33,7 @@ class TextOverlay extends StatelessWidget {
             throw Exception('Could not launch ${link.url}');
           }
         },
-        text: displayLabel,
+        text: displayLabel!,
         overflow: TextOverflow.ellipsis,
         maxLines: maxLines,
         style: TextStyle(

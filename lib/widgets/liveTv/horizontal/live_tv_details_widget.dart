@@ -32,7 +32,7 @@ class _LiveTvDetailsWidget extends State<LiveTvDetailsWidget> {
           const SizedBox(height: 15.0,),
           SizedBox(
               width: Utils.calculateWidth(context, 0.76),
-              child: TextOverlay(label: widget.liveTvModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,)),
+              child: TextOverlay(label: widget.liveTvModel.name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,maxLines: 1,)),
           const SizedBox(height: 8.0,),
         ],
       ),

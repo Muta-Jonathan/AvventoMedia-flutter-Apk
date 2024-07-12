@@ -29,7 +29,8 @@ class YouTubePlaylistItemModel {
       title: snippet['title'],
       description: snippet['description'],
       thumbnailUrl: defaultThumbnail['url'],
-      videoId: snippet['resourceId']['videoId'],
+      videoId: snippet['resourceId']?['videoId'] ?? json['id'],
+      duration: json['contentDetails']?['duration'] ?? '',
       publishedAt: DateTime.parse(snippet['publishedAt']),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/hightlights/hightlight_details_widget.dart';
@@ -6,7 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../apis/firestore_service_api.dart';
+import '../../controller/youtube_playlist_controller.dart';
+import '../../controller/youtube_playlist_item_controller.dart';
 import '../../models/highlightmodel/highlight_model.dart';
+import '../../routes/routes.dart';
 
 class HightlightsWidget extends StatefulWidget {
   const HightlightsWidget({super.key});
@@ -17,6 +21,8 @@ class HightlightsWidget extends StatefulWidget {
 
 class _HightlightsWidget extends State<HightlightsWidget> {
   final _highlightsAPI = Get.put(FirestoreServiceAPI());
+  final youtubePlaylistItemController = Get.put(YoutubePlaylistItemController());
+  final youtubePlaylistController = Get.put(YoutubePlaylistController());
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +68,27 @@ class _HightlightsWidget extends State<HightlightsWidget> {
   }
 
   Widget buildHighlightDetailsScreen(HighlightModel highlightModel) {
-    return HightlightsDetailsWidget(highlightModel: highlightModel,);
+    return  GestureDetector(
+        onTap: () {
+          if (highlightModel.youtubePlaylistItem != null) {
+            // Set the selected youtube playlist using the controller
+            youtubePlaylistItemController.setSelectedEpisode(highlightModel.youtubePlaylistItem);
+            // Navigate to the "YoutubePlaylistPage"
+            Get.toNamed(Routes.getWatchYoutubeRoute());
+          } else if (highlightModel.youtubePlaylist != null ) {
+            // Set the selected youtube playlist using the controller
+            youtubePlaylistController.setSelectedPlaylist(highlightModel.youtubePlaylist);
+            if (highlightModel.type == AppConstants.avventoMusic) {
+              // Navigate to the "music YoutubePlaylistPage"
+              Get.toNamed(Routes.getYoutubeMusicPlaylistItemRoute());
+            } else if (highlightModel.type == AppConstants.avventoKids) {
+              // Navigate to the "Kids YoutubePlaylistPage"
+              Get.toNamed(Routes.getYoutubeKidsPlaylistItemRoute());
+            }
+          }
+        },
+        child: HightlightsDetailsWidget(highlightModel: highlightModel,)
+    );
   }
 
 

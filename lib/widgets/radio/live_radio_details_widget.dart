@@ -35,7 +35,9 @@ class _LiveRadioDetailsWidget extends State<LiveRadioDetailsWidget> {
                 child:  TextOverlay(
                   label: widget.radioModel.name,
                   fontWeight: FontWeight.bold ,
-                  color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,),),
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 15.0,
+                  maxLines: 1,),),
               const SizedBox(height: 8.0,),
             ],
         ),

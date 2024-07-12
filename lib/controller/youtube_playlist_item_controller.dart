@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class YoutubePlaylistItemController extends GetxController {
   Rx<YouTubePlaylistItemModel?> selectedPlaylistItem = Rx<YouTubePlaylistItemModel?>(null);
 
-  void setSelectedEpisode(YouTubePlaylistItemModel item) {
+  void setSelectedEpisode(YouTubePlaylistItemModel? item) {
     selectedPlaylistItem.value = item;
   }
 }

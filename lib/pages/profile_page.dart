@@ -117,10 +117,10 @@ class ProfilePage extends StatelessWidget {
                   onTap: () => Utils.openBrowserURL(url: AppConstants.radioScheduleUrl),
                 ),
                 CustomListTile(
-                  label: AppConstants.previousBroadcasts,
+                  label: AppConstants.podcastBroadcasts,
                   leadingIcon: CupertinoIcons.globe,
                   isSwitch: false,
-                  onTap: () => Utils.openBrowserURL(url: AppConstants.previousBroadcastsUrl),
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.podcastBroadcastsUrl),
                 ),
                 CustomListTile(
                   label: AppConstants.avventoRadioTelegram,

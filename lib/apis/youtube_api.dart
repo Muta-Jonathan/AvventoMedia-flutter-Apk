@@ -37,14 +37,15 @@ class YouTubeApiService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        // Cache the fetched data in SharedPreferences.
-        prefs.setString(cacheKey, response.body);
-
         final List<dynamic> items = data['items'];
         final List<YoutubePlaylistModel> playlists = items.map((json) => YoutubePlaylistModel.fromJson(json)).toList();
 
         // Sort playlists by publishedAt date
         playlists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+
+        // Cache the fetched data in SharedPreferences.
+        prefs.setString(cacheKey, response.body);
+
         return playlists;
       } else {
         throw Exception('Failed to load playlists');
@@ -90,11 +91,11 @@ class YouTubeApiService {
       // Fetch video details including duration
       items = await _fetchVideoDetails(items, apiKey);
 
-      // Cache the fetched data in SharedPreferences.
-      prefs.setString(cacheKey, response.body);
-
       // Sort items by publish date
       items.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+
+      // Cache the fetched data in SharedPreferences.
+      prefs.setString(cacheKey, response.body);
 
       return items;
     } else {
@@ -115,7 +116,7 @@ class YouTubeApiService {
         final videoDetails = videoDetailsMap[item.videoId];
         final duration = videoDetails['contentDetails']['duration'];
         final liveBroadcastContent = videoDetails['snippet']['liveBroadcastContent'];
-        final formattedDuration = _formatDuration(duration);
+        final formattedDuration = formatDuration(duration);
         return item.copyWith(duration: formattedDuration,liveBroadcastContent: liveBroadcastContent);
       }).toList();
 
@@ -125,7 +126,7 @@ class YouTubeApiService {
     }
   }
 
-  String _formatDuration(String duration) {
+  String formatDuration(String duration) {
     // Duration format from YouTube API is in ISO 8601 (e.g., PT1H3M52S)
     String formattedDuration = '';
 
@@ -175,9 +176,9 @@ class YouTubeApiService {
       formattedDuration =
       '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     } else if (minutes > 0) {
-      formattedDuration = '${minutes.toString()}:${seconds.toString().padLeft(2, '0')}';
+      formattedDuration = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     } else {
-      formattedDuration = seconds.toString();
+      formattedDuration = seconds.toString().padLeft(2, '0');
     }
 
     return formattedDuration;

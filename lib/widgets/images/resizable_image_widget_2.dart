@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class ResizableImageContainerWithOverlay extends StatelessWidget {
-  final String imageUrl;
+  final String? imageUrl;
   final IconData? icon;
   final String? text;
   final Color? containerColor;
@@ -15,7 +15,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
 
   const ResizableImageContainerWithOverlay({
     super.key,
-    required this.imageUrl,
+    this.imageUrl,
     this.icon,
     this.text,
     this.containerColor,
@@ -96,7 +96,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
           child: Stack(
             children: [
               CachedNetworkImage(
-                imageUrl: imageUrl,
+                imageUrl: imageUrl!,
                 httpHeaders: token != null ? {
                   'Authorization': 'Bearer $token',
                 } : null ,
