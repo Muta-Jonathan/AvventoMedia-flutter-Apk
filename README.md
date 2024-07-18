@@ -32,6 +32,9 @@ Listen to wonderful Podcasts from AvventoRadio
 You can download the AvventoMedia app from the Play Store [here](https://play.google.com/store/apps/details?id=tv.avventomedia.app).
 
 ## Changelogs
+### Version 0.6.1 (July 2024)
+- Improved performance and fixed some bugs
+
 ### Version 0.6.0 (July 2024)
 - Improved performance
 - Added videos and podcasts view in highlights section
