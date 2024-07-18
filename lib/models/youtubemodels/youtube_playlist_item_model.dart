@@ -22,7 +22,7 @@ class YouTubePlaylistItemModel {
   factory YouTubePlaylistItemModel.fromJson(Map<String, dynamic> json) {
     final snippet = json['snippet'];
     final thumbnails = snippet['thumbnails'];
-    final defaultThumbnail = thumbnails['standard'];
+    final defaultThumbnail = thumbnails['maxres'];
 
     return YouTubePlaylistItemModel(
       id: json['id'],

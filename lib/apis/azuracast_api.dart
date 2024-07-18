@@ -111,9 +111,11 @@ class AzuraCastAPI {
     if (connectivityResult == ConnectivityResult.none) {
       final data = json.decode(cachedData!);
       final List<RadioPodcast> cachedPodcasts = List<RadioPodcast>.from(data.map((data) => RadioPodcast.fromJson(data)));
-      // Resort the cached episodes
-      cachedPodcasts.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
-      return cachedPodcasts;
+      // Filter podcasts with non-zero episodes
+      final filteredPodcasts = cachedPodcasts.where((podcast) => podcast.episodes > 0).toList();
+      // Resort the filtered episodes
+      filteredPodcasts.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+      return filteredPodcasts;
     } else {
       final url = Uri.parse(apiUrl);
 
@@ -132,10 +134,15 @@ class AzuraCastAPI {
         prefs.setString(_cachedRadioPodcastKey, response.body);
 
         // Create a list of RadioPodcast objects from the JSON data
-        final radioPodcasts = jsonResult.map((json) => RadioPodcast.fromJson(json)).toList()
-          ..sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+        final radioPodcasts = jsonResult.map((json) => RadioPodcast.fromJson(json)).toList();
 
-        return radioPodcasts;
+        // Filter podcasts with non-zero episodes
+        final filteredPodcasts = radioPodcasts.where((podcast) => podcast.episodes > 0).toList();
+
+        // Sort the filtered podcasts by lastUpdated date
+        filteredPodcasts.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+
+        return filteredPodcasts;
       } else {
         throw Exception('Failed to load radio podcast data');
       }

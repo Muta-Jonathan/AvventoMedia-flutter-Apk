@@ -21,9 +21,13 @@ class YouTubeApiService {
         final List<YoutubePlaylistModel> cachedPlaylists = List<YoutubePlaylistModel>.from(
             data['items'].map((data) => YoutubePlaylistModel.fromJson(data))
         );
-        // Sort cached playlists by publishedAt date
-        cachedPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
-        return cachedPlaylists;
+
+        // Filter playlists with non-zero item counts
+        final filteredPlaylists = cachedPlaylists.where((item) => item.itemCount != 0).toList();
+        // Sort filtered playlists by publishedAt date
+        filteredPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+
+        return filteredPlaylists;
       } else {
         throw Exception('No cached data available');
       }
@@ -40,13 +44,15 @@ class YouTubeApiService {
         final List<dynamic> items = data['items'];
         final List<YoutubePlaylistModel> playlists = items.map((json) => YoutubePlaylistModel.fromJson(json)).toList();
 
-        // Sort playlists by publishedAt date
-        playlists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+        // Filter playlists with non-zero item counts
+        final filteredPlaylists = playlists.where((item) => item.itemCount != 0).toList();
+        // Sort filtered playlists by publishedAt date
+        filteredPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
 
         // Cache the fetched data in SharedPreferences.
         prefs.setString(cacheKey, response.body);
 
-        return playlists;
+        return filteredPlaylists;
       } else {
         throw Exception('Failed to load playlists');
       }

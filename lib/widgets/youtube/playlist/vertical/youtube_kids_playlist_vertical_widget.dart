@@ -41,6 +41,7 @@ class  YoutubeKidsPlaylistVerticalWidgetState extends State< YoutubeKidsPlaylist
       },
     );
   }
+
   Widget buildSliverList(YoutubeProvider youtubeProvider) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(

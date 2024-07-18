@@ -18,7 +18,7 @@ class YoutubePlaylistModel {
   factory YoutubePlaylistModel.fromJson(Map<String, dynamic> json) {
     final snippet = json['snippet'];
     final thumbnails = snippet['thumbnails'];
-    final defaultThumbnail = thumbnails['standard'];
+    final defaultThumbnail = thumbnails['maxres'];
 
     return YoutubePlaylistModel(
       id: json['id'],
