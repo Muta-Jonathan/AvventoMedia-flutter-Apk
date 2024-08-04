@@ -2,6 +2,7 @@ import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/youtubemodels/youtube_playlist_item_model.dart';
@@ -67,8 +68,32 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                     const SizedBox(height: 2),
                     Row(
                       children: [
+                        (widget.youTubePlaylistItemModel.liveBroadcastContent == 'live' || widget.youTubePlaylistItemModel.liveBroadcastContent == 'upcoming') ?
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(5.0),
+                          child: Container(
+                            color: Colors.red,
+                            padding: const EdgeInsets.all(6),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  CupertinoIcons.dot_radiowaves_left_right,
+                                  color: Colors.white,
+                                  size: 15,
+                                ),
+                                const SizedBox(width: 2.0),
+                                TextOverlay(
+                                  label: widget.youTubePlaylistItemModel.duration,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ) :
                         TextOverlay(
-                          label: _getVideoStatusLabel(widget.youTubePlaylistItemModel),
+                          label: widget.youTubePlaylistItemModel.duration,
                           fontSize: 15,
                           color: Theme.of(context).colorScheme.onSecondary,
                         ),
@@ -82,15 +107,5 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
         ),
       ),
     );
-  }
-
-  String _getVideoStatusLabel(YouTubePlaylistItemModel item) {
-    if (item.liveBroadcastContent == 'live') {
-      return 'Live';
-    } else if (item.liveBroadcastContent == 'upcoming') {
-      return 'Premiering';
-    } else {
-      return item.duration;
-    }
   }
 }

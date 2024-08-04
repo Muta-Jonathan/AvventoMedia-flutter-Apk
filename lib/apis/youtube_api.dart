@@ -90,7 +90,21 @@ class YouTubeApiService {
     if (response.statusCode == 200) {
       final json = jsonDecode(response.body);
 
-      List<YouTubePlaylistItemModel> items = (json['items'] as List).map((item) {
+      // Filter out items with private video or with no thumbnails
+      final validItems = (json['items'] as List).where((item) {
+        final snippet = item['snippet'] ?? {};
+        final thumbnails = snippet['thumbnails'] ?? {};
+        final defaultThumbnail = thumbnails['maxres'] ?? thumbnails['standard'] ?? thumbnails['high'] ?? {};
+        final videoId = snippet['resourceId']?['videoId'] ?? item['id'];
+
+        // Check if the item is a private video or lacks a valid thumbnail
+        return snippet['title'] != 'Private video' &&
+            videoId.isNotEmpty &&
+            (defaultThumbnail['url']?.isNotEmpty ?? false);
+      }).toList();
+
+      // Convert filtered items to models
+      List<YouTubePlaylistItemModel> items = validItems.map((item) {
         return YouTubePlaylistItemModel.fromJson(item);
       }).toList();
 
@@ -122,7 +136,7 @@ class YouTubeApiService {
         final videoDetails = videoDetailsMap[item.videoId];
         final duration = videoDetails['contentDetails']['duration'];
         final liveBroadcastContent = videoDetails['snippet']['liveBroadcastContent'];
-        final formattedDuration = formatDuration(duration);
+        final formattedDuration = formatDuration(duration, liveBroadcastContent);
         return item.copyWith(duration: formattedDuration,liveBroadcastContent: liveBroadcastContent);
       }).toList();
 
@@ -132,7 +146,19 @@ class YouTubeApiService {
     }
   }
 
-  String formatDuration(String duration) {
+  String formatDuration(String duration, String? liveBroadcastContent) {
+    // If live broadcast content is present or the duration is 'P0D', handle accordingly
+    if (liveBroadcastContent != null) {
+      if (liveBroadcastContent == 'live') {
+        return 'Live'; // Handle live broadcasts specifically
+      } else if (liveBroadcastContent == 'upcoming') {
+        return 'Premiere'; // Handle scheduled (upcoming) videos
+      }
+    }
+
+    if (duration == 'P0D') {
+      return 'No Duration'; // Handle zero-duration case
+    }
     // Duration format from YouTube API is in ISO 8601 (e.g., PT1H3M52S)
     String formattedDuration = '';
 

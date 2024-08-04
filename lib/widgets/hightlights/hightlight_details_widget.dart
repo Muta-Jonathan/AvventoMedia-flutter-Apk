@@ -1,4 +1,5 @@
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../apis/youtube_api.dart';
@@ -44,7 +45,7 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
     // Determine text
     String? text;
     if (youtubeItem != null) {
-      text = YouTubeApiService().formatDuration(youtubeItem.duration);
+      text = YouTubeApiService().formatDuration(youtubeItem.duration, youtubeItem.liveBroadcastContent);
     } else if (youtubePlaylist != null) {
       text = youtubePlaylist.itemCount.toString();
     } else {
@@ -54,7 +55,11 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
     // Determine containerColor
     Color? containerColor;
     if (youtubeItem != null) {
-      containerColor = Colors.black38;
+      if (youtubeItem.liveBroadcastContent == 'live' || youtubeItem.liveBroadcastContent == 'upcoming') {
+        containerColor = Colors.red;
+      } else {
+        containerColor = Colors.black38;
+      }
     } else if (youtubePlaylist != null) {
       containerColor = Colors.black38; // Adjust logic as needed
     } else {
@@ -74,16 +79,17 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
                 text: text,
                 containerColor: containerColor,
                 svgPath: youtubePlaylist != null ? 'assets/icon/folder.svg' : null,
+                icon: (youtubeItem?.liveBroadcastContent == 'live' || youtubeItem?.liveBroadcastContent == 'upcoming') ? CupertinoIcons.dot_radiowaves_left_right : null,
               ),
             ),
             const SizedBox(height: 10.0,),
             SizedBox(
                 width: Utils.calculateWidth(context, 0.8),
                 child: TextOverlay(label: model.title, color: Colors.orange,allCaps: true, maxLines: 1,)),
-            const SizedBox(height: 5.0,),
+            const SizedBox(height: 2.0,),
             SizedBox(
                 width: Utils.calculateWidth(context, 0.8),
-                child: TextOverlay(label: name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 15.0,maxLines: 1,)),
+                child: TextOverlay(label: name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 16.0,maxLines: 2,)),
           ],
       ),
     );
