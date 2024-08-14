@@ -32,12 +32,21 @@ Listen to wonderful Podcasts from AvventoRadio
 You can download the AvventoMedia app from the Play Store [here](https://play.google.com/store/apps/details?id=tv.avventomedia.app).
 
 ## Changelogs
+### Version 0.6.3 (August 2024)
+- show youtube views
+
+---
+
 ### Version 0.6.2 (August 2024)
 - Improved performance and fixed some bugs
 - able to show live and premiering youtube videos
 
+---
+
 ### Version 0.6.1 (July 2024)
 - Improved performance and fixed some bugs
+
+---
 
 ### Version 0.6.0 (July 2024)
 - Improved performance
@@ -103,6 +112,7 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 
 ### Completed
 ##### August 2024
+- [x] show views on videos
 - [x] Able to show live and premiering videos
 
 ##### July 2024
