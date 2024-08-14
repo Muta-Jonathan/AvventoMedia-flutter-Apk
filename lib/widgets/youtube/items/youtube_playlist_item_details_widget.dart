@@ -20,6 +20,14 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
 
   @override
   Widget build(BuildContext context) {
+    final int views = int.tryParse(widget.youTubePlaylistItemModel!.views ?? '') ?? 0;
+    String view = views == 0
+        ? 'No views'
+        : views == 1
+        ? '$views view'
+        : '$views views';
+
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0, left: AppConstants.leftMain,right: 8.0,top: 2),
       child: ClipRRect(
@@ -66,38 +74,49 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        (widget.youTubePlaylistItemModel.liveBroadcastContent == 'live' || widget.youTubePlaylistItemModel.liveBroadcastContent == 'upcoming') ?
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(5.0),
-                          child: Container(
-                            color: Colors.red,
-                            padding: const EdgeInsets.all(6),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  CupertinoIcons.dot_radiowaves_left_right,
-                                  color: Colors.white,
-                                  size: 15,
-                                ),
-                                const SizedBox(width: 2.0),
-                                TextOverlay(
-                                  label: widget.youTubePlaylistItemModel.duration,
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              ],
+                    SizedBox(
+                      width: Utils.calculateWidth(context,0.52),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          (widget.youTubePlaylistItemModel.liveBroadcastContent == 'live' || widget.youTubePlaylistItemModel.liveBroadcastContent == 'upcoming') ?
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(5.0),
+                            child: Container(
+                              color: Colors.red,
+                              padding: const EdgeInsets.all(6),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    CupertinoIcons.dot_radiowaves_left_right,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                  const SizedBox(width: 2.0),
+                                  TextOverlay(
+                                    label: widget.youTubePlaylistItemModel.duration,
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                             ),
+                          ) :
+                          TextOverlay(
+                            label: widget.youTubePlaylistItemModel.duration,
+                            fontSize: 15,
+                            color: Theme.of(context).colorScheme.onSecondary,
                           ),
-                        ) :
-                        TextOverlay(
-                          label: widget.youTubePlaylistItemModel.duration,
-                          fontSize: 15,
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                      ],
+                          (widget.youTubePlaylistItemModel.liveBroadcastContent == 'live' || widget.youTubePlaylistItemModel.liveBroadcastContent == 'upcoming') ?
+                          const SizedBox.shrink() :
+                          TextOverlay(
+                            label: view,
+                            fontSize: 12,
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),

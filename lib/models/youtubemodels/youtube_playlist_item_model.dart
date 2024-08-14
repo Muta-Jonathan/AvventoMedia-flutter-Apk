@@ -5,6 +5,7 @@ class YouTubePlaylistItemModel {
   final String thumbnailUrl;
   final String videoId;
   final String duration;
+  final String views;
   final DateTime publishedAt;
   final String liveBroadcastContent;
 
@@ -15,6 +16,7 @@ class YouTubePlaylistItemModel {
     required this.thumbnailUrl,
     required this.videoId,
     this.duration = '',
+    this.views = '',
     required this.publishedAt,
     this.liveBroadcastContent = '',
   });
@@ -23,6 +25,7 @@ class YouTubePlaylistItemModel {
     final snippet = json['snippet'];
     final thumbnails = snippet['thumbnails'];
     final defaultThumbnail = thumbnails['maxres'];
+    final statistics = json["statistics"];
 
     return YouTubePlaylistItemModel(
       id: json['id'],
@@ -31,6 +34,7 @@ class YouTubePlaylistItemModel {
       thumbnailUrl: defaultThumbnail['url'],
       videoId: snippet['resourceId']?['videoId'] ?? json['id'],
       duration: json['contentDetails']?['duration'] ?? '',
+      views: statistics?['viewCount'] ?? '',
       publishedAt: DateTime.parse(snippet['publishedAt']),
     );
   }
@@ -42,6 +46,7 @@ class YouTubePlaylistItemModel {
     String? description,
     String? thumbnailUrl,
     String? duration,
+    String? views,
     DateTime? publishedAt,
     String? liveBroadcastContent,
   }) {
@@ -52,6 +57,7 @@ class YouTubePlaylistItemModel {
       description: description ?? this.description,
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       duration: duration ?? this.duration,
+      views: views ?? this.views,
       publishedAt: publishedAt ?? this.publishedAt,
       liveBroadcastContent: liveBroadcastContent ?? this.liveBroadcastContent,
     );

@@ -125,7 +125,7 @@ class YouTubeApiService {
 
   Future<List<YouTubePlaylistItemModel>> _fetchVideoDetails(List<YouTubePlaylistItemModel> items, apiKey) async {
     final videoIds = items.map((item) => item.videoId).join(',');
-    final url = 'https://www.googleapis.com/youtube/v3/videos?part=contentDetails,snippet&id=$videoIds&key=$apiKey';
+    final url = 'https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics,snippet&id=$videoIds&key=$apiKey';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -135,9 +135,10 @@ class YouTubeApiService {
       items = items.map((item) {
         final videoDetails = videoDetailsMap[item.videoId];
         final duration = videoDetails['contentDetails']['duration'];
+        final views = videoDetails["statistics"]['viewCount'];
         final liveBroadcastContent = videoDetails['snippet']['liveBroadcastContent'];
         final formattedDuration = formatDuration(duration, liveBroadcastContent);
-        return item.copyWith(duration: formattedDuration,liveBroadcastContent: liveBroadcastContent);
+        return item.copyWith(duration: formattedDuration,liveBroadcastContent: liveBroadcastContent, views: views);
       }).toList();
 
       return items;
@@ -146,7 +147,7 @@ class YouTubeApiService {
     }
   }
 
-  String formatDuration(String duration, String? liveBroadcastContent) {
+  String formatDuration(String? duration, String? liveBroadcastContent) {
     // If live broadcast content is present or the duration is 'P0D', handle accordingly
     if (liveBroadcastContent != null) {
       if (liveBroadcastContent == 'live') {
@@ -163,13 +164,13 @@ class YouTubeApiService {
     String formattedDuration = '';
 
     // Remove the 'PT' prefix and 'S' suffix
-    duration = duration.replaceAll('PT', '').replaceAll('S', '');
+    duration = duration?.replaceAll('PT', '').replaceAll('S', '');
 
     // Initialize hours, minutes, and seconds
     int hours = 0, minutes = 0, seconds = 0;
 
     // Parse hours, minutes, and seconds
-    if (duration.contains('H')) {
+    if (duration!.contains('H')) {
       // Format includes hours
       List<String> parts = duration.split('H');
       hours = int.parse(parts[0]);

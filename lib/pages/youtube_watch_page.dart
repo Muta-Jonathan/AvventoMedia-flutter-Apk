@@ -48,6 +48,12 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
   @override
   Widget build(BuildContext context) {
     final selectedItem = youtubePlaylistItemController.selectedPlaylistItem.value;
+    final int views = int.tryParse(selectedItem!.views ?? '') ?? 0;
+    String view = views == 0
+        ? 'No views'
+        : views == 1
+        ? '$views view'
+        : '$views views';
 
     return Scaffold(
       backgroundColor:   Theme.of(context).colorScheme.surface,
@@ -83,16 +89,17 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 12,),
+                        TextOverlay(label: selectedItem!.title,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: AppConstants.fontSize20,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            SizedBox(
-                                width: Utils.calculateWidth(context, 0.8),
-                                child: TextOverlay(label: selectedItem!.title,
-                                  color: Theme.of(context).colorScheme.onPrimary,
-                                  fontSize: AppConstants.fontSize20,
-                                ),
+                            TextOverlay(label: view,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontSize: 15,
                             ),
                             IconButton(
                               icon: const Icon(CupertinoIcons.share),
