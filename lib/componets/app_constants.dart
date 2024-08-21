@@ -26,14 +26,13 @@ class AppConstants {
   static const String apiKeysAPI = "apiKeys";
   static const String youtube = "youtube";
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
-  static const String showId = '5820368';
   static const azuracastAPI ='https://radio1.avventomedia.org/api/nowplaying/avventoradio';
-  static const azuracastAPIKey ='ab752d0ee6df5e38:1455e5d2ec68c412f761c19297b84a5b';
   static const azuracastPodcastAPI ='https://radio1.avventomedia.org/api/station/avventoradio/podcasts';
   static const azuracastWebSocketAPI ='wss://radio1.avventomedia.org/api/live/nowplaying/websocket';
   static const avventoEmail ='avventohomeproductions@gmail.com';
-  static const avventomusicYoutubeChannelID ='UC-xVlvRnqlQIjyBnmbj07nA';
-  static const avventoKidsYoutubeChannelID ='UCeQnz5VVY-6NWv1HzaXSiKg';
+  static const youtubePlaylistAPI ='https://www.googleapis.com/youtube/v3/playlists';
+  static const youtubePlaylistItemsAPI ='https://www.googleapis.com/youtube/v3/playlistItems';
+  static const youtubeVideoAPI ='https://www.googleapis.com/youtube/v3/videos';
 
 
 /// ***************** PROFILE PAGE ****************

@@ -24,7 +24,10 @@ class YouTubePlaylistItemModel {
   factory YouTubePlaylistItemModel.fromJson(Map<String, dynamic> json) {
     final snippet = json['snippet'];
     final thumbnails = snippet['thumbnails'];
-    final defaultThumbnail = thumbnails['maxres'];
+    // Check for the thumbnail qualities in order of preference
+    final defaultThumbnail = thumbnails['maxres'] ??
+        thumbnails['standard'] ??
+        thumbnails['high'];
     final statistics = json["statistics"];
 
     return YouTubePlaylistItemModel(

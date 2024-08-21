@@ -3,6 +3,7 @@ import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -16,6 +17,7 @@ class AzuraCastAPI {
   static const _cachedRadioStationKey = 'cachedRadioStationKey';
   static const _cachedRadioPodcastKey = 'cachedRadioPodcastKey';
   static const _cachedPodcastEpisodeKey = 'cachedPodcastEpisodeKey';
+  static String? azuracastAPIKey = dotenv.env["AZURACAST_APIKEY"];
 
   static void establishWebsocketConnection() {
     _channel = WebSocketChannel.connect(
@@ -123,7 +125,7 @@ class AzuraCastAPI {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${AppConstants.azuracastAPIKey}'
+          'Authorization': 'Bearer $azuracastAPIKey'
         },
       );
 
@@ -170,7 +172,7 @@ class AzuraCastAPI {
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ${AppConstants.azuracastAPIKey}'
+          'Authorization': 'Bearer $azuracastAPIKey'
         },
       );
 

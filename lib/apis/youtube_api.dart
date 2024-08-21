@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:avvento_media/componets/app_constants.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +35,7 @@ class YouTubeApiService {
     } else {
       final response = await http.get(
         Uri.parse(
-          'https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&channelId=$channelId&maxResults=25&key=$apiKey',
+          '${AppConstants.youtubePlaylistAPI}?part=snippet,contentDetails&channelId=$channelId&maxResults=25&key=$apiKey',
         ),
       );
 
@@ -82,7 +83,7 @@ class YouTubeApiService {
       }
     } else {}
     final url = Uri.parse(
-      'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=$playlistId&key=$apiKey',
+      '${AppConstants.youtubePlaylistItemsAPI}?part=snippet&maxResults=50&playlistId=$playlistId&key=$apiKey',
     );
 
     final response = await http.get(url);
@@ -125,7 +126,7 @@ class YouTubeApiService {
 
   Future<List<YouTubePlaylistItemModel>> _fetchVideoDetails(List<YouTubePlaylistItemModel> items, apiKey) async {
     final videoIds = items.map((item) => item.videoId).join(',');
-    final url = 'https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics,snippet&id=$videoIds&key=$apiKey';
+    final url = '${AppConstants.youtubeVideoAPI}?part=contentDetails,statistics,snippet&id=$videoIds&key=$apiKey';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

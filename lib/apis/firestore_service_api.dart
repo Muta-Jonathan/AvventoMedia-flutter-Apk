@@ -39,31 +39,4 @@ class FirestoreServiceAPI extends GetxController{
     }
   }
 
-  Future<String> fetchApiKey(String apiKeyName) async {
-    try {
-      // Initialize Firebase (if not initialized elsewhere)
-      await Firebase.initializeApp();
-
-      // Fetch API key from Firestore using apiKeys collection reference
-      DocumentSnapshot documentSnapshot = await apiKeys.doc(AppConstants.youtube).get();
-
-      // Check if document exists and extract API key
-      if (documentSnapshot.exists) {
-        // Access document data as Map<String, dynamic>
-        Map<String, dynamic>? data = documentSnapshot.data() as Map<String, dynamic>?;
-
-        // Check if data is not null and contains the apiKeyName
-        if (data != null && data.containsKey(apiKeyName)) {
-          // Cast data[apiKeyName] to String and return
-          return data[apiKeyName] as String;
-        } else {
-          throw Exception('API key $apiKeyName not found in Firestore');
-        }
-      } else {
-        throw Exception('Document not found in Firestore');
-      }
-    } catch (e) {
-      throw Exception('Failed to fetch API key');
-    }
-  }
 }

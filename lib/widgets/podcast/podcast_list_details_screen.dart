@@ -4,6 +4,7 @@ import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../text/text_overlay_widget.dart';
@@ -17,6 +18,7 @@ class PodcastListDetailsWidget extends StatefulWidget {
 }
 
 class PodcastPlayerWidgetState extends State<PodcastListDetailsWidget> {
+  static String? azuracastAPIKey = dotenv.env["AZURACAST_APIKEY"];
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +35,8 @@ class PodcastPlayerWidgetState extends State<PodcastListDetailsWidget> {
                   borderRadius: BorderRadius.circular(8.0),
                   child: CachedNetworkImage(
                     imageUrl: widget.radioPodcast.art,
-                    httpHeaders: const {
-                      'Authorization': 'Bearer ${AppConstants.azuracastAPIKey}',
+                    httpHeaders:  {
+                      'Authorization': 'Bearer $azuracastAPIKey',
                     },
                     fit: BoxFit.cover,
                     width: Utils.calculateWidth(context, 0.44),

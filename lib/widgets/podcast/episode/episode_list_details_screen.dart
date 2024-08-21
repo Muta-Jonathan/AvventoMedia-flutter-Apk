@@ -4,6 +4,7 @@ import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jiffy/jiffy.dart';
 
 import '../../../controller/audio_player_controller.dart';
@@ -36,6 +37,8 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
   @override
   Widget build(BuildContext context) {
     String publishedDate = Jiffy.parse(Utils.formatTimestamp(timestamp: widget.episode.publishedAt, format: 'yyyy-MM-dd HH:mm:ss',)).fromNow();
+    String? azuracastAPIKey = dotenv.env["AZURACAST_APIKEY"];
+
    return Center(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 10.0, left: 8.0,right: 8.0,top: 8),
@@ -50,8 +53,8 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                     borderRadius: BorderRadius.circular(8.0),
                     child: CachedNetworkImage(
                       imageUrl: widget.episode.art,
-                      httpHeaders: const {
-                        'Authorization': 'Bearer ${AppConstants.azuracastAPIKey}',
+                      httpHeaders: {
+                        'Authorization': 'Bearer $azuracastAPIKey',
                       },
                       fit: BoxFit.cover,
                       width: Utils.calculateWidth(context, 0.44),

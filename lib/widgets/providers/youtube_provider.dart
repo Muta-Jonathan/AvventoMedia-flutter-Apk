@@ -3,6 +3,7 @@ import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../apis/firestore_service_api.dart';
 
@@ -12,6 +13,10 @@ class YoutubeProvider extends ChangeNotifier {
   List<YouTubePlaylistItemModel> _youtubeMusicPlaylistItems = [];
   List<YouTubePlaylistItemModel> _youtubeKidsPlaylistItems = [];
   bool _isLoadingItems = false;
+  final String? musicApiKey = dotenv.env["AVVENTOMUSIC_APIKEY"];
+  final String? musicYoutubeChannelID = dotenv.env["AVVENTOMUSIC_YT_CHANNEL_ID"];
+  final String? kidsApiKey = dotenv.env["AVVENTOKIDS_APIKEY"];
+  final String? kidsYoutubeChannelID = dotenv.env["AVVENTOKIDS_YT_CHANNEL_ID"];
 
   // avventomusic
   List<YoutubePlaylistModel> get youtubeMusicPlaylists => _youtubeMusicPlaylists;
@@ -24,11 +29,10 @@ class YoutubeProvider extends ChangeNotifier {
 
 
   Future<void> fetchAllMusicPlaylists() async {
-    final String musicApiKey = await FirestoreServiceAPI().fetchApiKey('avventoMusicApiKey');
     try {
       _youtubeMusicPlaylists = await YouTubeApiService().fetchPlaylists(
           apiKey: musicApiKey,
-          channelId: AppConstants.avventomusicYoutubeChannelID);
+          channelId: musicYoutubeChannelID);
       notifyListeners();
     } catch (error) {
       // Handle error
@@ -36,7 +40,6 @@ class YoutubeProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAllMusicPlaylistItem({playlistId}) async {
-    final String musicApiKey = await FirestoreServiceAPI().fetchApiKey('avventoMusicApiKey');
     _isLoadingItems = true;
     notifyListeners();
 
@@ -54,11 +57,10 @@ class YoutubeProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAllKidsPlaylists() async {
-    final String kidsApiKey = await FirestoreServiceAPI().fetchApiKey('avventoKidsApiKey');
     try {
       _youtubeKidsPlaylists = await YouTubeApiService().fetchPlaylists(
           apiKey: kidsApiKey,
-          channelId: AppConstants.avventoKidsYoutubeChannelID);
+          channelId: kidsYoutubeChannelID);
       notifyListeners();
     } catch (error) {
       // Handle error
@@ -66,7 +68,6 @@ class YoutubeProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAllKidsPlaylistItem({playlistId}) async {
-    final String kidsApiKey = await FirestoreServiceAPI().fetchApiKey('avventoKidsApiKey');
     _isLoadingItems = true;
     notifyListeners();
 
