@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
@@ -8,7 +9,7 @@ import '../models/youtubemodels/youtube_playlist_item_model.dart';
 import '../models/youtubemodels/youtube_playlist_model.dart';
 
 class YouTubeApiService {
-  Future<List<YoutubePlaylistModel>> fetchPlaylists({apiKey,channelId}) async {
+  Future<List<YoutubePlaylistModel>> fetchPlaylists({apiKey,channelId, int maxResults = 25}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String cacheKey = 'avvento_$channelId';
     final String? avventoMusicCachedData = prefs.getString(cacheKey);
@@ -35,7 +36,7 @@ class YouTubeApiService {
     } else {
       final response = await http.get(
         Uri.parse(
-          '${AppConstants.youtubePlaylistAPI}?part=snippet,contentDetails&channelId=$channelId&maxResults=25&key=$apiKey',
+          '${AppConstants.youtubePlaylistAPI}?part=snippet,contentDetails&channelId=$channelId&maxResults=${maxResults}&key=$apiKey',
         ),
       );
 
@@ -43,24 +44,36 @@ class YouTubeApiService {
         final data = json.decode(response.body);
 
         final List<dynamic> items = data['items'];
-        final List<YoutubePlaylistModel> playlists = items.map((json) => YoutubePlaylistModel.fromJson(json)).toList();
+        final List<YoutubePlaylistModel> playlists = await Future.wait(items.map((json) async {
+          final YoutubePlaylistModel playlist = YoutubePlaylistModel.fromJson(json);
+
+          // Fetch playlist items using fetchPlaylistItems to get the non-private items
+          final List<YouTubePlaylistItemModel> playlistItems = await fetchPlaylistItems(
+            apiKey: apiKey,
+            playlistId: playlist.id,
+            maxResults: 70,
+          );
+
+          // Update the itemCount based on the non-private items
+          return playlist.updateItemCountBasedOnNonPrivateItems(playlistItems);
+        }).toList());
 
         // Filter playlists with non-zero item counts
-        final filteredPlaylists = playlists.where((item) => item.itemCount != 0).toList();
+        final finalPlaylists = playlists.where((item) => item.itemCount != 0).toList();
         // Sort filtered playlists by publishedAt date
-        filteredPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+        finalPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
 
         // Cache the fetched data in SharedPreferences.
         prefs.setString(cacheKey, response.body);
 
-        return filteredPlaylists;
+        return finalPlaylists;
       } else {
         throw Exception('Failed to load playlists');
       }
     }
   }
 
-  Future<List<YouTubePlaylistItemModel>> fetchPlaylistItems({apiKey,playlistId}) async {
+  Future<List<YouTubePlaylistItemModel>> fetchPlaylistItems({apiKey,playlistId,int maxResults = 70,}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String cacheKey = 'avvento_$playlistId';
     final String? avventoMusicItemCachedData = prefs.getString(cacheKey);
@@ -83,7 +96,7 @@ class YouTubeApiService {
       }
     } else {}
     final url = Uri.parse(
-      '${AppConstants.youtubePlaylistItemsAPI}?part=snippet&maxResults=50&playlistId=$playlistId&key=$apiKey',
+      '${AppConstants.youtubePlaylistItemsAPI}?part=snippet,status&maxResults=${maxResults}&playlistId=$playlistId&key=$apiKey',
     );
 
     final response = await http.get(url);
@@ -94,13 +107,14 @@ class YouTubeApiService {
       // Filter out items with private video or with no thumbnails
       final validItems = (json['items'] as List).where((item) {
         final snippet = item['snippet'] ?? {};
+        final status = item['status'] ?? {};
         final thumbnails = snippet['thumbnails'] ?? {};
         final defaultThumbnail = thumbnails['maxres'] ?? thumbnails['standard'] ?? thumbnails['high'] ?? {};
         final videoId = snippet['resourceId']?['videoId'] ?? item['id'];
 
         // Check if the item is a private video or lacks a valid thumbnail
         return snippet['title'] != 'Private video' &&
-            videoId.isNotEmpty &&
+            videoId.isNotEmpty && status['privacyStatus'] == 'public' &&
             (defaultThumbnail['url']?.isNotEmpty ?? false);
       }).toList();
 
@@ -126,7 +140,7 @@ class YouTubeApiService {
 
   Future<List<YouTubePlaylistItemModel>> _fetchVideoDetails(List<YouTubePlaylistItemModel> items, apiKey) async {
     final videoIds = items.map((item) => item.videoId).join(',');
-    final url = '${AppConstants.youtubeVideoAPI}?part=contentDetails,statistics,snippet&id=$videoIds&key=$apiKey';
+    final url = '${AppConstants.youtubeVideoAPI}?part=contentDetails,status,statistics,snippet&id=$videoIds&key=$apiKey';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -138,8 +152,9 @@ class YouTubeApiService {
         final duration = videoDetails['contentDetails']['duration'];
         final views = videoDetails["statistics"]['viewCount'];
         final liveBroadcastContent = videoDetails['snippet']['liveBroadcastContent'];
+        final privacyStatus = videoDetails['status']['privacyStatus'];
         final formattedDuration = formatDuration(duration, liveBroadcastContent);
-        return item.copyWith(duration: formattedDuration,liveBroadcastContent: liveBroadcastContent, views: views);
+        return item.copyWith(duration: formattedDuration,liveBroadcastContent: liveBroadcastContent, views: views, privacyStatus: privacyStatus);
       }).toList();
 
       return items;
@@ -158,50 +173,34 @@ class YouTubeApiService {
       }
     }
 
-    if (duration == 'P0D') {
+    if (duration == null || duration == 'P0D') {
       return 'No Duration'; // Handle zero-duration case
     }
     // Duration format from YouTube API is in ISO 8601 (e.g., PT1H3M52S)
     String formattedDuration = '';
 
     // Remove the 'PT' prefix and 'S' suffix
-    duration = duration?.replaceAll('PT', '').replaceAll('S', '');
+    duration = duration.replaceAll('PT', '').replaceAll('S', '');
 
     // Initialize hours, minutes, and seconds
     int hours = 0, minutes = 0, seconds = 0;
 
-    // Parse hours, minutes, and seconds
-    if (duration!.contains('H')) {
-      // Format includes hours
+    // Parse hours
+    if (duration.contains('H')) {
       List<String> parts = duration.split('H');
       hours = int.parse(parts[0]);
+      duration = parts.length > 1 ? parts[1] : '';
+    }
 
-      if (parts.length > 1) {
-        // There are minutes and/or seconds
-        String remainder = parts[1];
-        if (remainder.contains('M')) {
-          List<String> minuteParts = remainder.split('M');
-          minutes = int.parse(minuteParts[0]);
-          if (minuteParts.length > 1) {
-            // There are seconds
-            seconds = int.parse(minuteParts[1]);
-          }
-        } else if (remainder.contains('S')) {
-          // Only seconds
-          seconds = int.parse(remainder.replaceAll('S', ''));
-        }
-      }
-    } else if (duration.contains('M')) {
-      // Format includes minutes and seconds, but no hours
+    // Parse minutes
+    if (duration.contains('M')) {
       List<String> parts = duration.split('M');
       minutes = int.parse(parts[0]);
+      duration = parts.length > 1 ? parts[1] : '';
+    }
 
-      if (parts.length > 1) {
-        // There are seconds
-        seconds = int.parse(parts[1].replaceAll('S', ''));
-      }
-    } else {
-      // Only seconds
+    // Parse seconds
+    if (duration.isNotEmpty) {
       seconds = int.parse(duration);
     }
 

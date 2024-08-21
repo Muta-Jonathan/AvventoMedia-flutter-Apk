@@ -1,3 +1,5 @@
+import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
+
 class YoutubePlaylistModel {
   final String id;
   final String title;
@@ -32,4 +34,25 @@ class YoutubePlaylistModel {
       publishedAt: DateTime.parse(snippet['publishedAt']), // Parse the date
     );
   }
+
+  YoutubePlaylistModel updateItemCountBasedOnNonPrivateItems(List<YouTubePlaylistItemModel> items) {
+    int validItemCount = items.where((item) {
+      // Exclude private videos
+      bool isNotPrivate = item.title != 'Private video';
+      // Exclude unlisted videos (additional logic if possible)
+      bool isNotUnlisted = item.privacyStatus != 'unlisted';
+
+      return isNotPrivate && isNotUnlisted;
+    }).length;
+
+    return YoutubePlaylistModel(
+      id: id,
+      title: title,
+      description: description,
+      thumbnailUrl: thumbnailUrl,
+      itemCount: validItemCount,
+      publishedAt: publishedAt,
+    );
+  }
+
 }

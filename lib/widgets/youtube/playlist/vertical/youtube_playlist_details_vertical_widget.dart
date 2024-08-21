@@ -66,20 +66,27 @@ class YoutubePlaylistDetailsVerticalWidgetState extends State<YoutubePlaylistDet
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icon/folder.svg',
-                          color:  Theme.of(context).colorScheme.onSecondaryContainer,
-                          width: 20,
-                          height: 20,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: Container(
+                        color: Theme.of(context).colorScheme.tertiaryContainer,
+                        padding: const EdgeInsets.all(3.5),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icon/folder.svg',
+                              color:  Theme.of(context).colorScheme.onSecondary,
+                              width: 20,
+                              height: 20,
+                            ),
+                            TextOverlay(
+                              label: widget.youtubePlaylistModel.itemCount.toString(),
+                              fontSize: 15,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
+                          ],
                         ),
-                        TextOverlay(
-                          label: widget.youtubePlaylistModel.itemCount.toString(),
-                          fontSize: 15,
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                      ],
+                      ),
                     )
                   ],
                 ),

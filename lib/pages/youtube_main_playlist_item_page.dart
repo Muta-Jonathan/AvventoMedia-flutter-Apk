@@ -11,16 +11,16 @@ import 'package:provider/provider.dart';
 import '../widgets/images/resizable_image_widget_2.dart';
 import '../widgets/providers/youtube_provider.dart';
 import '../widgets/text/show_more_desc.dart';
-import '../widgets/youtube/items/youtube_kids_playlist_item_widget.dart';
+import '../widgets/youtube/items/youtube_main_playlist_item_widget.dart';
 
-class YoutubeKidsPlaylistItemPage extends StatefulWidget {
-  const YoutubeKidsPlaylistItemPage({super.key});
+class YoutubeMainPlaylistItemPage extends StatefulWidget {
+  const YoutubeMainPlaylistItemPage({super.key});
 
   @override
-  State<YoutubeKidsPlaylistItemPage> createState() => _YoutubePlaylistItemPageState();
+  State<YoutubeMainPlaylistItemPage> createState() => _YoutubePlaylistItemPageState();
 }
 
-class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
+class _YoutubePlaylistItemPageState extends State<YoutubeMainPlaylistItemPage> {
   final YoutubePlaylistController youtubePlaylistController = Get.find();
 
   @override
@@ -74,7 +74,7 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
                     child: TextOverlay(
                       label: youtubePlaylistController.selectedPlaylist.value!.title,
                       color: Theme.of(context).colorScheme.onPrimary,
-                      maxLines: 1,
+                      maxLines: 2,
                       fontSize: 18,
                     ),
                   ),
@@ -120,7 +120,7 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
                   ),
                 ),
               ),
-              const YoutubeKidsPlaylistItemWidget(),
+              const YoutubeMainPlaylistItemWidget(),
             ],
           ),
       ),

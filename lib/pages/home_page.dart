@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../componets/app_constants.dart';
 import '../widgets/liveTv/horizontal/live_tv_widget.dart';
 import '../widgets/youtube/playlist/horizontal/youtube_kids_playlist_widget.dart';
+import '../widgets/youtube/playlist/horizontal/youtube_main_playlist_widget.dart';
 import '../widgets/youtube/playlist/horizontal/youtube_music_playlist_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,6 +49,8 @@ class _HomePageState extends State<HomePage> {
                   YoutubeMusicPlaylistWidget(),
                   SizedBox(height: 30,),
                   YoutubeKidsPlaylistWidget(),
+                  SizedBox(height: 30,),
+                  YoutubeMainPlaylistWidget(),
                 ],
               ),
             ),

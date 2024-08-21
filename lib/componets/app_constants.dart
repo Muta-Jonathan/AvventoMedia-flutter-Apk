@@ -7,6 +7,7 @@ class AppConstants {
   static const String liveTv = "LIVE TV";
   static const String avventoMusic = "Music";
   static const String avventoKids = "Kids";
+  static const String avventoMain = "Avvento Productions";
   static const String liveNow = "LIVE NOW";
   static const String liveRadio = "Radio";
   static const String onAIR = "ON AIR";
@@ -24,6 +25,7 @@ class AppConstants {
   static const String liveTvAPI = "liveTv";
   static const String radioAPI = "radio";
   static const String apiKeysAPI = "apiKeys";
+  static const String desiredPlaylistId = "desiredPlaylistId";
   static const String youtube = "youtube";
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const azuracastAPI ='https://radio1.avventomedia.org/api/nowplaying/avventoradio';

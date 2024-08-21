@@ -92,6 +92,7 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                         TextOverlay(label: selectedItem!.title,
                           color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: AppConstants.fontSize20,
+                          maxLines: 3,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -8,6 +8,7 @@ class YouTubePlaylistItemModel {
   final String views;
   final DateTime publishedAt;
   final String liveBroadcastContent;
+  final String privacyStatus;
 
   YouTubePlaylistItemModel({
     required this.id,
@@ -19,6 +20,7 @@ class YouTubePlaylistItemModel {
     this.views = '',
     required this.publishedAt,
     this.liveBroadcastContent = '',
+    this.privacyStatus = '',
   });
 
   factory YouTubePlaylistItemModel.fromJson(Map<String, dynamic> json) {
@@ -36,7 +38,9 @@ class YouTubePlaylistItemModel {
       description: snippet['description'],
       thumbnailUrl: defaultThumbnail['url'],
       videoId: snippet['resourceId']?['videoId'] ?? json['id'],
-      duration: json['contentDetails']?['duration'] ?? '',
+      duration: json['contentDetails']?['duration'] ?? 'P0D',
+      liveBroadcastContent: json['snippet']?["liveBroadcastContent"] ?? '',
+      privacyStatus: json['status']?["privacyStatus"] ?? '',
       views: statistics?['viewCount'] ?? '',
       publishedAt: DateTime.parse(snippet['publishedAt']),
     );
@@ -52,6 +56,7 @@ class YouTubePlaylistItemModel {
     String? views,
     DateTime? publishedAt,
     String? liveBroadcastContent,
+    String? privacyStatus,
   }) {
     return YouTubePlaylistItemModel(
       id: id ?? this.id,
@@ -63,6 +68,7 @@ class YouTubePlaylistItemModel {
       views: views ?? this.views,
       publishedAt: publishedAt ?? this.publishedAt,
       liveBroadcastContent: liveBroadcastContent ?? this.liveBroadcastContent,
+      privacyStatus: privacyStatus ?? this.privacyStatus,
     );
   }
 }

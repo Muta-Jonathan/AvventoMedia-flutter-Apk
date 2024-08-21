@@ -62,6 +62,7 @@ class PodcastPlayerWidgetState extends State<PodcastListDetailsWidget> {
                       width: Utils.calculateWidth(context,0.44),
                       child: TextOverlay(
                         label: widget.radioPodcast.title,
+                        maxLines: 1,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: Utils.calculateWidth(context,0.042),

@@ -69,11 +69,14 @@ class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemP
                   stretchModes: const [
                     StretchMode.blurBackground
                   ],
-                  title: TextOverlay(
-                    label: youtubePlaylistController.selectedPlaylist.value!.title,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    maxLines: 1,
-                    fontSize: 18,
+                  title: Padding(
+                    padding: const EdgeInsets.only(top: 56,left: 38, right: 38),
+                    child: TextOverlay(
+                      label: youtubePlaylistController.selectedPlaylist.value!.title,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      maxLines: 1,
+                      fontSize: 18,
+                    ),
                   ),
                   centerTitle: true,
                   expandedTitleScale: 1,
@@ -82,7 +85,7 @@ class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemP
                     height: AppConstants.height250,
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          top: 105, right: 20, left: 20, bottom: 60),
+                          top: 95, right: 20, left: 20, bottom: 80),
                       child: ResizableImageContainerWithOverlay(
                         imageUrl: youtubePlaylistController.selectedPlaylist.value!.thumbnailUrl,
                         borderRadius: 10,
