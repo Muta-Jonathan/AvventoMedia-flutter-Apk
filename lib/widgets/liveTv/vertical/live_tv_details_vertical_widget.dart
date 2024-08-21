@@ -67,15 +67,23 @@ class LiveTvDetailsVerticalWidgetState extends State<LiveTvDetailsVerticalWidget
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Icon(CupertinoIcons.dot_radiowaves_left_right, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 20,),
-                        TextOverlay(
-                          label: widget.liveTvModel.status,
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSecondary,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: Container(
+                        color: Theme.of(context).colorScheme.tertiaryContainer,
+                        padding: const EdgeInsets.all(3.5),
+                        child:
+                        Row(
+                          children: [
+                            Icon(CupertinoIcons.dot_radiowaves_left_right, color: Theme.of(context).colorScheme.onSecondary, size: 20,),
+                            TextOverlay(
+                              label: widget.liveTvModel.status,
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     )
                   ],
                 ),
