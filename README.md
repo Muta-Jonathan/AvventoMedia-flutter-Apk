@@ -121,6 +121,8 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 ##### August 2024
 - [x] show views on videos
 - [x] Able to show live and premiering videos
+- [x] Added AvventoProductions youtube
+- [x] Refactor UI
 
 ##### July 2024
 - [x] fixed format time bug
