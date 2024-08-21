@@ -37,7 +37,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(6),
               color: containerColor ?? Colors.red,
-              child:icon != null
+              child: icon != null
                   ? Row(
                 children: [
                   Icon(
@@ -118,7 +118,11 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
           aspectRatio: 16 / 9,
           child: Stack(
             children: [
-              text != null || containerColor != null ? imageContainer() : InstaImageViewer(child: imageContainer()),
+              text != null || containerColor != null ? imageContainer() :
+              InstaImageViewer(
+                  backgroundColor:  Theme.of(context).colorScheme.surface,
+                  child: imageContainer()
+              ),
               icon != null || text != null || svgPath != null ? buildOverlay(): Container()
             ],
           ),
