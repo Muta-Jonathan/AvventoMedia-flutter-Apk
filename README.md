@@ -32,6 +32,13 @@ Listen to wonderful Podcasts from AvventoRadio
 You can download the AvventoMedia app from the Play Store [here](https://play.google.com/store/apps/details?id=tv.avventomedia.app).
 
 ## Changelogs
+### Version 0.8.0 (September 2024)
+- fixed android 14 and android 15
+- new redesign of youtube items
+- Upgraded packages
+
+---
+
 ### Version 0.7.0 (August 2024)
 - Added AvventoProductions Youtube
 - Updated to more nice and new looking UI
@@ -118,6 +125,10 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 - [ ] support podcast download
 
 ### Completed
+##### September 2024
+- [x] fixed android 14 and android 15
+- [x] added upload time for youtube videos
+
 ##### August 2024
 - [x] show views on videos
 - [x] Able to show live and premiering videos
