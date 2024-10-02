@@ -4,6 +4,7 @@ import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
 import '../componets/utils.dart';
@@ -48,12 +49,13 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
   @override
   Widget build(BuildContext context) {
     final selectedItem = youtubePlaylistItemController.selectedPlaylistItem.value;
-    final int views = int.tryParse(selectedItem!.views ?? '') ?? 0;
+    final int views = int.tryParse(selectedItem!.views) ?? 0;
     String view = views == 0
         ? 'No views'
         : views == 1
         ? '$views view'
         : '$views views';
+    String publishedDate = Jiffy.parseFromDateTime(selectedItem.publishedAt).fromNow();
 
     return Scaffold(
       backgroundColor:   Theme.of(context).colorScheme.surface,
@@ -89,7 +91,7 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 12,),
-                        TextOverlay(label: selectedItem!.title,
+                        TextOverlay(label: selectedItem.title,
                           color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: AppConstants.fontSize20,
                           maxLines: 3,
@@ -98,9 +100,18 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            TextOverlay(label: view,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                              fontSize: 15,
+                            Row(
+                              children: [
+                                TextOverlay(label: view,
+                                  color: Theme.of(context).colorScheme.onSecondary,
+                                  fontSize: 15,
+                                ),
+                                TextOverlay(
+                                  label: "  $publishedDate",
+                                  fontSize: 14,
+                                  color: Theme.of(context).colorScheme.onSecondary,
+                                ),
+                              ],
                             ),
                             IconButton(
                               icon: const Icon(CupertinoIcons.share),

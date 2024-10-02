@@ -1,11 +1,11 @@
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/componets/utils.dart';
-import 'package:avvento_media/widgets/common/loading_widget.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 
 import '../../../models/youtubemodels/youtube_playlist_item_model.dart';
+import '../../images/resizable_image_widget_2.dart';
 import '../../text/text_overlay_widget.dart';
 
 class YoutubePlaylistItemDetailsWidget extends StatefulWidget {
@@ -20,13 +20,13 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
 
   @override
   Widget build(BuildContext context) {
-    final int views = int.tryParse(widget.youTubePlaylistItemModel!.views ?? '') ?? 0;
+    final int views = int.tryParse(widget.youTubePlaylistItemModel.views) ?? 0;
     String view = views == 0
         ? 'No views'
         : views == 1
         ? '$views view'
         : '$views views';
-
+    String publishedDate = Jiffy.parseFromDateTime(widget.youTubePlaylistItemModel.publishedAt).fromNow();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0, left: AppConstants.leftMain,right: 8.0,top: 2),
@@ -41,24 +41,33 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: CachedNetworkImage(
+                // ClipRRect(
+                //   borderRadius: BorderRadius.circular(8.0),
+                //   child: CachedNetworkImage(
+                //     imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
+                //     fit: BoxFit.cover,
+                //     width: Utils.calculateWidth(context, 0.4),
+                //     height:  Utils.calculateHeight(context, 0.11),
+                //     placeholder: (context, url) => Center(
+                //       child: SizedBox(
+                //           width:  Utils.calculateWidth(context, 0.1),
+                //           height:  Utils.calculateWidth(context, 0.1),
+                //           child: const LoadingWidget()
+                //       ),
+                //     ),
+                //     errorWidget: (context, _, error) => Icon(
+                //       Icons.error,
+                //       color: Theme.of(context).colorScheme.error,
+                //     ),
+                //   ),
+                // ),
+                Expanded(
+                  child: ResizableImageContainerWithOverlay(
                     imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
-                    fit: BoxFit.cover,
-                    width: Utils.calculateWidth(context, 0.36),
-                    height:  Utils.calculateHeight(context, 0.094),
-                    placeholder: (context, url) => Center(
-                      child: SizedBox(
-                          width:  Utils.calculateWidth(context, 0.1),
-                          height:  Utils.calculateWidth(context, 0.1),
-                          child: const LoadingWidget()
-                      ),
-                    ),
-                    errorWidget: (context, _, error) => Icon(
-                      Icons.error,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
+                    text: widget.youTubePlaylistItemModel.duration,
+                    overlayBottom: 5,
+                    overlayRight: 5,
+                    containerColor: Colors.black45,
                   ),
                 ),
                 const SizedBox(width: 10,),
@@ -66,16 +75,16 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: Utils.calculateWidth(context,0.52),
+                      width: Utils.calculateWidth(context,0.5),
                       child: TextOverlay(
                         label: widget.youTubePlaylistItemModel.title,
                         color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: Utils.calculateWidth(context,0.042),
+                        fontSize: Utils.calculateWidth(context,0.041),
                       ),
                     ),
                     const SizedBox(height: 2),
                     SizedBox(
-                      width: Utils.calculateWidth(context,0.52),
+                      width: Utils.calculateWidth(context,0.5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -103,17 +112,21 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                               ),
                             ),
                           ) :
-                          TextOverlay(
-                            label: widget.youTubePlaylistItemModel.duration,
-                            fontSize: 15,
-                            color: Theme.of(context).colorScheme.onSecondary,
-                          ),
                           (widget.youTubePlaylistItemModel.liveBroadcastContent == 'live' || widget.youTubePlaylistItemModel.liveBroadcastContent == 'upcoming') ?
                           const SizedBox.shrink() :
-                          TextOverlay(
-                            label: view,
-                            fontSize: 12,
-                            color: Theme.of(context).colorScheme.onSecondary,
+                          Row(
+                            children: [
+                              TextOverlay(
+                                label: view,
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSecondary,
+                              ),
+                              TextOverlay(
+                                label: "• $publishedDate",
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSecondary,
+                              ),
+                            ]
                           ),
                         ],
                       ),

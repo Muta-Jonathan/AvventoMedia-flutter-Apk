@@ -24,14 +24,22 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
 
+  // Lock the app to portrait mode
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
 
-  await Upgrader.clearSavedSettings(); // clear upgrader settings
+  // clear upgrader settings
+  await Upgrader.clearSavedSettings();
+
+  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Load .env file
   await dotenv.load(fileName: ".env");
+
+  // Initialize JustAudioBackground
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
@@ -39,6 +47,9 @@ Future<void> main() async {
     androidNotificationOngoing: true,
     androidStopForegroundOnPause: true,
   );
+
+  // Clear upgrader settings
+  await Upgrader.clearSavedSettings();
 
   runApp(
     MultiProvider(

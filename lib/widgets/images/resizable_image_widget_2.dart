@@ -9,6 +9,9 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
   final String? imageUrl;
   final IconData? icon;
   final String? text;
+  final double? textFontSize;
+  final double? overlayBottom;
+  final double? overlayRight;
   final Color? containerColor;
   final String? token;
   final double? borderRadius;
@@ -19,6 +22,9 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
     this.imageUrl,
     this.icon,
     this.text,
+    this.textFontSize = 14,
+    this.overlayBottom = 10,
+    this.overlayRight = 10,
     this.containerColor,
     this.token,
     this.borderRadius = 8,
@@ -27,15 +33,15 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
 
   Widget buildOverlay() {
     return   Positioned(
-      bottom: 10,
-      right: 10,
+      bottom: overlayBottom,
+      right: overlayRight,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(5.0),
+        borderRadius: BorderRadius.circular(6.0),
         child: SizedBox(
           height: 30,
           child: Center(
             child: Container(
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(4),
               color: containerColor ?? Colors.red,
               child: icon != null
                   ? Row(
@@ -48,8 +54,9 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
                   const SizedBox(width: 8.0),
                   Text(
                     text!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
+                      fontSize: textFontSize,
                     ),
                   ),
                 ],
@@ -66,16 +73,18 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
                   const SizedBox(width: 8.0),
                   Text(
                     text!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
+                      fontSize: textFontSize!,
                     ),
                   ),
                 ],
               )
                   : Text(
                 text!,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
+                  fontSize: textFontSize!,
                 ),
               ),
             ),

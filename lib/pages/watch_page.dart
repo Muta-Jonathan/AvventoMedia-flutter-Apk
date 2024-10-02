@@ -32,13 +32,6 @@ class _WatchPageState extends State<WatchPage> {
       BetterPlayerDataSourceType.network,
       liveTvController.selectedTv.value!.streamUrl,
       videoFormat: BetterPlayerVideoFormat.hls,
-      notificationConfiguration: BetterPlayerNotificationConfiguration(
-        showNotification: true,
-        title: liveTvController.selectedTv.value!.name,
-        author: "3ABN & Avvento",
-        imageUrl: liveTvController.selectedTv.value!.imageUrl,
-        activityName: "MainActivity",
-      ),
       liveStream: true,
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.token,
@@ -137,18 +130,15 @@ class _WatchPageState extends State<WatchPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 12,),
+                    TextOverlay(
+                      label: selectedTv!.name,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontSize: AppConstants.fontSize20,
+                    ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                       SizedBox(
-                         width: Utils.calculateWidth(context, 0.8),
-                           child: TextOverlay(
-                             label: selectedTv!.name,
-                             color: Theme.of(context).colorScheme.onPrimary,
-                             fontSize: AppConstants.fontSize20,
-                           ),
-                       ),
                         IconButton(
                           icon: const Icon(CupertinoIcons.share),
                           onPressed: () {
