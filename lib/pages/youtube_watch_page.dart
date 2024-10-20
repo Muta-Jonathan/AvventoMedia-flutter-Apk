@@ -50,11 +50,7 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
   Widget build(BuildContext context) {
     final selectedItem = youtubePlaylistItemController.selectedPlaylistItem.value;
     final int views = int.tryParse(selectedItem!.views) ?? 0;
-    String view = views == 0
-        ? 'No views'
-        : views == 1
-        ? '$views view'
-        : '$views views';
+    String view = Utils.formatViews(views);
     String publishedDate = Jiffy.parseFromDateTime(selectedItem.publishedAt).fromNow();
 
     return Scaffold(
@@ -100,6 +96,8 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            (youtubePlaylistItemController.selectedPlaylistItem.value!.liveBroadcastContent == 'live' || youtubePlaylistItemController.selectedPlaylistItem.value!.liveBroadcastContent == 'upcoming') ?
+                            const SizedBox.shrink() :
                             Row(
                               children: [
                                 TextOverlay(label: view,

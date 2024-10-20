@@ -98,4 +98,20 @@ class Utils {
     final playlistUrl = 'https://www.youtube.com/playlist?list=$playlistId';
     Share.share('Check out this playlist: $playlistTitle\n$playlistUrl \n shared from ${AppConstants.appName} app');
   }
+
+  static String formatViews(int views) {
+    if (views < 1000) {
+      return views == 0
+          ? 'No views'
+          : views == 1
+          ? '$views view'
+          : '$views views';
+    } else if (views < 1000000) {
+      return '${(views / 1000).toStringAsFixed(1)}K views';
+    } else if (views < 1000000000) {
+      return '${(views / 1000000).toStringAsFixed(1)}M views';
+    } else {
+      return '${(views / 1000000000).toStringAsFixed(1)}B views';
+    }
+  }
 }

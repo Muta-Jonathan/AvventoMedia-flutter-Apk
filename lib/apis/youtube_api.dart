@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:avvento_media/componets/app_constants.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
@@ -9,17 +8,21 @@ import '../models/youtubemodels/youtube_playlist_item_model.dart';
 import '../models/youtubemodels/youtube_playlist_model.dart';
 
 class YouTubeApiService {
-  Future<List<YoutubePlaylistModel>> fetchPlaylists({apiKey,channelId, int maxResults = 25}) async {
+  Duration cacheDuration = const Duration(hours: 24);
+  final int currentTime = DateTime.now().millisecondsSinceEpoch;
+
+  Future<List<YoutubePlaylistModel>> fetchPlaylists({apiKey,channelId, int maxResults = 50, int totalResults = 200, }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String cacheKey = 'avvento_$channelId';
-    final String? avventoMusicCachedData = prefs.getString(cacheKey);
+    final String? avventoCachedData = prefs.getString(cacheKey);
+    List<YoutubePlaylistModel> allPlaylists = [];
+    final int? cachedTimestamp = prefs.getInt('${cacheKey}_timestamp');
 
-    // Check network connectivity
-    final connectivityResult = await Connectivity().checkConnectivity();
-
-    if (connectivityResult == ConnectivityResult.none) {
-      if (avventoMusicCachedData != null) {
-        final data = json.decode(avventoMusicCachedData);
+    // Check if cached data exists and hasn't expired
+    if (avventoCachedData != null && cachedTimestamp != null) {
+      final int cacheExpirationTime = cachedTimestamp + cacheDuration.inMilliseconds;
+      if (currentTime < cacheExpirationTime) {
+        final data = json.decode(avventoCachedData);
         final List<YoutubePlaylistModel> cachedPlaylists = List<YoutubePlaylistModel>.from(
             data['items'].map((data) => YoutubePlaylistModel.fromJson(data))
         );
@@ -30,15 +33,18 @@ class YouTubeApiService {
         filteredPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
 
         return filteredPlaylists;
-      } else {
-        throw Exception('No cached data available');
       }
-    } else {
-      final response = await http.get(
-        Uri.parse(
-          '${AppConstants.youtubePlaylistAPI}?part=snippet,contentDetails&channelId=$channelId&maxResults=${maxResults}&key=$apiKey',
-        ),
-      );
+    }
+    String? nextPageToken;
+    int fetchedResults = 0;
+
+    do {
+      // Build the URL with pagination
+      final baseUrl =
+          '${AppConstants.youtubePlaylistAPI}?part=snippet,contentDetails&channelId=$channelId&maxResults=$maxResults&key=$apiKey';
+      final url = nextPageToken != null ? '$baseUrl&pageToken=$nextPageToken' : baseUrl;
+
+      final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -58,45 +64,56 @@ class YouTubeApiService {
           return playlist.updateItemCountBasedOnNonPrivateItems(playlistItems);
         }).toList());
 
-        // Filter playlists with non-zero item counts
-        final finalPlaylists = playlists.where((item) => item.itemCount != 0).toList();
-        // Sort filtered playlists by publishedAt date
-        finalPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+        // Add to total fetched playlists
+        allPlaylists.addAll(playlists);
 
-        // Cache the fetched data in SharedPreferences.
-        prefs.setString(cacheKey, response.body);
+        // Check for pagination token
+        nextPageToken = data['nextPageToken'];
 
-        return finalPlaylists;
+        // Increment the fetched results count
+        fetchedResults += items.length;
+
       } else {
         throw Exception('Failed to load playlists');
       }
-    }
+
+    } while (nextPageToken != null && fetchedResults < totalResults); // Continue if more items to fetch
+
+    // Filter playlists with non-zero item counts
+    final finalPlaylists = allPlaylists.where((item) => item.itemCount != 0).toList();
+    // Sort filtered playlists by publishedAt date
+    finalPlaylists.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+
+    // Cache the fetched data in SharedPreferences.
+    prefs.setString(cacheKey, json.encode(allPlaylists));
+
+    return finalPlaylists;
   }
 
-  Future<List<YouTubePlaylistItemModel>> fetchPlaylistItems({apiKey,playlistId,int maxResults = 70,}) async {
+  Future<List<YouTubePlaylistItemModel>> fetchPlaylistItems({apiKey,playlistId,int maxResults = 50,}) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String cacheKey = 'avvento_$playlistId';
-    final String? avventoMusicItemCachedData = prefs.getString(cacheKey);
+    final String? avventoItemCachedData = prefs.getString(cacheKey);
+    final int? cachedTimestamp = prefs.getInt('${cacheKey}_timestamp');
+    cacheDuration = const Duration(hours: 4);
 
-    // Check network connectivity
-    final connectivityResult = await Connectivity().checkConnectivity();
-
-    if (connectivityResult == ConnectivityResult.none) {
-      if (avventoMusicItemCachedData != null) {
-        final data = json.decode(avventoMusicItemCachedData);
-        final List<YouTubePlaylistItemModel> cachedItems = List<YouTubePlaylistItemModel>.from(
+    if (avventoItemCachedData != null && cachedTimestamp != null) {
+      final int cacheExpirationTime = cachedTimestamp + cacheDuration.inMilliseconds;
+      if (currentTime < cacheExpirationTime) {
+        final data = json.decode(avventoItemCachedData);
+        final List<YouTubePlaylistItemModel> cachedItems = List<
+            YouTubePlaylistItemModel>.from(
             data['items'].map((data) => YouTubePlaylistItemModel.fromJson(data))
         );
 
         // Sort cached items by publish date
         cachedItems.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
         return cachedItems;
-      } else {
-        throw Exception('No cached data available');
       }
-    } else {}
+    }
+
     final url = Uri.parse(
-      '${AppConstants.youtubePlaylistItemsAPI}?part=snippet,status&maxResults=${maxResults}&playlistId=$playlistId&key=$apiKey',
+      '${AppConstants.youtubePlaylistItemsAPI}?part=snippet,status&maxResults=$maxResults&playlistId=$playlistId&key=$apiKey',
     );
 
     final response = await http.get(url);
@@ -213,9 +230,7 @@ class YouTubeApiService {
     } else {
       formattedDuration = seconds.toString().padLeft(2, '0');
     }
-
     return formattedDuration;
   }
-
 
 }

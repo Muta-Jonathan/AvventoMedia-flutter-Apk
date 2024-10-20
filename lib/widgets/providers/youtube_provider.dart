@@ -1,11 +1,9 @@
 import 'package:avvento_media/apis/youtube_api.dart';
-import 'package:avvento_media/componets/app_constants.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 import '../../apis/firestore_service_api.dart';
 
@@ -104,7 +102,7 @@ class YoutubeProvider extends ChangeNotifier {
       // Fetch all playlists
       final playlists = await YouTubeApiService().fetchPlaylists(
         apiKey: mainApiKey,
-        maxResults: 30,
+        maxResults: 50,
         channelId: mainYoutubeChannelID,
       );
 

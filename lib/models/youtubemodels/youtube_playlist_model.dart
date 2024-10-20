@@ -35,6 +35,24 @@ class YoutubePlaylistModel {
     );
   }
 
+  // Method to convert an instance to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'snippet': {
+        'title': title,
+        'description': description,
+        'publishedAt': publishedAt.toIso8601String(),
+        'thumbnails': {
+          'maxres': {'url': thumbnailUrl},
+        },
+      },
+      'contentDetails': {
+        'itemCount': itemCount,
+      },
+    };
+  }
+
   YoutubePlaylistModel updateItemCountBasedOnNonPrivateItems(List<YouTubePlaylistItemModel> items) {
     int validItemCount = items.where((item) {
       // Exclude private videos

@@ -21,11 +21,7 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
   @override
   Widget build(BuildContext context) {
     final int views = int.tryParse(widget.youTubePlaylistItemModel.views) ?? 0;
-    String view = views == 0
-        ? 'No views'
-        : views == 1
-        ? '$views view'
-        : '$views views';
+    String view = Utils.formatViews(views);
     String publishedDate = Jiffy.parseFromDateTime(widget.youTubePlaylistItemModel.publishedAt).fromNow();
 
     return Padding(
@@ -41,32 +37,20 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // ClipRRect(
-                //   borderRadius: BorderRadius.circular(8.0),
-                //   child: CachedNetworkImage(
-                //     imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
-                //     fit: BoxFit.cover,
-                //     width: Utils.calculateWidth(context, 0.4),
-                //     height:  Utils.calculateHeight(context, 0.11),
-                //     placeholder: (context, url) => Center(
-                //       child: SizedBox(
-                //           width:  Utils.calculateWidth(context, 0.1),
-                //           height:  Utils.calculateWidth(context, 0.1),
-                //           child: const LoadingWidget()
-                //       ),
-                //     ),
-                //     errorWidget: (context, _, error) => Icon(
-                //       Icons.error,
-                //       color: Theme.of(context).colorScheme.error,
-                //     ),
-                //   ),
-                // ),
+                (widget.youTubePlaylistItemModel.liveBroadcastContent == 'live' || widget.youTubePlaylistItemModel.liveBroadcastContent == 'upcoming') ?
+                Expanded(
+                  child: ResizableImageContainerWithOverlay(
+                    imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
+                  ),
+                ) :
                 Expanded(
                   child: ResizableImageContainerWithOverlay(
                     imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
                     text: widget.youTubePlaylistItemModel.duration,
-                    overlayBottom: 5,
-                    overlayRight: 5,
+                    textFontSize: 10,
+                    overlayBottom: 0.2,
+                    overlayRight: 3,
+                    borderRadiusContainer: 10,
                     containerColor: Colors.black45,
                   ),
                 ),
@@ -118,12 +102,12 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
                             children: [
                               TextOverlay(
                                 label: view,
-                                fontSize: 14,
+                                fontSize: 12,
                                 color: Theme.of(context).colorScheme.onSecondary,
                               ),
                               TextOverlay(
                                 label: "• $publishedDate",
-                                fontSize: 14,
+                                fontSize: 12,
                                 color: Theme.of(context).colorScheme.onSecondary,
                               ),
                             ]
