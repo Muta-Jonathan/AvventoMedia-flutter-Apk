@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:avvento_media/componets/app_constants.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

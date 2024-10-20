@@ -33,6 +33,12 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 
 ## Changelogs
 ### Version 0.8.0 (September 2024)
+- new redesign of youtube items
+- updated cache functionality for youtube
+
+---
+
+### Version 0.8.0 (September 2024)
 - fixed android 14 and android 15
 - new redesign of youtube items
 - Upgraded packages
