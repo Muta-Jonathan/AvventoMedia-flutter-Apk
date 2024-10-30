@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../widgets/dialog/coming_soon_widget.dart';
 
@@ -114,4 +115,10 @@ class Utils {
       return '${(views / 1000000000).toStringAsFixed(1)}B views';
     }
   }
+
+  static Future<bool> checkConnectivity() async {
+  final connectivityResult = await Connectivity().checkConnectivity();
+  return connectivityResult != ConnectivityResult.none;
+  }
+
 }

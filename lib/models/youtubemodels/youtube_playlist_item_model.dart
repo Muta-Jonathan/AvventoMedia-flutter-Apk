@@ -38,7 +38,7 @@ class YouTubePlaylistItemModel {
       description: snippet['description'],
       thumbnailUrl: defaultThumbnail['url'],
       videoId: snippet['resourceId']?['videoId'] ?? json['id'],
-      duration: json['contentDetails']?['duration'] ?? 'P0D',
+      duration: json['contentDetails']?['duration'] ?? '',
       liveBroadcastContent: json['snippet']?["liveBroadcastContent"] ?? '',
       privacyStatus: json['status']?["privacyStatus"] ?? '',
       views: statistics?['viewCount'] ?? '',

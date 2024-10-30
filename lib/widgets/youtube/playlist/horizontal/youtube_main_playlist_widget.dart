@@ -7,6 +7,7 @@ import 'package:avvento_media/models/youtubemodels/youtube_playlist_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/providers/youtube_provider.dart';
 import 'package:avvento_media/widgets/youtube/playlist/horizontal/youtube_playlist_details_widget.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,16 +39,30 @@ class _YoutubeMainPlaylistWidget extends State<YoutubeMainPlaylistWidget> {
   Widget build(BuildContext context) {
     final youtubeProvider = Provider.of<YoutubeProvider>(context);
 
-    return Container(
-      margin: const EdgeInsets.only(top: 10.0),
-      width: double.infinity,
-      height: Utils.calculateAspectHeight(context, 1.25),
-      child: Column(
-        children: [
-          LabelPlaceHolder(title: AppConstants.avventoMain,titleFontSize: 18, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getYoutubeMainPlaylistRoute(),)),
-          Expanded(child: buildListView(context, youtubeProvider),)
-        ],
-      ),
+    return StreamBuilder<ConnectivityResult>(
+      stream: Connectivity().onConnectivityChanged,
+      builder: (BuildContext context, AsyncSnapshot<ConnectivityResult> snapshot) {
+        if (!snapshot.hasData) {
+          // Display loading indicator while waiting for connectivity status
+          return const LoadingWidget();
+        } else if (snapshot.data == ConnectivityResult.none) {
+          // Show "No internet connection" message if there’s no connection
+          return const SizedBox.shrink();
+        } else {
+          // Show content if internet is available
+          return  Container(
+            margin: const EdgeInsets.only(top: 10.0),
+            width: double.infinity,
+            height: Utils.calculateAspectHeight(context, 1.25),
+            child: Column(
+              children: [
+                LabelPlaceHolder(title: AppConstants.avventoMain,titleFontSize: 18, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getYoutubeMainPlaylistRoute(),)),
+                Expanded(child: buildListView(context, youtubeProvider),)
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 
