@@ -3,6 +3,7 @@ class YouTubePlaylistItemModel {
   final String title;
   final String description;
   final String thumbnailUrl;
+  final String channelTitle;
   final String videoId;
   final String duration;
   final String views;
@@ -16,6 +17,7 @@ class YouTubePlaylistItemModel {
     required this.description,
     required this.thumbnailUrl,
     required this.videoId,
+    required this.channelTitle,
     this.duration = '',
     this.views = '',
     required this.publishedAt,
@@ -35,6 +37,7 @@ class YouTubePlaylistItemModel {
     return YouTubePlaylistItemModel(
       id: json['id'],
       title: snippet['title'],
+      channelTitle: snippet['channelTitle'],
       description: snippet['description'],
       thumbnailUrl: defaultThumbnail['url'],
       videoId: snippet['resourceId']?['videoId'] ?? json['id'],
@@ -53,6 +56,7 @@ class YouTubePlaylistItemModel {
     String? description,
     String? thumbnailUrl,
     String? duration,
+    String? channelTitle,
     String? views,
     DateTime? publishedAt,
     String? liveBroadcastContent,
@@ -62,6 +66,7 @@ class YouTubePlaylistItemModel {
       id: id ?? this.id,
       videoId: videoId ?? this.videoId,
       title: title ?? this.title,
+      channelTitle: channelTitle ?? this.channelTitle,
       description: description ?? this.description,
       thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
       duration: duration ?? this.duration,

@@ -19,6 +19,7 @@ class AppConstants {
   static const String noInternet = "OOPS! IT SEEMS YOU'RE NOT CONNECTED TO THE INTERNET.";
   static const String showMore = "Show More";
   static const String from = "from";
+  static const String share = "Share";
 
   /// ***************** API ****************
   static const String highlightsAPI = "highlights";

@@ -135,16 +135,32 @@ class _WatchPageState extends State<WatchPage> {
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontSize: AppConstants.fontSize20,
                     ),
+                    const SizedBox(height: 8,),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        IconButton(
-                          icon: const Icon(CupertinoIcons.share),
-                          onPressed: () {
-                            // Implement share functionality here
-                            Utils.share("${liveTvController.selectedTv.value!.name} \n ${selectedTv.webUrl}");
-                          },
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(25.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              // Implement share functionality here
+                              Utils.share("${liveTvController.selectedTv.value!.name} \n ${selectedTv.webUrl}");
+                            },
+                            child: Container(
+                              color: Theme.of(context).colorScheme.secondary,
+                              padding: const EdgeInsets.all(8),
+                              child: Row(
+                                children: [
+                                  const Icon(CupertinoIcons.share, size: 18,),
+                                  TextOverlay(label: AppConstants.share,
+                                    color: Theme.of(context).colorScheme.onSecondary,
+                                    fontSize: 12,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),

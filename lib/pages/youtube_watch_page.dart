@@ -92,11 +92,18 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                           fontSize: AppConstants.fontSize20,
                           maxLines: 3,
                         ),
+                        TextOverlay(label: 'from  ${youtubePlaylistItemController.selectedPlaylistItem.value!.channelTitle}',
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontSize: 15,
+                        ),
+                        const SizedBox(height: 8,),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: view == 'No views' ? MainAxisAlignment.start : MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            (youtubePlaylistItemController.selectedPlaylistItem.value!.liveBroadcastContent == 'live' || youtubePlaylistItemController.selectedPlaylistItem.value!.liveBroadcastContent == 'upcoming') ?
+                            (youtubePlaylistItemController.selectedPlaylistItem.value!.liveBroadcastContent == 'live' ||
+                                youtubePlaylistItemController.selectedPlaylistItem.value!.liveBroadcastContent == 'upcoming' ||
+                                view == 'No views') ?
                             const SizedBox.shrink() :
                             Row(
                               children: [
@@ -111,12 +118,27 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                                 ),
                               ],
                             ),
-                            IconButton(
-                              icon: const Icon(CupertinoIcons.share),
-                              onPressed: () {
-                                // Implement share functionality here
-                                Utils.shareYouTubeVideo(selectedItem.videoId);
-                              },
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(25.0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Implement share functionality here
+                                  Utils.shareYouTubeVideo(selectedItem.videoId);
+                                },
+                                child: Container(
+                                  color: Theme.of(context).colorScheme.secondary,
+                                  padding: const EdgeInsets.all(8),
+                                  child: Row(
+                                    children: [
+                                      const Icon(CupertinoIcons.share, size: 18,),
+                                      TextOverlay(label: AppConstants.share,
+                                        color: Theme.of(context).colorScheme.onSecondary,
+                                        fontSize: 12,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

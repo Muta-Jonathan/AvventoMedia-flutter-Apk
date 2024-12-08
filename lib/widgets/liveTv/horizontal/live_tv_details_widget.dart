@@ -27,6 +27,7 @@ class _LiveTvDetailsWidget extends State<LiveTvDetailsWidget> {
               imageUrl: widget.liveTvModel.imageUrl,
               icon: CupertinoIcons.dot_radiowaves_left_right,
               text: widget.liveTvModel.status,
+              textFontSize: 10,
             ),
           ),
           const SizedBox(height: 15.0,),

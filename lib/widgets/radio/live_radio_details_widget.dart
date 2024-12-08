@@ -28,7 +28,9 @@ class _LiveRadioDetailsWidget extends State<LiveRadioDetailsWidget> {
             children: [
               Expanded(child: ResizableImageContainerWithOverlay(
                 imageUrl: widget.radioModel.imageUrl,
-                text: widget.radioModel.status, icon: CupertinoIcons.dot_radiowaves_left_right,)),
+                text: widget.radioModel.status,
+                textFontSize: 10,
+                icon: CupertinoIcons.dot_radiowaves_left_right,)),
               const SizedBox(height: 15.0,),
               SizedBox(
                 width: Utils.calculateWidth(context, 0.76),
