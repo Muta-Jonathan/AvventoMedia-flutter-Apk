@@ -1,5 +1,5 @@
-import 'package:avvento_media/componets/app_constants.dart';
-import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/components/app_constants.dart';
+import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -70,16 +70,16 @@ class LiveTvDetailsVerticalWidgetState extends State<LiveTvDetailsVerticalWidget
                     ClipRRect(
                       borderRadius: BorderRadius.circular(5.0),
                       child: Container(
-                        color: Theme.of(context).colorScheme.tertiaryContainer,
+                        color: Colors.red,
                         padding: const EdgeInsets.all(3.5),
                         child:
                         Row(
                           children: [
-                            Icon(CupertinoIcons.dot_radiowaves_left_right, color: Theme.of(context).colorScheme.onSecondary, size: 20,),
+                            const Icon(CupertinoIcons.dot_radiowaves_left_right, color: Colors.white, size: 20,),
                             TextOverlay(
                               label: widget.liveTvModel.status,
                               fontSize: 12,
-                              color: Theme.of(context).colorScheme.onSecondary,
+                              color: Colors.white,
                             ),
                           ],
                         ),

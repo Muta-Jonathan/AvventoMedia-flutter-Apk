@@ -1,4 +1,4 @@
-import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/components/app_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 

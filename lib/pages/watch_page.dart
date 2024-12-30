@@ -1,4 +1,4 @@
-import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/live_tv_controller.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
@@ -9,7 +9,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../componets/utils.dart';
+import '../components/utils.dart';
+import '../widgets/common/share_button.dart';
 import '../widgets/text/show_more_desc.dart';
 
 class WatchPage extends StatefulWidget {
@@ -140,28 +141,7 @@ class _WatchPageState extends State<WatchPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(25.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              // Implement share functionality here
-                              Utils.share("${liveTvController.selectedTv.value!.name} \n ${selectedTv.webUrl}");
-                            },
-                            child: Container(
-                              color: Theme.of(context).colorScheme.secondary,
-                              padding: const EdgeInsets.all(8),
-                              child: Row(
-                                children: [
-                                  const Icon(CupertinoIcons.share, size: 18,),
-                                  TextOverlay(label: AppConstants.share,
-                                    color: Theme.of(context).colorScheme.onSecondary,
-                                    fontSize: 12,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
+                        ShareButton(onShareTap: (){ Utils.share("${liveTvController.selectedTv.value!.name} \n ${selectedTv.webUrl}"); }),
                       ],
                     ),
                     const SizedBox(height: 12,),

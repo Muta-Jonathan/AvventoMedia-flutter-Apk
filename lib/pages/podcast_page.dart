@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:avvento_media/componets/app_constants.dart';
-import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/components/app_constants.dart';
+import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';

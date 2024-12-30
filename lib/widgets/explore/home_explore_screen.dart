@@ -1,7 +1,7 @@
 import 'dart:math';
 
-import 'package:avvento_media/componets/app_constants.dart';
-import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/components/app_constants.dart';
+import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/models/exploremodels/programs.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/explore/home_explore_details_screen.dart';

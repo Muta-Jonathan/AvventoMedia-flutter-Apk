@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../componets/utils.dart';
+import '../../components/utils.dart';
 import '../../controller/podcast_controller.dart';
 import '../../routes/routes.dart';
 import '../common/loading_widget.dart';

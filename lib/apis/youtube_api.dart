@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/components/app_constants.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/youtubemodels/youtube_playlist_item_model.dart';

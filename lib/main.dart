@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/firebase_options.dart';
 import 'package:avvento_media/routes/routes.dart';
 import 'package:avvento_media/themes/dark_theme.dart';

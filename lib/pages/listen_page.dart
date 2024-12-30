@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../componets/app_constants.dart';
+import '../components/app_constants.dart';
 import '../routes/routes.dart';
 import '../widgets/explore/home_explore_screen.dart';
 import '../widgets/providers/programs_provider.dart';

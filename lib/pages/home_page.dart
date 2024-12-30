@@ -2,7 +2,7 @@ import 'package:avvento_media/widgets/hightlights/hightlights_widget.dart';
 import 'package:avvento_media/widgets/radio/live_radio_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../componets/app_constants.dart';
+import '../components/app_constants.dart';
 import '../widgets/liveTv/horizontal/live_tv_widget.dart';
 import '../widgets/youtube/playlist/horizontal/youtube_kids_playlist_widget.dart';
 import '../widgets/youtube/playlist/horizontal/youtube_main_playlist_widget.dart';

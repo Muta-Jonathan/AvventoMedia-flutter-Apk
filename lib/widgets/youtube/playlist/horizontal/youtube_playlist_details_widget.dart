@@ -1,7 +1,7 @@
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../componets/utils.dart';
+import '../../../../components/utils.dart';
 import '../../../../models/youtubemodels/youtube_playlist_model.dart';
 import '../../../images/resizable_image_widget_2.dart';
 
