@@ -1,4 +1,4 @@
-import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';

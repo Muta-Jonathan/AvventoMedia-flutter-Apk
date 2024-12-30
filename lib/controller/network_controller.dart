@@ -1,4 +1,4 @@
-import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';

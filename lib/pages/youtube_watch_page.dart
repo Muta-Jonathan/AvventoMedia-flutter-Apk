@@ -1,5 +1,6 @@
-import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/youtube_playlist_item_controller.dart';
+import 'package:avvento_media/widgets/common/share_button.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 
-import '../componets/utils.dart';
+import '../components/utils.dart';
 import '../widgets/text/show_more_desc.dart';
 
 class YoutubeWatchPage extends StatefulWidget {
@@ -118,28 +119,7 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                                 ),
                               ],
                             ),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(25.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  // Implement share functionality here
-                                  Utils.shareYouTubeVideo(selectedItem.videoId);
-                                },
-                                child: Container(
-                                  color: Theme.of(context).colorScheme.secondary,
-                                  padding: const EdgeInsets.all(8),
-                                  child: Row(
-                                    children: [
-                                      const Icon(CupertinoIcons.share, size: 18,),
-                                      TextOverlay(label: AppConstants.share,
-                                        color: Theme.of(context).colorScheme.onSecondary,
-                                        fontSize: 12,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                            ShareButton(onShareTap: (){ Utils.shareYouTubeVideo(selectedItem.videoId); }),
                           ],
                         ),
                         const SizedBox(height: 12,),

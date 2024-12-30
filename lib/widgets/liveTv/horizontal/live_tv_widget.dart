@@ -1,5 +1,5 @@
-import 'package:avvento_media/componets/app_constants.dart';
-import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/components/app_constants.dart';
+import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/live_tv_controller.dart';
 import 'package:avvento_media/models/livetvmodel/livetv_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';

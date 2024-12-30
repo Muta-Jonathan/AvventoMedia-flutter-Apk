@@ -1,5 +1,5 @@
-import 'package:avvento_media/componets/app_constants.dart';
-import 'package:avvento_media/componets/utils.dart';
+import 'package:avvento_media/components/app_constants.dart';
+import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

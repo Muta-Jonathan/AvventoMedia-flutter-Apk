@@ -7,8 +7,8 @@ import 'package:get/get.dart';
 
 import '../../../../routes/routes.dart';
 import '../../../apis/firestore_service_api.dart';
-import '../../../componets/app_constants.dart';
-import '../../../componets/utils.dart';
+import '../../../components/app_constants.dart';
+import '../../../components/utils.dart';
 import '../../../controller/live_tv_controller.dart';
 import '../../../models/livetvmodel/livetv_model.dart';
 

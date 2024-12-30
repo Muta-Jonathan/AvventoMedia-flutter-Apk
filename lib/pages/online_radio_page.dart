@@ -9,8 +9,8 @@ import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
 
-import '../componets/app_constants.dart';
-import '../componets/utils.dart';
+import '../components/app_constants.dart';
+import '../components/utils.dart';
 import '../controller/audio_player_controller.dart';
 import '../models/musicplayermodels/music_player_position.dart';
 import '../widgets/audio_players/controls.dart';

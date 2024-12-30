@@ -6,8 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
-import '../componets/app_constants.dart';
-import '../componets/utils.dart';
+import '../components/app_constants.dart';
+import '../components/utils.dart';
 import '../routes/routes.dart';
 import '../widgets/settings/app_creaters_widget.dart';
 import '../widgets/settings/app_version_widget.dart';

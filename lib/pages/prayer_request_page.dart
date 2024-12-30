@@ -1,7 +1,7 @@
-import 'package:avvento_media/componets/app_constants.dart';
+import 'package:avvento_media/components/app_constants.dart';
 import 'package:flutter/material.dart';
-import '../componets/prayer_request_field.dart';
-import '../componets/utils.dart';
+import '../components/prayer_request_field.dart';
+import '../components/utils.dart';
 
 class PrayerRequestPage extends StatelessWidget {
   const PrayerRequestPage({super.key});

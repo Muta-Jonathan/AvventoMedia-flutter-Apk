@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../apis/youtube_api.dart';
-import '../../componets/utils.dart';
+import '../../components/utils.dart';
 import '../../models/highlightmodel/highlight_model.dart';
 import '../images/resizable_image_widget_2.dart';
 
