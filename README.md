@@ -171,3 +171,4 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 - [x] Implemented initial app framework.
 - [x] Integrated AvventoRadio and 3ABN streaming.
 - [x] Released version 0.1.0 on the Play Store.
+- [x] Refactored to work on IOS devices

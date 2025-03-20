@@ -10,12 +10,14 @@ class TextOverlay extends StatelessWidget {
   final bool allCaps;
   final int maxLines;
   final bool underline;
+  final TextAlign textAlign;
 
   const TextOverlay({
     super.key,
     required this.label,
     this.fontSize = 12.0,
     this.maxLines = 2,
+    this.textAlign = TextAlign.left,
     required this.color,
     this.underline = false,
     this.fontWeight = FontWeight.normal,
@@ -36,6 +38,7 @@ class TextOverlay extends StatelessWidget {
         text: displayLabel!,
         overflow: TextOverflow.ellipsis,
         maxLines: maxLines,
+        textAlign: textAlign,
         style: TextStyle(
           fontSize: fontSize,
           fontWeight: fontWeight,

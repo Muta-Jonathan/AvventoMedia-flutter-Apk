@@ -1,0 +1,2 @@
+/Users/mutajonathan/Developer/Apps/AvventoMedia-flutter-Apk/android/app/.cxx/Debug/1an586y6/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/mutajonathan/Developer/Apps/AvventoMedia-flutter-Apk/android/app/.cxx/Debug/1an586y6/armeabi-v7a/CMakeFiles/rebuild_cache.dir

@@ -20,7 +20,7 @@ class ExploreDataFetcher {
     } else {
       final url = Uri.https(
         'raw.githubusercontent.com',
-        '/Muta-Jonathan/AvventoRadio-flutter-Apk/main/assets/temp.json',
+        '/AvventoMedia/AvventoMedia-flutter-Apk/refs/heads/main/assets/temp.json',
         {'q': '{https}'},
       );
 

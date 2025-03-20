@@ -38,6 +38,7 @@ class SpeedControlState extends State<SpeedControl> {
         ),
         child: Text(
           '${widget.audioPlayerController.speeds[widget.audioPlayerController.currentSpeedIndex]}x',
+          textAlign: TextAlign.center,
           style: TextStyle(
             color:  Theme.of(context).colorScheme.onPrimary,
             fontSize: Utils.calculateHeight(context, 0.023),

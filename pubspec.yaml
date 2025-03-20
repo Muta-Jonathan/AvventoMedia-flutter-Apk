@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.9.2+17
+version: 1.0.0+18
 
 environment:
   sdk: '>=3.1.2 <4.0.0'
@@ -30,7 +30,7 @@ environment:
 dependencies:
   # firebase_dependencies
   firebase_core: ^2.17.0
-  cloud_firestore: ^4.9.3
+  cloud_firestore: ^4.17.5
 
   get: ^4.6.6
   http: ^0.13.5
@@ -50,11 +50,11 @@ dependencies:
   jiffy: ^6.2.1
   share_plus: ^10.0.2
   web_socket_channel: ^2.4.0
-  floating: ^2.0.1
-  animated_text_kit: ^4.2.2
+  floating: ^6.0.0
+  animated_text_kit: ^4.2.3
   flutter_native_splash: ^2.3.4
   double_back_to_close_app: ^2.1.0
-  package_info_plus: ^4.2.0
+  package_info_plus: ^8.3.0
   url_launcher: ^6.3.0
   font_awesome_flutter: ^10.6.0
   intl_phone_field: ^3.2.0
@@ -90,7 +90,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.1
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.3
   dart_code_metrics: ^5.6.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -111,7 +111,8 @@ flutter_native_splash:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icon/icon.png"
+  image_path_android: "assets/icon/icon.png"
+  image_path_ios: "assets/icon/icon.png"
   adaptive_icon_foreground: "assets/icon/icon_foreground.png"
   adaptive_icon_background: "#ffffff"
 

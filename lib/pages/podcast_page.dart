@@ -182,13 +182,13 @@ class PodcastPageState extends State<PodcastPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: Utils.calculateHeight(context, 0.04)),
+                  SizedBox(height: Utils.calculateHeight(context, 0.03)),
                   StreamBuilder<MusicPlayerPosition>(
                     stream: _musicPlayerPositionStream,
                     builder: (_,snapshot) {
                       final positionData = snapshot.data;
                       final paddingWidth = Utils.calculateWidth(context, 0.05);
-                      final paddingTop = Utils.calculateHeight(context, 0.06);
+                      final paddingTop = Utils.calculateHeight(context, 0.02);
                       return Column(
                         children: [
                           Column(
@@ -196,15 +196,13 @@ class PodcastPageState extends State<PodcastPage> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                                child: TextOverlay(label: _audioPlayerController.currentMediaItem!.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold),
+                                child: TextOverlay(label: _audioPlayerController.currentMediaItem!.title, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold, textAlign: TextAlign.center,),
                               ),
-                              const SizedBox(height: 5,),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: TextOverlay(label:  _audioPlayerController.currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondaryContainer,fontSize: 16,),
+                                child: TextOverlay(label:  _audioPlayerController.currentMediaItem?.artist ?? '', color: Theme.of(context).colorScheme.onSecondaryContainer,fontSize: 16, textAlign: TextAlign.center,),
                               ),
-                              const SizedBox(height: 5,),
-                              TextOverlay(label: "Published $publishedDate",color: Theme.of(context).colorScheme.onSecondaryContainer)
+                              TextOverlay(label: "Published $publishedDate",color: Theme.of(context).colorScheme.onSecondaryContainer, textAlign: TextAlign.center,)
                             ],
                           ),
                           Padding(
@@ -223,7 +221,7 @@ class PodcastPageState extends State<PodcastPage> {
                           ),
                           SizedBox(height: Utils.calculateHeight(context, 0.02)),
                           Controls(audioPlayerController: _audioPlayerController,),
-                          SizedBox(height: Utils.calculateHeight(context, 0.04),),
+                          SizedBox(height: Utils.calculateHeight(context, 0.08),),
                           TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer),
                           SizedBox(height: Utils.calculateHeight(context, 0.02),),
                         ],

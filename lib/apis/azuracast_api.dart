@@ -41,6 +41,7 @@ class AzuraCastAPI {
         final np = jsonResult['pub']['data']['np'];
         final stationData = np['station'];
         final nowPlaying = np['now_playing'];
+        final playingNext = np['playing_next'];
 
         final id = nowPlaying['sh_id'];
         final artist = nowPlaying['song']['artist'];
@@ -49,6 +50,8 @@ class AzuraCastAPI {
         final nowPlayingTitle = nowPlaying['song']['title'];
         final elapsed = nowPlaying['elapsed'];
         final duration = nowPlaying['duration'];
+        final playingNextProgram = playingNext['song']['text'];
+
 
         final radioStation = RadioStation(
           id: id ?? '',
@@ -58,6 +61,7 @@ class AzuraCastAPI {
           streamUrl: streamUrl ?? '',
           elapsed: elapsed ?? 0,
           duration: duration ?? 0,
+          nextProgram: playingNextProgram != null ? 'Next: $playingNextProgram' : '',
         );
 
         // Store the retrieved data in SharedPreferences
@@ -76,6 +80,7 @@ class AzuraCastAPI {
           streamUrl: '',
           elapsed: 0,
           duration: 0,
+          nextProgram: '',
         );
       }
     });
@@ -194,6 +199,4 @@ class AzuraCastAPI {
       }
     }
   }
-
-
 }

@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../routes/routes.dart';
+import '../../../common/no_internet_widget.dart';
 import '../../../text/label_place_holder.dart';
 
 
@@ -27,42 +28,46 @@ class YoutubeMainPlaylistWidget extends StatefulWidget {
 class _YoutubeMainPlaylistWidget extends State<YoutubeMainPlaylistWidget> {
   final youtubePlaylistController = Get.put(YoutubePlaylistController());
   int itemsToDisplay = 12;
+  bool _isConnected = true; // Tracks network status
 
   @override
   void initState() {
     super.initState();
     // Fetch Main playlist using the provider and listen to changes
     Provider.of<YoutubeProvider>(context, listen: false).fetchAllMainPlaylists();
+    // Check initial connectivity and update state
+    Connectivity().checkConnectivity().then((result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
+
+    // Listen for connectivity changes
+    Connectivity().onConnectivityChanged.listen((result) {
+      setState(() {
+        _isConnected = result != ConnectivityResult.none;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final youtubeProvider = Provider.of<YoutubeProvider>(context);
 
-    return StreamBuilder<ConnectivityResult>(
-      stream: Connectivity().onConnectivityChanged,
-      builder: (BuildContext context, AsyncSnapshot<ConnectivityResult> snapshot) {
-        if (!snapshot.hasData) {
-          // Display loading indicator while waiting for connectivity status
-          return const LoadingWidget();
-        } else if (snapshot.data == ConnectivityResult.none) {
-          // Show "No internet connection" message if there’s no connection
-          return const SizedBox.shrink();
-        } else {
-          // Show content if internet is available
-          return  Container(
-            margin: const EdgeInsets.only(top: 10.0),
-            width: double.infinity,
-            height: Utils.calculateAspectHeight(context, 1.25),
-            child: Column(
-              children: [
-                LabelPlaceHolder(title: AppConstants.avventoMain,titleFontSize: 18, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getYoutubeMainPlaylistRoute(),)),
-                Expanded(child: buildListView(context, youtubeProvider),)
-              ],
-            ),
-          );
-        }
-      },
+    if (!_isConnected) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(top: 10.0),
+      width: double.infinity,
+      height: Utils.calculateAspectHeight(context, 1.25),
+      child: Column(
+        children: [
+          LabelPlaceHolder(title: AppConstants.avventoMain,titleFontSize: 18, moreIcon: true, onMoreTap: () => Get.toNamed(Routes.getYoutubeMainPlaylistRoute(),)),
+          Expanded(child: buildListView(context, youtubeProvider),)
+        ],
+      ),
     );
   }
 

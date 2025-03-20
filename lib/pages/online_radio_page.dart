@@ -140,7 +140,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                     stream: _musicPlayerPositionStream,
                     builder: (_,snapshot) {
                       final paddingWidth = Utils.calculateWidth(context, 0.05);
-                      final paddingTop = Utils.calculateHeight(context, 0.06);
+                      final paddingTop = Utils.calculateHeight(context, 0.02);
                       return Column(
                         children: [
                           Center(
@@ -215,18 +215,17 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: Utils.calculateHeight(context, 0.04)),
+                          SizedBox(height: Utils.calculateHeight(context, 0.03)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(left: paddingWidth , right: paddingWidth),
-                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold),
+                                child: TextOverlay(label:  radioProvider.radioStation!.nowPlayingTitle, color: Theme.of(context).colorScheme.onPrimary,fontSize: AppConstants.fontSize20, fontWeight: FontWeight.bold, textAlign: TextAlign.center,),
                               ),
-                              const SizedBox(height: 5,),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14,),
+                                child: TextOverlay(label:  radioProvider.radioStation!.artist, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14, textAlign: TextAlign.center,),
                               ),
                             ],
                           ),
@@ -244,9 +243,13 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                               total: Utils.parseDuration(radioProvider.radioStation?.duration),
                              ),
                           ),
-                          SizedBox(height: Utils.calculateHeight(context, 0.02)),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextOverlay(label: radioProvider.radioStation!.nextProgram, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14, textAlign: TextAlign.center,),
+                          ),
+                          SizedBox(height: Utils.calculateHeight(context, 0.01)),
                           Controls(audioPlayerController: _audioPlayerController,),
-                          SizedBox(height: Utils.calculateHeight(context, 0.04)),
+                          SizedBox(height: Utils.calculateHeight(context, 0.08)),
                           TextOverlay(label: AppConstants.avventoSlogan,color: Theme.of(context).colorScheme.onSecondaryContainer),
                           SizedBox(height: Utils.calculateHeight(context, 0.02)),
                         ],

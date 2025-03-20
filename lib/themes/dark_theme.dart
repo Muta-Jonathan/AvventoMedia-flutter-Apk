@@ -11,7 +11,7 @@ ThemeData darkTheme = ThemeData(
             statusBarColor: Color.fromARGB(255, 22, 20, 36),
             systemNavigationBarColor: Color.fromARGB(255, 22, 20, 36),//rgba(22,20,36,255)
             statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
         ),
     ),
     iconTheme: IconThemeData(

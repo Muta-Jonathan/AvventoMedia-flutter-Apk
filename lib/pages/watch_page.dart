@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/live_tv_controller.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
@@ -55,11 +57,13 @@ class _WatchPageState extends State<WatchPage> {
             playerTheme: BetterPlayerTheme.material,
             loadingWidget: const LoadingWidget(),
             overflowMenuCustomItems: [
-              BetterPlayerOverflowMenuItem(
-                Icons.picture_in_picture_alt_rounded,
-                AppConstants.pip,
-                    () => _betterPlayerController.enablePictureInPicture(_betterPlayerKey)
-              )
+              // Add PiP option only for Android
+              if (Platform.isAndroid)
+                BetterPlayerOverflowMenuItem(
+                  Icons.picture_in_picture_alt_rounded,
+                  AppConstants.pip,
+                      () => _betterPlayerController.enablePictureInPicture(_betterPlayerKey),
+                ),
             ],
           ),
         ),

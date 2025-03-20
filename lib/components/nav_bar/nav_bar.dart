@@ -47,10 +47,10 @@ class _NavBarState extends State<NavBar> {
           backgroundColor: Theme.of(context).colorScheme.surface,
           selectedItemColor: Theme.of(context).colorScheme.onPrimary,
           unselectedItemColor: Theme.of(context).iconTheme.color,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          selectedFontSize: 0,
-          unselectedFontSize: 0,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          selectedFontSize: 10,
+          unselectedFontSize: 10,
           elevation: 0,
           //Bottom Navigation Bar with [Home,Listen,Profile]
           items: const [

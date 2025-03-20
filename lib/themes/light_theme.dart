@@ -12,7 +12,7 @@ ThemeData lightTheme = ThemeData(
       statusBarColor:  Colors.grey[200]!,
       systemNavigationBarColor: Colors.grey[200]!,
       statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
     ),
   ),
   iconTheme: IconThemeData(

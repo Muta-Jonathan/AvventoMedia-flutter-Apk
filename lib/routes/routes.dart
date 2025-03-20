@@ -9,6 +9,7 @@ import '../pages/podcast_episode_list_page.dart';
 import '../pages/podcast_list_page.dart';
 import '../pages/prayer_request_page.dart';
 import '../pages/profile_page.dart';
+import '../pages/search_page.dart';
 import '../pages/watch_page.dart';
 import '../pages/youtube_kids_playlist_item_page.dart';
 import '../pages/youtube_kids_playlist_page.dart';
@@ -36,6 +37,7 @@ class Routes {
   static String youtubeMainPlaylist = "/youtube/avventoProductions/playlist";
   static String youtubeMainPlaylistItem = "/youtube/avventoProductions/playlist/item";
   static String watchYoutube = "/watch/youtube/video";
+  static String search = "/search";
 
   static  String getHomeRoute() => home;
   static  String getListenRoute() => listen;
@@ -54,6 +56,7 @@ class Routes {
   static  String getYoutubeKidsPlaylistItemRoute() => youtubeKidsPlaylistItem;
   static  String getYoutubeMainPlaylistItemRoute() => youtubeMainPlaylistItem;
   static  String getWatchYoutubeRoute() => watchYoutube;
+  static  String getSearchRoute() => search;
 
   static List<GetPage> routes = [
     GetPage(name: home, page: () => const MainPage()),
@@ -73,5 +76,6 @@ class Routes {
     GetPage(name: youtubeKidsPlaylistItem, page: () => const YoutubeKidsPlaylistItemPage()),
     GetPage(name: youtubeMainPlaylistItem, page: () => const YoutubeMainPlaylistItemPage()),
     GetPage(name: watchYoutube, page: () => const YoutubeWatchPage()),
+    GetPage(name: search, page: () => const SearchPage()),
   ];
 }

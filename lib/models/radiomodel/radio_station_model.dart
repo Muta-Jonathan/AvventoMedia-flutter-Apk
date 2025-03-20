@@ -6,6 +6,7 @@ class RadioStation {
   final String streamUrl;
   final int duration;
   final int elapsed;
+  final String nextProgram;
 
   RadioStation({
     required this.id,
@@ -15,6 +16,7 @@ class RadioStation {
     required this.streamUrl,
     required this.duration,
     required this.elapsed,
+    required this.nextProgram,
   });
 
   Map<String, dynamic> toJson() {
@@ -25,6 +27,7 @@ class RadioStation {
       'streamUrl': streamUrl,
       'duration': duration,
       'elapsed': elapsed,
+      'nextProgram' : nextProgram,
     };
   }
   factory RadioStation.fromJson(Map<String, dynamic> json) {
@@ -36,6 +39,7 @@ class RadioStation {
       streamUrl: json['streamUrl'] ?? '',
       elapsed: json['elapsed'] ?? 0,
       duration: json['duration'] ?? 0,
+      nextProgram: '',
     );
   }
 }

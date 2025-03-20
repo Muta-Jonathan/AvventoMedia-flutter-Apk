@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:avvento_media/models/sendemail/send_email.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:http/http.dart' as http;
 
 class SendEmailAPI {
   static Future<bool> sendEmail(SendEmail sendEmailData) async {
-    const serviceId = "service_78aobee";
-    const templateId = "template_arqna7a";
-    const userId = "DFwSd_WhywHMACy84";
+    final serviceId =  dotenv.env["SERVICE_ID"];
+    final templateId = dotenv.env["TEMPLATE_ID"];
+    final userId = dotenv.env["USER_ID"];
     
     final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
     final response = await http.post(
