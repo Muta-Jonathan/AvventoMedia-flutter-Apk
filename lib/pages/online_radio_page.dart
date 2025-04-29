@@ -111,10 +111,24 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
         title: SizedBox(
           height: AppConstants.height30,
           child: Center(
-            child: TextOverlay(
-              label: AppConstants.nowPlaying,
-              color: Theme.of(context).colorScheme.onPrimary,
-              fontSize: AppConstants.fontSize18,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextOverlay(
+                  label: AppConstants.nowPlaying,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: AppConstants.fontSize18,
+                ),
+                const SizedBox(width: 8), // space between text and dot
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

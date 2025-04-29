@@ -32,6 +32,11 @@ Listen to wonderful Podcasts from AvventoRadio
 You can download the AvventoMedia app from the Play Store [here](https://play.google.com/store/apps/details?id=tv.avventomedia.app).
 
 ## Changelogs
+### Version 1.1.0 (April 2025)
+- Refactoring explore to Carousel design | UI re-design
+
+---
+
 ### Version 0.9.2 (December 2024)
 - new redesign of share button
 
@@ -136,6 +141,11 @@ You can download the AvventoMedia app from the Play Store [here](https://play.go
 - [ ] support podcast download
 
 ### Completed
+##### April 2025
+- [x] Refactoring explore to Carousel design | UI re-design
+
+---
+
 ##### September 2024
 - [x] fixed android 14 and android 15
 - [x] added upload time for youtube videos
