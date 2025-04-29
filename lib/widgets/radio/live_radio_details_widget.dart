@@ -30,7 +30,7 @@ class _LiveRadioDetailsWidget extends State<LiveRadioDetailsWidget> {
                 imageUrl: widget.radioModel.imageUrl,
                 text: widget.radioModel.status,
                 textFontSize: 10,
-                icon: CupertinoIcons.dot_radiowaves_left_right,)),
+                icon: Icons.music_note,)),
               const SizedBox(height: 15.0,),
               SizedBox(
                 width: Utils.calculateWidth(context, 0.76),

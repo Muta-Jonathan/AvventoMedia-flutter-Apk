@@ -6,9 +6,10 @@ import 'package:provider/provider.dart';
 
 import '../components/app_constants.dart';
 import '../routes/routes.dart';
-import '../widgets/explore/home_explore_screen.dart';
 import '../widgets/providers/programs_provider.dart';
 import '../widgets/providers/radio_podcast_provider.dart';
+import '../widgets/text/label_place_holder.dart';
+import '../widgets/explore/carousel_slider.dart';
 
 class ListenPage extends StatefulWidget {
   const ListenPage({super.key});
@@ -53,18 +54,24 @@ class ListenPageState extends State<ListenPage> {
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(CupertinoIcons.headphones),
+                  icon: const Icon(CupertinoIcons.antenna_radiowaves_left_right),
                   onPressed: () {
                     Get.toNamed(Routes.getOnlineRadioRoute());
                   },
                 ),
               ],
             ),
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Column(
                 children: [
-                  HomeExploreScreen(),
-                  AudioListScreen()
+                  const SizedBox(height: 5),
+                  const LabelPlaceHolder(title: AppConstants.missNot),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    height: 210, // 👈 give CarouselPage a fixed height
+                    child: CarouselSlider(),
+                  ),
+                  const AudioListScreen()
                 ],
               ),
             ),

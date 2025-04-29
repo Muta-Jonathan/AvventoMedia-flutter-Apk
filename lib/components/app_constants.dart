@@ -3,13 +3,13 @@ class AppConstants {
   static const String radioName = "AvventoRadio";
   static const String nowPlaying = "Now Playing";
   static const String avventoSlogan = "Flying the Gospel to the Whole World!";
-  static const String missNot = "Programs You shouldn't miss This Week";
+  static const String missNot = "Programs You shouldn't miss";
   static const String liveTv = "LIVE TV";
   static const String avventoMusic = "Music";
   static const String avventoKids = "Kids";
   static const String avventoMain = "Avvento Productions";
   static const String liveNow = "LIVE NOW";
-  static const String liveRadio = "Radio";
+  static const String liveRadio = "Live Radio";
   static const String onAIR = "ON AIR";
   static const String pip = "Picture In Picture";
   static const String readMore = "Read more";

@@ -32,11 +32,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
   MediaItem? currentMediaItem;
   StreamSubscription<MusicPlayerPosition>? _positionSubscription;
 
-  double currentPosition = 0;
-  double bufferedPosition = 0;
-  double duration = 0;
-  String title = "";
-  String artist = "";
+  String? _nextProgram;
 
   final StreamController<MusicPlayerPosition> _musicPlayerPositionController = StreamController<MusicPlayerPosition>.broadcast();
 
@@ -78,6 +74,12 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
         artist: radioProvider.radioStation!.artist,
         artUri: Uri.parse(radioProvider.radioStation!.imageUrl),
       );
+
+      // Update _nextProgram ONLY IF new data is not empty
+      if (radioProvider.radioStation!.nextProgram.isNotEmpty) {
+        _nextProgram = radioProvider.radioStation!.nextProgram;
+      }
+
       if (!_audioPlayerController.audioPlayer.playerState.playing) {
         await _audioPlayerController.setAudioSource(
           radioProvider.radioStation!.streamUrl,
@@ -197,7 +199,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                                         child: const Row(
                                           children: [
                                             Icon(
-                                              CupertinoIcons.antenna_radiowaves_left_right,
+                                              Icons.music_note,
                                               color: Colors.white,
                                               size: 15,
                                             ),
@@ -245,7 +247,7 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: TextOverlay(label: radioProvider.radioStation!.nextProgram, color: Theme.of(context).colorScheme.onSecondary, fontSize: 14, textAlign: TextAlign.center,),
+                            child: TextOverlay(label: _nextProgram ?? "", color: Theme.of(context).colorScheme.onSecondary, fontSize: 14, textAlign: TextAlign.center,),
                           ),
                           SizedBox(height: Utils.calculateHeight(context, 0.01)),
                           Controls(audioPlayerController: _audioPlayerController,),

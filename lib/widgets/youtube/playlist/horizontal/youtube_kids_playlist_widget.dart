@@ -14,7 +14,6 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../routes/routes.dart';
-import '../../../common/no_internet_widget.dart';
 import '../../../text/label_place_holder.dart';
 
 
