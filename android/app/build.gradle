@@ -30,7 +30,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace "tv.avventomedia.app"
-    compileSdkVersion 35
+    compileSdkVersion 36
     ndkVersion = "27.0.12077973"
     lintOptions {
         abortOnError false
@@ -46,7 +46,6 @@ android {
         applicationId "tv.avventomedia.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        targetSdkVersion 35
         minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

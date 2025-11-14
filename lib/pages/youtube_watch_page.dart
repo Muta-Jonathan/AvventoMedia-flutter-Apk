@@ -4,9 +4,10 @@ import 'package:avvento_media/widgets/common/share_button.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../components/utils.dart';
 import '../widgets/text/show_more_desc.dart';
@@ -21,29 +22,34 @@ class YoutubeWatchPage extends StatefulWidget {
 class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
   final YoutubePlaylistItemController youtubePlaylistItemController = Get.find();
   late YoutubePlayerController _controller;
+  bool isPlayerReady = false;
 
   @override
   void initState() {
     super.initState();
+    final selected = youtubePlaylistItemController.selectedPlaylistItem.value!;
+
     _controller = YoutubePlayerController(
-      params: const YoutubePlayerParams(
-        showControls: true,
+      initialVideoId: selected.videoId,
+      flags: YoutubePlayerFlags(
+        autoPlay: true,
         mute: false,
-        showFullscreenButton: true,
-        strictRelatedVideos: true,
-        playsInline: false,
-        showVideoAnnotations: true,
         loop: false,
-        color: 'red'
+        forceHD: false,
+        enableCaption: true,
+        isLive: selected.liveBroadcastContent == 'live',
+        useHybridComposition: true,
       ),
     );
 
-    _controller.loadVideoById( videoId: youtubePlaylistItemController.selectedPlaylistItem.value!.videoId,);
+    // Allow immersive fullscreen when rotated
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   @override
   void dispose() {
-    _controller.close();
+    _controller.dispose();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
 
@@ -55,32 +61,38 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
     String publishedDate = Jiffy.parseFromDateTime(selectedItem.publishedAt).fromNow();
 
     return Scaffold(
-      backgroundColor:   Theme.of(context).colorScheme.surface,
-      body: YoutubePlayerScaffold(
-        controller: _controller,
-        builder: (BuildContext context, Widget player) {
-         return SingleChildScrollView(
-            child: SafeArea(
-              child: Column(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: YoutubePlayerBuilder(
+        player: YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: Colors.red,
+
+          ),
+            builder: (context, player) {
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Stack(
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 16 / 9,
-                        child: player),
-                      Positioned(
-                        top: 5, // Adjust the top position as needed
-                        left: 5, // Adjust the left position as needed
-                        child: IconButton(
-                          icon: const Icon(CupertinoIcons.chevron_back,color: Colors.white),
-                          onPressed: () {
-                            Get.back();
-                          },
+                  SafeArea(
+                    child: Stack(
+                      children: [
+                        AspectRatio(
+                          aspectRatio: 16 / 9,
+                          child: player,
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          top: 5,
+                          left: 5,
+                          child: IconButton(
+                            icon: const Icon(
+                              CupertinoIcons.chevron_back,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => Get.back(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.all(10.0),
@@ -122,17 +134,18 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                             ShareButton(onShareTap: (){ Utils.shareYouTubeVideo(selectedItem.videoId); }),
                           ],
                         ),
-                        const SizedBox(height: 12,),
-                        ShowMoreDescription(modalTitle: AppConstants.description,description: selectedItem.description,),
+                        const SizedBox(height: 12),
+                        ShowMoreDescription(
+                          modalTitle: AppConstants.description,
+                          description: selectedItem.description,
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
-              ),
-            ),
-          );
-        },
-      ),
+              );
+            },
+          ),
     );
   }
 }
