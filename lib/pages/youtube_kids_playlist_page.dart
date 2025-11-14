@@ -25,7 +25,7 @@ class _YoutubeKidsPlaylistPageState extends State<YoutubeKidsPlaylistPage> {
 
     Future<void> refreshData() async {
       // Fetch fresh data for a specific all playlist
-     await Provider.of<YoutubeProvider>(context, listen: false).fetchAllKidsPlaylists();
+      Provider.of<YoutubeProvider>(context, listen: false).streamKidsPlaylists();
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }

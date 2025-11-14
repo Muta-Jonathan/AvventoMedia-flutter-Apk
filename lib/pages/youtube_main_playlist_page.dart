@@ -25,7 +25,7 @@ class _YoutubeMainPlaylistPageState extends State<YoutubeMainPlaylistPage> {
 
     Future<void> refreshData() async {
       // Fetch fresh data for a specific all playlist
-     await Provider.of<YoutubeProvider>(context, listen: false).fetchAllMainPlaylists();
+     Provider.of<YoutubeProvider>(context, listen: false).streamMainPlaylists();
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }

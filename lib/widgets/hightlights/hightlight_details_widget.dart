@@ -2,7 +2,6 @@ import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../apis/youtube_api.dart';
 import '../../components/utils.dart';
 import '../../models/highlightmodel/highlight_model.dart';
 import '../images/resizable_image_widget_2.dart';
@@ -44,9 +43,7 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
 
     // Determine text
     String? text;
-    if (youtubeItem != null) {
-      text = YouTubeApiService().formatDuration(youtubeItem.duration, youtubeItem.liveBroadcastContent);
-    } else if (youtubePlaylist != null) {
+   if (youtubePlaylist != null) {
       text = youtubePlaylist.itemCount.toString();
     } else {
       text = null;

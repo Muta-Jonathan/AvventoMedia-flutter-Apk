@@ -24,7 +24,7 @@ class _YoutubeMusicPlaylistVerticalWidgetState extends State<YoutubeMusicPlaylis
   void initState() {
     super.initState();
     // Fetch music playlists using the provider and listen to changes
-    Provider.of<YoutubeProvider>(context, listen: false).fetchAllMusicPlaylists();
+    Provider.of<YoutubeProvider>(context, listen: false).streamMusicPlaylists();
   }
 
   @override

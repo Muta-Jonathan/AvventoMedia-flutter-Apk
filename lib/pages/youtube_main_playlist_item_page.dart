@@ -40,7 +40,7 @@ class _YoutubePlaylistItemPageState extends State<YoutubeMainPlaylistItemPage> {
 
     Future<void> refreshData() async {
       // Fetch fresh data for a specific playlist
-      await Provider.of<YoutubeProvider>(context, listen: false).fetchAllMusicPlaylistItem(playlistId:  youtubePlaylistController.selectedPlaylist.value!.id);
+      Provider.of<YoutubeProvider>(context, listen: false).streamMainPlaylistItems(playlistId:  youtubePlaylistController.selectedPlaylist.value!.id);
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }

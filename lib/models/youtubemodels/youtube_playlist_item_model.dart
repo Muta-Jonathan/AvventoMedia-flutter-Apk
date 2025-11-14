@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class YouTubePlaylistItemModel {
   final String id;
   final String title;
@@ -76,4 +78,33 @@ class YouTubePlaylistItemModel {
       privacyStatus: privacyStatus ?? this.privacyStatus,
     );
   }
+
+  factory YouTubePlaylistItemModel.fromFirestore(String docId, Map<String, dynamic> data) {
+    final info = data; // Fields are stored directly in the document
+
+    DateTime publishedAt = DateTime.now();
+
+    if (info['publishedAt'] != null) {
+      if (info['publishedAt'] is Timestamp) {
+        publishedAt = (info['publishedAt'] as Timestamp).toDate();
+      } else if (info['publishedAt'] is String) {
+        publishedAt = DateTime.tryParse(info['publishedAt']) ?? DateTime.now();
+      }
+    }
+    print("docId: $docId, data: $data");
+    return YouTubePlaylistItemModel(
+      id: docId,
+      videoId: info['id'] ?? '',
+      title: info['title'] ?? '',
+      description: info['description'] ?? '',
+      thumbnailUrl: info['thumbnailUrl'] ?? '',
+      channelTitle: info['channelTitle'] ?? '',
+      duration: info['duration'] ?? '',
+      views: info['views'] ?? '',
+      liveBroadcastContent: info['liveBroadcastContent'] ?? '',
+      privacyStatus: info['privacyStatus'] ?? '',
+      publishedAt: publishedAt,
+    );
+  }
+
 }

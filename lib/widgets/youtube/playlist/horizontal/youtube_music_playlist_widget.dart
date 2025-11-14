@@ -17,7 +17,6 @@ import '../../../../routes/routes.dart';
 import '../../../common/no_internet_widget.dart';
 import '../../../text/label_place_holder.dart';
 
-
 class YoutubeMusicPlaylistWidget extends StatefulWidget {
   const YoutubeMusicPlaylistWidget({super.key});
 
@@ -34,7 +33,7 @@ class _YoutubeMusicPlaylistWidget extends State<YoutubeMusicPlaylistWidget> {
   void initState() {
     super.initState();
     // Fetch music playlist using the provider and listen to changes
-    Provider.of<YoutubeProvider>(context, listen: false).fetchAllMusicPlaylists();
+    Provider.of<YoutubeProvider>(context, listen: false).streamMusicPlaylists();
     // Check initial connectivity and update state
     Connectivity().checkConnectivity().then((result) {
       setState(() {

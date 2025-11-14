@@ -28,6 +28,7 @@ class AppConstants {
   static const String apiKeysAPI = "apiKeys";
   static const String desiredPlaylistId = "desiredPlaylistId";
   static const String youtube = "youtube";
+  static const String playlists = "playlists";
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const azuracastAPI ='https://radio1.avventomedia.org/api/nowplaying/avventoradio';
   static const azuracastPodcastAPI ='https://radio1.avventomedia.org/api/station/avventoradio/podcasts';
@@ -131,4 +132,9 @@ class AppConstants {
   /// ***************** FONT SIZE ****************
   static const double fontSize18 = 18;
   static const double fontSize20 = 20;
+
+  /// ***************** CHANNEL NAMES ****************
+  static const String avventoKidsChannel = "AvventoKids";
+  static const String avventoMusicChannel = "AvventoMusic";
+  static const String avventoMainChannel = "AvventoProductions";
 }

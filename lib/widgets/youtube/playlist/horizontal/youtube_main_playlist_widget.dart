@@ -33,7 +33,7 @@ class _YoutubeMainPlaylistWidget extends State<YoutubeMainPlaylistWidget> {
   void initState() {
     super.initState();
     // Fetch Main playlist using the provider and listen to changes
-    Provider.of<YoutubeProvider>(context, listen: false).fetchAllMainPlaylists();
+    Provider.of<YoutubeProvider>(context, listen: false).streamMainPlaylists();
     // Check initial connectivity and update state
     Connectivity().checkConnectivity().then((result) {
       setState(() {

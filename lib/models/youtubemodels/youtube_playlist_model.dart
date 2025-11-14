@@ -1,4 +1,5 @@
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class YoutubePlaylistModel {
   final String id;
@@ -70,6 +71,21 @@ class YoutubePlaylistModel {
       thumbnailUrl: thumbnailUrl,
       itemCount: validItemCount,
       publishedAt: publishedAt,
+    );
+  }
+
+  factory YoutubePlaylistModel.fromFirestore(String docId, Map<String, dynamic> data) {
+    return YoutubePlaylistModel(
+      id: docId,
+      title: data['title'] ?? '',
+      description: data['description'] ?? '',
+      thumbnailUrl: data['thumbnailUrl'] ?? '',
+      itemCount: data['itemCount'] ?? 0,
+      publishedAt: data['publishedAt'] != null
+          ? (data['publishedAt'] is Timestamp
+          ? (data['publishedAt'] as Timestamp).toDate()
+          : DateTime.parse(data['publishedAt'].toString()))
+          : DateTime.now(),
     );
   }
 
