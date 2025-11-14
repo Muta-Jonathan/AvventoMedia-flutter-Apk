@@ -89,6 +89,8 @@ class AppConstants {
       "";
   static const String donateTitle = "Give a Lift to the Gospel 🚀🌍";
   static const String donateMessage = "Your contribution means a lot as we fly the gospel to the whole world. Please consider donating to us today.";
+  static const String donateButton = "Support Us on YouTube";
+  static const String avventoJoinYtUrl = "https://www.youtube.com/@AvventoProductions/join";
 
 
   /// ***************** PRAYER REQUEST PAGE ****************

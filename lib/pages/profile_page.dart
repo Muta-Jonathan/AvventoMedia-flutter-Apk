@@ -1,10 +1,10 @@
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_donation_buttons/donationButtons/ko-fiButton.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../components/app_constants.dart';
 import '../components/utils.dart';
@@ -92,7 +92,25 @@ class ProfilePage extends StatelessWidget {
                                   maxLines: 3,
                                 ),
                                 const Gap(10),
-                                const KofiButton(text:AppConstants.kofiText,kofiName: AppConstants.kofiName,kofiColor: KofiColor.Red),
+                                ElevatedButton.icon(
+                                  onPressed: () async {
+                                    final uri = Uri.parse(AppConstants.avventoJoinYtUrl);
+                                    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+                                      throw 'Could not launch ${AppConstants.avventoJoinYtUrl}';
+                                    }
+                                  },
+                                  icon: const Icon(Icons.card_giftcard, color: Colors.white),
+                                  label: TextOverlay(label: AppConstants.donateButton,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.onPrimary,
+                                    fontSize: Utils.calculateWidth(context,0.04),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red.shade500,
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                    textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
