@@ -15,55 +15,36 @@ class YoutubeMainPlaylistPage extends StatefulWidget {
 }
 
 class _YoutubeMainPlaylistPageState extends State<YoutubeMainPlaylistPage> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
-
-    Future<void> refreshData() async {
-      // Fetch fresh data for a specific all playlist
-     Provider.of<YoutubeProvider>(context, listen: false).streamMainPlaylists();
-
-      await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
-    }
     return Scaffold(
-      backgroundColor:   Theme.of(context).colorScheme.surface,
-      body: RefreshIndicator(
-          backgroundColor: Colors.white,
-          color: Colors.orange,
-          onRefresh: refreshData,
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverAppBar(
-                backgroundColor:   Theme.of(context).colorScheme.surface,
-                iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-                expandedHeight: Utils.calculateHeight(context, 0.12),
-                floating: false,
-                pinned: true,
-                flexibleSpace: FlexibleSpaceBar(
-                  stretchModes: const [
-                    StretchMode.blurBackground
-                  ],
-                  title: TextOverlay(
-                    label: AppConstants.avventoMain,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    maxLines: 1,
-                    fontSize: AppConstants.fontSize20,
-                  ),
-                  centerTitle: false,
-                  expandedTitleScale: 1,
-                  collapseMode: CollapseMode.pin,
-                  titlePadding: const EdgeInsets.only(left: 48,bottom: 14),
-                ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+            expandedHeight: Utils.calculateHeight(context, 0.12),
+            floating: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              stretchModes: const [StretchMode.blurBackground],
+              title: TextOverlay(
+                label: AppConstants.avventoMain,
+                color: Theme.of(context).colorScheme.onPrimary,
+                maxLines: 1,
+                fontSize: AppConstants.fontSize20,
               ),
-              const YoutubeMainPlaylistVerticalWidget(),
-            ],
+              centerTitle: false,
+              expandedTitleScale: 1,
+              collapseMode: CollapseMode.pin,
+              titlePadding: const EdgeInsets.only(left: 48, bottom: 14),
+            ),
           ),
+          // Stream-based vertical playlist widget
+          const YoutubeMainPlaylistVerticalWidget(),
+        ],
       ),
     );
   }
 }
-

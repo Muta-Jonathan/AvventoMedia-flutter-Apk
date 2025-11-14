@@ -91,8 +91,6 @@ class FirestoreServiceAPI extends GetxController{
     });
   }
 
-
-
   // Fetch a single playlist by ID Path: playlists/{channelName}/playlists/{playlistId}
   Future<Map<String, dynamic>?> fetchPlaylistById(
       String channelName,
