@@ -66,8 +66,18 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
         player: YoutubePlayer(
           controller: _controller,
           showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.red,
-
+          progressIndicatorColor: Colors.redAccent,
+          progressColors: ProgressBarColors(
+            playedColor: Colors.redAccent,
+            handleColor: Colors.redAccent,     // thumb color
+            bufferedColor: Colors.grey,
+            backgroundColor: Colors.grey[600],
+          ),
+          onReady: () {
+            setState(() {
+              isPlayerReady = true;
+            });
+          },
           ),
             builder: (context, player) {
               return Column(
