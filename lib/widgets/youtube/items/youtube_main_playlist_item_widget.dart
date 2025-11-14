@@ -28,7 +28,7 @@ class YoutubeMainPlaylistItemWidgetState extends State<YoutubeMainPlaylistItemWi
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         // Fetch Main playlist item using the provider and listen to changes
-        Provider.of<YoutubeProvider>(context, listen: false).fetchAllMainPlaylistItem(playlistId: youtubePlaylistController.selectedPlaylist.value!.id);
+        Provider.of<YoutubeProvider>(context, listen: false).streamMainPlaylistItems(playlistId: youtubePlaylistController.selectedPlaylist.value!.id);
       }
     });
   }

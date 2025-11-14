@@ -6,63 +6,60 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../apis/firestore_service_api.dart';
+import '../../../../components/app_constants.dart';
 import '../../../../controller/youtube_playlist_controller.dart';
 import '../../../../routes/routes.dart';
 import '../../../providers/youtube_provider.dart';
 
-class YoutubeMusicPlaylistVerticalWidget extends StatefulWidget {
-  const YoutubeMusicPlaylistVerticalWidget({super.key,});
-
-  @override
-  State<YoutubeMusicPlaylistVerticalWidget> createState() => _YoutubeMusicPlaylistVerticalWidgetState();
-}
-
-class _YoutubeMusicPlaylistVerticalWidgetState extends State<YoutubeMusicPlaylistVerticalWidget> {
-  final youtubePlaylistController = Get.put(YoutubePlaylistController());
-
-  @override
-  void initState() {
-    super.initState();
-    // Fetch music playlists using the provider and listen to changes
-    Provider.of<YoutubeProvider>(context, listen: false).fetchAllMusicPlaylists();
-  }
+class YoutubeMusicPlaylistVerticalWidget extends StatelessWidget {
+  const YoutubeMusicPlaylistVerticalWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<YoutubeProvider>(
-      builder: (context, youtubeProvider, child) {
-        if (youtubeProvider.isLoading) {
-          return const SliverToBoxAdapter(child: Center(child:LoadingWidget()));
-        } else if (youtubeProvider.youtubeMusicPlaylists.isEmpty) {
-          return const SliverToBoxAdapter(child: Center(child: Text('No items found')));
-        } else {
-          return buildSliverList(youtubeProvider);
+    final youtubePlaylistController = Get.put(YoutubePlaylistController());
+
+    return StreamBuilder<List<YoutubePlaylistModel>>(
+      stream: FirestoreServiceAPI.instance.streamPlaylists(AppConstants.avventoMusicChannel),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SliverToBoxAdapter(
+            child: Center(child: LoadingWidget()),
+          );
         }
-      },
-    );
-  }
 
-  Widget buildSliverList(YoutubeProvider youtubeProvider) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
-          final item = youtubeProvider.youtubeMusicPlaylists[index];
-          return buildYoutubePlaylistDetailsScreen(item);
-        },
-        childCount: youtubeProvider.youtubeMusicPlaylists.length,
-      ),
-    );
-  }
+        if (snapshot.hasError) {
+          return SliverToBoxAdapter(
+            child: Center(child: Text('Error: ${snapshot.error}')),
+          );
+        }
 
-  Widget buildYoutubePlaylistDetailsScreen(YoutubePlaylistModel youtubePlaylist) {
-    return GestureDetector(
-      onTap: () {
-        // Set the selected youtube playlist using the controller
-        youtubePlaylistController.setSelectedPlaylist(youtubePlaylist);
-        // Navigate to the "YoutubePlaylistPage"
-        Get.toNamed(Routes.getYoutubeMusicPlaylistItemRoute());
+        final playlists = snapshot.data ?? [];
+
+        if (playlists.isEmpty) {
+          return const SliverToBoxAdapter(
+            child: Center(child: Text('No items found')),
+          );
+        }
+
+        return SliverList(
+          delegate: SliverChildBuilderDelegate(
+                (context, index) {
+              final playlist = playlists[index];
+              return GestureDetector(
+                onTap: () {
+                  youtubePlaylistController.setSelectedPlaylist(playlist);
+                  Get.toNamed(Routes.getYoutubeMusicPlaylistItemRoute());
+                },
+                child: YoutubePlaylistDetailsVerticalWidget(
+                  youtubePlaylistModel: playlist,
+                ),
+              );
+            },
+            childCount: playlists.length,
+          ),
+        );
       },
-      child: YoutubePlaylistDetailsVerticalWidget(youtubePlaylistModel: youtubePlaylist,),
     );
   }
 }

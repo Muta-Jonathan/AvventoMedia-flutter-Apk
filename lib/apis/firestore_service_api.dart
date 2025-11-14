@@ -2,6 +2,9 @@ import 'package:avvento_media/components/app_constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
+import '../models/youtubemodels/youtube_playlist_item_model.dart';
+import '../models/youtubemodels/youtube_playlist_model.dart';
+
 
 class FirestoreServiceAPI extends GetxController{
   static FirestoreServiceAPI get instance => Get.find();
@@ -10,7 +13,8 @@ class FirestoreServiceAPI extends GetxController{
   final CollectionReference liveTv = FirebaseFirestore.instance.collection(AppConstants.liveTvAPI);
   final CollectionReference radio = FirebaseFirestore.instance.collection(AppConstants.radioAPI);
   final CollectionReference apiKeys = FirebaseFirestore.instance.collection(AppConstants.apiKeysAPI);
-  final CollectionReference ytMainPlaylistIds = FirebaseFirestore.instance.collection(AppConstants.desiredPlaylistId); // Add a reference to your playlists collection
+  final CollectionReference ytMainPlaylistIds = FirebaseFirestore.instance.collection(AppConstants.desiredPlaylistId);
+  final CollectionReference ytPlaylists = FirebaseFirestore.instance.collection(AppConstants.playlists);
 
   // Fetch playlist IDs or titles from Firestore
   Future<List<String>> fetchDesiredPlaylistIds() async {
@@ -57,4 +61,76 @@ class FirestoreServiceAPI extends GetxController{
     }
   }
 
+  // ----------------------------------------------
+  // 🔥 NEW: Firestore structure for YouTube playlists
+  // playlists/{channelName}/playlists/{playlistId}/items/{videoId}
+  // ----------------------------------------------
+
+  // // Fetch channel info Path: playlists/{channelName}/info/info
+  // Future<Map<String, dynamic>?> fetchChannelInfo(String channelName) async {
+  //   final doc = await ytPlaylists
+  //       .doc(channelName)
+  //       .collection("info")
+  //       .doc("info")
+  //       .get();
+  //   return doc.data();
+  // }
+
+  // --- PLAYLISTS ---
+  /// Stream of all playlists for a given channel (real-time) Path: playlists/{channelName}/playlists
+  Stream<List<YoutubePlaylistModel>> streamPlaylists(String channelName) {
+    final playlistsCollection = ytPlaylists.doc(channelName).collection('channel');
+
+    return playlistsCollection.snapshots().map((snapshot) {
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        // Pass the full document data instead of data['info']
+        return YoutubePlaylistModel.fromFirestore(doc.id, data);
+      }).toList();
+    });
+  }
+
+  // Fetch a single playlist by ID Path: playlists/{channelName}/playlists/{playlistId}
+  Future<Map<String, dynamic>?> fetchPlaylistById(
+      String channelName,
+      String playlistId,
+      ) async {
+    final doc = await ytPlaylists
+        .doc(channelName)
+        .collection("channel")
+        .doc(playlistId)
+        .get();
+
+    return doc.data();
+  }
+
+  /// Stream of items for a given playlist (real-time) Path: playlists/{channelName}/playlists/{playlistId}/items
+  Stream<List<YouTubePlaylistItemModel>> streamPlaylistItems(String channelName, String playlistId) {
+    final itemsCollection = ytPlaylists.doc(channelName).collection('channel').doc(playlistId).collection('items');
+    return itemsCollection
+        .orderBy('publishedAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return YouTubePlaylistItemModel.fromFirestore(doc.id, data);
+    }).toList());
+  }
+
+  // Fetch a single video by videoId Path: playlists/{channelName}/playlists/{playlistId}/items/{videoId}
+  Future<Map<String, dynamic>?> fetchVideoById(
+      String channelName,
+      String playlistId,
+      String videoId,
+      ) async {
+    final doc = await ytPlaylists
+        .doc(channelName)
+        .collection("channel")
+        .doc(playlistId)
+        .collection("items")
+        .doc(videoId)
+        .get();
+
+    return doc.data();
+  }
 }

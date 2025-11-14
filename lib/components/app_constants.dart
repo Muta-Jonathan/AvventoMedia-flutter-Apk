@@ -28,6 +28,7 @@ class AppConstants {
   static const String apiKeysAPI = "apiKeys";
   static const String desiredPlaylistId = "desiredPlaylistId";
   static const String youtube = "youtube";
+  static const String playlists = "playlists";
   static const String spreakerUrl = 'https://api.spreaker.com/v2/shows';
   static const azuracastAPI ='https://radio1.avventomedia.org/api/nowplaying/avventoradio';
   static const azuracastPodcastAPI ='https://radio1.avventomedia.org/api/station/avventoradio/podcasts';
@@ -88,6 +89,8 @@ class AppConstants {
       "";
   static const String donateTitle = "Give a Lift to the Gospel 🚀🌍";
   static const String donateMessage = "Your contribution means a lot as we fly the gospel to the whole world. Please consider donating to us today.";
+  static const String donateButton = "Support Us on YouTube";
+  static const String avventoJoinYtUrl = "https://www.youtube.com/@AvventoProductions/join";
 
 
   /// ***************** PRAYER REQUEST PAGE ****************
@@ -131,4 +134,9 @@ class AppConstants {
   /// ***************** FONT SIZE ****************
   static const double fontSize18 = 18;
   static const double fontSize20 = 20;
+
+  /// ***************** CHANNEL NAMES ****************
+  static const String avventoKidsChannel = "AvventoKids";
+  static const String avventoMusicChannel = "AvventoMusic";
+  static const String avventoMainChannel = "AvventoProductions";
 }
