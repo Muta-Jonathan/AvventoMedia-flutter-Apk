@@ -35,7 +35,7 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
         autoPlay: true,
         mute: false,
         loop: false,
-        forceHD: false,
+        forceHD: true,
         enableCaption: false,
         isLive: selected.liveBroadcastContent == 'live',
         useHybridComposition: true,
