@@ -99,6 +99,7 @@ class _SearchPageState extends State<SearchPage> {
       body: Column(
         children: [
           _buildCategoryChips(),
+          const SizedBox(height: 8),
           Expanded(
             child: _searchText.isEmpty
                 ? _buildSearchHistory()
@@ -330,7 +331,7 @@ class _SearchPageState extends State<SearchPage> {
                 _showCategoryBottomSheet(category);   // Open sheet
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 decoration: BoxDecoration(
                   color: isSelected ? Colors.amber : Theme.of(context).colorScheme.secondary,
                   borderRadius: BorderRadius.circular(30),
@@ -368,40 +369,6 @@ class _SearchPageState extends State<SearchPage> {
         }).toList(),
       ),
     );
-  }
-
-  // ---------------- LOGIC ----------------
-
-  void _openItem(dynamic item) async {
-    if (item is YoutubePlaylistModel) {
-      youtubePlaylistController.setSelectedPlaylist(item);
-      Get.toNamed(Routes.getYoutubeKidsPlaylistItemRoute());
-    } else if (item is YouTubePlaylistItemModel) {
-      youtubeItemController.setSelectedEpisode(item);
-      Get.toNamed(Routes.getWatchYoutubeRoute());
-    } else if (item is LiveTvModel) {
-      liveTvController.selectedTv(item);
-      Get.toNamed(Routes.getLiveTvRoute());
-    } else if (item is RadioModel) {
-      radioController.selectedRadio(item);
-      Get.toNamed(Routes.getListenRoute());
-    }
-  }
-
-  String getItemTitle(dynamic item) {
-    if (item is YoutubePlaylistModel) return item.title;
-    if (item is YouTubePlaylistItemModel) return item.title;
-    if (item is LiveTvModel) return item.name;
-    if (item is RadioModel) return item.name;
-    return '';
-  }
-
-  String getItemThumbnail(dynamic item) {
-    if (item is YoutubePlaylistModel) return item.thumbnailUrl;
-    if (item is YouTubePlaylistItemModel) return item.thumbnailUrl;
-    if (item is LiveTvModel) return item.imageUrl;
-    if (item is RadioModel) return item.imageUrl;
-    return '';
   }
 
   void _showCategoryBottomSheet(String category) {
@@ -524,6 +491,49 @@ class _SearchPageState extends State<SearchPage> {
         );
       },
     );
+  }
+
+  // ---------------- LOGIC ----------------
+
+  void _openItem(dynamic item) async {
+    if (item is YoutubePlaylistModel) {
+      youtubePlaylistController.setSelectedPlaylist(item);
+
+      if (item.channelName == AppConstants.avventoKidsChannel) {
+        Get.toNamed(Routes.getYoutubeKidsPlaylistItemRoute());
+      }
+      else if (item.channelName == AppConstants.avventoMusicChannel) {
+        Get.toNamed(Routes.getYoutubeMusicPlaylistItemRoute());
+      }
+      else {
+        Get.toNamed(Routes.getYoutubeMainPlaylistItemRoute());
+      }
+    } else if (item is YouTubePlaylistItemModel) {
+      youtubeItemController.setSelectedEpisode(item);
+      Get.toNamed(Routes.getWatchYoutubeRoute());
+    } else if (item is LiveTvModel) {
+      liveTvController.selectedTv(item);
+      Get.toNamed(Routes.getLiveTvRoute());
+    } else if (item is RadioModel) {
+      radioController.selectedRadio(item);
+      Get.toNamed(Routes.getListenRoute());
+    }
+  }
+
+  String getItemTitle(dynamic item) {
+    if (item is YoutubePlaylistModel) return item.title;
+    if (item is YouTubePlaylistItemModel) return item.title;
+    if (item is LiveTvModel) return item.name;
+    if (item is RadioModel) return item.name;
+    return '';
+  }
+
+  String getItemThumbnail(dynamic item) {
+    if (item is YoutubePlaylistModel) return item.thumbnailUrl;
+    if (item is YouTubePlaylistItemModel) return item.thumbnailUrl;
+    if (item is LiveTvModel) return item.imageUrl;
+    if (item is RadioModel) return item.imageUrl;
+    return '';
   }
 
   List<dynamic> _filterByCategory() {
