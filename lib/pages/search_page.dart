@@ -350,7 +350,7 @@ class _SearchPageState extends State<SearchPage> {
                     Text(
                       category,
                       style: TextStyle(
-                        color: isSelected ? Colors.black54 : Colors.white,
+                        color: isSelected ? Colors.black54 : Theme.of(context).colorScheme.onSecondary,
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
@@ -358,7 +358,7 @@ class _SearchPageState extends State<SearchPage> {
                     const SizedBox(width: 6),
                     Icon(
                       Icons.keyboard_arrow_down,
-                      color: isSelected ? Colors.black54 : Colors.white,
+                      color: isSelected ? Colors.black54 : Theme.of(context).colorScheme.onSecondary,
                       size: 22,
                     ),
                   ],
