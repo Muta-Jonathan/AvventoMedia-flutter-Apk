@@ -2,7 +2,6 @@ import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/youtube_playlist_controller.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

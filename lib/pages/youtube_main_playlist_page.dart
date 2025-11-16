@@ -2,9 +2,7 @@ import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../widgets/providers/youtube_provider.dart';
 import '../widgets/youtube/playlist/vertical/youtube_main_playlist_vertical_widget.dart';
 
 class YoutubeMainPlaylistPage extends StatefulWidget {

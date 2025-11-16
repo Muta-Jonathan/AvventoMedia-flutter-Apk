@@ -4,13 +4,11 @@ import 'package:avvento_media/widgets/youtube/playlist/vertical/youtube_playlist
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../apis/firestore_service_api.dart';
 import '../../../../components/app_constants.dart';
 import '../../../../controller/youtube_playlist_controller.dart';
 import '../../../../routes/routes.dart';
-import '../../../providers/youtube_provider.dart';
 
 class YoutubeMusicPlaylistVerticalWidget extends StatelessWidget {
   const YoutubeMusicPlaylistVerticalWidget({super.key});

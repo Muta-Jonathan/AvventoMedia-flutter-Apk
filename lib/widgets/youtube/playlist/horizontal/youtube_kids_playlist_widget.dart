@@ -86,8 +86,7 @@ class YoutubeKidsPlaylistWidget extends StatelessWidget {
                           child: const Icon(CupertinoIcons.forward, size: 18, color: Colors.white),
                         ),
                         onPressed: () {
-                          print('🌟REDItem: Navigate to kids playlist');
-                         // Get.toNamed(Routes.getYoutubeKidsPlaylistRoute());
+                         Get.toNamed(Routes.getYoutubeKidsPlaylistRoute());
                         }
                       );
                     } else {

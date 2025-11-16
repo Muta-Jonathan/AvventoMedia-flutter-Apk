@@ -467,9 +467,9 @@ class _SearchPageState extends State<SearchPage> {
                 return RadioListTile<String>(
                   title: TextOverlay(label: option, color: Theme.of(context).colorScheme.onPrimary),
                   activeColor: Colors.amber,
-                  fillColor: MaterialStateProperty.resolveWith<Color>(
+                  fillColor: WidgetStateProperty.resolveWith<Color>(
                         (states) {
-                      if (states.contains(MaterialState.selected)) {
+                      if (states.contains(WidgetState.selected)) {
                         return Colors.amber;            // selected ring
                       }
                       return Colors.grey;               // unselected ring (inactive)
@@ -548,11 +548,11 @@ class _SearchPageState extends State<SearchPage> {
 
     switch (_selectedSubCategory) {
       case "TV":
-        filtered = filtered.where((item) => item is LiveTvModel).toList();
+        filtered = filtered.whereType<LiveTvModel>().toList();
         break;
 
       case "Radio":
-        filtered = filtered.where((item) => item is RadioModel).toList();
+        filtered = filtered.whereType<RadioModel>().toList();
         break;
 
       case AppConstants.avventoKidsChannel:

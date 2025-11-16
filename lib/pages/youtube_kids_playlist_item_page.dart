@@ -2,11 +2,9 @@ import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/youtube_playlist_controller.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 import '../apis/firestore_service_api.dart';
 import '../controller/youtube_playlist_item_controller.dart';
@@ -15,9 +13,7 @@ import '../routes/routes.dart';
 import '../widgets/common/loading_widget.dart';
 import '../widgets/common/share_button.dart';
 import '../widgets/images/resizable_image_widget_2.dart';
-import '../widgets/providers/youtube_provider.dart';
 import '../widgets/text/show_more_desc.dart';
-import '../widgets/youtube/items/youtube_kids_playlist_item_widget.dart';
 import '../widgets/youtube/items/youtube_playlist_item_details_widget.dart';
 
 class YoutubeKidsPlaylistItemPage extends StatefulWidget {
@@ -170,7 +166,6 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
                       onTap: () {
                         final youtubePlaylistItemController =
                         Get.find<YoutubePlaylistItemController>();
-                        print('REDItem: ${item.title}, ${item.id}');
                         youtubePlaylistItemController.setSelectedEpisode(item);
                         Get.toNamed(Routes.getWatchYoutubeRoute());
                       },

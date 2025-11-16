@@ -5,13 +5,11 @@ import 'package:avvento_media/widgets/youtube/items/youtube_playlist_item_detail
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 import '../../../apis/firestore_service_api.dart';
 import '../../../controller/youtube_playlist_controller.dart';
 import '../../../controller/youtube_playlist_item_controller.dart';
 import '../../../routes/routes.dart';
-import '../../providers/youtube_provider.dart';
 
 class YoutubeKidsPlaylistItemWidget extends StatelessWidget {
   const YoutubeKidsPlaylistItemWidget({super.key});
@@ -55,7 +53,6 @@ class YoutubeKidsPlaylistItemWidget extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   youtubePlaylistItemController.setSelectedEpisode(item);
-                  print('REDItem: $item');
                   Get.toNamed(Routes.getWatchYoutubeRoute());
                 },
                 child: YoutubePlaylistItemDetailsWidget(

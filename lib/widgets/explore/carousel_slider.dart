@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:avvento_media/widgets/common/loading_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +8,8 @@ import 'carousel_card.dart';
 import '../providers/programs_provider.dart';
 
 class CarouselSlider extends StatefulWidget {
+  const CarouselSlider({super.key});
+
   @override
   _CarouselSliderState createState() => _CarouselSliderState();
 }

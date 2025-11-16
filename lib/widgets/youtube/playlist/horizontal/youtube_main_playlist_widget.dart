@@ -1,17 +1,12 @@
-import 'dart:math';
-
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/youtube_playlist_controller.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
-import 'package:avvento_media/widgets/providers/youtube_provider.dart';
 import 'package:avvento_media/widgets/youtube/playlist/horizontal/youtube_playlist_details_widget.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../apis/firestore_service_api.dart';
 import '../../../../routes/routes.dart';

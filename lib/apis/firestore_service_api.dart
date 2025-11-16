@@ -98,7 +98,7 @@ class FirestoreServiceAPI extends GetxController {
 
     return playlistsCollection.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
+        final data = doc.data();
         return YoutubePlaylistModel.fromFirestore(doc.id, data);
       }).toList();
     });
@@ -129,7 +129,7 @@ class FirestoreServiceAPI extends GetxController {
         .snapshots()
         .map((snapshot) =>
         snapshot.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
+          final data = doc.data();
           return YouTubePlaylistItemModel.fromFirestore(doc.id, data);
         }).toList());
   }

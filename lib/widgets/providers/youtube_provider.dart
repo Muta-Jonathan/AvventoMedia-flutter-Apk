@@ -72,17 +72,13 @@ class YoutubeProvider extends ChangeNotifier {
     _isLoadingItems = true;
     notifyListeners();
 
-    print("🔹 Starting to stream music playlists...");
-
     _firestoreAPI.streamPlaylistItems(AppConstants.avventoMusicChannel, playlistId).listen((items) {
-      print("✅ Received ${items.length} music playlists from Firestore");
       _youtubeMusicPlaylistItems = items;
       _isLoadingItems = false;
       notifyListeners();
     },
-      onError: (error) {
-      print("❌ Error streaming music playlists: $error");
-    },);
+      onError: (error) {},
+    );
   }
 
   void streamKidsPlaylistItems({playlistId}) {
