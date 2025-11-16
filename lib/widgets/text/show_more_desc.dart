@@ -90,7 +90,7 @@ class ShowMoreDescriptionState extends State<ShowMoreDescription> {
                     },
                     child: const TextOverlay(
                         label: AppConstants.readMore,
-                        color: Colors.orange, fontSize: 14,
+                        color: Colors.amber, fontSize: 14,
                         underline: true),
                     ),
               ],

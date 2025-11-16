@@ -30,7 +30,7 @@ ThemeData lightTheme = ThemeData(
     tertiaryContainer: Colors.grey[600]!.withOpacity(0.5),
   ),
   textSelectionTheme: const TextSelectionThemeData(
-    cursorColor: Colors.orange,
-    selectionHandleColor: Colors.orange,
+    cursorColor: Colors.amber,
+    selectionHandleColor: Colors.amber,
   ),
 );

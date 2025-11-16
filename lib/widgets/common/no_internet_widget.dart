@@ -9,9 +9,9 @@ class NoConnectionMessage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8.0),
         decoration: BoxDecoration(
-          color: Colors.orange[100]!.withOpacity(0.2),
+          color: Colors.amber[100]!.withOpacity(0.2),
           border: Border.all(
-            color: Colors.orange, // Orange border color
+            color: Colors.amber, // Orange border color
             width: 1.0, // Border width
           ),
           borderRadius: BorderRadius.circular(8.0), // Rounded corners
@@ -19,7 +19,7 @@ class NoConnectionMessage extends StatelessWidget {
         child: const Text(
           "No internet connection",
           style: TextStyle(
-            color: Colors.orange, // Text color
+            color: Colors.amber, // Text color
           ),
         ),
       ),

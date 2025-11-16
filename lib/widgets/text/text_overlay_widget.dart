@@ -44,11 +44,11 @@ class TextOverlay extends StatelessWidget {
           fontWeight: fontWeight,
           color: color,
           decoration: underline ? TextDecoration.underline : TextDecoration.none,
-          decorationColor: Colors.orange,
+          decorationColor: Colors.amber,
         ),
         options: const LinkifyOptions(humanize: true),
         linkStyle: const TextStyle(
-            color: Colors.orange,
+            color: Colors.amber,
             fontStyle: FontStyle.italic
         ),
       )

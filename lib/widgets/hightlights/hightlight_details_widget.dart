@@ -82,7 +82,7 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
             const SizedBox(height: 10.0,),
             SizedBox(
                 width: Utils.calculateWidth(context, 0.8),
-                child: TextOverlay(label: model.title, color: Colors.orange,allCaps: true, maxLines: 1,)),
+                child: TextOverlay(label: model.title, color: Colors.amber,allCaps: true, maxLines: 1,)),
             const SizedBox(height: 2.0,),
             SizedBox(
                 width: Utils.calculateWidth(context, 0.8),

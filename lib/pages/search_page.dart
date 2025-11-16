@@ -18,6 +18,7 @@ import '../models/youtubemodels/youtube_playlist_item_model.dart';
 import '../models/youtubemodels/youtube_playlist_model.dart';
 import '../routes/routes.dart';
 import '../widgets/common/loading_widget.dart';
+import '../widgets/icons/boxed_icon_widget.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -33,6 +34,15 @@ class _SearchPageState extends State<SearchPage> {
 
   /// Cached content = playlists + items + highlights + liveTv + radio
   List<dynamic> _content = [];
+  // Currently selected category filter
+  String? _selectedCategory; // null = all
+
+  final List<String> _categories = [
+    "Playlist",
+    "Video",
+    "Live" // Live = TV + Radio
+  ];
+  String? _selectedSubCategory;
 
   final youtubePlaylistController = Get.put(YoutubePlaylistController());
   final youtubeItemController = Get.put(YoutubePlaylistItemController());
@@ -81,9 +91,6 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _content
-        .where((item) => getItemTitle(item).toLowerCase().contains(_searchText.toLowerCase()))
-        .toList();
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -91,10 +98,11 @@ class _SearchPageState extends State<SearchPage> {
       appBar: _buildSearchBar(context),
       body: Column(
         children: [
+          _buildCategoryChips(),
           Expanded(
             child: _searchText.isEmpty
                 ? _buildSearchHistory()
-                : _buildResults(filtered),
+                : _buildResults(_filterByCategory()),
           ),
         ],
       ),
@@ -307,6 +315,61 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Widget _buildCategoryChips() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
+      child: Row(
+        children: _categories.map((category) {
+          final bool isSelected = _selectedCategory == category;
+
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: GestureDetector(
+              onTap: () {
+                _showCategoryBottomSheet(category);   // Open sheet
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.amber : Theme.of(context).colorScheme.secondary,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: isSelected
+                      ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.20),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                      : [],
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      category,
+                      style: TextStyle(
+                        color: isSelected ? Colors.black54 : Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: isSelected ? Colors.black54 : Colors.white,
+                      size: 22,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   // ---------------- LOGIC ----------------
 
   void _openItem(dynamic item) async {
@@ -339,6 +402,161 @@ class _SearchPageState extends State<SearchPage> {
     if (item is LiveTvModel) return item.imageUrl;
     if (item is RadioModel) return item.imageUrl;
     return '';
+  }
+
+  void _showCategoryBottomSheet(String category) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        List<String> options = [];
+
+        switch (category) {
+          case "Playlist":
+            options = [
+              AppConstants.avventoKidsChannel,
+              AppConstants.avventoMusicChannel,
+              AppConstants.avventoMainChannel
+            ];
+            break;
+
+          case "Video":
+            options = [
+              AppConstants.avventoKidsChannel,
+              AppConstants.avventoMusicChannel,
+              AppConstants.avventoMainChannel
+            ];
+            break;
+
+          case "Live":
+            options = ["TV", "Radio"];
+            break;
+        }
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // HEADER
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Title: Category selected
+                  Text(
+                    category,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      // Clear button
+                      if (_selectedSubCategory != null)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedSubCategory = null;
+                              _selectedCategory = null; // Clear chip highlight
+                            });
+                            Get.back();
+                          },
+                          child: const Text(
+                            "Clear",
+                            style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+
+                      const SizedBox(width: 20),
+
+                      // Exit button (X)
+                      GestureDetector(
+                        onTap: () =>  Get.back(),
+                        child: BoxedIcon(
+                          backgroundColor: Colors.white.withOpacity(0.2),
+                          icon: Icons.close_rounded,
+                          borderRadius: 20,
+                          iconColor: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+
+            // RADIO OPTIONS
+            ListView(
+              shrinkWrap: true,
+              children: options.map((option) {
+                return RadioListTile<String>(
+                  title: TextOverlay(label: option, color: Theme.of(context).colorScheme.onPrimary),
+                  activeColor: Colors.amber,
+                  fillColor: MaterialStateProperty.resolveWith<Color>(
+                        (states) {
+                      if (states.contains(MaterialState.selected)) {
+                        return Colors.amber;            // selected ring
+                      }
+                      return Colors.grey;               // unselected ring (inactive)
+                    },
+                  ),
+                  value: option,
+                  groupValue: _selectedSubCategory,
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCategory = category; // highlight chip
+                      _selectedSubCategory = value;
+                    });
+                    Get.back();
+                  },
+                );
+              }).toList(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<dynamic> _filterByCategory() {
+    List<dynamic> filtered = _content
+        .where((item) =>
+        getItemTitle(item)
+            .toLowerCase()
+            .contains(_searchText.toLowerCase()))
+        .toList();
+
+    if (_selectedSubCategory == null) return filtered;
+
+    switch (_selectedSubCategory) {
+      case "TV":
+        filtered = filtered.where((item) => item is LiveTvModel).toList();
+        break;
+
+      case "Radio":
+        filtered = filtered.where((item) => item is RadioModel).toList();
+        break;
+
+      case AppConstants.avventoKidsChannel:
+      case AppConstants.avventoMusicChannel:
+      case AppConstants.avventoMainChannel:
+        filtered = filtered.where((item) =>
+        (item is YoutubePlaylistModel &&
+            item.channelName == _selectedSubCategory) ||
+            (item is YouTubePlaylistItemModel &&
+                item.channelName == _selectedSubCategory)).toList();
+        break;
+    }
+
+    return filtered;
   }
 
   @override

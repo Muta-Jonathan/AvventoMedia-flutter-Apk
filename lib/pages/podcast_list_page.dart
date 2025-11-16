@@ -28,7 +28,7 @@ class _PodcastListPageState extends State<PodcastListPage> {
       backgroundColor:   Theme.of(context).colorScheme.surface,
       body: RefreshIndicator(
           backgroundColor: Colors.white,
-          color: Colors.orange,
+          color: Colors.amber,
           onRefresh: refreshData,
           child: CustomScrollView(
             slivers: <Widget>[

@@ -87,7 +87,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                     child: TextOverlay(
                       label: widget.episode.title,
                       fontWeight: FontWeight.bold,
-                      color:  widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.orange : Theme.of(context).colorScheme.onPrimary,
+                      color:  widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.amber : Theme.of(context).colorScheme.onPrimary,
                       fontSize: Utils.calculateWidth(context,0.042),
                     ),
                   ),
@@ -97,7 +97,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                     child: TextOverlay(
                       label: widget.episode.playlistMediaArtist,
                       fontSize: 14,
-                      color: widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.orange : Theme.of(context).colorScheme.onPrimary,
+                      color: widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.amber : Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 1),
@@ -107,7 +107,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                       label: "Published $publishedDate",
                       fontSize: 11,
                       maxLines: 1,
-                      color: widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.orange : Theme.of(context).colorScheme.onPrimary,
+                      color: widget.audioPlayerController.currentMediaItem?.id == widget.episode.id ? Colors.amber : Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
                 ],

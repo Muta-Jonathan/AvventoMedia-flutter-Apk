@@ -42,7 +42,7 @@ class CustomListTileState extends State<CustomListTile> {
       trailing: widget.isSwitch
           ? Switch.adaptive(
         value: _isSwitchOn,
-        activeColor: Colors.orange,
+        activeColor: Colors.amber,
         onChanged: (value) {
           setState(() {
             widget.onSwitchChanged?.call(value);

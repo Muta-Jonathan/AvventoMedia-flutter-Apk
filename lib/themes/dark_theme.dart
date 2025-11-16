@@ -29,8 +29,8 @@ ThemeData darkTheme = ThemeData(
         tertiaryContainer: Colors.grey.withOpacity(0.5),
     ),
     textSelectionTheme: const TextSelectionThemeData(
-        cursorColor: Colors.orange,
-        selectionHandleColor: Colors.orange,
+        cursorColor: Colors.amber,
+        selectionHandleColor: Colors.amber,
     ),
     textTheme: const TextTheme(
         bodyMedium: TextStyle(

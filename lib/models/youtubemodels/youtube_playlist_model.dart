@@ -8,6 +8,7 @@ class YoutubePlaylistModel {
   final String thumbnailUrl;
   final int itemCount;
   final DateTime publishedAt;
+  final String channelName;
 
   YoutubePlaylistModel({
     required this.id,
@@ -16,6 +17,7 @@ class YoutubePlaylistModel {
     required this.thumbnailUrl,
     required this.itemCount,
     required this.publishedAt,
+    this.channelName = '',
   });
 
   factory YoutubePlaylistModel.fromJson(Map<String, dynamic> json) {
@@ -81,6 +83,7 @@ class YoutubePlaylistModel {
       description: data['description'] ?? '',
       thumbnailUrl: data['thumbnailUrl'] ?? '',
       itemCount: data['itemCount'] ?? 0,
+      channelName: data['channelName'] ?? '',
       publishedAt: data['publishedAt'] != null
           ? (data['publishedAt'] is Timestamp
           ? (data['publishedAt'] as Timestamp).toDate()
