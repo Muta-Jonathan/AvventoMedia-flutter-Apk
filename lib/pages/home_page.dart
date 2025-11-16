@@ -1,5 +1,7 @@
+import 'package:avvento_media/pages/search_page.dart';
 import 'package:avvento_media/widgets/hightlights/hightlights_widget.dart';
 import 'package:avvento_media/widgets/radio/live_radio_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../components/app_constants.dart';
@@ -26,6 +28,17 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Theme.of(context).colorScheme.surface,
               floating: true,
               iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+              actions: [
+                IconButton(
+                  icon: Icon(CupertinoIcons.search, color: Theme.of(context).colorScheme.onPrimary),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SearchPage()),
+                    );
+                  },
+                )
+              ],
               title: Column(
                 children: [
                   const SizedBox(height: 15),

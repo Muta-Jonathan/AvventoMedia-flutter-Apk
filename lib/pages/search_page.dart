@@ -1,15 +1,19 @@
-import 'dart:convert';
-
 import 'package:avvento_media/components/app_constants.dart';
+import 'package:avvento_media/controller/live_tv_controller.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../apis/firestore_service_api.dart';
 import '../components/utils.dart';
+import '../controller/radio_controller.dart';
 import '../controller/youtube_playlist_controller.dart';
+import '../controller/youtube_playlist_item_controller.dart';
+import '../models/livetvmodel/livetv_model.dart';
+import '../models/radiomodel/radio_model.dart';
 import '../models/youtubemodels/youtube_playlist_item_model.dart';
 import '../models/youtubemodels/youtube_playlist_model.dart';
 import '../routes/routes.dart';
@@ -24,321 +28,318 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
-  final List<String> _searchHistory = []; // Memory for last searches
+  final List<String> _searchHistory = [];
   String _searchText = "";
-  late List<dynamic> _content = [];
+
+  /// Cached content = playlists + items + highlights + liveTv + radio
+  List<dynamic> _content = [];
+
   final youtubePlaylistController = Get.put(YoutubePlaylistController());
+  final youtubeItemController = Get.put(YoutubePlaylistItemController());
+  final liveTvController = Get.put(LiveTvController());
+  final radioController = Get.put(RadioController());
 
-  Future<void> loadCachedPlaylists() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Filter keys starting with "cached_playlists_"
-    final keys = prefs.getKeys().where((key) => key.startsWith('cached_playlists_')).toList();
-    final List<dynamic> allPlaylists = [];
 
-    for (var key in keys) {
-      final String? cachedData = prefs.getString(key);
-      if (cachedData != null) {
-        final List<dynamic> playlistJsonList = jsonDecode(cachedData);
-
-        // Identify the type of model stored and decode accordingly
-        final List<dynamic> playlistsOrItems = playlistJsonList.map((json) {
-          if (json['itemCount'] != null) {
-            // If `etag` and `id` exist, it's a YoutubePlaylistModel
-            return YoutubePlaylistModel.fromJson(json);
-          } else if (json['videoId'] != null) {
-            // If `videoId` exists, it's a YouTubePlaylistItemModel
-            return YouTubePlaylistItemModel.fromJson(json);
-          }
-          return null; // Ignore invalid entries
-        }).whereType<dynamic>().toList();
-
-        allPlaylists.addAll(playlistsOrItems);
-      }
-    }
-
-    // for (var key in keys) {
-    //   final String? cachedData = prefs.getString(key);
-    //   if (cachedData != null) {
-    //     final List<dynamic> playlistJsonList = jsonDecode(cachedData);
-    //     final List<YoutubePlaylistModel> playlists = playlistJsonList
-    //         .map((json) => YoutubePlaylistModel.fromJson(json))
-    //         .toList();
-    //     allPlaylists.addAll(playlists);
-    //   }
-    // }
-
-    setState(() {
-      _content = allPlaylists;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    loadCachedPlaylists();
+    _loadAllCachedContent();
   }
 
-  // Dropdown filters state
-  // String _selectedCategory = "Category";
+  Future<void> _loadAllCachedContent() async {
+    final api = FirestoreServiceAPI.instance;
+    final List<dynamic> loaded = [];
+
+
+    // All your channel names
+    final List<String> channelNames = [
+      AppConstants.avventoKidsChannel,
+      AppConstants.avventoMusicChannel,
+      AppConstants.avventoMainChannel,
+    ];
+
+    // LOAD DATA FROM CACHE (no internet needed)
+    loaded.addAll(await api.loadLiveTvOffline());
+    loaded.addAll(await api.loadRadioOffline());
+
+    // Load playlists + items for each channel
+    for (final channelName in channelNames) {
+      // Load playlists
+      final playlists = await api.loadPlaylistsOffline(channelName);
+      loaded.addAll(playlists);
+
+      // Load items for each playlist
+      for (final playlist in playlists) {
+        final items = await api.loadPlaylistItemsOffline(channelName, playlist.id);
+        loaded.addAll(items);
+      }
+    }
+
+    setState(() => _content = loaded);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final filteredContent = _content
-        .where((item) =>
-        item.title.toLowerCase().contains(_searchText.toLowerCase()))
+    final filtered = _content
+        .where((item) => getItemTitle(item).toLowerCase().contains(_searchText.toLowerCase()))
         .toList();
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (value) {
-                    setState(() {
-                      _searchText = value;
-                    });
-                  },
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                    hintText: "Search content",
-                    hintStyle: const TextStyle(
-                      color: Colors.grey,
-                    ),
-                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                    suffixIcon: _searchText.isNotEmpty
-                        ? IconButton(
-                      icon: const Icon(Icons.clear, color: Colors.grey),
-                      onPressed: () {
-                        setState(() {
-                          _searchController.clear();
-                          _searchText = "";
-                        });
-                      },
-                    )
-                        : null,
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.secondary,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context); // Exit back to main page
-                },
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 16),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      resizeToAvoidBottomInset: true,
+      appBar: _buildSearchBar(context),
       body: Column(
         children: [
-          // Filters
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // _buildDropdown("Category", _selectedCategory, (value) {
-                //   setState(() {
-                //     _selectedCategory = value!;
-                //   });
-                // }),
-              ],
-            ),
-          ),
-
-          // Search History
           Expanded(
             child: _searchText.isEmpty
                 ? _buildSearchHistory()
-                : _buildSearchResults(filteredContent),
+                : _buildResults(filtered),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchResults(List<dynamic> filteredContent) {
-    if (filteredContent.isEmpty) {
-      return const Center(
-        child: Text(
-          "No results found.",
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+  // ---------------- UI COMPONENTS ----------------
+
+  PreferredSizeWidget _buildSearchBar(BuildContext context) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      elevation: 0,
+      title: Row(
+        children: [
+          Expanded(child: _buildSearchInput(context)),
+          const SizedBox(width: 8),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              AppConstants.cancel,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchInput(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) => setState(() => _searchText = value),
+        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          hintText: AppConstants.searchContent,
+          hintStyle: const TextStyle(color: Colors.grey),
+          prefixIcon: const Icon(CupertinoIcons.search, color: Colors.grey),
+          suffixIcon: _searchText.isNotEmpty
+              ? IconButton(
+            icon: const Icon(Icons.clear, color: Colors.grey),
+            onPressed: () {
+              setState(() {
+                _searchController.clear();
+                _searchText = "";
+              });
+            },
+          )
+              : null,
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.secondary,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildResults(List<dynamic> list) {
+    if (list.isEmpty) {
+      return const Center(
+        child: Text(AppConstants.noResults, style: TextStyle(color: Colors.grey)),
       );
     }
 
     return ListView.builder(
-      itemCount: filteredContent.length,
-      itemBuilder: (context, index) {
-        final item = filteredContent[index];
-        return GestureDetector(
-            onTap: () {
-              // Set the selected youtube playlist using the controller
-              youtubePlaylistController.setSelectedPlaylist(item);
-              // Navigate to the "YoutubePlaylistPage"
-              Get.toNamed(Routes.getYoutubeMusicPlaylistItemRoute());
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 10.0, left: AppConstants.leftMain,right: 8.0,top: 2),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child:Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(right: AppConstants.rightMain),
-                    ),
-                    const SizedBox(height: 5,),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: CachedNetworkImage(
-                            imageUrl: item.thumbnailUrl,
-                            fit: BoxFit.cover,
-                            width: Utils.calculateWidth(context, 0.36),
-                            height:  Utils.calculateHeight(context, 0.094),
-                            placeholder: (context, url) => Center(
-                              child: SizedBox(
-                                  width:  Utils.calculateWidth(context, 0.1),
-                                  height:  Utils.calculateWidth(context, 0.1),
-                                  child: const LoadingWidget()
-                              ),
-                            ),
-                            errorWidget: (context, _, error) => Icon(
-                              Icons.error,
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: Utils.calculateWidth(context,0.52),
-                              child: TextOverlay(
-                                label: item.title,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontSize: Utils.calculateWidth(context,0.042),
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(5.0),
-                              child: Container(
-                                color: Theme.of(context).colorScheme.tertiaryContainer,
-                                padding: const EdgeInsets.all(3.5),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icon/folder.svg',
-                                      color:  Theme.of(context).colorScheme.onSecondary,
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                    TextOverlay(
-                                      label: item.itemCount.toString(),
-                                      fontSize: 15,
-                                      color: Theme.of(context).colorScheme.onSecondary,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            )
-        );
-      },
+      itemCount: list.length,
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      itemBuilder: (_, index) => _buildResultTile(list[index]),
     );
   }
 
-  Widget _buildSearchHistory() {
-    return ListView(
+  Widget _buildResultTile(dynamic item) {
+    return GestureDetector(
+      onTap: () => _openItem(item),
+      child: Padding(
+        padding: const EdgeInsets.only(
+          bottom: 10,
+          left: AppConstants.leftMain,
+          right: 8,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Row(
+            children: [
+              _buildThumbnail(item),
+              const SizedBox(width: 12),
+              _buildTextSection(item),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThumbnail(item) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: CachedNetworkImage(
+        imageUrl: getItemThumbnail(item),
+        fit: BoxFit.cover,
+        width: Utils.calculateWidth(context, 0.36),
+        height: Utils.calculateHeight(context, 0.094),
+        placeholder: (_, __) => const LoadingWidget(),
+        errorWidget: (_, __, ___) => const Icon(Icons.error),
+      ),
+    );
+  }
+
+  Widget _buildTextSection(dynamic item) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_searchHistory.isNotEmpty)
-          ..._searchHistory.map(
-                (term) => ListTile(
-              leading: const Icon(Icons.history, color: Colors.grey),
-              title: Text(term),
-              onTap: () {
-                setState(() {
-                  _searchText = term;
-                  _searchController.text = term;
-                });
-              },
-            ),
+        SizedBox(
+          width: Utils.calculateWidth(context, 0.52),
+          child: TextOverlay(
+            label: getItemTitle(item),
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontSize: Utils.calculateWidth(context, 0.042),
           ),
-        if (_searchHistory.isEmpty)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "No search history yet",
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ),
+        ),
+        const SizedBox(height: 5),
+        _buildMeta(item),
       ],
     );
   }
 
-  // Widget _buildDropdown(
-  //     String label, String value, ValueChanged<String?> onChanged) {
-  //   return ClipRRect(
-  //     borderRadius: BorderRadius.circular(25.0),
-  //     child: Container(
-  //       color: Theme.of(context).colorScheme.secondary,
-  //       padding: const EdgeInsets.all(8),
-  //       height: 40,
-  //       child: DropdownButton<String>(
-  //         value: value,
-  //         underline: const SizedBox(),
-  //         items: [label, "Live", "Avvento Music", "Avvento Kids", "Avvento Productions"]
-  //             .map((item) => DropdownMenuItem<String>(
-  //           value: item,
-  //           child: Text(
-  //             item,
-  //             style: TextStyle(
-  //               color: item == label ? Colors.yellow[700] : Theme.of(context).colorScheme.onPrimary,
-  //               fontWeight:
-  //               item == label ? FontWeight.bold : FontWeight.normal,
-  //             ),
-  //           ),
-  //         ))
-  //             .toList(),
-  //         onChanged: onChanged,
-  //         icon: Icon(Icons.arrow_drop_down, color: Colors.yellow[700]),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget _buildMeta(dynamic item) {
+    if (item is YoutubePlaylistModel) {
+      // Playlist → show itemCount with folder
+      return Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.tertiaryContainer,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        padding: const EdgeInsets.all(4),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              'assets/icon/folder.svg',
+              width: 20,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              item.itemCount.toString(),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondary,
+                fontSize: 14,
+              ),
+            )
+          ],
+        ),
+      );
+    } else if (item is YouTubePlaylistItemModel) {
+      // Playlist item → show duration without container
+      return Text(
+        item.duration,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontSize: 12,
+        ),
+      );
+    } else if (item is LiveTvModel || item is RadioModel) {
+      // Live TV or Radio → show LIVE in red container
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        child: const Text(
+          AppConstants.live,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+          ),
+        ),
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildSearchHistory() {
+    if (_searchHistory.isEmpty) {
+      return const Center(
+        child: Text(AppConstants.noSearchResults, style: TextStyle(color: Colors.grey)),
+      );
+    }
+
+    return ListView(
+      children: _searchHistory.map((term) {
+        return ListTile(
+          leading: const Icon(Icons.history, color: Colors.grey),
+          title: Text(term),
+          onTap: () {
+            _searchController.text = term;
+            setState(() => _searchText = term);
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  // ---------------- LOGIC ----------------
+
+  void _openItem(dynamic item) async {
+    if (item is YoutubePlaylistModel) {
+      youtubePlaylistController.setSelectedPlaylist(item);
+      Get.toNamed(Routes.getYoutubeKidsPlaylistItemRoute());
+    } else if (item is YouTubePlaylistItemModel) {
+      youtubeItemController.setSelectedEpisode(item);
+      Get.toNamed(Routes.getWatchYoutubeRoute());
+    } else if (item is LiveTvModel) {
+      liveTvController.selectedTv(item);
+      Get.toNamed(Routes.getLiveTvRoute());
+    } else if (item is RadioModel) {
+      radioController.selectedRadio(item);
+      Get.toNamed(Routes.getListenRoute());
+    }
+  }
+
+  String getItemTitle(dynamic item) {
+    if (item is YoutubePlaylistModel) return item.title;
+    if (item is YouTubePlaylistItemModel) return item.title;
+    if (item is LiveTvModel) return item.name;
+    if (item is RadioModel) return item.name;
+    return '';
+  }
+
+  String getItemThumbnail(dynamic item) {
+    if (item is YoutubePlaylistModel) return item.thumbnailUrl;
+    if (item is YouTubePlaylistItemModel) return item.thumbnailUrl;
+    if (item is LiveTvModel) return item.imageUrl;
+    if (item is RadioModel) return item.imageUrl;
+    return '';
+  }
 
   @override
   void dispose() {

@@ -12,6 +12,7 @@ class YouTubePlaylistItemModel {
   final DateTime publishedAt;
   final String liveBroadcastContent;
   final String privacyStatus;
+  List<YouTubePlaylistItemModel> items = [];
 
   YouTubePlaylistItemModel({
     required this.id,
@@ -91,7 +92,6 @@ class YouTubePlaylistItemModel {
         publishedAt = DateTime.tryParse(info['publishedAt']) ?? DateTime.now();
       }
     }
-    print("docId: $docId, data: $data");
     return YouTubePlaylistItemModel(
       id: docId,
       videoId: info['id'] ?? '',

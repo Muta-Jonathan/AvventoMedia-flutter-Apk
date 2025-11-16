@@ -5,6 +5,7 @@ class AppConstants {
   static const String avventoSlogan = "Flying the Gospel to the Whole World!";
   static const String missNot = "Programs You shouldn't miss";
   static const String liveTv = "LIVE TV";
+  static const String live = "LIVE";
   static const String avventoMusic = "Music";
   static const String avventoKids = "Kids";
   static const String avventoMain = "Avvento Productions";
@@ -20,6 +21,11 @@ class AppConstants {
   static const String showMore = "Show More";
   static const String from = "from";
   static const String share = "Share";
+  static const String cancel = "Cancel";
+  static const String searchContent = "Search Content";
+  static const String noResults = "No results found.";
+  static const String noSearchResults = "No search history yet";
+
 
   /// ***************** API ****************
   static const String highlightsAPI = "highlights";
