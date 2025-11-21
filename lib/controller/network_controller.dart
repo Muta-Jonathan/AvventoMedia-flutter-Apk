@@ -11,7 +11,7 @@ class NetworkController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus as void Function(List<ConnectivityResult> event)?);
   }
 
   void _updateConnectionStatus(ConnectivityResult connectivityResult) {

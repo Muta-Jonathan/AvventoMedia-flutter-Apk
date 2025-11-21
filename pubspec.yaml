@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.2.0+20
+version: 1.3.0+21
 
 environment:
   sdk: '>=3.1.2 <4.0.0'
@@ -29,13 +29,13 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   # firebase_dependencies
-  firebase_core: ^2.17.0
-  cloud_firestore: ^4.17.5
+  firebase_core: ^4.2.1
+  cloud_firestore: ^6.1.0
 
   get: ^4.6.6
   http: ^0.13.5
   audio_video_progress_bar: ^2.0.0
-  just_audio: ^0.9.40
+  just_audio: ^0.10.5
   just_audio_background: ^0.0.1-beta.13
   rxdart: ^0.27.7
   flutter:
@@ -44,12 +44,12 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.3.2
-  connectivity_plus: ^4.0.2
+  connectivity_plus: ^7.0.0
   provider: ^6.0.5
   flutter_animated_icons: ^1.0.1
   jiffy: ^6.2.1
-  share_plus: ^10.0.2
-  web_socket_channel: ^2.4.0
+  share_plus: ^12.0.1
+  web_socket_channel: ^3.0.3
   floating: ^6.0.0
   animated_text_kit: ^4.2.3
   flutter_native_splash: ^2.3.4
@@ -59,7 +59,7 @@ dependencies:
   font_awesome_flutter: ^10.6.0
   intl_phone_field: ^3.2.0
   awesome_snackbar_content: ^0.1.3
-  email_validator: ^2.1.17
+  email_validator: ^3.0.0
   upgrader:
     git:
       url: 'https://github.com/Muta-Jonathan/upgrader.git'
@@ -78,7 +78,7 @@ dependencies:
   youtube_player_flutter: ^9.1.3
   flutter_svg: ^2.0.9
   insta_image_viewer: ^1.0.4
-  flutter_dotenv: ^5.1.0
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -89,7 +89,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
+  flutter_lints: ^6.0.0
   flutter_launcher_icons: ^0.14.3
   dart_code_metrics: ^5.6.0
 # For information on the generic Dart part of this file, see the

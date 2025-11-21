@@ -242,7 +242,6 @@ class PodcastPageState extends State<PodcastPage> {
             ),
           ],
         )
-
     );
   }
 }
