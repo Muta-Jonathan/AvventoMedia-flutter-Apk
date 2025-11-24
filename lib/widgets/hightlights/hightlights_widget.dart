@@ -81,9 +81,12 @@ class _HightlightsWidget extends State<HightlightsWidget> {
             if (highlightModel.type == AppConstants.avventoMusic) {
               // Navigate to the "music YoutubePlaylistPage"
               Get.toNamed(Routes.getYoutubeMusicPlaylistItemRoute());
-            } else if (highlightModel.type == AppConstants.avventoKids) {
+            } else  if (highlightModel.type == AppConstants.avventoKids) {
               // Navigate to the "Kids YoutubePlaylistPage"
               Get.toNamed(Routes.getYoutubeKidsPlaylistItemRoute());
+            } else {
+              // Navigate to the "Kids YoutubePlaylistPage"
+              Get.toNamed(Routes.getYoutubeMainPlaylistItemRoute());
             }
           }
         },

@@ -88,6 +88,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UpgradeAlert(
+      showIgnore: false,
+      showLater: true,
+      showReleaseNotes: true,
+      barrierDismissible: true,
+      dialogStyle: Platform.isIOS ? UpgradeDialogStyle.cupertino : UpgradeDialogStyle.material,
       child: Shortcuts(
         shortcuts: <LogicalKeySet, Intent>{
           LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
