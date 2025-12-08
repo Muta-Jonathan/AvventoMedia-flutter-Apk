@@ -33,12 +33,45 @@ class Utils {
     return Duration.zero;
   }
 
-  static String formatDuration(Duration duration) {
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes.remainder(60);
-    final seconds = duration.inSeconds.remainder(60);
-    return hours > 0  ? '$hours:$minutes:${seconds.toString().padLeft(2, '0')}' :'$minutes:${seconds.toString().padLeft(2, '0')}';
+  static String formatDuration(String? duration, String? liveBroadcastContent) {
+    // Handle LIVE / UPCOMING labels
+    if (liveBroadcastContent == 'live') return 'Live';
+    if (liveBroadcastContent == 'upcoming') return 'Premiere';
+    // Handle missing duration
+    if (duration == null || duration.isEmpty || duration == 'P0D') {
+      return '';
+    }
+    int h = 0, m = 0, s = 0;
+
+    // Remove the PT prefix
+    String d = duration.replaceFirst('PT', '');
+    // Extract hours
+    if (d.contains('H')) {
+      final parts = d.split('H');
+      h = int.tryParse(parts[0]) ?? 0;
+      d = parts.length > 1 ? parts[1] : '';
+    }
+    // Extract minutes
+    if (d.contains('M')) {
+      final parts = d.split('M');
+      m = int.tryParse(parts[0]) ?? 0;
+      d = parts.length > 1 ? parts[1] : '';
+    }
+    // Extract seconds
+    if (d.contains('S')) {
+      s = int.tryParse(d.replaceFirst('S', '')) ?? 0;
+    }
+    // Return HH:mm:ss when hour exists
+    if (h > 0) {
+      return '${h.toString().padLeft(2, '0')}:'
+          '${m.toString().padLeft(2, '0')}:'
+          '${s.toString().padLeft(2, '0')}';
+    }
+    // Otherwise return mm:ss
+    return '${m.toString().padLeft(2, '0')}:'
+        '${s.toString().padLeft(2, '0')}';
   }
+
 
   static Future openBrowserURL({required String url, bool inApp = false}) async {
     Uri uriUrl = Uri.parse(url);

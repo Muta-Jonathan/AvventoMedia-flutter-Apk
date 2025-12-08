@@ -51,16 +51,18 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
 
     // Determine containerColor
     Color? containerColor;
+    containerColor = Colors.black38;
     if (youtubeItem != null) {
-      if (youtubeItem.liveBroadcastContent == 'live' || youtubeItem.liveBroadcastContent == 'upcoming') {
-        containerColor = Colors.red;
+      final isLive = youtubeItem.liveBroadcastContent == 'live';
+      final isUpcoming = youtubeItem.liveBroadcastContent == 'upcoming';
+
+      if (isLive || isUpcoming) {
+        text = null;
       } else {
-        containerColor = Colors.black38;
+        if (youtubeItem.duration.isNotEmpty) {
+          text = Utils.formatDuration(youtubeItem.duration, youtubeItem.liveBroadcastContent);
+        }
       }
-    } else if (youtubePlaylist != null) {
-      containerColor = Colors.black38; // Adjust logic as needed
-    } else {
-      containerColor = null;
     }
 
     return Padding(
