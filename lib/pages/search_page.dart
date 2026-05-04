@@ -1,15 +1,12 @@
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/live_tv_controller.dart';
-import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../apis/firestore_service_api.dart';
-import '../components/utils.dart';
 import '../controller/radio_controller.dart';
 import '../controller/youtube_playlist_controller.dart';
 import '../controller/youtube_playlist_item_controller.dart';
