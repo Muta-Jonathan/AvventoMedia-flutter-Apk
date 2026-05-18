@@ -8,11 +8,14 @@ class AudioIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Lottie.asset(
-      'assets/animations/audio_indicator.json',
-      width: 80,
-      height: 80,
-      animate: isPlaying,
+    return ColorFiltered(
+      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+      child: Lottie.asset(
+        'assets/animations/audio_indicator.json',
+        width: 80,
+        height: 80,
+        animate: isPlaying,
+      ),
     );
   }
 }

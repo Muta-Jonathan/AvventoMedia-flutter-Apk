@@ -68,7 +68,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
           podcastEpisodeController.setSelectedEpisode(podcastEpisode);
 
           final provider = Provider.of<RadioPodcastProvider>(context, listen: false);
-          final episodes = provider.podcastEpisodes;
+          final episodes = provider.podcastEpisodes.reversed.toList();
           final initialIndex = episodes.indexOf(podcastEpisode);
           
           List<AudioSource> audioSources = episodes.map((ep) => AudioSource.uri(
