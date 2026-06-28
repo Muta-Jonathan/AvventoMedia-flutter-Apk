@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../components/utils.dart';
 import '../../controller/audio_player_controller.dart';
 
 class SpeedControl extends StatelessWidget {

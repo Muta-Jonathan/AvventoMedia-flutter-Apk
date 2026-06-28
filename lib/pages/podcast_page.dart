@@ -18,8 +18,11 @@ import 'package:rxdart/rxdart.dart' as r_x;
 import '../controller/audio_player_controller.dart';
 import '../controller/podcast_episode_controller.dart';
 import '../models/musicplayermodels/music_player_position.dart';
+import '../models/saved_item_model.dart';
 import '../widgets/audio_players/controls.dart';
 import '../widgets/audio_players/speed_control.dart';
+import '../widgets/common/favorite_button.dart';
+import '../widgets/common/save_button.dart';
 
 class PodcastPage extends StatefulWidget {
   const PodcastPage({super.key});
@@ -160,7 +163,7 @@ class PodcastPageState extends State<PodcastPage> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: isPlaying ? Colors.amber : Theme.of(context).colorScheme.onPrimary,
+                                color: isPlaying ? Colors.orange : Theme.of(context).colorScheme.onPrimary,
                                 fontWeight: isPlaying ? FontWeight.bold : FontWeight.normal,
                               ),
                             ),
@@ -343,7 +346,35 @@ class PodcastPageState extends State<PodcastPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               SpeedControl(audioPlayerController: _audioPlayerController),
-                              const SizedBox(width: 40),
+                              const SizedBox(width: 20),
+                              StreamBuilder<Duration?>(
+                                stream: _audioPlayerController.audioPlayer.durationStream,
+                                builder: (context, snapshot) {
+                                  final duration = snapshot.data ?? _audioPlayerController.audioPlayer.duration;
+                                  final itemToSave = SavedItem(
+                                    id: selectedEpisode.id,
+                                    type: 'podcast_episode',
+                                    title: selectedEpisode.title,
+                                    thumbnailUrl: selectedEpisode.art,
+                                    groupId: selectedEpisode.playlistMediaAlbum,
+                                    groupTitle: selectedEpisode.playlistMediaAlbum,
+                                    url: selectedEpisode.downloadLink,
+                                    duration: duration != null ? '${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}' : null,
+                                    description: selectedEpisode.description,
+                                    publishedAtItem: DateTime.fromMillisecondsSinceEpoch(selectedEpisode.publishedAt * 1000).toIso8601String(),
+                                    savedAt: DateTime.now(),
+                                  );
+                                  return Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      FavoriteButton(item: itemToSave),
+                                      const SizedBox(width: 20),
+                                      SaveButton(item: itemToSave),
+                                    ],
+                                  );
+                                }
+                              ),
+                              const SizedBox(width: 20),
                               IconButton(
                                 icon: const Icon(Icons.queue_music_rounded),
                                 color: Theme.of(context).colorScheme.onSecondary,

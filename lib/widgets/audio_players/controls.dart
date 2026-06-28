@@ -68,7 +68,7 @@ class ControlsState extends State<Controls> with SingleTickerProviderStateMixin 
             height: 60.0,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.redAccent,
+              color: Colors.orange,
             ),
             child: Align(
               alignment: Alignment.center,

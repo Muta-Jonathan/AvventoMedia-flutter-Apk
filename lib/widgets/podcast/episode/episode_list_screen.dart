@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../../components/utils.dart';
 import '../../../controller/audio_player_controller.dart';
 import '../../../controller/podcast_controller.dart';
 import '../../../controller/podcast_episode_controller.dart';

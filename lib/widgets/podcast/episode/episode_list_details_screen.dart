@@ -148,7 +148,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
               padding: const EdgeInsets.only(left: 8.0, right: 4.0),
               child: Icon(
                 isPlayingAudio ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded,
-                color: isSelected ? Colors.amber : Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                color: isSelected ? Colors.orange : Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
                 size: 32,
               ),
             ),

@@ -151,4 +151,24 @@ class AppConstants {
   static const String avventoKidsChannel = "AvventoKids";
   static const String avventoMusicChannel = "AvventoMusic";
   static const String avventoMainChannel = "AvventoProductions";
+
+  /// ***************** LIBRARY ****************
+  static const String myLibrary = "MY LIBRARY";
+  static const String favorites = "Favorites";
+  static const String myPlaylists = "My Playlists";
+  static const String newPlaylist = "New Playlist";
+  static const String save = "+ Save";
+  static const String addToFavorites = "Add to Favorites";
+  static const String saveToPlaylist = "Save to Playlist";
+  static const String noFavorites = "No favorites yet";
+  static const String noPlaylists = "No playlists yet";
+  static const String createPlaylist = "Create";
+  static const String alreadySaved = "Already saved";
+  static const String savedToFavorites = "Added to Favorites";
+  static const String removedFromFavorites = "Removed from Favorites";
+  static const String savedToPlaylist = "Saved to playlist";
+  static const String playlistNameHint = "Playlist name";
+  static const String playlistCreated = "Playlist created";
+  static const String playlistDeleted = "Playlist deleted";
+  static const String playlistNameEmpty = "Please enter a playlist name";
 }

@@ -1,5 +1,8 @@
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/youtube_playlist_item_controller.dart';
+import 'package:avvento_media/models/saved_item_model.dart';
+import '../widgets/common/favorite_button.dart';
+import '../widgets/common/save_button.dart';
 import 'package:avvento_media/widgets/common/share_button.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,10 +69,10 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
         player: YoutubePlayer(
           controller: _controller,
           showVideoProgressIndicator: true,
-          progressIndicatorColor: Colors.redAccent,
+          progressIndicatorColor: Colors.amber,
           progressColors: ProgressBarColors(
-            playedColor: Colors.redAccent,
-            handleColor: Colors.redAccent,     // thumb color
+            playedColor: Colors.amber,
+            handleColor: Colors.amber,     // thumb color
             bufferedColor: Colors.grey,
             backgroundColor: Colors.grey[600],
           ),
@@ -120,9 +123,8 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                           fontSize: 15,
                         ),
                         const SizedBox(height: 8,),
-                        Row(
-                          mainAxisAlignment: view == 'No views' ? MainAxisAlignment.start : MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             (youtubePlaylistItemController.selectedPlaylistItem.value!.liveBroadcastContent == 'live' ||
                                 youtubePlaylistItemController.selectedPlaylistItem.value!.liveBroadcastContent == 'upcoming' ||
@@ -141,7 +143,46 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                                 ),
                               ],
                             ),
-                            ShareButton(onShareTap: (){ Utils.shareYouTubeVideo(selectedItem.videoId); }),
+                            const SizedBox(height: 12),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  ShareButton(onShareTap: (){ Utils.shareYouTubeVideo(selectedItem.videoId); }),
+                                  const SizedBox(width: 12),
+                                  ValueListenableBuilder<YoutubePlayerValue>(
+                                    valueListenable: _controller,
+                                    builder: (context, value, _) {
+                                      final currentDuration = _controller.metadata.duration;
+                                      final itemToSave = SavedItem(
+                                        id: selectedItem.id,
+                                        type: 'video',
+                                        title: selectedItem.title,
+                                        thumbnailUrl: selectedItem.thumbnailUrl,
+                                        groupId: selectedItem.channelTitle,
+                                        groupTitle: selectedItem.channelTitle,
+                                        videoId: selectedItem.videoId,
+                                        duration: currentDuration.inSeconds > 0 
+                                            ? '${currentDuration.inMinutes}:${(currentDuration.inSeconds % 60).toString().padLeft(2, '0')}' 
+                                            : Utils.formatDuration(selectedItem.duration, selectedItem.liveBroadcastContent),
+                                        description: selectedItem.description,
+                                        views: selectedItem.views,
+                                        publishedAtItem: selectedItem.publishedAt.toIso8601String(),
+                                        savedAt: DateTime.now(),
+                                      );
+                                      return Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          FavoriteButton(item: itemToSave),
+                                          const SizedBox(width: 12),
+                                          SaveButton(item: itemToSave),
+                                        ],
+                                      );
+                                    }
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),

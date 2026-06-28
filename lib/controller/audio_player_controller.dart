@@ -31,8 +31,6 @@ class AudioPlayerController extends GetxController {
     
     // Listen to sequence state changes to dynamically update current item and next/prev availability
     audioPlayer.sequenceStateStream.listen((sequenceState) {
-      if (sequenceState == null) return;
-      
       final currentItem = sequenceState.currentSource?.tag as MediaItem?;
       if (currentItem != null) {
         currentMediaItem = currentItem;
@@ -110,8 +108,8 @@ class AudioPlayerController extends GetxController {
 
   /// Stop audio and completely hide the mini player globally
   Future<void> closeMiniPlayer() async {
-    await audioPlayer.stop();
     isPlayerActive.value = false;
+    await audioPlayer.stop();
   }
 
   /// Hide mini player on the current page

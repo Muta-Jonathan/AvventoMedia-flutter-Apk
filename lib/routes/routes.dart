@@ -1,9 +1,11 @@
 import 'package:avvento_media/pages/podcast_page.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
+import '../pages/favorites_page.dart';
 import '../pages/listen_page.dart';
 import '../pages/live_tv_list_page.dart';
 import '../pages/main_page.dart';
+import '../pages/my_playlists_page.dart';
 import '../pages/online_radio_page.dart';
 import '../pages/podcast_episode_list_page.dart';
 import '../pages/podcast_list_page.dart';
@@ -38,6 +40,8 @@ class Routes {
   static String youtubeMainPlaylistItem = "/youtube/avventoProductions/playlist/item";
   static String watchYoutube = "/watch/youtube/video";
   static String search = "/search";
+  static String libraryFavorites = "/library/favorites";
+  static String libraryPlaylists = "/library/playlists";
 
   static  String getHomeRoute() => home;
   static  String getListenRoute() => listen;
@@ -57,6 +61,8 @@ class Routes {
   static  String getYoutubeMainPlaylistItemRoute() => youtubeMainPlaylistItem;
   static  String getWatchYoutubeRoute() => watchYoutube;
   static  String getSearchRoute() => search;
+  static  String getLibraryFavoritesRoute() => libraryFavorites;
+  static  String getLibraryPlaylistsRoute() => libraryPlaylists;
 
   static List<GetPage> routes = [
     GetPage(name: home, page: () => const MainPage()),
@@ -77,5 +83,7 @@ class Routes {
     GetPage(name: youtubeMainPlaylistItem, page: () => const YoutubeMainPlaylistItemPage()),
     GetPage(name: watchYoutube, page: () => const YoutubeWatchPage()),
     GetPage(name: search, page: () => const SearchPage()),
+    GetPage(name: libraryFavorites, page: () => const FavoritesPage()),
+    GetPage(name: libraryPlaylists, page: () => const MyPlaylistsPage()),
   ];
 }

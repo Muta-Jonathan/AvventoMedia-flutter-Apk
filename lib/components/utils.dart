@@ -41,6 +41,12 @@ class Utils {
     if (duration == null || duration.isEmpty || duration == 'P0D') {
       return '';
     }
+    
+    // If it doesn't start with PT, it's likely already formatted (e.g. "1:30")
+    if (!duration.startsWith('PT')) {
+      return duration;
+    }
+
     int h = 0, m = 0, s = 0;
 
     // Remove the PT prefix

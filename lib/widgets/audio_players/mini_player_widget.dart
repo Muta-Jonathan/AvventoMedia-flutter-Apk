@@ -26,8 +26,9 @@ class MiniPlayerWidget extends StatelessWidget {
         builder: (context, snapshot) {
           final state = snapshot.data;
           final isPlaying = state?.playing ?? false;
+          final isBuffering = state?.processingState == ProcessingState.buffering || state?.processingState == ProcessingState.loading;
 
-          return _buildFloatingMiniPlayer(context, controller, isPlaying);
+          return _buildFloatingMiniPlayer(context, controller, isPlaying, isBuffering);
         },
       );
     });
@@ -37,6 +38,7 @@ class MiniPlayerWidget extends StatelessWidget {
     BuildContext context,
     AudioPlayerController controller,
     bool isPlaying,
+    bool isBuffering,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
     final mediaItem = controller.currentMediaItem!;
@@ -61,7 +63,13 @@ class MiniPlayerWidget extends StatelessWidget {
             Get.toNamed(Routes.getPodcastRoute());
           }
         },
-        child: Material(
+        child: Dismissible(
+          key: const Key('mini_player_dismissible'),
+          direction: DismissDirection.down,
+          onDismissed: (_) {
+            controller.closeMiniPlayer();
+          },
+          child: Material(
           type: MaterialType.transparency,
           child: Container(
           decoration: BoxDecoration(
@@ -83,29 +91,6 @@ class MiniPlayerWidget extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Progress bar for podcasts
-              if (!isLive)
-                StreamBuilder<Duration>(
-                  stream: controller.audioPlayer.positionStream,
-                  builder: (context, posSnapshot) {
-                    final position = posSnapshot.data ?? Duration.zero;
-                    final duration = controller.audioPlayer.duration ?? Duration.zero;
-                    final progress = duration.inMilliseconds > 0
-                        ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0)
-                        : 0.0;
-
-                    return ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        minHeight: 2.5,
-                        backgroundColor: colorScheme.surface.withValues(alpha: 0.5),
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.amber.shade600),
-                      ),
-                    );
-                  },
-                ),
-
               // Main content row
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -256,16 +241,24 @@ class MiniPlayerWidget extends StatelessWidget {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Colors.amber.shade700,
+                          color: Colors.orange.shade700,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          isPlaying
-                              ? CupertinoIcons.pause_fill
-                              : CupertinoIcons.play_fill,
-                          color: Colors.black,
-                          size: 16,
-                        ),
+                        child: isBuffering 
+                          ? const Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: CircularProgressIndicator(
+                                color: Colors.black,
+                                strokeWidth: 2.0,
+                              ),
+                            )
+                          : Icon(
+                              isPlaying
+                                  ? CupertinoIcons.pause_fill
+                                  : CupertinoIcons.play_fill,
+                              color: Colors.black,
+                              size: 16,
+                            ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -304,10 +297,34 @@ class MiniPlayerWidget extends StatelessWidget {
                   ],
                 ),
               ), // End Padding
+              
+              // Progress bar for podcasts (moved to bottom)
+              if (!isLive)
+                StreamBuilder<Duration>(
+                  stream: controller.audioPlayer.positionStream,
+                  builder: (context, posSnapshot) {
+                    final position = posSnapshot.data ?? Duration.zero;
+                    final duration = controller.audioPlayer.duration ?? Duration.zero;
+                    final progress = duration.inMilliseconds > 0
+                        ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0)
+                        : 0.0;
+
+                    return ClipRRect(
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(14)),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 2.5,
+                        backgroundColor: colorScheme.surface.withValues(alpha: 0.5),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.orange.shade600),
+                      ),
+                    );
+                  },
+                ),
             ],
           ), // End Column
-        ), // End Container
+          ), // End Container
         ), // End Material
+        ), // End Dismissible
       ), // End GestureDetector
     ); // End Positioned
   }
