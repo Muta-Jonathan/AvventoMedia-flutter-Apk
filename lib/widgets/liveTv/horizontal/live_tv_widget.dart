@@ -46,11 +46,18 @@ class _LiveTvWidget extends State<LiveTvWidget> {
             List liveTvList = snapshot.data!.docs;
 
             if (liveTvList.isNotEmpty) {
+              // Keep LIVE NOW channels first; push non-live ones to the end.
+              final sorted = [...liveTvList]..sort((a, b) {
+                final aLive = LiveTvModel.fromSnapShot(a as DocumentSnapshot).status == AppConstants.liveNow;
+                final bLive = LiveTvModel.fromSnapShot(b as DocumentSnapshot).status == AppConstants.liveNow;
+                if (aLive == bLive) return 0;
+                return aLive ? -1 : 1;
+              });
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: liveTvList.length,
+                itemCount: sorted.length,
                 itemBuilder: (BuildContext context, int index) {
-                  DocumentSnapshot documentSnapshot = liveTvList[index];
+                  DocumentSnapshot documentSnapshot = sorted[index] as DocumentSnapshot;
 
                   LiveTvModel liveTvModel = LiveTvModel.fromSnapShot(documentSnapshot);
 

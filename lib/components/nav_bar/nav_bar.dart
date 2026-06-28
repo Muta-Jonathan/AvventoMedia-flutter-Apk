@@ -9,6 +9,7 @@ import 'package:upgrader/upgrader.dart';
 import '../../pages/home_page.dart';
 import '../../pages/listen_page.dart';
 import '../../pages/profile_page.dart';
+import '../../pages/search_page.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -36,6 +37,7 @@ class _NavBarState extends State<NavBar> {
                 children: const [
                   HomePage(),
                   ListenPage(),
+                  SearchPage(),
                   ProfilePage(),
                 ],
               ),
@@ -54,9 +56,10 @@ class _NavBarState extends State<NavBar> {
           elevation: 0,
           //Bottom Navigation Bar with [Home,Listen,Profile]
           items: const [
-            BottomNavigationBarItem(label: "Videos",icon: Icon(CupertinoIcons.play_circle)),
-            BottomNavigationBarItem(label: "Audio",icon: Icon(CupertinoIcons.headphones)),
-            BottomNavigationBarItem(label: "More",icon: Icon(CupertinoIcons.person_crop_circle)),
+            BottomNavigationBarItem(label: "Videos", icon: Icon(CupertinoIcons.play_circle)),
+            BottomNavigationBarItem(label: "Audio", icon: Icon(CupertinoIcons.headphones)),
+            BottomNavigationBarItem(label: "Search", icon: Icon(CupertinoIcons.search)),
+            BottomNavigationBarItem(label: "More", icon: Icon(CupertinoIcons.person_crop_circle)),
           ],
           ),
         ),
