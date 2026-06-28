@@ -90,6 +90,9 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
           radioProvider.radioStation!.streamUrl,
           currentMediaItem!,
         );
+      } else {
+        // Dynamically update the notification if the radio is already playing
+        _audioPlayerController.updateRadioProgram(radioProvider.radioStation!.nowPlayingTitle);
       }
     }
   }

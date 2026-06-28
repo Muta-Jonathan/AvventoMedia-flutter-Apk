@@ -1,7 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
+import 'package:audio_service/audio_service.dart';
+import 'package:permission_handler/permission_handler.dart';
+import '../main.dart';
+import 'audio_handler.dart';
 
 class AudioPlayerController extends GetxController {
   late AudioPlayer audioPlayer;
@@ -29,6 +32,8 @@ class AudioPlayerController extends GetxController {
     audioPlayer = AudioPlayer();
     audioPlayer.setLoopMode(LoopMode.off);
     
+    _initAudioService();
+    
     // Listen to sequence state changes to dynamically update current item and next/prev availability
     audioPlayer.sequenceStateStream.listen((sequenceState) {
       final currentItem = sequenceState.currentSource?.tag as MediaItem?;
@@ -39,6 +44,30 @@ class AudioPlayerController extends GetxController {
       hasNext.value = audioPlayer.hasNext;
       hasPrevious.value = audioPlayer.hasPrevious;
     });
+  }
+
+  Future<void> _initAudioService() async {
+    // Request notification permission for Android 13+ before initializing the audio service
+    await Permission.notification.request();
+
+    audioHandler = await AudioService.init(
+      builder: () => MyAudioHandler(audioPlayer),
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+        androidNotificationChannelName: 'Audio playback',
+        androidNotificationIcon: 'mipmap/ic_logo_icon',
+        androidNotificationOngoing: true,
+        androidStopForegroundOnPause: true,
+      ),
+    );
+  }
+
+  Future<void> updateRadioProgram(String newTitle) async {
+    if (currentMediaItem != null) {
+      final updatedItem = currentMediaItem!.copyWith(title: newTitle);
+      currentMediaItem = updatedItem;
+      await audioHandler.updateMediaItem(updatedItem);
+    }
   }
 
   Future<void> setAudioSource(String url, MediaItem mediaItemTag) async {
@@ -53,7 +82,10 @@ class AudioPlayerController extends GetxController {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       isPlayerActive.value = true;
     });
+    // Set audio source normally
     await audioPlayer.setAudioSource(audioSource!);
+    // Push initial media item to AudioHandler
+    await audioHandler.updateMediaItem(mediaItemTag);
   }
 
   Future<void> setAudioPlaylist(List<AudioSource> sources, int initialIndex) async {
