@@ -52,23 +52,22 @@ class PodcastPageState extends State<PodcastPage> {
       _audioPlayerController.isLive.value = false;
       _audioPlayerController.hideMiniPlayer(); // Hide on player page
     });
-    // Check if the selected episode is different from the current media item
-    final selectedEpisode = episodeController.selectedEpisode.value!;
-    // Check if the selected episode is different from the current media item
-    // var currentMediaItem = _audioPlayerController.currentMediaItem.value;
 
-    if (_audioPlayerController.currentMediaItem == null || _audioPlayerController.currentMediaItem!.id != selectedEpisode.id) {
+    // The playlist was already set by EpisodeListScreen before navigation.
+    // Only seed currentMediaItem for the UI if the controller doesn't have one
+    // yet (e.g. sequenceStateStream hasn't fired). Never call setAudioSource
+    // here — doing so would interrupt the in-flight setAudioPlaylist load.
+    final selectedEpisode = episodeController.selectedEpisode.value!;
+    if (_audioPlayerController.currentMediaItem == null ||
+        _audioPlayerController.currentMediaItem!.id != selectedEpisode.id) {
       _audioPlayerController.currentMediaItem = MediaItem(
         id: selectedEpisode.id,
         title: selectedEpisode.title,
         artist: selectedEpisode.playlistMediaArtist,
         artUri: Uri.parse(selectedEpisode.art),
       );
-      _audioPlayerController.setAudioSource(
-          selectedEpisode.downloadLink,
-          _audioPlayerController.currentMediaItem!);
-      }
     }
+  }
 
   @override
   void dispose() {
