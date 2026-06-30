@@ -96,12 +96,20 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                         Positioned(
                           top: 5,
                           left: 5,
-                          child: IconButton(
-                            icon: const Icon(
-                              CupertinoIcons.chevron_back,
-                              color: Colors.white,
+                          child: Material(
+                            color: Colors.black38,
+                            shape: const CircleBorder(),
+                            child: InkWell(
+                              customBorder: const CircleBorder(),
+                              onTap: () => Get.back(),
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Icon(
+                                  CupertinoIcons.chevron_back,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                            onPressed: () => Get.back(),
                           ),
                         ),
                       ],

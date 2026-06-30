@@ -120,11 +120,17 @@ class _WatchPageState extends State<WatchPage> {
                   Positioned(
                     top: 5, // Adjust the top position as needed
                     left: 5, // Adjust the left position as needed
-                    child: IconButton(
-                      icon: const Icon(CupertinoIcons.chevron_back,color: Colors.white),
-                      onPressed: () {
-                        Get.back();
-                      },
+                    child: Material(
+                      color: Colors.black38,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: () => Get.back(),
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(CupertinoIcons.chevron_back, color: Colors.white),
+                        ),
+                      ),
                     ),
                   ),
                 ],
