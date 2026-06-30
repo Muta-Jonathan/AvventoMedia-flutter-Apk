@@ -152,16 +152,16 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
                           child: player,
                         ),
                         Positioned(
-                          top: 5,
-                          left: 5,
-                          child: Material(
-                            color: Colors.black38,
-                            shape: const CircleBorder(),
-                            child: InkWell(
-                              customBorder: const CircleBorder(),
-                              onTap: () => Get.back(),
+                          top: 10,
+                          left: 10,
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => Get.back(),
+                            child: Material(
+                              color: Colors.black38,
+                              shape: const CircleBorder(),
                               child: const Padding(
-                                padding: EdgeInsets.all(8.0),
+                                padding: EdgeInsets.all(10.0),
                                 child: Icon(
                                   CupertinoIcons.chevron_back,
                                   color: Colors.white,
