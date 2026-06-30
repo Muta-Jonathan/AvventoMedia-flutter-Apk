@@ -305,11 +305,11 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: AppConstants.leftMain, right: AppConstants.rightMain, top: 8),
+          padding: const EdgeInsets.only(left: AppConstants.leftMain, right: AppConstants.rightMain, top: 0),
           child: Divider(color: Theme.of(context).colorScheme.tertiaryContainer),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: AppConstants.leftMain, right: AppConstants.rightMain, top: 8, bottom: 4),
+          padding: const EdgeInsets.only(left: AppConstants.leftMain, right: AppConstants.rightMain, top: 4, bottom: 8),
           child: TextOverlay(
             label: 'You Might Also Like',
             color: Theme.of(context).colorScheme.onPrimary,
