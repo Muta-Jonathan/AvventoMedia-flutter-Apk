@@ -70,7 +70,9 @@ class LiveTvDetailsVerticalWidgetState extends State<LiveTvDetailsVerticalWidget
                     ClipRRect(
                       borderRadius: BorderRadius.circular(5.0),
                       child: Container(
-                        color: Colors.red,
+                        color: widget.liveTvModel.status == AppConstants.liveNow
+                            ? Colors.red
+                            : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.75),
                         padding: const EdgeInsets.all(3.5),
                         child:
                         Row(

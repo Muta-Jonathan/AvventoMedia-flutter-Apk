@@ -42,14 +42,21 @@ class _LiveTvVerticalWidgetState extends State<LiveTvVerticalWidget> {
           );
         } else {
           List liveTvList = snapshot.data!.docs;
+          // Keep LIVE NOW channels first; push non-live ones to the end.
+          final sorted = [...liveTvList]..sort((a, b) {
+            final aLive = LiveTvModel.fromSnapShot(a as DocumentSnapshot).status == AppConstants.liveNow;
+            final bLive = LiveTvModel.fromSnapShot(b as DocumentSnapshot).status == AppConstants.liveNow;
+            if (aLive == bLive) return 0;
+            return aLive ? -1 : 1;
+          });
           return SliverList(
             delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
-                DocumentSnapshot documentSnapshot = liveTvList[index];
+                DocumentSnapshot documentSnapshot = sorted[index] as DocumentSnapshot;
                 LiveTvModel liveTvModel = LiveTvModel.fromSnapShot(documentSnapshot);
                 return buildLiveTvDetailsScreen(liveTvModel);
               },
-              childCount: liveTvList.length,
+              childCount: sorted.length,
             ),
           );
         }

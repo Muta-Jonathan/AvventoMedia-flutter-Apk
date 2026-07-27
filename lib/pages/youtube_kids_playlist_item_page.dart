@@ -1,6 +1,7 @@
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/youtube_playlist_controller.dart';
+import 'package:avvento_media/models/saved_item_model.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +12,8 @@ import '../controller/youtube_playlist_item_controller.dart';
 import '../models/youtubemodels/youtube_playlist_item_model.dart';
 import '../routes/routes.dart';
 import '../widgets/common/loading_widget.dart';
+import '../widgets/common/favorite_button.dart';
+import '../widgets/common/save_button.dart';
 import '../widgets/common/share_button.dart';
 import '../widgets/images/resizable_image_widget_2.dart';
 import '../widgets/text/show_more_desc.dart';
@@ -103,17 +106,46 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
                     ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      children: [
-                        ShareButton(
-                          onShareTap: () {
-                            Utils.shareYouTubePlaylist(
-                              playlistId: selectedPlaylist.id,
-                              playlistTitle: selectedPlaylist.title,
-                            );
-                          },
-                        ),
-                      ],
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ShareButton(
+                            onShareTap: () {
+                              Utils.shareYouTubePlaylist(
+                                playlistId: selectedPlaylist.id,
+                                playlistTitle: selectedPlaylist.title,
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          Builder(
+                            builder: (context) {
+                              final itemToSave = SavedItem(
+                                id: selectedPlaylist.id,
+                                type: 'playlist',
+                                title: selectedPlaylist.title,
+                                thumbnailUrl: selectedPlaylist.thumbnailUrl,
+                                groupId: selectedPlaylist.id,
+                                groupTitle: selectedPlaylist.title,
+                                description: selectedPlaylist.description,
+                                publishedAtItem: selectedPlaylist.publishedAt.toIso8601String(),
+                                savedAt: DateTime.now(),
+                              );
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FavoriteButton(item: itemToSave),
+                                  const SizedBox(width: 12),
+                                  SaveButton(item: itemToSave),
+                                ],
+                              );
+                            }
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Row(

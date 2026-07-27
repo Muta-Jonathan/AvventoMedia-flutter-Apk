@@ -28,6 +28,9 @@ class _LiveTvDetailsWidget extends State<LiveTvDetailsWidget> {
               icon: CupertinoIcons.dot_radiowaves_left_right,
               text: widget.liveTvModel.status,
               textFontSize: 10,
+              containerColor: widget.liveTvModel.status == 'LIVE NOW'
+                  ? Colors.red
+                  : Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.75),
             ),
           ),
           const SizedBox(height: 15.0,),

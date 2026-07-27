@@ -7,6 +7,9 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../controller/podcast_controller.dart';
+import '../models/saved_item_model.dart';
+import '../widgets/common/favorite_button.dart';
+import '../widgets/common/save_button.dart';
 import '../widgets/images/resizable_image_widget_2.dart';
 import '../widgets/podcast/episode/episode_list_screen.dart';
 import '../widgets/text/show_more_desc.dart';
@@ -88,8 +91,32 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                       )
                       : const SizedBox.shrink(),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
+                          Builder(
+                            builder: (context) {
+                              final itemToSave = SavedItem(
+                                id: podcastController.selectedEpisode.value!.id,
+                                type: 'podcast_show',
+                                title: podcastController.selectedEpisode.value!.title,
+                                thumbnailUrl: podcastController.selectedEpisode.value!.art,
+                                groupId: podcastController.selectedEpisode.value!.id,
+                                groupTitle: podcastController.selectedEpisode.value!.title,
+                                description: podcastController.selectedEpisode.value!.description,
+                                publishedAtItem: podcastController.selectedEpisode.value!.lastUpdated.toIso8601String(),
+                                savedAt: DateTime.now(),
+                              );
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  FavoriteButton(item: itemToSave),
+                                  const SizedBox(width: 12),
+                                  SaveButton(item: itemToSave),
+                                ],
+                              );
+                            }
+                          ),
                           TextOverlay(label: episodeCountLabel, color: Theme.of(context).colorScheme.onPrimary,fontSize: 15),
                         ],
                       ),

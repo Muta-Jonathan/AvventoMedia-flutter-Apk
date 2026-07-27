@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../controller/audio_player_controller.dart';
 import '../controller/episode_controller.dart';
+import '../controller/library_controller.dart';
 import '../controller/podcast_controller.dart';
 import '../controller/podcast_episode_controller.dart';
 
@@ -14,5 +15,6 @@ class InitialBinding extends Bindings {
     Get.put(EpisodeController());
     Get.put(PodcastEpisodeController());
     Get.put(PodcastController());
+    Get.put(LibraryController());
   }
 }

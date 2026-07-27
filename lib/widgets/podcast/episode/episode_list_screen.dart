@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../../components/utils.dart';
 import '../../../controller/audio_player_controller.dart';
 import '../../../controller/podcast_controller.dart';
 import '../../../controller/podcast_episode_controller.dart';
@@ -68,7 +67,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
           podcastEpisodeController.setSelectedEpisode(podcastEpisode);
 
           final provider = Provider.of<RadioPodcastProvider>(context, listen: false);
-          final episodes = provider.podcastEpisodes;
+          final episodes = provider.podcastEpisodes.reversed.toList();
           final initialIndex = episodes.indexOf(podcastEpisode);
           
           List<AudioSource> audioSources = episodes.map((ep) => AudioSource.uri(

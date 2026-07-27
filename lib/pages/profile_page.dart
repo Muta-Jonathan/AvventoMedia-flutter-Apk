@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import '../components/app_constants.dart';
 import '../components/utils.dart';
+import '../controller/library_controller.dart';
 import '../routes/routes.dart';
 import '../widgets/settings/app_creaters_widget.dart';
 import '../widgets/settings/app_version_widget.dart';
@@ -34,6 +35,64 @@ class ProfilePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20,),
+                // MY LIBRARY section
+                LabelPlaceHolder(title: AppConstants.myLibrary, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                Obx(() {
+                  final library = Get.find<LibraryController>();
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(CupertinoIcons.heart, size: 28, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                        title: Text(AppConstants.favorites, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 14)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (library.favoritesCount > 0)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.redAccent.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  '${library.favoritesCount}',
+                                  style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            const SizedBox(width: 6),
+                            Icon(CupertinoIcons.chevron_forward, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 18),
+                          ],
+                        ),
+                        onTap: () => Get.toNamed(Routes.getLibraryFavoritesRoute()),
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.playlist_play, size: 28, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                        title: Text(AppConstants.myPlaylists, style: TextStyle(color: Theme.of(context).colorScheme.onPrimary, fontSize: 14)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (library.playlistsCount > 0)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  '${library.playlistsCount}',
+                                  style: const TextStyle(color: Colors.amber, fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            const SizedBox(width: 6),
+                            Icon(CupertinoIcons.chevron_forward, color: Theme.of(context).colorScheme.onSecondaryContainer, size: 18),
+                          ],
+                        ),
+                        onTap: () => Get.toNamed(Routes.getLibraryPlaylistsRoute()),
+                      ),
+                    ],
+                  );
+                }),
+                const SizedBox(height: 20),
                 // General section
                 LabelPlaceHolder(title: AppConstants.general, color: Theme.of(context).colorScheme.onSecondaryContainer),
                 CustomListTile(

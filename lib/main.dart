@@ -14,12 +14,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:just_audio_background/just_audio_background.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 
 import 'bindings/initial_binding.dart';
 import 'widgets/audio_players/mini_player_widget.dart';
+
+late AudioHandler audioHandler;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,14 +42,9 @@ Future<void> main() async {
   // Load .env file
   await dotenv.load(fileName: ".env");
 
-  // Initialize JustAudioBackground
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationIcon: 'mipmap/ic_logo_icon',
-    androidNotificationOngoing: true,
-    androidStopForegroundOnPause: true,
-  );
+  // We will initialize AudioService inside AudioPlayerController or after creating the player
+  // But actually we need the AudioPlayer to pass to the handler.
+  // We'll initialize it in AudioPlayerController and register the handler there.
 
   // Clear upgrader settings
   await Upgrader.clearSavedSettings();
