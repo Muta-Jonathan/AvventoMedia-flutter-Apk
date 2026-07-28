@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 import '../components/app_constants.dart';
+import '../components/responsive_helper.dart';
 import '../components/utils.dart';
 import '../controller/library_controller.dart';
 import '../routes/routes.dart';
@@ -22,6 +23,10 @@ class ProfilePage extends StatelessWidget {
       backgroundColor:   Theme.of(context).colorScheme.surface,
       body:  CustomScrollView(
           slivers: <Widget>[
+            if (ResponsiveHelper.isTv(context))
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 70),
+              ),
             SliverAppBar(
               backgroundColor:   Theme.of(context).colorScheme.surface,
               floating: true,

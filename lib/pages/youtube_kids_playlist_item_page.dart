@@ -27,7 +27,7 @@ class YoutubeKidsPlaylistItemPage extends StatefulWidget {
 }
 
 class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
-  final YoutubePlaylistController youtubePlaylistController = Get.find();
+  final YoutubePlaylistController youtubePlaylistController = Get.put(YoutubePlaylistController());
 
   @override
   void initState() {
@@ -41,6 +41,12 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (youtubePlaylistController.selectedPlaylist.value == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.offAllNamed(Routes.getYoutubeKidsPlaylistRoute());
+      });
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     final selectedPlaylist = youtubePlaylistController.selectedPlaylist.value!;
     final int itemCount = selectedPlaylist.itemCount;
     String videoCountLabel = itemCount == 1 ? '$itemCount video' : '$itemCount videos';
@@ -52,7 +58,7 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
           SliverAppBar(
             backgroundColor: Theme.of(context).colorScheme.surface,
             iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-            expandedHeight: Utils.calculateHeight(context, 0.4),
+            expandedHeight: Utils.calculateResponsiveAspectHeight(context, 0.76) + 175,
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
@@ -70,7 +76,7 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
               expandedTitleScale: 1,
               collapseMode: CollapseMode.pin,
               background: SizedBox(
-                height: AppConstants.height250,
+                height: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 95, right: 20, left: 20, bottom: 80),
                   child: ResizableImageContainerWithOverlay(

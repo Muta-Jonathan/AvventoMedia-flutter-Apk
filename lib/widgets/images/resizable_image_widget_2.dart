@@ -17,6 +17,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
   final double? borderRadius;
   final double? borderRadiusContainer;
   final String? svgPath;
+  final double widthMultiplier;
 
   const ResizableImageContainerWithOverlay({
     super.key,
@@ -30,7 +31,8 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
     this.token,
     this.borderRadius = 8,
     this.borderRadiusContainer = 8,
-    this.svgPath
+    this.svgPath,
+    this.widthMultiplier = 0.76,
   });
 
   Widget buildOverlay() {
@@ -158,8 +160,7 @@ class ResizableImageContainerWithOverlay extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius!),
       child: SizedBox(
-        width: Utils.calculateWidth(context, 0.76), // Constrain width to match parent
-        height: Utils.calculateHeight(context, 0.1), // Constrain height to match parent
+        width: Utils.calculateResponsiveWidth(context, widthMultiplier), // Constrain width to match parent
         child: AspectRatio(
           aspectRatio: 16 / 9,
           child: Stack(

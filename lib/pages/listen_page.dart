@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../components/app_constants.dart';
+import '../components/responsive_helper.dart';
 import '../routes/routes.dart';
 import '../widgets/providers/programs_provider.dart';
 import '../widgets/providers/radio_podcast_provider.dart';
@@ -38,6 +39,10 @@ class ListenPageState extends State<ListenPage> {
         onRefresh: refreshData,
         child: CustomScrollView(
           slivers: <Widget>[
+            if (ResponsiveHelper.isTv(context))
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 70),
+              ),
             SliverAppBar(
               backgroundColor: Theme.of(context).colorScheme.surface,
               iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),

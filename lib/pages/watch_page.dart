@@ -8,6 +8,7 @@ import 'package:better_player/better_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:floating/floating.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -58,7 +59,7 @@ class _WatchPageState extends State<WatchPage> {
             loadingWidget: const LoadingWidget(),
             overflowMenuCustomItems: [
               // Add PiP option only for Android
-              if (Platform.isAndroid)
+              if (defaultTargetPlatform == TargetPlatform.android)
                 BetterPlayerOverflowMenuItem(
                   Icons.picture_in_picture_alt_rounded,
                   AppConstants.pip,

@@ -16,7 +16,9 @@ import 'package:jiffy/jiffy.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../apis/firestore_service_api.dart';
+import '../components/responsive_helper.dart';
 import '../components/utils.dart';
+import '../widgets/tv/tv_media_card.dart';
 import '../widgets/text/show_more_desc.dart';
 
 class YoutubeWatchPage extends StatefulWidget {
@@ -301,6 +303,8 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
       return const SizedBox.shrink();
     }
 
+    bool isWidescreen = !ResponsiveHelper.isMobile(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -317,20 +321,46 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _relatedVideos.length,
-          itemBuilder: (context, index) {
-            final item = _relatedVideos[index];
-            return GestureDetector(
-              onTap: () => _onRelatedVideoTap(item),
-              child: YoutubePlaylistItemDetailsWidget(
-                youTubePlaylistItemModel: item,
-              ),
-            );
-          },
-        ),
+        if (isWidescreen)
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(12),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: ResponsiveHelper.getGridCrossAxisCount(context, mobile: 1, tablet: 2, tv: 3),
+              childAspectRatio: 1.4,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemCount: _relatedVideos.length,
+            itemBuilder: (context, index) {
+              final item = _relatedVideos[index];
+              return TvMediaCard(
+                title: item.title,
+                subtitle: item.channelName,
+                imageUrl: item.thumbnailUrl,
+                badgeText: item.duration,
+                width: double.infinity,
+                height: double.infinity,
+                onTap: () => _onRelatedVideoTap(item),
+              );
+            },
+          )
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _relatedVideos.length,
+            itemBuilder: (context, index) {
+              final item = _relatedVideos[index];
+              return GestureDetector(
+                onTap: () => _onRelatedVideoTap(item),
+                child: YoutubePlaylistItemDetailsWidget(
+                  youTubePlaylistItemModel: item,
+                ),
+              );
+            },
+          ),
         const SizedBox(height: 20),
       ],
     );

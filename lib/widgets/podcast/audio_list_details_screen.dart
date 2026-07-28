@@ -33,12 +33,12 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                   child: CachedNetworkImage(
                     imageUrl: widget.spreakerEpisode.imageOriginalUrl,
                     fit: BoxFit.cover,
-                    width: Utils.calculateWidth(context, 0.44),
-                    height:  Utils.calculateHeight(context, 0.2),
+                    width: Utils.calculateResponsiveWidth(context, 0.44),
+                    height:  Utils.calculateResponsiveWidth(context, 0.44),
                     placeholder: (context, url) => Center(
                       child: SizedBox(
-                          width:  Utils.calculateWidth(context, 0.3),
-                          height:  Utils.calculateWidth(context, 0.3),
+                          width:  Utils.calculateResponsiveWidth(context, 0.3),
+                          height:  Utils.calculateResponsiveWidth(context, 0.3),
                           child: const LoadingWidget()
                       ),
                     ),
@@ -53,12 +53,12 @@ class AudioPlayerWidgetState extends State<AudioListDetailsWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: Utils.calculateWidth(context,0.44),
+                      width: Utils.calculateResponsiveWidth(context,0.44),
                       child: TextOverlay(
                         label: widget.spreakerEpisode.title,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: Utils.calculateWidth(context,0.042),
+                        fontSize: Utils.calculateResponsiveWidth(context,0.042),
                       ),
                     ),
                     const SizedBox(height: 5),

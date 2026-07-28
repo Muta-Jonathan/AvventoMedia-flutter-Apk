@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class AppConstants {
   static const String appName = "AvventoMedia";
@@ -58,7 +59,7 @@ class AppConstants {
   static const String shareApp = "Share AvventoMedia App";
   static const String shareAppLinkAndroid = "https://play.google.com/store/apps/details?id=tv.avventomedia.app";
   static const String shareAppLinkIOS = "https://apps.apple.com/us/app/avventomedia/id6756179416";
-  static String get shareAppLink => Platform.isIOS ? shareAppLinkIOS : shareAppLinkAndroid;
+  static String get shareAppLink => (defaultTargetPlatform == TargetPlatform.iOS) ? shareAppLinkIOS : shareAppLinkAndroid;
   static const String shareAppMessage = "Experience the joy of uplifting gospel music and inspiring stories with the AvventoMedia app! Download now and let your heart sing!";
 
   static const String appStores = "APP STORES";

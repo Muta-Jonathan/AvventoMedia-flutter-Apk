@@ -30,7 +30,7 @@ class _HightlightsWidget extends State<HightlightsWidget> {
     return Container(
       margin: const EdgeInsets.only(top: 10.0),
       width: double.infinity,
-      height: Utils.calculateAspectHeight(context, 1.46),
+      height: Utils.calculateResponsiveAspectHeight(context, 1.25),
       child: Column(
         children: [
           Expanded(child: buildListView(context)),

@@ -28,7 +28,7 @@ class _LiveTvWidget extends State<LiveTvWidget> {
 
     return SizedBox(
       width: double.infinity,
-      height: Utils.calculateAspectHeight(context, 1.25),
+      height: Utils.calculateResponsiveAspectHeight(context, 1.25),
       child: Column(
         children: [
           LabelPlaceHolder(title: AppConstants.liveTv,titleFontSize: 18, moreIcon: true ,onMoreTap: () => Get.toNamed(Routes.getLiveTvListRoute())),

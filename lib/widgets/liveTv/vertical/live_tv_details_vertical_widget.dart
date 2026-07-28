@@ -39,12 +39,12 @@ class LiveTvDetailsVerticalWidgetState extends State<LiveTvDetailsVerticalWidget
                   child: CachedNetworkImage(
                     imageUrl:  widget.liveTvModel.imageUrl,
                     fit: BoxFit.cover,
-                    width: Utils.calculateWidth(context, 0.36),
-                    height:  Utils.calculateHeight(context, 0.094),
+                    width: Utils.calculateResponsiveWidth(context, 0.36),
+                    height:  Utils.calculateResponsiveAspectHeight(context, 0.36),
                     placeholder: (context, url) => Center(
                       child: SizedBox(
-                          width:  Utils.calculateWidth(context, 0.1),
-                          height:  Utils.calculateWidth(context, 0.1),
+                          width:  Utils.calculateResponsiveWidth(context, 0.1),
+                          height:  Utils.calculateResponsiveWidth(context, 0.1),
                           child: const LoadingWidget()
                       ),
                     ),
@@ -59,11 +59,11 @@ class LiveTvDetailsVerticalWidgetState extends State<LiveTvDetailsVerticalWidget
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: Utils.calculateWidth(context,0.52),
+                      width: Utils.calculateResponsiveWidth(context,0.52),
                       child: TextOverlay(
                         label: widget.liveTvModel.name,
                         color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: Utils.calculateWidth(context,0.042),
+                        fontSize: Utils.calculateResponsiveWidth(context,0.042),
                       ),
                     ),
                     const SizedBox(height: 2),

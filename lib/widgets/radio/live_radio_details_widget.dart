@@ -25,11 +25,12 @@ class _LiveRadioDetailsWidget extends State<LiveRadioDetailsWidget> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: ResizableImageContainerWithOverlay(
+              ResizableImageContainerWithOverlay(
                 imageUrl: widget.radioModel.imageUrl,
                 text: widget.radioModel.status,
                 textFontSize: 10,
-                icon: Icons.music_note,)),
+                widthMultiplier: 0.36,
+                icon: Icons.music_note,),
               const SizedBox(height: 15.0,),
               SizedBox(
                 width: Utils.calculateWidth(context, 0.76),

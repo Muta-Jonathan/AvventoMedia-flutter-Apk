@@ -39,10 +39,10 @@ class _PodcastListState extends State<PodcastListScreen> {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(),
               shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: MediaQuery.of(context).size.width > 800 ? 4 : (MediaQuery.of(context).size.width > 600 ? 3 : 2),
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
                 childAspectRatio: 0.8,

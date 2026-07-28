@@ -15,6 +15,7 @@ import '../widgets/images/resizable_image_widget_2.dart';
 import '../widgets/providers/youtube_provider.dart';
 import '../widgets/text/show_more_desc.dart';
 import '../widgets/youtube/items/youtube_music_playlist_item_widget.dart';
+import '../routes/routes.dart';
 
 class YoutubeMusicPlaylistItemPage extends StatefulWidget {
   const YoutubeMusicPlaylistItemPage({super.key});
@@ -24,7 +25,7 @@ class YoutubeMusicPlaylistItemPage extends StatefulWidget {
 }
 
 class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemPage> {
-  final YoutubePlaylistController youtubePlaylistController = Get.find();
+  final YoutubePlaylistController youtubePlaylistController = Get.put(YoutubePlaylistController());
 
   @override
   void initState() {
@@ -37,6 +38,12 @@ class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemP
   }
   @override
   Widget build(BuildContext context) {
+    if (youtubePlaylistController.selectedPlaylist.value == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.offAllNamed(Routes.getYoutubeMusicPlaylistRoute());
+      });
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     final int itemCount = youtubePlaylistController.selectedPlaylist.value!.itemCount;
     String videoCountLabel = itemCount == 1 ? '$itemCount video' : '$itemCount videos';
 
@@ -57,7 +64,7 @@ class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemP
               SliverAppBar(
                 backgroundColor:   Theme.of(context).colorScheme.surface,
                 iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-                expandedHeight: Utils.calculateHeight(context, 0.4),
+                expandedHeight: Utils.calculateResponsiveAspectHeight(context, 0.76) + 175,
                 floating: false,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
@@ -77,7 +84,7 @@ class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemP
                   expandedTitleScale: 1,
                   collapseMode: CollapseMode.pin,
                   background: SizedBox(
-                    height: AppConstants.height250,
+                    height: double.infinity,
                     child: Padding(
                       padding: const EdgeInsets.only(
                           top: 95, right: 20, left: 20, bottom: 80),

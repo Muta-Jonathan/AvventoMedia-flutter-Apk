@@ -10,6 +10,7 @@ import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
 import 'package:avvento_media/widgets/providers/youtube_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -27,10 +28,12 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
 
-  // Lock the app to portrait mode
+  // Allow portrait and landscape orientations for responsive tablet and TV support
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
   ]);
 
   // clear upgrader settings
@@ -90,7 +93,7 @@ class MyApp extends StatelessWidget {
       showLater: true,
       showReleaseNotes: true,
       barrierDismissible: true,
-      dialogStyle: Platform.isIOS ? UpgradeDialogStyle.cupertino : UpgradeDialogStyle.material,
+      dialogStyle: (defaultTargetPlatform == TargetPlatform.iOS) ? UpgradeDialogStyle.cupertino : UpgradeDialogStyle.material,
       child: Shortcuts(
         shortcuts: <LogicalKeySet, Intent>{
           LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),

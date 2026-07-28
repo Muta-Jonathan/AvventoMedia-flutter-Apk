@@ -14,6 +14,24 @@ class Utils {
     return widgetWidth * 9.0 / 16.0;
   }
 
+  static double calculateResponsiveWidth(BuildContext context, double multiplier) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double effectiveWidth = screenWidth;
+    if (screenWidth >= 1200) {
+      effectiveWidth = screenWidth / 3.5;
+    } else if (screenWidth >= 800) {
+      effectiveWidth = screenWidth / 2.5;
+    } else if (screenWidth >= 600) {
+      effectiveWidth = screenWidth / 1.5;
+    }
+    return multiplier * effectiveWidth;
+  }
+
+  static double calculateResponsiveAspectHeight(BuildContext context, double multiplier) {
+    double widgetWidth = calculateResponsiveWidth(context, multiplier);
+    return widgetWidth * 9.0 / 16.0;
+  }
+
   static double calculateHeight(BuildContext context, height) {
     double screenHeight = MediaQuery.of(context).size.height;
     double widgetHeight = height * screenHeight;

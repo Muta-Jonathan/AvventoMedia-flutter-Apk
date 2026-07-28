@@ -70,9 +70,7 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height:  Utils.calculateAspectHeight(context, 0.92),
-              width:  Utils.calculateAspectHeight(context, 1.61),
+            Expanded(
               child: ResizableImageContainerWithOverlay(
                 imageUrl: imageUrl,
                 text: text,
@@ -83,11 +81,11 @@ class _HightlightsDetailsWidget extends State<HightlightsDetailsWidget> {
             ),
             const SizedBox(height: 10.0,),
             SizedBox(
-                width: Utils.calculateWidth(context, 0.8),
+                width: Utils.calculateResponsiveWidth(context, 0.76),
                 child: TextOverlay(label: model.title, color: Colors.amber,allCaps: true, maxLines: 1,)),
             const SizedBox(height: 2.0,),
             SizedBox(
-                width: Utils.calculateWidth(context, 0.8),
+                width: Utils.calculateResponsiveWidth(context, 0.76),
                 child: TextOverlay(label: name, fontWeight: FontWeight.bold ,color: Theme.of(context).colorScheme.onPrimary, fontSize: 16.0,maxLines: 2,)),
           ],
       ),

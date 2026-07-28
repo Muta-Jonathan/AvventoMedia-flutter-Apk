@@ -26,14 +26,14 @@ class YoutubeKidsPlaylistWidget extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return SizedBox(
-            height: Utils.calculateAspectHeight(context, 1.25),
+            height: Utils.calculateResponsiveAspectHeight(context, 1.25),
             child: const Center(child: LoadingWidget()),
           );
         }
 
         if (snapshot.hasError) {
           return SizedBox(
-            height: Utils.calculateAspectHeight(context, 1.25),
+            height: Utils.calculateResponsiveAspectHeight(context, 1.25),
             child: Center(child: Text('Error: ${snapshot.error}')),
           );
         }
@@ -42,7 +42,7 @@ class YoutubeKidsPlaylistWidget extends StatelessWidget {
 
         if (playlists.isEmpty) {
           return SizedBox(
-            height: Utils.calculateAspectHeight(context, 1.25),
+            height: Utils.calculateResponsiveAspectHeight(context, 1.25),
             child: const Center(child: Text('No items found')),
           );
         }
@@ -50,7 +50,7 @@ class YoutubeKidsPlaylistWidget extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.only(top: 10.0),
           width: double.infinity,
-          height: Utils.calculateAspectHeight(context, 1.25),
+          height: Utils.calculateResponsiveAspectHeight(context, 1.25),
           child: Column(
             children: [
               LabelPlaceHolder(

@@ -38,12 +38,12 @@ class YoutubePlaylistDetailsVerticalWidgetState extends State<YoutubePlaylistDet
                   child: CachedNetworkImage(
                     imageUrl: widget.youtubePlaylistModel.thumbnailUrl,
                     fit: BoxFit.cover,
-                    width: Utils.calculateWidth(context, 0.36),
-                    height:  Utils.calculateHeight(context, 0.094),
+                    width: Utils.calculateResponsiveWidth(context, 0.36),
+                    height:  Utils.calculateResponsiveAspectHeight(context, 0.36),
                     placeholder: (context, url) => Center(
                       child: SizedBox(
-                          width:  Utils.calculateWidth(context, 0.1),
-                          height:  Utils.calculateWidth(context, 0.1),
+                          width:  Utils.calculateResponsiveWidth(context, 0.1),
+                          height:  Utils.calculateResponsiveWidth(context, 0.1),
                           child: const LoadingWidget()
                       ),
                     ),
@@ -58,11 +58,11 @@ class YoutubePlaylistDetailsVerticalWidgetState extends State<YoutubePlaylistDet
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: Utils.calculateWidth(context,0.52),
+                      width: Utils.calculateResponsiveWidth(context,0.52),
                       child: TextOverlay(
                         label: widget.youtubePlaylistModel.title,
                         color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: Utils.calculateWidth(context,0.042),
+                        fontSize: Utils.calculateResponsiveWidth(context,0.042),
                       ),
                     ),
                     const SizedBox(height: 2),

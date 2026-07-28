@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../apis/firestore_service_api.dart';
+import '../components/responsive_helper.dart';
+import '../widgets/tv/tv_media_card.dart';
 import '../controller/radio_controller.dart';
 import '../controller/youtube_playlist_controller.dart';
 import '../controller/youtube_playlist_item_controller.dart';
@@ -199,6 +201,38 @@ class _SearchPageState extends State<SearchPage> {
     if (list.isEmpty) {
       return const Center(
         child: Text(AppConstants.noResults, style: TextStyle(color: Colors.grey)),
+      );
+    }
+
+    if (!ResponsiveHelper.isMobile(context)) {
+      int crossAxisCount = ResponsiveHelper.getGridCrossAxisCount(context, mobile: 2, tablet: 3, tv: 5);
+      return GridView.builder(
+        padding: ResponsiveHelper.getTvSafePadding(context),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          childAspectRatio: 1.4,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        itemCount: list.length,
+        itemBuilder: (_, index) {
+          final item = list[index];
+          String badgeText = '';
+          if (item is LiveTvModel || item is RadioModel) badgeText = 'LIVE';
+          if (item is YoutubePlaylistModel) badgeText = '${item.itemCount} videos';
+
+          return TvMediaCard(
+            title: getItemTitle(item),
+            imageUrl: getItemThumbnail(item),
+            badgeText: badgeText,
+            width: double.infinity,
+            height: double.infinity,
+            onTap: () {
+              _saveSearchHistory(_searchText);
+              _openItem(item);
+            },
+          );
+        },
       );
     }
 

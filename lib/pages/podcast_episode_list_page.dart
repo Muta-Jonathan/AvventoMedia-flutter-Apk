@@ -45,7 +45,7 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
               SliverAppBar(
                 backgroundColor:   Theme.of(context).colorScheme.surface,
                 iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-                expandedHeight: Utils.calculateHeight(context, 0.4),
+                expandedHeight: Utils.calculateResponsiveWidth(context, 0.76) + 165,
                 floating: false,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
@@ -62,7 +62,7 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                   expandedTitleScale: 1,
                   collapseMode: CollapseMode.pin,
                   background: SizedBox(
-                    height: AppConstants.height250,
+                    height: double.infinity,
                     child: Padding(
                       padding: const EdgeInsets.only(
                           top: 105, right: 20, left: 20, bottom: 60),

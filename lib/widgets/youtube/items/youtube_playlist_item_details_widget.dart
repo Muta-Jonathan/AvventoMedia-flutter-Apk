@@ -38,37 +38,35 @@ class YoutubePlaylistItemDetailsWidgetState extends State<YoutubePlaylistItemDet
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 (widget.youTubePlaylistItemModel.liveBroadcastContent == 'live' || widget.youTubePlaylistItemModel.liveBroadcastContent == 'upcoming') ?
-                Expanded(
-                  child: ResizableImageContainerWithOverlay(
-                    imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
-                  ),
+                ResizableImageContainerWithOverlay(
+                  imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
+                  widthMultiplier: 0.4,
                 ) :
-                Expanded(
-                  child: ResizableImageContainerWithOverlay(
-                    imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
-                    text: widget.youTubePlaylistItemModel.duration,
-                    textFontSize: 10,
-                    overlayBottom: 0.15,
-                    overlayRight: 3.5,
-                    borderRadiusContainer: 10,
-                    containerColor: Colors.black45,
-                  ),
+                ResizableImageContainerWithOverlay(
+                  imageUrl: widget.youTubePlaylistItemModel.thumbnailUrl,
+                  text: widget.youTubePlaylistItemModel.duration,
+                  textFontSize: 10,
+                  overlayBottom: 0.15,
+                  overlayRight: 3.5,
+                  borderRadiusContainer: 10,
+                  containerColor: Colors.black45,
+                  widthMultiplier: 0.4,
                 ),
                 const SizedBox(width: 10,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: Utils.calculateWidth(context,0.5),
+                      width: Utils.calculateResponsiveWidth(context,0.5),
                       child: TextOverlay(
                         label: widget.youTubePlaylistItemModel.title,
                         color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: Utils.calculateWidth(context,0.041),
+                        fontSize: Utils.calculateResponsiveWidth(context,0.041),
                       ),
                     ),
                     const SizedBox(height: 2),
                     SizedBox(
-                      width: Utils.calculateWidth(context,0.5),
+                      width: Utils.calculateResponsiveWidth(context,0.5),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
