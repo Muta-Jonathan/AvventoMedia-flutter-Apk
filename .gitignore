@@ -78,3 +78,7 @@ ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
 
 # ignore to secure apikeys
 *.env
+# Local PR description drafts
+PR.md
+# Local PR description drafts
+PR.md
