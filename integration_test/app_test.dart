@@ -64,8 +64,12 @@ void main() {
     await tester.binding.handlePopRoute();
     await pumpUntil(tester, () => audio.panelPercentage.value < 0.05,
         reason: 'player collapses on back');
-    expect(find.byType(BottomNavigationBar), findsOneWidget);
-    expect(find.text('LIVE'), findsWidgets);
+    // The BottomNav is rebuilt a frame after panelPercentage changes.
+    await pumpUntil(
+        tester, () => find.byType(BottomNavigationBar).evaluate().isNotEmpty,
+        reason: 'bottom navigation returns');
+    await pumpUntil(tester, () => find.text('LIVE').evaluate().isNotEmpty,
+        reason: 'mini bar shows LIVE');
 
     // Close hides the mini bar
     await tester.tap(find.byIcon(CupertinoIcons.xmark));

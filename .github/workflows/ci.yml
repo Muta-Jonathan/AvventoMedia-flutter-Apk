@@ -30,7 +30,14 @@ jobs:
       - name: Create .env
         env:
           DOTENV: ${{ secrets.DOTENV }}
-        run: printf '%s\n' "${DOTENV:-# DOTENV secret not available}" > .env
+        run: |
+          if [ -n "$DOTENV" ]; then
+            printf '%s\n' "$DOTENV" > .env
+            echo "Wrote .env from DOTENV secret"
+          else
+            echo '# DOTENV secret not available' > .env
+            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+          fi
 
       - run: flutter pub get
 
@@ -66,7 +73,14 @@ jobs:
       - name: Create .env
         env:
           DOTENV: ${{ secrets.DOTENV }}
-        run: printf '%s\n' "${DOTENV:-# DOTENV secret not available}" > .env
+        run: |
+          if [ -n "$DOTENV" ]; then
+            printf '%s\n' "$DOTENV" > .env
+            echo "Wrote .env from DOTENV secret"
+          else
+            echo '# DOTENV secret not available' > .env
+            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+          fi
 
       - run: flutter pub get
       - run: flutter build apk --debug
@@ -99,7 +113,14 @@ jobs:
       - name: Create .env
         env:
           DOTENV: ${{ secrets.DOTENV }}
-        run: printf '%s\n' "${DOTENV:-# DOTENV secret not available}" > .env
+        run: |
+          if [ -n "$DOTENV" ]; then
+            printf '%s\n' "$DOTENV" > .env
+            echo "Wrote .env from DOTENV secret"
+          else
+            echo '# DOTENV secret not available' > .env
+            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+          fi
 
       - run: flutter pub get
 
