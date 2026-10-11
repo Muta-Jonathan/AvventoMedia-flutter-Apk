@@ -54,6 +54,15 @@ void main() {
     expect(player.calls, ['setAudioSource']);
   });
 
+  test('an interrupted load (e.g. closed while loading) is not an error',
+      () async {
+    player.interruptNextLoad = true;
+    await controller.setAudioSource(
+        'https://example.com/stream', const MediaItem(id: 'r', title: 'Live'));
+
+    expect(player.calls, ['setAudioSource']);
+  });
+
   testWidgets('back collapses the expanded player instead of popping',
       (tester) async {
     await tester.pumpWidget(GetMaterialApp(

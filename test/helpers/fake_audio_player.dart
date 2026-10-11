@@ -11,6 +11,7 @@ class FakeAudioPlayer implements AudioPlayer {
 
   PlayerState _playerState = PlayerState(false, ProcessingState.idle);
   Duration? fakeDuration;
+  bool interruptNextLoad = false;
   final List<String> calls = [];
 
   void emitState(bool playing, ProcessingState processingState) {
@@ -58,6 +59,10 @@ class FakeAudioPlayer implements AudioPlayer {
     Duration? initialPosition,
   }) async {
     calls.add('setAudioSource');
+    if (interruptNextLoad) {
+      interruptNextLoad = false;
+      throw PlayerInterruptedException('Connection aborted');
+    }
     return fakeDuration;
   }
   @override

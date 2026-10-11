@@ -139,7 +139,7 @@ class AudioPlayerController extends GetxController {
       handler.setLivePlayback(isLive.value);
     }
 
-    await audioPlayer.setAudioSource(audioSource!);
+    if (!await _load(audioSource!)) return;
     await handler?.updateMediaItem(mediaItemTag);
   }
 
@@ -163,11 +163,23 @@ class AudioPlayerController extends GetxController {
       handler.setLivePlayback(false);
     }
 
-    await audioPlayer.setAudioSource(
-      playlist!,
-      initialIndex: initialIndex,
-      initialPosition: Duration.zero,
-    );
+    await _load(playlist!, initialIndex: initialIndex);
+  }
+
+  /// Loads [source]; false if a stop / close / newer load interrupted it.
+  /// just_audio throws PlayerInterruptedException for that, which callers
+  /// are expected to catch.
+  Future<bool> _load(AudioSource source, {int? initialIndex}) async {
+    try {
+      await audioPlayer.setAudioSource(
+        source,
+        initialIndex: initialIndex,
+        initialPosition: initialIndex == null ? null : Duration.zero,
+      );
+      return true;
+    } on PlayerInterruptedException {
+      return false;
+    }
   }
 
   Future<void> playNext() async {
@@ -193,7 +205,7 @@ class AudioPlayerController extends GetxController {
 
   Future<void> play() async {
     if (isLive.value && audioPlayer.processingState == ProcessingState.idle && audioSource != null) {
-      await audioPlayer.setAudioSource(audioSource!);
+      if (!await _load(audioSource!)) return;
     }
     await audioPlayer.play();
   }
