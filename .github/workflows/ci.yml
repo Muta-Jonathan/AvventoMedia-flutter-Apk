@@ -132,4 +132,13 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: true
-          script: flutter test integration_test --timeout 10m
+          # On failure, keep the app's log: the test reporter doesn't always
+          # print the reason.
+          script: flutter test integration_test --timeout 10m || (adb logcat -d > logcat.txt; exit 1)
+
+      - name: Upload logcat
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-logcat
+          path: logcat.txt
