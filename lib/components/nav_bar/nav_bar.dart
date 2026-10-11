@@ -48,16 +48,15 @@ class _NavBarState extends State<NavBar> {
           ),
 
           // Reserves space for the root-level mini bar above the BottomNav (so
-          // body content and snackbars clear it). The BottomNav fades out by
-          // 33 % expansion.
+          // body content and snackbars clear it). The reserve is fixed so the
+          // tab pages aren't re-laid out on every drag frame. The BottomNav
+          // fades out by 33 % expansion.
           bottomNavigationBar: Obx(() {
             final pct = audioController.panelPercentage.value;
             final showPlayer = audioController.isPlayerActive.value &&
                 audioController.isMiniPlayerVisible.value;
 
-            final reserved = showPlayer
-                ? miniPlayerMinHeight * (1.0 - pct).clamp(0.0, 1.0)
-                : 0.0;
+            final reserved = showPlayer ? miniPlayerMinHeight : 0.0;
             final opacity = showPlayer ? (1.0 - pct * 3).clamp(0.0, 1.0) : 1.0;
 
             return Column(

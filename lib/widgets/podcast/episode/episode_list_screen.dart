@@ -105,6 +105,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
     audioPlayerController.isLive.value = false;
 
     final (sources, index) = _buildSources(provider, episode);
+    podcastEpisodeController.setQueue(provider.podcastEpisodes);
     audioPlayerController.setAudioPlaylist(sources, index);
     // No panel expansion — just starts playing in the mini bar
   }
@@ -120,6 +121,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
 
     if (!isSelected) {
       final (sources, index) = _buildSources(provider, episode);
+      podcastEpisodeController.setQueue(provider.podcastEpisodes);
       audioPlayerController.setAudioPlaylist(sources, index);
     }
 

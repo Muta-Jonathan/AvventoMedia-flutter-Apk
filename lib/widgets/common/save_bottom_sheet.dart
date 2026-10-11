@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_constants.dart';
+import '../../controller/audio_player_controller.dart';
 import '../../controller/library_controller.dart';
 import '../../models/saved_item_model.dart';
 import 'new_playlist_bottom_sheet.dart';
@@ -51,12 +52,29 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
   }
 
   void _snack(String msg, {bool success = true}) {
+    final color = (success ? Colors.green : Colors.orange).withOpacity(0.85);
+
+    // Opened from the full player: root snackbars would sit under it, so use
+    // the player's own ScaffoldMessenger.
+    final player = Get.find<AudioPlayerController>().fullPlayerNavigator;
+    if (mounted && player != null && identical(Navigator.of(context), player)) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(msg, style: const TextStyle(color: Colors.white)),
+        backgroundColor: color,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(12),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 2),
+      ));
+      return;
+    }
+
     Get.snackbar(
       '',
       msg,
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor:
-          (success ? Colors.green : Colors.orange).withOpacity(0.85),
+      backgroundColor: color,
       colorText: Colors.white,
       margin: const EdgeInsets.all(12),
       borderRadius: 12,

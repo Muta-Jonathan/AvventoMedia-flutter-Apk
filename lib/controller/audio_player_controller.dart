@@ -82,7 +82,7 @@ class AudioPlayerController extends GetxController {
     audioHandler = await AudioService.init(
       builder: () => MyAudioHandler(audioPlayer),
       config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+        androidNotificationChannelId: 'tv.avventomedia.app.channel.audio',
         androidNotificationChannelName: 'Audio playback',
         androidNotificationIcon: 'mipmap/ic_logo_icon',
         androidNotificationOngoing: true,
@@ -190,6 +190,12 @@ class AudioPlayerController extends GetxController {
     } else {
       await audioPlayer.pause();
     }
+  }
+
+  /// Restart the current track after it completes.
+  Future<void> replay() async {
+    await audioPlayer.seek(Duration.zero);
+    await audioPlayer.play();
   }
 
   Future<void> stop() async {

@@ -27,6 +27,9 @@ ThemeData darkTheme = ThemeData(
         onSecondaryContainer: Colors.grey[400]!,
         onSurface: const Color.fromARGB(255, 22, 20, 36), //rgba(22,20,36,255),
         tertiaryContainer: Colors.grey.withOpacity(0.5),
+        // Playback accent (play buttons, now-playing highlights)
+        tertiary: Colors.orange,
+        onTertiary: Colors.black,
     ),
     textSelectionTheme: const TextSelectionThemeData(
         cursorColor: Colors.amber,

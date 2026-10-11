@@ -161,7 +161,7 @@ class PodcastPageState extends State<PodcastPage> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                color: isPlaying ? Colors.orange : Theme.of(context).colorScheme.onPrimary,
+                                color: isPlaying ? Theme.of(context).colorScheme.tertiary : Theme.of(context).colorScheme.onPrimary,
                                 fontWeight: isPlaying ? FontWeight.bold : FontWeight.normal,
                               ),
                             ),
