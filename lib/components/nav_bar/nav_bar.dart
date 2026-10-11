@@ -36,77 +36,66 @@ class _NavBarState extends State<NavBar> {
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               content: const Text(AppConstants.exitApp),
             ),
-            child: Column(
-              children: [
-                Expanded(
-                  child: IndexedStack(
-                    index: controller.tabIndex,
-                    children: const [
-                      HomePage(),
-                      ListenPage(),
-                      SearchPage(),
-                      ProfilePage(),
-                    ],
-                  ),
-                ),
-                // Reserve space at the bottom equal to the mini bar height so
-                // tab content is never hidden behind the root-level mini bar.
-                // Shrinks to 0 as the panel expands (bar is no longer at bottom).
-                Obx(() {
-                  final isActive = audioController.isPlayerActive.value;
-                  final isVisible = audioController.isMiniPlayerVisible.value;
-                  final pct = audioController.panelPercentage.value;
-                  final reserved = (isActive && isVisible)
-                      ? miniPlayerMinHeight * (1.0 - pct).clamp(0.0, 1.0)
-                      : 0.0;
-                  return SizedBox(height: reserved);
-                }),
+            child: IndexedStack(
+              index: controller.tabIndex,
+              children: const [
+                HomePage(),
+                ListenPage(),
+                SearchPage(),
+                ProfilePage(),
               ],
             ),
           ),
 
-          // BottomNavigationBar fades as the panel expands so the full player
-          // is never blocked. Fully hidden beyond 33 % expansion.
+          // Reserves space for the root-level mini bar above the BottomNav (so
+          // body content and snackbars clear it). The BottomNav fades out by
+          // 33 % expansion.
           bottomNavigationBar: Obx(() {
             final pct = audioController.panelPercentage.value;
-            final isActive = audioController.isPlayerActive.value;
-            final isVisible = audioController.isMiniPlayerVisible.value;
+            final showPlayer = audioController.isPlayerActive.value &&
+                audioController.isMiniPlayerVisible.value;
 
-            final opacity = (isActive && isVisible)
-                ? (1.0 - pct * 3).clamp(0.0, 1.0)
-                : 1.0;
+            final reserved = showPlayer
+                ? miniPlayerMinHeight * (1.0 - pct).clamp(0.0, 1.0)
+                : 0.0;
+            final opacity = showPlayer ? (1.0 - pct * 3).clamp(0.0, 1.0) : 1.0;
 
-            if (opacity == 0.0) return const SizedBox.shrink();
-
-            return Opacity(
-              opacity: opacity,
-              child: BottomNavigationBar(
-                currentIndex: controller.tabIndex,
-                onTap: controller.changeTabIndex,
-                type: BottomNavigationBarType.fixed,
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                selectedItemColor: Theme.of(context).colorScheme.onPrimary,
-                unselectedItemColor: Theme.of(context).iconTheme.color,
-                showSelectedLabels: true,
-                showUnselectedLabels: true,
-                selectedFontSize: 10,
-                unselectedFontSize: 10,
-                elevation: 0,
-                items: const [
-                  BottomNavigationBarItem(
-                      label: "Videos",
-                      icon: Icon(CupertinoIcons.play_circle)),
-                  BottomNavigationBarItem(
-                      label: "Audio",
-                      icon: Icon(CupertinoIcons.headphones)),
-                  BottomNavigationBarItem(
-                      label: "Search",
-                      icon: Icon(CupertinoIcons.search)),
-                  BottomNavigationBarItem(
-                      label: "More",
-                      icon: Icon(CupertinoIcons.person_crop_circle)),
-                ],
-              ),
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: reserved),
+                if (opacity > 0.0)
+                  Opacity(
+                    opacity: opacity,
+                    child: BottomNavigationBar(
+                      currentIndex: controller.tabIndex,
+                      onTap: controller.changeTabIndex,
+                      type: BottomNavigationBarType.fixed,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      selectedItemColor:
+                          Theme.of(context).colorScheme.onPrimary,
+                      unselectedItemColor: Theme.of(context).iconTheme.color,
+                      showSelectedLabels: true,
+                      showUnselectedLabels: true,
+                      selectedFontSize: 10,
+                      unselectedFontSize: 10,
+                      elevation: 0,
+                      items: const [
+                        BottomNavigationBarItem(
+                            label: "Videos",
+                            icon: Icon(CupertinoIcons.play_circle)),
+                        BottomNavigationBarItem(
+                            label: "Audio",
+                            icon: Icon(CupertinoIcons.headphones)),
+                        BottomNavigationBarItem(
+                            label: "Search", icon: Icon(CupertinoIcons.search)),
+                        BottomNavigationBarItem(
+                            label: "More",
+                            icon: Icon(CupertinoIcons.person_crop_circle)),
+                      ],
+                    ),
+                  ),
+              ],
             );
           }),
         ),

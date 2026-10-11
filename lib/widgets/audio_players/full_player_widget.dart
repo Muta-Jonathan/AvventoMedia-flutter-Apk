@@ -77,8 +77,11 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
           return const Center(child: LoadingWidget());
         }
 
-        // Initialize audio source exactly once
+        // Initialize audio source once a usable stream URL arrives
         if (!_radioInitialized) {
+          if (radioProvider.radioStation!.streamUrl.isEmpty) {
+            return const Center(child: LoadingWidget());
+          }
           _radioInitialized = true;
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             final station = radioProvider.radioStation!;

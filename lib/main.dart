@@ -101,10 +101,11 @@ class MyApp extends StatelessWidget {
           initialBinding: InitialBinding(),
           // Keep currentRoute in sync so the overlay can tell whether the
           // BottomNavigationBar is visible (only on the home/NavBar route).
+          navigatorObservers: [popupRouteObserver],
           routingCallback: (routing) {
             if (routing?.current != null) {
-              Get.find<AudioPlayerController>().currentRoute.value =
-                  routing!.current;
+              Get.find<AudioPlayerController>()
+                  .setCurrentRoute(routing!.current);
             }
           },
           // Root-level builder: the Miniplayer sits above ALL routes
@@ -120,15 +121,36 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Counts open dialogs / bottom sheets on the root navigator.
+class PopupRouteObserver extends NavigatorObserver {
+  final RxInt openPopups = 0.obs;
+
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    if (route is PopupRoute) runOutsideBuild(() => openPopups.value++);
+  }
+
+  @override
+  void didPop(Route route, Route? previousRoute) => _closed(route);
+
+  @override
+  void didRemove(Route route, Route? previousRoute) => _closed(route);
+
+  void _closed(Route route) {
+    if (route is! PopupRoute) return;
+    runOutsideBuild(() {
+      if (openPopups.value > 0) openPopups.value--;
+    });
+  }
+}
+
+final popupRouteObserver = PopupRouteObserver();
+
 /// Wraps the entire app in a Stack with the Miniplayer panel on top.
 ///
-/// Positioning logic:
-///   • On the home route (NavBar visible) the collapsed mini bar sits ABOVE
-///     the BottomNavigationBar (offset = navBarHeight when pct = 0).
-///   • On any pushed route (no BottomNav) the mini bar anchors flush to the
-///     screen bottom (offset = 0).
-///   • As the panel expands (pct → 1) the offset smoothly goes to 0 so the
-///     full player covers the whole screen in both cases.
+/// Home route: the mini bar sits above the BottomNavigationBar, which reserves
+/// space for it. Other routes: the navigator is shrunk by the bar height so
+/// pages, dialogs, sheets and snackbars stay above it.
 class _MiniPlayerOverlay extends StatelessWidget {
   final Widget child;
   const _MiniPlayerOverlay({required this.child});
@@ -138,60 +160,86 @@ class _MiniPlayerOverlay extends StatelessWidget {
     final audioCtrl = Get.find<AudioPlayerController>();
 
     return Obx(() {
-      final isActive = audioCtrl.isPlayerActive.value;
-      final isVisible = audioCtrl.isMiniPlayerVisible.value;
-
-      // Nothing playing — render the page tree as-is.
-      if (!isActive || !isVisible) return child;
-
+      final mediaQuery = MediaQuery.of(context);
+      final showPlayer =
+          audioCtrl.isPlayerActive.value && audioCtrl.isMiniPlayerVisible.value;
       final pct = audioCtrl.panelPercentage.value;
-      final screenH = MediaQuery.of(context).size.height;
-      final safeBot = MediaQuery.of(context).padding.bottom;
+      final screenH = mediaQuery.size.height;
 
       // BottomNav exists only on the root NavBar route ("/").
       final onHomeRoute = audioCtrl.currentRoute.value == Routes.home ||
           audioCtrl.currentRoute.value == '/';
-      final navH = onHomeRoute ? kBottomNavigationBarHeight + safeBot : 0.0;
+      final navH = onHomeRoute
+          ? kBottomNavigationBarHeight + mediaQuery.padding.bottom
+          : 0.0;
 
-      // Linearly shrink the bottom inset as the panel expands.
-      // Multiply by 4 so the inset reaches 0 by 25 % expansion — the BottomNav
-      // fades at the same rate, so there is never an uncovered gap.
+      // Inset reaches 0 by 25 % expansion, as the BottomNav fades out.
       final bottomInset = (navH * (1.0 - pct * 4)).clamp(0.0, navH);
 
+      // Not needed while the keyboard covers the bar.
+      final reserveBelowPages =
+          showPlayer && !onHomeRoute && mediaQuery.viewInsets.bottom == 0;
+
+      // Popups on the home route would open under the collapsed bar.
+      final hideForPopup =
+          onHomeRoute && pct < 0.2 && popupRouteObserver.openPopups.value > 0;
+
+      // Keep the same tree shape whether or not the player shows, so the
+      // navigator is never remounted.
       return Stack(
         children: [
-          // Underlying page tree
-          child,
-
-          // Miniplayer positioned so that:
-          //   collapsed → bottom edge sits just above the BottomNav
-          //   expanded  → covers the full screen (bottom = 0)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: bottomInset,
-            // Height is always the full screen height so the Miniplayer has
-            // enough room to animate to its maxHeight. As `bottomInset` goes
-            // to 0 the widget shifts down, covering the BottomNav area.
-            height: screenH,
-            child: Miniplayer(
-              controller: audioCtrl.miniplayerController,
-              minHeight: miniPlayerMinHeight,
-              maxHeight: screenH,
-              elevation: 8,
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              builder: (height, percentage) {
-                // Update panelPercentage after the frame to avoid calling
-                // setState during build.
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  audioCtrl.onPanelPercentageChanged(percentage);
-                });
-
-                if (percentage < 0.2) return const MiniPlayerWidget();
-                return const FullPlayerWidget();
-              },
+          Padding(
+            padding: EdgeInsets.only(
+                bottom: reserveBelowPages ? miniPlayerMinHeight : 0),
+            child: MediaQuery.removePadding(
+              context: context,
+              removeBottom: reserveBelowPages,
+              child: child,
             ),
           ),
+          if (showPlayer)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: bottomInset,
+              // Full screen height so the Miniplayer can animate to maxHeight.
+              height: screenH,
+              child: Visibility(
+                visible: !hideForPopup,
+                maintainState: true,
+                child: Miniplayer(
+                  controller: audioCtrl.miniplayerController,
+                  minHeight: miniPlayerMinHeight,
+                  maxHeight: screenH,
+                  elevation: 8,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  builder: (height, percentage) {
+                    // Update after the frame to avoid setState during build.
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      audioCtrl.onPanelPercentageChanged(percentage);
+                    });
+
+                    if (percentage < 0.2) return const MiniPlayerWidget();
+                    // No GlobalKey: the miniplayer reparents this subtree
+                    // on drag-down, which trips GlobalKey assertions.
+                    // HeroControllerScope.none: the app's HeroController
+                    // can only belong to the root Navigator.
+                    return HeroControllerScope.none(
+                      child: Navigator(
+                        onGenerateRoute: (_) => PageRouteBuilder(
+                          pageBuilder: (context, __, ___) {
+                            audioCtrl.fullPlayerNavigator =
+                                Navigator.of(context);
+                            return const FullPlayerWidget();
+                          },
+                          transitionDuration: Duration.zero,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
         ],
       );
     });

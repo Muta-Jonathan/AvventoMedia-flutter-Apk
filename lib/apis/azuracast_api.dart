@@ -34,7 +34,9 @@ class AzuraCastAPI {
   }
 
   static Stream<RadioStation> getRadioStationUpdates() {
-    return _channel!.stream.asyncMap((data) async {
+    // Non-station messages (e.g. the connect reply) map to null and are
+    // dropped, so listeners never get an empty station.
+    return _channel!.stream.asyncMap<RadioStation?>((data) async {
       try {
         final jsonResult = json.decode(data);
 
@@ -70,20 +72,9 @@ class AzuraCastAPI {
         return radioStation;
       } catch (e) {
 
-        // Load cached data if available, or provide default values
-        final cachedRadioStation = await _loadCachedRadioStationData();
-        return cachedRadioStation ?? RadioStation(
-          id: 0,
-          artist: '', // Provide default values in case of an error
-          imageUrl: '',
-          nowPlayingTitle: '',
-          streamUrl: '',
-          elapsed: 0,
-          duration: 0,
-          nextProgram: '',
-        );
+        return _loadCachedRadioStationData();
       }
-    });
+    }).where((station) => station != null).cast<RadioStation>();
   }
 
   static Future<void> _cacheRadioStationData(RadioStation radioStation) async {
