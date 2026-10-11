@@ -1,3 +1,4 @@
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -11,8 +12,18 @@ class AudioPlayerController extends GetxController {
   late AudioPlayer audioPlayer;
   AudioSource? audioSource;
   ConcatenatingAudioSource? playlist;
-  MediaItem? currentMediaItem;
-  
+
+  MediaItem? _currentMediaItem;
+
+  /// Reactive copy of [currentMediaItem] for use in Obx.
+  final Rxn<MediaItem> currentMediaItemRx = Rxn<MediaItem>();
+
+  MediaItem? get currentMediaItem => _currentMediaItem;
+  set currentMediaItem(MediaItem? item) {
+    _currentMediaItem = item;
+    _runOutsideBuild(() => currentMediaItemRx.value = _currentMediaItem);
+  }
+
   final RxBool hasNext = false.obs;
   final RxBool hasPrevious = false.obs;
   List<double> speeds = [1.0, 1.25, 1.5, 1.75, 2.0];
@@ -36,6 +47,9 @@ class AudioPlayerController extends GetxController {
   /// Tracks the currently active route name so the Miniplayer overlay knows
   /// whether the BottomNavigationBar is visible (home route only).
   final RxString currentRoute = '/'.obs;
+
+  /// Lets the back button collapse the expanded player.
+  LocalHistoryEntry? _expandedBackEntry;
 
   @override
   void onInit() {
@@ -178,8 +192,59 @@ class AudioPlayerController extends GetxController {
     await audioPlayer.stop();
   }
 
+  void onPanelPercentageChanged(double percentage) {
+    panelPercentage.value = percentage;
+    if (percentage >= 0.99) {
+      _addExpandedBackEntry();
+    } else if (percentage <= 0.01) {
+      _removeExpandedBackEntry();
+    }
+  }
+
+  void collapsePlayer() {
+    miniplayerController.animateToHeight(state: PanelState.MIN);
+  }
+
+  void _addExpandedBackEntry() {
+    if (_expandedBackEntry != null) return;
+    final route = Get.routing.route;
+    if (route is! LocalHistoryRoute) return;
+
+    late final LocalHistoryEntry entry;
+    entry = LocalHistoryEntry(
+      impliesAppBarDismissal: false,
+      onRemove: () {
+        // Skip when removed by _removeExpandedBackEntry.
+        if (identical(_expandedBackEntry, entry)) {
+          _expandedBackEntry = null;
+          collapsePlayer();
+        }
+      },
+    );
+    _expandedBackEntry = entry;
+    route.addLocalHistoryEntry(entry);
+  }
+
+  void _removeExpandedBackEntry() {
+    final entry = _expandedBackEntry;
+    if (entry == null) return;
+    _expandedBackEntry = null;
+    entry.remove();
+  }
+
+  /// Defers [update] past the current build to avoid markNeedsBuild errors.
+  void _runOutsideBuild(VoidCallback update) {
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => update());
+    } else {
+      update();
+    }
+  }
+
   /// Stop audio and completely hide the mini player globally
   Future<void> closeMiniPlayer() async {
+    _removeExpandedBackEntry();
     isPlayerActive.value = false;
     await audioPlayer.stop();
   }

@@ -32,12 +32,15 @@ class EpisodeListDetailsWidget extends StatefulWidget {
 
 class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
   StreamSubscription? _playerStateSubscription;
+  StreamSubscription? _mediaItemSubscription;
 
   @override
   void initState() {
     super.initState();
     _playerStateSubscription = widget
         .audioPlayerController.audioPlayer.playerStateStream
+        .listen((_) => _updatePlayingState());
+    _mediaItemSubscription = widget.audioPlayerController.currentMediaItemRx
         .listen((_) => _updatePlayingState());
   }
 
@@ -48,6 +51,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
   @override
   void dispose() {
     _playerStateSubscription?.cancel();
+    _mediaItemSubscription?.cancel();
     super.dispose();
   }
 
