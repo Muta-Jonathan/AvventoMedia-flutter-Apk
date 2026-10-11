@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_constants.dart';
+import '../../components/app_snackbar.dart';
 import '../../controller/library_controller.dart';
 
 class NewPlaylistBottomSheet {
-  static Future<String?> show(BuildContext context) {
+  /// [confirm]: show "Playlist created". Callers that follow up with their
+  /// own message (e.g. "Saved to …") pass false.
+  static Future<String?> show(BuildContext context, {bool confirm = true}) {
     final controller = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
@@ -88,16 +91,9 @@ class NewPlaylistBottomSheet {
                         final meta = await library.createPlaylist(
                             controller.text.trim());
                         Navigator.of(ctx).pop(meta.id);
-                        Get.snackbar(
-                          '',
-                          AppConstants.playlistCreated,
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.green.withOpacity(0.85),
-                          colorText: Colors.white,
-                          margin: const EdgeInsets.all(12),
-                          borderRadius: 12,
-                          duration: const Duration(seconds: 2),
-                        );
+                        if (confirm) {
+                          AppSnackbar.show(AppConstants.playlistCreated(meta.title));
+                        }
                       }
                     },
                     child: Text(

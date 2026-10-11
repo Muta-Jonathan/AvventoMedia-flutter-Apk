@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../components/app_constants.dart';
+import '../../components/app_snackbar.dart';
 
 class DonateBottomSheet extends StatelessWidget {
   const DonateBottomSheet({super.key});
@@ -19,15 +20,8 @@ class DonateBottomSheet extends StatelessWidget {
 
   void _copyToClipboard(BuildContext context, String text, String label) {
     Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$label copied to clipboard'),
-        backgroundColor: Colors.amber.shade700,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    // Root overlay: a ScaffoldMessenger snackbar would sit under this sheet.
+    AppSnackbar.show('$label copied to clipboard');
   }
 
   @override
