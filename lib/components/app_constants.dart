@@ -61,9 +61,6 @@ class AppConstants {
   static String get shareAppLink => Platform.isIOS ? shareAppLinkIOS : shareAppLinkAndroid;
   static const String shareAppMessage = "Experience the joy of uplifting gospel music and inspiring stories with the AvventoMedia app! Download now and let your heart sing!";
 
-  static const String appStores = "APP STORES";
-  static const String playStore = "Get it on Google Play";
-  static const String appStore = "Download on App Store";
 
   static const String radio = "RADIO";
   static const String webRadio = "Avvento Web Radio";
@@ -87,13 +84,11 @@ class AppConstants {
   static const String notifications = "Allow notifications";
   static const String darkMode = "Dark Mode";
 
-  static const String socialMedia = "SOCIAL MEDIA";
   static const String tiktok = "Follow us on Tiktok";
   static const String tiktokWebsite = "https://www.tiktok.com/@avventomedia_official";
   static const String facebook = "Like us on Facebook";
   static const String facebookWebsite = "https://www.facebook.com/AvventoProductions/";
 
-  static const String feedBack = "FEED BACK";
   static const String report = "Report a Problem";
 
   static const String kofiName = "avventomedia";
@@ -154,6 +149,26 @@ class AppConstants {
 
   /// ***************** LIBRARY ****************
   static const String myLibrary = "MY LIBRARY";
+
+  // More tab
+  static const String supportUs = "Support AvventoMedia";
+  static const String supportUsSubtitle = "Tap to see donation options";
+  static const String themeAuto = "Auto";
+  static const String themeOn = "On";
+  static const String themeOff = "Off";
+  static const String allowNotifications = "Allow Notifications";
+  static const String allowMiniPlayer = "Allow Mini Player";
+  static const String followUs = "FOLLOW US";
+  static const String getTheApp = "GET THE APP";
+  static const String googlePlayStore = "Google Play Store";
+  static const String appleAppStore = "Apple App Store";
+  static const String supportAndLegal = "SUPPORT & LEGAL";
+  static const String termsOfService = "Terms of Service";
+  static const String privacyPolicy = "Privacy Policy";
+  static const String termsUrl = "https://avventomedia.org/terms/";
+  static const String privacyUrl = "https://avventomedia.org/privacy/";
+  static const String notificationsDenied =
+      "Notifications are off for AvventoMedia in your phone's settings";
   static const String favorites = "Favorites";
   static const String myPlaylists = "My Playlists";
   static const String newPlaylist = "New Playlist";
