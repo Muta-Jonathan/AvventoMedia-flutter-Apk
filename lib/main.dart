@@ -184,7 +184,7 @@ class _MiniPlayerOverlay extends StatelessWidget {
                 // Update panelPercentage after the frame to avoid calling
                 // setState during build.
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  audioCtrl.panelPercentage.value = percentage;
+                  audioCtrl.onPanelPercentageChanged(percentage);
                 });
 
                 if (percentage < 0.2) return const MiniPlayerWidget();

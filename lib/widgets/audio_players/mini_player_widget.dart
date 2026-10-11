@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:miniplayer/miniplayer.dart';
 
@@ -16,31 +17,37 @@ class MiniPlayerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final AudioPlayerController controller = Get.find<AudioPlayerController>();
 
-    return StreamBuilder<PlayerState>(
-      stream: controller.audioPlayer.playerStateStream,
-      initialData: controller.audioPlayer.playerState,
-      builder: (context, snapshot) {
-        final state = snapshot.data;
-        final isPlaying = state?.playing ?? false;
-        final isBuffering = state?.processingState == ProcessingState.buffering ||
-            state?.processingState == ProcessingState.loading;
+    return Obx(() {
+      final mediaItem = controller.currentMediaItemRx.value;
+      final isLive = controller.isLive.value;
+      if (mediaItem == null) return const SizedBox.shrink();
 
-        return _buildMiniPlayerBar(context, controller, isPlaying, isBuffering);
-      },
-    );
+      return StreamBuilder<PlayerState>(
+        stream: controller.audioPlayer.playerStateStream,
+        initialData: controller.audioPlayer.playerState,
+        builder: (context, snapshot) {
+          final state = snapshot.data;
+          final isPlaying = state?.playing ?? false;
+          final isBuffering =
+              state?.processingState == ProcessingState.buffering ||
+                  state?.processingState == ProcessingState.loading;
+
+          return _buildMiniPlayerBar(
+              context, controller, mediaItem, isLive, isPlaying, isBuffering);
+        },
+      );
+    });
   }
 
   Widget _buildMiniPlayerBar(
     BuildContext context,
     AudioPlayerController controller,
+    MediaItem mediaItem,
+    bool isLive,
     bool isPlaying,
     bool isBuffering,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    final mediaItem = controller.currentMediaItem;
-    if (mediaItem == null) return const SizedBox.shrink();
-
-    final isLive = controller.isLive.value;
     final artUri = mediaItem.artUri?.toString();
 
     return GestureDetector(
