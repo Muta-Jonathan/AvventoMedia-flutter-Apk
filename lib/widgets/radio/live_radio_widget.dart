@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:miniplayer/miniplayer.dart';
 
 import '../../apis/firestore_service_api.dart';
 import '../../controller/audio_player_controller.dart';
@@ -57,9 +56,9 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
           audioController.isLive.value = true;
           audioController.isPlayerActive.value = true;
           audioController.isMiniPlayerVisible.value = true;
-          // Defer until the Miniplayer widget is in the tree
+          // Defer until the PlayerPanel is in the tree
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            audioController.miniplayerController.animateToHeight(state: PanelState.MAX);
+            audioController.panelController.expand();
           });
         },
         child: Container(

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:miniplayer/miniplayer.dart';
+import '../widgets/audio_players/player_panel.dart';
 import '../main.dart';
 import 'audio_handler.dart';
 
@@ -50,12 +50,12 @@ class AudioPlayerController extends GetxController {
   final RxBool isPlayerActive = false.obs;
 
   /// Controls the expand/collapse state of the sliding mini player panel
-  final MiniplayerController miniplayerController = MiniplayerController();
+  final PlayerPanelController panelController = PlayerPanelController();
 
   /// 0.0 = fully collapsed (mini bar), 1.0 = fully expanded (full player)
   final RxDouble panelPercentage = 0.0.obs;
 
-  /// Tracks the currently active route name so the Miniplayer overlay knows
+  /// Tracks the currently active route name so the player overlay knows
   /// whether the BottomNavigationBar is visible (home route only).
   final RxString currentRoute = '/'.obs;
 
@@ -238,7 +238,7 @@ class AudioPlayerController extends GetxController {
   }
 
   void collapsePlayer() {
-    miniplayerController.animateToHeight(state: PanelState.MIN);
+    panelController.collapse();
   }
 
   void _addExpandedBackEntry() {
@@ -281,7 +281,8 @@ class AudioPlayerController extends GetxController {
 
   /// Stop audio and completely hide the mini player globally
   Future<void> closeMiniPlayer() async {
-    _removeExpandedBackEntry();
+    // The panel is removed, so it won't report its percentage again.
+    onPanelPercentageChanged(0);
     isPlayerActive.value = false;
     await audioPlayer.stop();
   }

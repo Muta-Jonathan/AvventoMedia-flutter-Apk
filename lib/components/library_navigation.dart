@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:miniplayer/miniplayer.dart';
 
 import '../controller/audio_player_controller.dart';
 import '../controller/podcast_controller.dart';
@@ -62,7 +61,7 @@ class LibraryNavigation {
       audioController.isPlayerActive.value = true;
       audioController.isMiniPlayerVisible.value = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        audioController.miniplayerController.animateToHeight(state: PanelState.MAX);
+        audioController.panelController.expand();
       });
     } else if (item.type == 'podcast_show') {
       final model = RadioPodcast(

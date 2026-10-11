@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:miniplayer/miniplayer.dart';
 
 import '../../controller/audio_player_controller.dart';
 
 /// The collapsed mini-player bar. No Positioned wrapper — it is placed
-/// inside the Miniplayer builder by nav_bar.dart.
+/// inside the PlayerPanel builder in main.dart.
 class MiniPlayerWidget extends StatelessWidget {
   const MiniPlayerWidget({super.key});
 
@@ -57,8 +56,8 @@ class MiniPlayerWidget extends StatelessWidget {
 
     final bar = GestureDetector(
       onTap: () {
-        // Expand the Miniplayer panel to full screen
-        controller.miniplayerController.animateToHeight(state: PanelState.MAX);
+        // Expand the panel to full screen
+        controller.panelController.expand();
       },
       child: Container(
         decoration: BoxDecoration(
