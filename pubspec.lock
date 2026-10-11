@@ -113,14 +113,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  awesome_snackbar_content:
-    dependency: "direct main"
-    description:
-      name: awesome_snackbar_content
-      sha256: "1aac8861d567ba0f8a5dc8e79e525b50f70d6feedf4cbe99e08efb29fce6039d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.8"
   better_player:
     dependency: "direct main"
     description:
@@ -516,11 +508,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
-  flutter_localizations:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   flutter_native_splash:
     dependency: "direct main"
     description:

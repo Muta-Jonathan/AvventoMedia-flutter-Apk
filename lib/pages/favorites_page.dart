@@ -7,6 +7,7 @@ import '../components/app_constants.dart';
 import '../components/library_navigation.dart';
 import '../controller/library_controller.dart';
 import '../models/saved_item_model.dart';
+import '../widgets/common/empty_state.dart';
 
 class FavoritesPage extends StatelessWidget {
   const FavoritesPage({super.key});
@@ -27,23 +28,11 @@ class FavoritesPage extends StatelessWidget {
       ),
       body: Obx(() {
         if (library.favorites.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(CupertinoIcons.heart,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
-                const SizedBox(height: 16),
-                Text(
-                  AppConstants.noFavorites,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
+          return const EmptyState(
+            icon: CupertinoIcons.heart_fill,
+            color: Color(0xFFFF5252),
+            title: AppConstants.noFavorites,
+            message: AppConstants.noFavoritesMessage,
           );
         }
 

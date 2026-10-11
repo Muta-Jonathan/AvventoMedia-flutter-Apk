@@ -9,6 +9,7 @@ import '../components/library_navigation.dart';
 import '../controller/library_controller.dart';
 import '../models/custom_playlist_meta.dart';
 import '../models/saved_item_model.dart';
+import '../widgets/common/empty_state.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
   final CustomPlaylistMeta playlist;
@@ -53,23 +54,11 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _items.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(CupertinoIcons.music_note_list,
-                          size: 64,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No items in this playlist',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSecondary,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
+              ? const EmptyState(
+                  icon: CupertinoIcons.music_note_list,
+                  color: Color(0xFFA77BFF),
+                  title: AppConstants.emptyPlaylist,
+                  message: AppConstants.emptyPlaylistMessage,
                 )
               : _buildGroupedList(context),
     );

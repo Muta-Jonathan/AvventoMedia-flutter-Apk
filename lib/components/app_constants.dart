@@ -101,21 +101,36 @@ class AppConstants {
 
 
   /// ***************** PRAYER REQUEST PAGE ****************
-  static const String prayerRequestTitle = "\"Rejoice evermore. Pray without ceasing....\" 1 Thessalonians 5:16-23";
-  static const String prayerRequestHintName = "Enter your name";
-  static const String prayerRequestName = "Please enter your name";
-  static const String prayerRequestHintPhone = "Phone Number";
-  static const String prayerRequestPhone = "Please enter your correct number";
-  static const String prayerRequestHintEmail = "Enter your email";
-  static const String prayerRequestEmail = "Please enter a correct email";
-  static const String prayerRequestHintPrayFor = "Pray For";
-  static const String prayerRequestPrayFor = "Please enter what you want to join with you in Prayer";
-  static const String prayerRequestMessage = "Please enter your Prayer Request";
-
-  static const String successful = "Successful";
-  static const String prayerRequestError = "Error sending your Prayer Request 🚫";
-  static const String error = "Oops need to try Again";
-  static const String send = "SEND";
+  static const String prayerHeadline = "How can we pray for you?";
+  static const String prayerSubtitle =
+      "Share your request and our team will pray with you.";
+  static const String prayerYourDetails = "YOUR DETAILS";
+  static const String prayerPrayForSection = "PRAY FOR";
+  static const String prayerYourRequest = "YOUR REQUEST";
+  static const String prayerHintName = "Full name";
+  static const String prayerHintPhone = "Phone number";
+  static const String prayerSearchCountry = "Search country";
+  static const String prayerHintEmail = "Email address";
+  static const String prayerHintPrayFor = "Who or what should we pray for?";
+  static const String prayerHintMessage = "Write your prayer request…";
+  static const List<String> prayerTopics = [
+    "Myself", "Family", "Health", "Work", "Finances", "Church",
+  ];
+  static const int prayerMaxLength = 1000;
+  static const String prayerErrorName = "Enter your name (letters only)";
+  static const String prayerErrorPhone = "Enter your phone number";
+  static const String prayerErrorEmail = "Enter a valid email address";
+  static const String prayerErrorPrayFor = "Tell us who or what to pray for";
+  static const String prayerErrorMessage = "Write your prayer request";
+  static const String prayerSend = "Send Request";
+  static const String prayerSending = "Sending…";
+  static const String prayerSent = "Request sent";
+  static String prayerSentMessage(String firstName) =>
+      "Hey $firstName, your prayer request was sent successfully. "
+      "We'll be praying with you.";
+  static const String prayerSendAnother = "Send another request";
+  static const String prayerRequestError =
+      "Couldn't send your prayer request. Please try again.";
 
 
   /// ***************** SHARE MESSAGE ****************
@@ -177,6 +192,13 @@ class AppConstants {
   static const String saveToPlaylist = "Save to Playlist";
   static const String noFavorites = "No favorites yet";
   static const String noPlaylists = "No playlists yet";
+  static const String noFavoritesMessage =
+      "Tap the heart on any video or podcast to keep it here.";
+  static const String noPlaylistsMessage =
+      "Create a playlist to collect the videos and podcasts you love.";
+  static const String emptyPlaylist = "This playlist is empty";
+  static const String emptyPlaylistMessage =
+      "Tap Save on a video or podcast and choose this playlist.";
   static const String createPlaylist = "Create";
   static const String alreadySaved = "Already saved";
   static const String savedToFavorites = "Added to Favorites";
