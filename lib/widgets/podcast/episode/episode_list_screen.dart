@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:miniplayer/miniplayer.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controller/audio_player_controller.dart';
@@ -126,8 +125,7 @@ class _EpisodeListState extends State<EpisodeListScreen> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      audioPlayerController.miniplayerController
-          .animateToHeight(state: PanelState.MAX);
+      audioPlayerController.panelController.expand();
     });
   }
 

@@ -19,14 +19,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:miniplayer/miniplayer.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart' as rx;
 
 import '../../controller/podcast_episode_controller.dart';
 import '../../models/saved_item_model.dart';
 
-/// The full-screen inline player that is rendered inside the expanded Miniplayer panel.
+/// The full-screen inline player that is rendered inside the expanded PlayerPanel.
 /// This replaces the route-based OnlineRadioPage / PodcastPage when the panel is expanded.
 class FullPlayerWidget extends StatefulWidget {
   const FullPlayerWidget({super.key});
@@ -136,8 +135,7 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
                       IconButton(
                         icon: const Icon(CupertinoIcons.chevron_down),
                         color: Theme.of(context).colorScheme.onPrimary,
-                        onPressed: () => _controller.miniplayerController
-                            .animateToHeight(state: PanelState.MIN),
+                        onPressed: () => _controller.panelController.collapse(),
                       ),
                       Expanded(
                         child: Row(
@@ -335,8 +333,7 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
                   IconButton(
                     icon: const Icon(CupertinoIcons.chevron_down),
                     color: Theme.of(context).colorScheme.onPrimary,
-                    onPressed: () => _controller.miniplayerController
-                        .animateToHeight(state: PanelState.MIN),
+                    onPressed: () => _controller.panelController.collapse(),
                   ),
                   Expanded(
                     child: Center(

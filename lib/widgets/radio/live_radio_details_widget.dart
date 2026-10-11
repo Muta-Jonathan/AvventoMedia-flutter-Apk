@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 
 import '../../components/utils.dart';
 import '../../controller/audio_player_controller.dart';
-import 'package:miniplayer/miniplayer.dart';
 import '../images/resizable_image_widget_2.dart';
 
 class LiveRadioDetailsWidget extends StatefulWidget {
@@ -28,7 +27,7 @@ class _LiveRadioDetailsWidget extends State<LiveRadioDetailsWidget> {
           audioController.isPlayerActive.value = true;
           audioController.isMiniPlayerVisible.value = true;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            audioController.miniplayerController.animateToHeight(state: PanelState.MAX);
+            audioController.panelController.expand();
           });
         },
         child: Column(

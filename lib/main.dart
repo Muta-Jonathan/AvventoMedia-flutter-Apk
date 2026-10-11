@@ -9,6 +9,7 @@ import 'package:avvento_media/themes/dark_theme.dart';
 import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/audio_players/full_player_widget.dart';
 import 'package:avvento_media/widgets/audio_players/mini_player_widget.dart';
+import 'package:avvento_media/widgets/audio_players/player_panel.dart';
 import 'package:avvento_media/widgets/providers/programs_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
@@ -19,7 +20,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:audio_service/audio_service.dart';
-import 'package:miniplayer/miniplayer.dart';
 import 'package:provider/provider.dart';
 import 'package:upgrader/upgrader.dart';
 
@@ -111,7 +111,7 @@ class MyApp extends StatelessWidget {
                   .setCurrentRoute(routing!.current);
             }
           },
-          // Root-level builder: the Miniplayer sits above ALL routes
+          // Root-level builder: the player panel sits above ALL routes
           // (tabs, pushed pages, modals) exactly like Spotify / YouTube Music.
           builder: (context, child) {
             return _MiniPlayerOverlay(
@@ -124,7 +124,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// Wraps the entire app in a Stack with the Miniplayer panel on top.
+/// Wraps the entire app in a Stack with the [PlayerPanel] on top.
 ///
 /// Home route: the mini bar sits above the BottomNavigationBar, which reserves
 /// space for it. Other routes: the navigator is shrunk by the bar height so
@@ -180,25 +180,20 @@ class _MiniPlayerOverlay extends StatelessWidget {
               left: 0,
               right: 0,
               bottom: bottomInset,
-              // Full screen height so the Miniplayer can animate to maxHeight.
+              // Full screen height so the panel can animate to maxHeight.
               height: screenH,
               child: Visibility(
                 visible: !hideForPopup,
                 maintainState: true,
-                child: Miniplayer(
-                  controller: audioCtrl.miniplayerController,
+                child: PlayerPanel(
+                  controller: audioCtrl.panelController,
                   minHeight: miniPlayerMinHeight,
                   maxHeight: screenH,
                   elevation: 8,
                   backgroundColor: Theme.of(context).colorScheme.surface,
-                  builder: (height, percentage) {
-                    // Update after the frame to avoid setState during build.
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      audioCtrl.onPanelPercentageChanged(percentage);
-                    });
-
-                    return _PanelContent(percentage: percentage);
-                  },
+                  onChanged: audioCtrl.onPanelPercentageChanged,
+                  builder: (height, percentage) =>
+                      _PanelContent(percentage: percentage),
                 ),
               ),
             ),
@@ -253,8 +248,7 @@ class _PanelContent extends StatelessWidget {
                   child: Scaffold(
                     backgroundColor: Colors.transparent,
                     // HeroControllerScope.none: the app's HeroController can
-                    // only belong to the root Navigator. No GlobalKey: the
-                    // miniplayer reparents this subtree on drag-down.
+                    // only belong to the root Navigator.
                     body: HeroControllerScope.none(
                       child: Navigator(
                         onGenerateRoute: (_) => PageRouteBuilder(
