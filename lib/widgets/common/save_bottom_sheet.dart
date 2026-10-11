@@ -51,14 +51,17 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
     if (mounted) setState(() => _playlistContains = result);
   }
 
-  void _snack(String msg, {bool success = true}) {
+  /// [navigator] is the Navigator the sheet was shown on; pass it when this
+  /// sheet may already be closed.
+  void _snack(String msg, {bool success = true, NavigatorState? navigator}) {
     final color = (success ? Colors.green : Colors.orange).withOpacity(0.85);
+    navigator ??= mounted ? Navigator.of(context) : null;
 
     // Opened from the full player: root snackbars would sit under it, so use
     // the player's own ScaffoldMessenger.
     final player = Get.find<AudioPlayerController>().fullPlayerNavigator;
-    if (mounted && player != null && identical(Navigator.of(context), player)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    if (navigator != null && navigator.mounted && identical(navigator, player)) {
+      ScaffoldMessenger.of(navigator.context).showSnackBar(SnackBar(
         content: Text(msg, style: const TextStyle(color: Colors.white)),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
@@ -129,11 +132,19 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      Navigator.of(context).pop();
-                      final id = await NewPlaylistBottomSheet.show(context);
-                      if (id != null) {
-                        final added = await _library.addToPlaylist(id, widget.item);
-                        if (added) _snack(AppConstants.savedToPlaylist);
+                      // This sheet's context dies on pop, so open the next
+                      // sheet from the Navigator it was shown on.
+                      final navigator = Navigator.of(context);
+                      final library = _library;
+                      final item = widget.item;
+                      navigator.pop();
+                      final id =
+                          await NewPlaylistBottomSheet.show(navigator.context);
+                      if (id == null) return;
+                      final added = await library.addToPlaylist(id, item);
+                      if (added) {
+                        _snack(AppConstants.savedToPlaylist,
+                            navigator: navigator);
                       }
                     },
                     icon: const Icon(CupertinoIcons.add_circled_solid, color: Colors.amber, size: 28),

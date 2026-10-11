@@ -32,7 +32,7 @@ dependencies:
   firebase_core: ^4.2.1
   cloud_firestore: ^6.1.0
 
-  get: ^4.6.6
+  get: ^4.7.3
   http: ^0.13.5
   audio_video_progress_bar: ^2.0.0
   just_audio: ^0.10.5
