@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../widgets/audio_players/player_panel.dart';
+import 'settings_controller.dart';
 import '../main.dart';
 import 'audio_handler.dart';
 
@@ -68,6 +69,16 @@ class AudioPlayerController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    if (Get.isRegistered<SettingsController>()) {
+      ever(Get.find<SettingsController>().miniPlayerEnabled, (bool enabled) {
+        if (!isPlayerActive.value) return;
+        if (enabled) {
+          isMiniPlayerVisible.value = true;
+        } else if (panelPercentage.value <= 0.01) {
+          isMiniPlayerVisible.value = false;
+        }
+      });
+    }
     audioPlayer.setLoopMode(LoopMode.off);
 
     _handlerReady =
@@ -131,7 +142,7 @@ class AudioPlayerController extends GetxController {
     playlist = null;
 
     isPlayerActive.value = true;
-    isMiniPlayerVisible.value = true;
+    _revealPlayer();
 
     // Tell the handler this is live (no seek bar, no skip buttons)
     final handler = await _handlerReady;
@@ -155,7 +166,7 @@ class AudioPlayerController extends GetxController {
     }
 
     isPlayerActive.value = true;
-    isMiniPlayerVisible.value = true;
+    _revealPlayer();
 
     // Tell the handler this is a seekable playlist (show progress bar + skip)
     final handler = await _handlerReady;
@@ -229,12 +240,27 @@ class AudioPlayerController extends GetxController {
   }
 
   void onPanelPercentageChanged(double percentage) {
+    final wasOpen = panelPercentage.value > 0.01;
     panelPercentage.value = percentage;
     if (percentage >= 0.99) {
       _addExpandedBackEntry();
     } else if (percentage <= 0.01) {
       _removeExpandedBackEntry();
+      // Mini bar disabled: collapsing closes the player (audio continues).
+      if (wasOpen && !_miniBarAllowed) isMiniPlayerVisible.value = false;
     }
+  }
+
+  /// "Allow Mini Player" in More; on when there are no settings (tests).
+  bool get _miniBarAllowed =>
+      !Get.isRegistered<SettingsController>() ||
+      Get.find<SettingsController>().miniPlayerEnabled.value;
+
+  /// Shows the player for new playback: the mini bar, or the full player
+  /// when the mini bar is disabled.
+  void _revealPlayer() {
+    isMiniPlayerVisible.value = true;
+    if (!_miniBarAllowed) panelController.expand();
   }
 
   void collapsePlayer() {
@@ -292,6 +318,7 @@ class AudioPlayerController extends GetxController {
 
   /// Show mini player (called on page navigation)
   void showMiniPlayer() {
+    if (!_miniBarAllowed) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       isMiniPlayerVisible.value = true;
     });

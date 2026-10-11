@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
 import 'package:avvento_media/controller/popup_route_observer.dart';
+import 'package:avvento_media/controller/settings_controller.dart';
 import 'package:avvento_media/firebase_options.dart';
 import 'package:avvento_media/routes/routes.dart';
 import 'package:avvento_media/themes/dark_theme.dart';
@@ -45,6 +46,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: ".env");
   await Upgrader.clearSavedSettings();
+  Get.put(await SettingsController.load(), permanent: true);
 
   runApp(
     MultiProvider(
@@ -99,6 +101,7 @@ class MyApp extends StatelessWidget {
           title: AppConstants.appName,
           theme: lightTheme,
           darkTheme: darkTheme,
+          themeMode: Get.find<SettingsController>().themeMode.value,
           initialRoute: Routes.getHomeRoute(),
           getPages: Routes.routes,
           initialBinding: InitialBinding(),
