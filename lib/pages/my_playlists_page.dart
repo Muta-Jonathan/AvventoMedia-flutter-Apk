@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../components/app_constants.dart';
+import '../components/app_snackbar.dart';
 import '../controller/library_controller.dart';
 import '../widgets/common/new_playlist_bottom_sheet.dart';
 import 'playlist_detail_page.dart';
@@ -110,13 +111,7 @@ class MyPlaylistsPage extends StatelessWidget {
               },
               onDismissed: (_) async {
                 await library.deletePlaylist(pl.id);
-                Get.snackbar('', AppConstants.playlistDeleted,
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.grey.withOpacity(0.8),
-                    colorText: Colors.white,
-                    margin: const EdgeInsets.all(12),
-                    borderRadius: 12,
-                    duration: const Duration(seconds: 2));
+                AppSnackbar.show(AppConstants.playlistDeleted(pl.title));
               },
               child: ListTile(
                 contentPadding:

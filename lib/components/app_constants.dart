@@ -168,7 +168,8 @@ class AppConstants {
   static const String removedFromFavorites = "Removed from Favorites";
   static const String savedToPlaylist = "Saved to playlist";
   static const String playlistNameHint = "Playlist name";
-  static const String playlistCreated = "Playlist created";
-  static const String playlistDeleted = "Playlist deleted";
+  static String playlistCreated(String title) => 'Playlist "$title" created';
+  static String playlistDeleted(String title) => 'Playlist "$title" deleted';
+  static const String undo = "Undo";
   static const String playlistNameEmpty = "Please enter a playlist name";
 }

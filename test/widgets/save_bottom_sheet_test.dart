@@ -33,8 +33,7 @@ void main() {
     savedAt: DateTime(2026),
   );
 
-  testWidgets('"New playlist" from the save sheet creates, saves and confirms',
-      (tester) async {
+  Future<void> pumpSaveSheet(WidgetTester tester) async {
     await tester.pumpWidget(GetMaterialApp(
       home: Scaffold(
         body: Builder(
@@ -45,9 +44,13 @@ void main() {
         ),
       ),
     ));
-
     await tester.tap(find.text('save'));
     await tester.pumpAndSettle();
+  }
+
+  testWidgets('"New playlist" from the save sheet creates, saves and confirms',
+      (tester) async {
+    await pumpSaveSheet(tester);
 
     await tester.tap(find.byIcon(CupertinoIcons.add_circled_solid));
     await tester.pumpAndSettle();
@@ -62,15 +65,35 @@ void main() {
     final items = await library.getPlaylistItems(library.playlists.single.id);
     expect(items.map((i) => i.id), ['ep1']);
 
-    // Regression: Get.snackbar threw "No Overlay widget found" on Flutter
-    // 3.47 with get 4.7.2. GetX shows the two snackbars one after the other.
-    expect(find.text(AppConstants.playlistCreated), findsOneWidget);
+    // One confirmation naming the playlist. Regression: Get.snackbar threw
+    // "No Overlay widget found" on Flutter 3.47 with get 4.7.2.
+    expect(find.text('Saved to Favourites'), findsOneWidget);
+    expect(find.text(AppConstants.playlistCreated('Favourites')), findsNothing);
+    await _finishSnackbars(tester);
+  });
+
+  testWidgets('removing from a playlist offers Undo', (tester) async {
+    final playlist = await library.createPlaylist('Favourites');
+    await library.addToPlaylist(playlist.id, item);
+    await pumpSaveSheet(tester);
+
+    await tester.tap(find.text('Favourites'));
+    await tester.pumpAndSettle();
+    expect(find.text('Removed from Favourites'), findsOneWidget);
+    expect(await library.getPlaylistItems(playlist.id), isEmpty);
+
+    await tester.tap(find.text(AppConstants.undo));
+    await tester.pumpAndSettle();
+    final items = await library.getPlaylistItems(playlist.id);
+    expect(items.map((i) => i.id), ['ep1']);
+    await _finishSnackbars(tester);
+  });
+}
+
+/// Lets GetX snackbar timers finish so the test ends cleanly.
+Future<void> _finishSnackbars(WidgetTester tester) async {
+  for (var i = 0; i < 3; i++) {
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
-    expect(find.text(AppConstants.savedToPlaylist), findsOneWidget);
-    for (var i = 0; i < 3; i++) {
-      await tester.pump(const Duration(seconds: 3));
-      await tester.pumpAndSettle();
-    }
-  });
+  }
 }

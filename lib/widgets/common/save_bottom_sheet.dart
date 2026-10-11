@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_constants.dart';
-import '../../controller/audio_player_controller.dart';
+import '../../components/app_snackbar.dart';
 import '../../controller/library_controller.dart';
 import '../../models/saved_item_model.dart';
 import 'new_playlist_bottom_sheet.dart';
@@ -49,40 +49,6 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
       result[pl.id] = items.any((i) => i.id == widget.item.id);
     }
     if (mounted) setState(() => _playlistContains = result);
-  }
-
-  /// [navigator] is the Navigator the sheet was shown on; pass it when this
-  /// sheet may already be closed.
-  void _snack(String msg, {bool success = true, NavigatorState? navigator}) {
-    final color = (success ? Colors.green : Colors.orange).withOpacity(0.85);
-    navigator ??= mounted ? Navigator.of(context) : null;
-
-    // Opened from the full player: root snackbars would sit under it, so use
-    // the player's own ScaffoldMessenger.
-    final player = Get.find<AudioPlayerController>().fullPlayerNavigator;
-    if (navigator != null && navigator.mounted && identical(navigator, player)) {
-      ScaffoldMessenger.of(navigator.context).showSnackBar(SnackBar(
-        content: Text(msg, style: const TextStyle(color: Colors.white)),
-        backgroundColor: color,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(12),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 2),
-      ));
-      return;
-    }
-
-    Get.snackbar(
-      '',
-      msg,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: color,
-      colorText: Colors.white,
-      margin: const EdgeInsets.all(12),
-      borderRadius: 12,
-      duration: const Duration(seconds: 2),
-    );
   }
 
   String get _titleString {
@@ -138,12 +104,20 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                       final library = _library;
                       final item = widget.item;
                       navigator.pop();
-                      final id =
-                          await NewPlaylistBottomSheet.show(navigator.context);
+                      // One confirmation for create + save.
+                      final id = await NewPlaylistBottomSheet.show(
+                          navigator.context,
+                          confirm: false);
                       if (id == null) return;
                       final added = await library.addToPlaylist(id, item);
                       if (added) {
-                        _snack(AppConstants.savedToPlaylist,
+                        final title = library.playlists
+                            .firstWhereOrNull((p) => p.id == id)
+                            ?.title;
+                        AppSnackbar.show(
+                            title == null
+                                ? AppConstants.savedToPlaylist
+                                : 'Saved to $title',
                             navigator: navigator);
                       }
                     },
@@ -226,12 +200,23 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                       final added = await _library.addToPlaylist(pl.id, widget.item);
                       if (added) {
                         setState(() => _playlistContains[pl.id] = true);
-                        _snack(AppConstants.savedToPlaylist);
+                        AppSnackbar.show('Saved to ${pl.title}',
+                            navigator: Navigator.of(context));
                       }
                     } else {
                       await _library.removeFromPlaylist(pl.id, widget.item.id);
                       setState(() => _playlistContains[pl.id] = false);
-                      _snack('Removed from playlist', success: false);
+                      AppSnackbar.show(
+                        'Removed from ${pl.title}',
+                        navigator: Navigator.of(context),
+                        actionLabel: AppConstants.undo,
+                        onAction: () async {
+                          await _library.addToPlaylist(pl.id, widget.item);
+                          if (mounted) {
+                            setState(() => _playlistContains[pl.id] = true);
+                          }
+                        },
+                      );
                     }
                   },
                 );

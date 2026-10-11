@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../components/app_constants.dart';
+import '../components/app_snackbar.dart';
 import '../components/library_navigation.dart';
 import '../controller/library_controller.dart';
 import '../models/custom_playlist_meta.dart';
@@ -115,13 +117,14 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
           onDismissed: (_) async {
             await _library.removeFromPlaylist(widget.playlist.id, item.id);
             setState(() => _items.removeWhere((i) => i.id == item.id));
-            Get.snackbar('', 'Removed from playlist',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.grey.withOpacity(0.8),
-                colorText: Colors.white,
-                margin: const EdgeInsets.all(12),
-                borderRadius: 12,
-                duration: const Duration(seconds: 2));
+            AppSnackbar.show(
+              'Removed from ${widget.playlist.title}',
+              actionLabel: AppConstants.undo,
+              onAction: () async {
+                await _library.addToPlaylist(widget.playlist.id, item);
+                await _load();
+              },
+            );
           },
           child: InkWell(
             onTap: () => LibraryNavigation.navigateToSavedItem(item),

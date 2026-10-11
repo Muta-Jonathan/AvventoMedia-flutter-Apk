@@ -32,6 +32,15 @@ ThemeData lightTheme = ThemeData(
     tertiary: Colors.orange,
     onTertiary: Colors.black,
   ),
+  // Material 3 snackbars: inverse of the surface, floating.
+  snackBarTheme: const SnackBarThemeData(
+    backgroundColor: Color(0xFF313033),
+    contentTextStyle: TextStyle(color: Colors.white, fontSize: 14),
+    actionTextColor: Colors.orange,
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8))),
+  ),
   textSelectionTheme: const TextSelectionThemeData(
     cursorColor: Colors.amber,
     selectionHandleColor: Colors.amber,
