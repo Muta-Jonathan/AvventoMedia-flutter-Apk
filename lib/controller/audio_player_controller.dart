@@ -10,7 +10,17 @@ import '../main.dart';
 import 'audio_handler.dart';
 
 class AudioPlayerController extends GetxController {
-  late AudioPlayer audioPlayer;
+  /// [player] and [startAudioService] exist for tests.
+  AudioPlayerController({AudioPlayer? player, bool startAudioService = true})
+      : audioPlayer = player ?? AudioPlayer(),
+        _startAudioService = startAudioService;
+
+  final AudioPlayer audioPlayer;
+  final bool _startAudioService;
+
+  /// Completes once AudioService is ready (null when not started, in tests).
+  /// Await it before using the handler: playback can start before init ends.
+  late final Future<AudioHandler?> _handlerReady;
   AudioSource? audioSource;
   ConcatenatingAudioSource? playlist;
 
@@ -58,10 +68,10 @@ class AudioPlayerController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    audioPlayer = AudioPlayer();
     audioPlayer.setLoopMode(LoopMode.off);
-    
-    _initAudioService();
+
+    _handlerReady =
+        _startAudioService ? _initAudioService() : Future.value(null);
     
     // Listen to sequence state changes to dynamically update current item and next/prev availability
     audioPlayer.sequenceStateStream.listen((sequenceState) {
@@ -75,7 +85,7 @@ class AudioPlayerController extends GetxController {
     });
   }
 
-  Future<void> _initAudioService() async {
+  Future<AudioHandler> _initAudioService() async {
     // Request notification permission for Android 13+ before initializing the audio service
     await Permission.notification.request();
 
@@ -89,12 +99,14 @@ class AudioPlayerController extends GetxController {
         androidStopForegroundOnPause: true,
       ),
     );
+    return audioHandler;
   }
 
   Future<void> updateRadioProgram(String newTitle, String newArtist, String newImageUrl, Duration duration, Duration elapsed) async {
-    if (audioHandler is MyAudioHandler) {
-      (audioHandler as MyAudioHandler).setLivePlayback(isLive.value);
-      (audioHandler as MyAudioHandler).syncLiveProgress(elapsed);
+    final handler = await _handlerReady;
+    if (handler is MyAudioHandler) {
+      handler.setLivePlayback(isLive.value);
+      handler.syncLiveProgress(elapsed);
     }
 
     if (currentMediaItem != null) {
@@ -105,7 +117,7 @@ class AudioPlayerController extends GetxController {
         duration: duration,
       );
       currentMediaItem = updatedItem;
-      await audioHandler.updateMediaItem(updatedItem);
+      await handler?.updateMediaItem(updatedItem);
     }
   }
 
@@ -122,12 +134,13 @@ class AudioPlayerController extends GetxController {
     isMiniPlayerVisible.value = true;
 
     // Tell the handler this is live (no seek bar, no skip buttons)
-    if (audioHandler is MyAudioHandler) {
-      (audioHandler as MyAudioHandler).setLivePlayback(isLive.value);
+    final handler = await _handlerReady;
+    if (handler is MyAudioHandler) {
+      handler.setLivePlayback(isLive.value);
     }
 
-    await audioPlayer.setAudioSource(audioSource!);
-    await audioHandler.updateMediaItem(mediaItemTag);
+    if (!await _load(audioSource!)) return;
+    await handler?.updateMediaItem(mediaItemTag);
   }
 
   Future<void> setAudioPlaylist(List<AudioSource> sources, int initialIndex) async {
@@ -145,15 +158,28 @@ class AudioPlayerController extends GetxController {
     isMiniPlayerVisible.value = true;
 
     // Tell the handler this is a seekable playlist (show progress bar + skip)
-    if (audioHandler is MyAudioHandler) {
-      (audioHandler as MyAudioHandler).setLivePlayback(false);
+    final handler = await _handlerReady;
+    if (handler is MyAudioHandler) {
+      handler.setLivePlayback(false);
     }
 
-    await audioPlayer.setAudioSource(
-      playlist!,
-      initialIndex: initialIndex,
-      initialPosition: Duration.zero,
-    );
+    await _load(playlist!, initialIndex: initialIndex);
+  }
+
+  /// Loads [source]; false if a stop / close / newer load interrupted it.
+  /// just_audio throws PlayerInterruptedException for that, which callers
+  /// are expected to catch.
+  Future<bool> _load(AudioSource source, {int? initialIndex}) async {
+    try {
+      await audioPlayer.setAudioSource(
+        source,
+        initialIndex: initialIndex,
+        initialPosition: initialIndex == null ? null : Duration.zero,
+      );
+      return true;
+    } on PlayerInterruptedException {
+      return false;
+    }
   }
 
   Future<void> playNext() async {
@@ -179,7 +205,7 @@ class AudioPlayerController extends GetxController {
 
   Future<void> play() async {
     if (isLive.value && audioPlayer.processingState == ProcessingState.idle && audioSource != null) {
-      await audioPlayer.setAudioSource(audioSource!);
+      if (!await _load(audioSource!)) return;
     }
     await audioPlayer.play();
   }

@@ -45,6 +45,18 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Create .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: |
+          if [ -n "$DOTENV" ]; then
+            printf '%s\n' "$DOTENV" > .env
+            echo "Wrote .env from DOTENV secret"
+          else
+            echo '# DOTENV secret not available' > .env
+            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+          fi
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -90,6 +102,18 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+
+      - name: Create .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: |
+          if [ -n "$DOTENV" ]; then
+            printf '%s\n' "$DOTENV" > .env
+            echo "Wrote .env from DOTENV secret"
+          else
+            echo '# DOTENV secret not available' > .env
+            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+          fi
 
       - name: Install dependencies
         run: flutter pub get

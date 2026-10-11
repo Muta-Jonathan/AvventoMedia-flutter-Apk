@@ -1,0 +1,135 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: '3.47.5'
+
+jobs:
+  test:
+    name: Analyze & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      # .env is gitignored but bundled as an asset. Empty on fork PRs.
+      - name: Create .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: |
+          if [ -n "$DOTENV" ]; then
+            printf '%s\n' "$DOTENV" > .env
+            echo "Wrote .env from DOTENV secret"
+          else
+            echo '# DOTENV secret not available' > .env
+            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+          fi
+
+      - run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Unit & widget tests
+        run: flutter test --coverage
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/lcov.info
+
+  build-android:
+    name: Build Android (debug)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Create .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: |
+          if [ -n "$DOTENV" ]; then
+            printf '%s\n' "$DOTENV" > .env
+            echo "Wrote .env from DOTENV secret"
+          else
+            echo '# DOTENV secret not available' > .env
+            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+          fi
+
+      - run: flutter pub get
+      - run: flutter build apk --debug
+
+  e2e-android:
+    name: E2E (Android emulator)
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Create .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: |
+          if [ -n "$DOTENV" ]; then
+            printf '%s\n' "$DOTENV" > .env
+            echo "Wrote .env from DOTENV secret"
+          else
+            echo '# DOTENV secret not available' > .env
+            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+          fi
+
+      - run: flutter pub get
+
+      # API 30: no runtime notification-permission dialog to block the app.
+      - name: Run integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: flutter test integration_test --timeout 10m

@@ -9,8 +9,6 @@ class MyAudioHandler extends BaseAudioHandler with SeekHandler, QueueHandler {
   MyAudioHandler(this._player) {
     // Track changes in the current sequence item (playlist navigation)
     _player.sequenceStateStream.listen((sequenceState) {
-      if (sequenceState == null) return;
-
       final item = sequenceState.currentSource?.tag as MediaItem?;
       if (item != null) {
         // Don't overwrite live-radio metadata pushed via updateMediaItem
