@@ -192,6 +192,12 @@ class AudioPlayerController extends GetxController {
     }
   }
 
+  /// Restart the current track after it completes.
+  Future<void> replay() async {
+    await audioPlayer.seek(Duration.zero);
+    await audioPlayer.play();
+  }
+
   Future<void> stop() async {
     await audioPlayer.stop();
   }

@@ -27,13 +27,17 @@ class MiniPlayerWidget extends StatelessWidget {
         initialData: controller.audioPlayer.playerState,
         builder: (context, snapshot) {
           final state = snapshot.data;
-          final isPlaying = state?.playing ?? false;
+          // just_audio keeps playing == true after the track completes.
+          final isCompleted =
+              state?.processingState == ProcessingState.completed;
+          final isPlaying = (state?.playing ?? false) && !isCompleted;
           final isBuffering =
               state?.processingState == ProcessingState.buffering ||
                   state?.processingState == ProcessingState.loading;
 
           return _buildMiniPlayerBar(
-              context, controller, mediaItem, isLive, isPlaying, isBuffering);
+              context, controller, mediaItem, isLive, isPlaying, isBuffering,
+              isCompleted);
         },
       );
     });
@@ -46,6 +50,7 @@ class MiniPlayerWidget extends StatelessWidget {
     bool isLive,
     bool isPlaying,
     bool isBuffering,
+    bool isCompleted,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
     final artUri = mediaItem.artUri?.toString();
@@ -191,12 +196,16 @@ class MiniPlayerWidget extends StatelessWidget {
                   // IconButton gives a 48dp tap area. Semantics instead of
                   // tooltip: there is no Overlay above the mini bar.
                   Semantics(
-                    label: isPlaying ? 'Pause' : 'Play',
+                    label: isCompleted
+                        ? 'Replay'
+                        : (isPlaying ? 'Pause' : 'Play'),
                     child: IconButton(
                       // No padding: default 8px padding overflowed the 70px
                       // bar. Tap target stays 48dp.
                       padding: EdgeInsets.zero,
-                      onPressed: isPlaying ? controller.pause : controller.play,
+                      onPressed: isCompleted
+                          ? controller.replay
+                          : (isPlaying ? controller.pause : controller.play),
                       icon: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -217,9 +226,11 @@ class MiniPlayerWidget extends StatelessWidget {
                                     ),
                                   )
                                 : Icon(
-                                    isPlaying
-                                        ? CupertinoIcons.pause_fill
-                                        : CupertinoIcons.play_fill,
+                                    isCompleted
+                                        ? CupertinoIcons.arrow_counterclockwise
+                                        : isPlaying
+                                            ? CupertinoIcons.pause_fill
+                                            : CupertinoIcons.play_fill,
                                     color: colorScheme.onTertiary,
                                     size: 16,
                                   ),
