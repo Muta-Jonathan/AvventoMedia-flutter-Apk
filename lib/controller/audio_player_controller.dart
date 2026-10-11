@@ -82,7 +82,7 @@ class AudioPlayerController extends GetxController {
     audioHandler = await AudioService.init(
       builder: () => MyAudioHandler(audioPlayer),
       config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+        androidNotificationChannelId: 'tv.avventomedia.app.channel.audio',
         androidNotificationChannelName: 'Audio playback',
         androidNotificationIcon: 'mipmap/ic_logo_icon',
         androidNotificationOngoing: true,

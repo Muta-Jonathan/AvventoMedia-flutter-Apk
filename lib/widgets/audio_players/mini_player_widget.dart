@@ -193,35 +193,45 @@ class MiniPlayerWidget extends StatelessWidget {
                   Semantics(
                     label: isPlaying ? 'Pause' : 'Play',
                     child: IconButton(
+                      // No padding: default 8px padding overflowed the 70px
+                      // bar. Tap target stays 48dp.
+                      padding: EdgeInsets.zero,
                       onPressed: isPlaying ? controller.pause : controller.play,
-                      icon: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: Colors.orange.shade700,
-                          shape: BoxShape.circle,
-                        ),
-                        child: isBuffering
-                            ? const Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: CircularProgressIndicator(
-                                  color: Colors.black,
-                                  strokeWidth: 2.0,
-                                ),
-                              )
-                            : Icon(
-                                isPlaying
-                                    ? CupertinoIcons.pause_fill
-                                    : CupertinoIcons.play_fill,
-                                color: Colors.black,
-                                size: 16,
-                              ),
+                      icon: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          if (!isLive) _progressRing(controller, colorScheme),
+                          Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: colorScheme.tertiary,
+                              shape: BoxShape.circle,
+                            ),
+                            child: isBuffering
+                                ? Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: CircularProgressIndicator(
+                                      color: colorScheme.onTertiary,
+                                      strokeWidth: 2.0,
+                                    ),
+                                  )
+                                : Icon(
+                                    isPlaying
+                                        ? CupertinoIcons.pause_fill
+                                        : CupertinoIcons.play_fill,
+                                    color: colorScheme.onTertiary,
+                                    size: 16,
+                                  ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                   Semantics(
                     label: 'Close player',
                     child: IconButton(
+                      padding: EdgeInsets.zero,
                       onPressed: controller.closeMiniPlayer,
                       icon: Container(
                         width: 26,
@@ -241,35 +251,38 @@ class MiniPlayerWidget extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Progress bar for podcasts (at bottom of mini bar)
-            if (!isLive)
-              StreamBuilder<Duration>(
-                stream: controller.audioPlayer.positionStream,
-                builder: (context, posSnapshot) {
-                  final position = posSnapshot.data ?? Duration.zero;
-                  final duration =
-                      controller.audioPlayer.duration ?? Duration.zero;
-                  final progress = duration.inMilliseconds > 0
-                      ? (position.inMilliseconds / duration.inMilliseconds)
-                          .clamp(0.0, 1.0)
-                      : 0.0;
-
-                  return LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 3,
-                    borderRadius: BorderRadius.zero,
-                    backgroundColor: colorScheme.surface.withValues(alpha: 0.3),
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.orange.shade600),
-                  );
-                },
-              ),
           ],
         ),
       ),
     );
 
     return Semantics(button: true, label: 'Open player', child: bar);
+  }
+
+  /// Podcast progress drawn as a ring around the play/pause button.
+  Widget _progressRing(
+      AudioPlayerController controller, ColorScheme colorScheme) {
+    return StreamBuilder<Duration>(
+      stream: controller.audioPlayer.positionStream,
+      builder: (context, snapshot) {
+        final position = snapshot.data ?? Duration.zero;
+        final duration = controller.audioPlayer.duration ?? Duration.zero;
+        final progress = duration.inMilliseconds > 0
+            ? (position.inMilliseconds / duration.inMilliseconds)
+                .clamp(0.0, 1.0)
+            : 0.0;
+
+        return SizedBox(
+          width: 44,
+          height: 44,
+          child: CircularProgressIndicator(
+            value: progress,
+            strokeWidth: 2.5,
+            backgroundColor: colorScheme.surface.withValues(alpha: 0.3),
+            color: colorScheme.tertiary,
+          ),
+        );
+      },
+    );
   }
 }

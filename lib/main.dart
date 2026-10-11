@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
+import 'package:avvento_media/controller/popup_route_observer.dart';
 import 'package:avvento_media/firebase_options.dart';
 import 'package:avvento_media/routes/routes.dart';
 import 'package:avvento_media/themes/dark_theme.dart';
@@ -25,6 +26,8 @@ import 'package:upgrader/upgrader.dart';
 import 'bindings/initial_binding.dart';
 
 late AudioHandler audioHandler;
+
+final popupRouteObserver = PopupRouteObserver();
 
 /// Height of the collapsed mini player bar (content area only)
 const double miniPlayerMinHeight = 70.0;
@@ -121,31 +124,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// Counts open dialogs / bottom sheets on the root navigator.
-class PopupRouteObserver extends NavigatorObserver {
-  final RxInt openPopups = 0.obs;
-
-  @override
-  void didPush(Route route, Route? previousRoute) {
-    if (route is PopupRoute) runOutsideBuild(() => openPopups.value++);
-  }
-
-  @override
-  void didPop(Route route, Route? previousRoute) => _closed(route);
-
-  @override
-  void didRemove(Route route, Route? previousRoute) => _closed(route);
-
-  void _closed(Route route) {
-    if (route is! PopupRoute) return;
-    runOutsideBuild(() {
-      if (openPopups.value > 0) openPopups.value--;
-    });
-  }
-}
-
-final popupRouteObserver = PopupRouteObserver();
-
 /// Wraps the entire app in a Stack with the Miniplayer panel on top.
 ///
 /// Home route: the mini bar sits above the BottomNavigationBar, which reserves
@@ -219,12 +197,65 @@ class _MiniPlayerOverlay extends StatelessWidget {
                       audioCtrl.onPanelPercentageChanged(percentage);
                     });
 
-                    if (percentage < 0.2) return const MiniPlayerWidget();
-                    // No GlobalKey: the miniplayer reparents this subtree
-                    // on drag-down, which trips GlobalKey assertions.
-                    // HeroControllerScope.none: the app's HeroController
-                    // can only belong to the root Navigator.
-                    return HeroControllerScope.none(
+                    return _PanelContent(percentage: percentage);
+                  },
+                ),
+              ),
+            ),
+        ],
+      );
+    });
+  }
+}
+
+/// Cross-fades the mini bar into the full player over the first 25 % of the
+/// drag. Keys keep each side's state while the other fades in or out.
+class _PanelContent extends StatelessWidget {
+  final double percentage;
+  const _PanelContent({required this.percentage});
+
+  static const _fadeEnd = 0.25;
+
+  @override
+  Widget build(BuildContext context) {
+    final audioCtrl = Get.find<AudioPlayerController>();
+    final t = (percentage / _fadeEnd).clamp(0.0, 1.0);
+
+    return Stack(
+      children: [
+        if (t < 1)
+          KeyedSubtree(
+            key: const ValueKey('mini'),
+            child: IgnorePointer(
+              ignoring: t >= 0.5,
+              child: Opacity(
+                opacity: 1 - t,
+                child: const Align(
+                  alignment: Alignment.topCenter,
+                  child: SizedBox(
+                    height: miniPlayerMinHeight,
+                    child: MiniPlayerWidget(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        if (t > 0)
+          KeyedSubtree(
+            key: const ValueKey('full'),
+            child: IgnorePointer(
+              ignoring: t < 0.5,
+              child: Opacity(
+                opacity: t,
+                // Own ScaffoldMessenger so snackbars from the full player
+                // show above it rather than under it on the root Scaffold.
+                child: ScaffoldMessenger(
+                  child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    // HeroControllerScope.none: the app's HeroController can
+                    // only belong to the root Navigator. No GlobalKey: the
+                    // miniplayer reparents this subtree on drag-down.
+                    body: HeroControllerScope.none(
                       child: Navigator(
                         onGenerateRoute: (_) => PageRouteBuilder(
                           pageBuilder: (context, __, ___) {
@@ -235,13 +266,13 @@ class _MiniPlayerOverlay extends StatelessWidget {
                           transitionDuration: Duration.zero,
                         ),
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
             ),
-        ],
-      );
-    });
+          ),
+      ],
+    );
   }
 }

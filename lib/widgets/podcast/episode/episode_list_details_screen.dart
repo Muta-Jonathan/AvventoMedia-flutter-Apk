@@ -187,7 +187,7 @@ class EpisodePlayerWidgetState extends State<EpisodeListDetailsWidget> {
                       ? Icons.pause_circle_filled_rounded
                       : Icons.play_circle_fill_rounded,
                   color: isSelected
-                      ? Colors.orange
+                      ? Theme.of(context).colorScheme.tertiary
                       : Theme.of(context)
                           .colorScheme
                           .primary
