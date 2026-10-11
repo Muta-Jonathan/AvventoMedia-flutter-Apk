@@ -50,11 +50,10 @@ class MiniPlayerWidget extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final artUri = mediaItem.artUri?.toString();
 
-    return GestureDetector(
+    final bar = GestureDetector(
       onTap: () {
         // Expand the Miniplayer panel to full screen
-        controller.miniplayerController
-            .animateToHeight(state: PanelState.MAX);
+        controller.miniplayerController.animateToHeight(state: PanelState.MAX);
       },
       child: Container(
         decoration: BoxDecoration(
@@ -65,8 +64,7 @@ class MiniPlayerWidget extends StatelessWidget {
           children: [
             // Main content row
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
               child: Row(
                 children: [
                   // Artwork thumbnail
@@ -190,55 +188,53 @@ class MiniPlayerWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
 
-                  // Play/Pause button
-                  GestureDetector(
-                    onTap: () {
-                      if (isPlaying) {
-                        controller.pause();
-                      } else {
-                        controller.play();
-                      }
-                    },
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: Colors.orange.shade700,
-                        shape: BoxShape.circle,
-                      ),
-                      child: isBuffering
-                          ? const Padding(
-                              padding: EdgeInsets.all(10.0),
-                              child: CircularProgressIndicator(
+                  // IconButton gives a 48dp tap area. Semantics instead of
+                  // tooltip: there is no Overlay above the mini bar.
+                  Semantics(
+                    label: isPlaying ? 'Pause' : 'Play',
+                    child: IconButton(
+                      onPressed: isPlaying ? controller.pause : controller.play,
+                      icon: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade700,
+                          shape: BoxShape.circle,
+                        ),
+                        child: isBuffering
+                            ? const Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                  strokeWidth: 2.0,
+                                ),
+                              )
+                            : Icon(
+                                isPlaying
+                                    ? CupertinoIcons.pause_fill
+                                    : CupertinoIcons.play_fill,
                                 color: Colors.black,
-                                strokeWidth: 2.0,
+                                size: 16,
                               ),
-                            )
-                          : Icon(
-                              isPlaying
-                                  ? CupertinoIcons.pause_fill
-                                  : CupertinoIcons.play_fill,
-                              color: Colors.black,
-                              size: 16,
-                            ),
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-
-                  // Close (dismiss) button
-                  GestureDetector(
-                    onTap: () => controller.closeMiniPlayer(),
-                    child: Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        color: colorScheme.surface.withValues(alpha: 0.6),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        CupertinoIcons.xmark,
-                        color: colorScheme.onSecondary,
-                        size: 12,
+                  Semantics(
+                    label: 'Close player',
+                    child: IconButton(
+                      onPressed: controller.closeMiniPlayer,
+                      icon: Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: colorScheme.surface.withValues(alpha: 0.6),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          CupertinoIcons.xmark,
+                          color: colorScheme.onSecondary,
+                          size: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -263,10 +259,9 @@ class MiniPlayerWidget extends StatelessWidget {
                     value: progress,
                     minHeight: 3,
                     borderRadius: BorderRadius.zero,
-                    backgroundColor:
-                        colorScheme.surface.withValues(alpha: 0.3),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Colors.orange.shade600),
+                    backgroundColor: colorScheme.surface.withValues(alpha: 0.3),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Colors.orange.shade600),
                   );
                 },
               ),
@@ -274,5 +269,7 @@ class MiniPlayerWidget extends StatelessWidget {
         ),
       ),
     );
+
+    return Semantics(button: true, label: 'Open player', child: bar);
   }
 }

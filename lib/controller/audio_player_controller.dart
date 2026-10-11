@@ -1,4 +1,5 @@
-import 'package:flutter/scheduler.dart';
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -21,7 +22,7 @@ class AudioPlayerController extends GetxController {
   MediaItem? get currentMediaItem => _currentMediaItem;
   set currentMediaItem(MediaItem? item) {
     _currentMediaItem = item;
-    _runOutsideBuild(() => currentMediaItemRx.value = _currentMediaItem);
+    runOutsideBuild(() => currentMediaItemRx.value = _currentMediaItem);
   }
 
   final RxBool hasNext = false.obs;
@@ -50,6 +51,9 @@ class AudioPlayerController extends GetxController {
 
   /// Lets the back button collapse the expanded player.
   LocalHistoryEntry? _expandedBackEntry;
+
+  /// Navigator inside the full player, so its sheets have a Navigator.
+  NavigatorState? fullPlayerNavigator;
 
   @override
   void onInit() {
@@ -215,8 +219,16 @@ class AudioPlayerController extends GetxController {
       impliesAppBarDismissal: false,
       onRemove: () {
         // Skip when removed by _removeExpandedBackEntry.
-        if (identical(_expandedBackEntry, entry)) {
-          _expandedBackEntry = null;
+        if (!identical(_expandedBackEntry, entry)) return;
+        _expandedBackEntry = null;
+        // Close an open sheet (e.g. speed) before collapsing the player.
+        final playerNavigator = fullPlayerNavigator;
+        if (playerNavigator != null &&
+            playerNavigator.mounted &&
+            playerNavigator.canPop()) {
+          playerNavigator.pop();
+          _addExpandedBackEntry();
+        } else {
           collapsePlayer();
         }
       },
@@ -232,15 +244,8 @@ class AudioPlayerController extends GetxController {
     entry.remove();
   }
 
-  /// Defers [update] past the current build to avoid markNeedsBuild errors.
-  void _runOutsideBuild(VoidCallback update) {
-    if (SchedulerBinding.instance.schedulerPhase ==
-        SchedulerPhase.persistentCallbacks) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => update());
-    } else {
-      update();
-    }
-  }
+  void setCurrentRoute(String route) =>
+      runOutsideBuild(() => currentRoute.value = route);
 
   /// Stop audio and completely hide the mini player globally
   Future<void> closeMiniPlayer() async {
@@ -265,3 +270,8 @@ class AudioPlayerController extends GetxController {
     super.onClose();
   }
 }
+
+/// Defers [update] past the current build to avoid markNeedsBuild errors.
+/// A microtask is used because the scheduler phase can't detect every build
+/// (e.g. the first one from attachRootWidget runs while idle).
+void runOutsideBuild(VoidCallback update) => scheduleMicrotask(update);
