@@ -7,6 +7,7 @@ import '../components/app_snackbar.dart';
 import '../controller/library_controller.dart';
 import '../widgets/common/new_playlist_bottom_sheet.dart';
 import 'playlist_detail_page.dart';
+import '../widgets/common/empty_state.dart';
 
 class MyPlaylistsPage extends StatelessWidget {
   const MyPlaylistsPage({super.key});
@@ -34,35 +35,14 @@ class MyPlaylistsPage extends StatelessWidget {
       ),
       body: Obx(() {
         if (library.playlists.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.playlist_play,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
-                const SizedBox(height: 16),
-                Text(
-                  AppConstants.noPlaylists,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSecondary,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.amber,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  icon: const Icon(CupertinoIcons.add),
-                  label: Text(AppConstants.newPlaylist),
-                  onPressed: () => NewPlaylistBottomSheet.show(context),
-                ),
-              ],
-            ),
+          return EmptyState(
+            icon: Icons.playlist_play_rounded,
+            color: const Color(0xFFFFB300),
+            title: AppConstants.noPlaylists,
+            message: AppConstants.noPlaylistsMessage,
+            actionLabel: AppConstants.newPlaylist,
+            actionIcon: CupertinoIcons.add,
+            onAction: () => NewPlaylistBottomSheet.show(context),
           );
         }
 
