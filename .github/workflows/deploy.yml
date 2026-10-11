@@ -45,6 +45,11 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Create .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: printf '%s\n' "${DOTENV:-# DOTENV secret not available}" > .env
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -90,6 +95,11 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+
+      - name: Create .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: printf '%s\n' "${DOTENV:-# DOTENV secret not available}" > .env
 
       - name: Install dependencies
         run: flutter pub get

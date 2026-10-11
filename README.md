@@ -73,7 +73,7 @@ To run this project locally, you will need the following prerequisites:
 
 1. **Flutter SDK**: `>=3.1.2 <4.0.0`
 2. **Firebase Config**: You must obtain the `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) from your Firebase Console and place them in their respective app directories.
-3. **Environment Variables**: Create a `.env` file in the root directory for any sensitive local API keys.
+3. **Environment Variables**: Copy `.env.example` to `.env` and fill in the keys. The file must exist for the app to build.
 4. **Run the App**:
    ```bash
    flutter pub get
