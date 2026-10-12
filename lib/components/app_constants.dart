@@ -1,5 +1,9 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart' show ThemeMode;
+
+import '../controller/settings_controller.dart' show RemovePlayed;
+
 class AppConstants {
   static const String appName = "AvventoMedia";
   static const String radioName = "AvventoRadio";
@@ -83,6 +87,8 @@ class AppConstants {
   static const String preferences = "PREFERENCES";
   static const String notifications = "Allow notifications";
   static const String darkMode = "Dark Mode";
+  static const String darkModeMessage =
+      "Auto follows your phone’s system setting.";
 
   static const String tiktok = "Follow us on Tiktok";
   static const String tiktokWebsite = "https://www.tiktok.com/@avventomedia_official";
@@ -212,4 +218,83 @@ class AppConstants {
   static String playlistDeleted(String title) => 'Playlist "$title" deleted';
   static const String undo = "Undo";
   static const String playlistNameEmpty = "Please enter a playlist name";
+  // Podcast feed & downloads
+  static const String podcastLabel = "PODCAST";
+  static const String episodes = "Episodes";
+  static const String playAll = "Play All";
+  static const String pause = "Pause";
+  static const String resume = "Resume";
+  static const String shuffle = "Shuffle";
+  static const String newest = "Newest";
+  static const String oldest = "Oldest";
+  static const String played = "Played";
+  static const String play = "Play";
+  static const String today = "Today";
+  static const String newLabel = "NEW";
+  static const String moreLower = "more";
+  static const String markPlayed = "Mark as played";
+  static const String markUnplayed = "Mark as unplayed";
+  static const String download = "Download";
+  static const String downloads = "Downloads";
+  static const String removeDownload = "Remove download";
+  static const String cancelDownload = "Cancel download";
+  static const String noDownloads = "No downloads yet";
+  static const String noDownloadsMessage =
+      "Tap the download icon on any episode to listen offline, even without data.";
+  static const String downloading = "Downloading";
+  static const String episodesLoadFailed = "Couldn't load episodes";
+  static const String episodesLoadFailedMessage =
+      "Check your connection and try again. Downloaded episodes still play offline.";
+  static const String noEpisodes = "No episodes yet";
+  static const String retry = "Retry";
+  static const String waitingForWifi =
+      "Waiting for Wi-Fi. Wi-Fi only downloads are on in More";
+  static const String downloadNow = "Download now";
+  static const String playingOffline = "Playing offline";
+  static const String waitingForWifiShort = "Waiting for Wi-Fi";
+  static const String waiting = "Waiting";
+  static const String paused = "Paused";
+  static const String pauseAll = "Pause all";
+  static const String resumeAll = "Resume all";
+  static const String edit = "Edit";
+  static const String done = "Done";
+  static const String delete = "Delete";
+  static const String selectAll = "Select all";
+  static const String clear = "Clear";
+  static const String selectEpisodes = "Select episodes";
+  static const String all = "All";
+  static const String unplayed = "Unplayed";
+  static const String inProgress = "In progress";
+  static const String episodesLegend = "Episodes";
+  static const String otherApps = "Other apps";
+  static const String browsePodcasts = "Browse podcasts";
+  static const String downloadsTitle = "DOWNLOADS";
+  static const String downloadWifiOnly = "Download over Wi-Fi only";
+  static const String removePlayed = "Remove played episodes";
+  static const String removePlayedMessage =
+      "Downloaded episodes you have finished are deleted automatically to free up space.";
+  static String removePlayedValue(RemovePlayed v) => switch (v) {
+        RemovePlayed.off => themeOff,
+        RemovePlayed.day => "24 hours",
+        RemovePlayed.month => "30 days",
+        RemovePlayed.twoMonths => "60 days",
+      };
+  static String themeLabel(ThemeMode m) => switch (m) {
+        ThemeMode.system => themeAuto,
+        ThemeMode.dark => themeOn,
+        ThemeMode.light => themeOff,
+      };
+  static String removePlayedOption(RemovePlayed v) =>
+      v == RemovePlayed.off ? themeOff : "After ${removePlayedValue(v)}";
+  static String usedByApp(String size) => '$size used by AvventoMedia';
+  static String freeSpace(String size) => '$size free';
+  static String downloadingCount(int n) => 'DOWNLOADING · $n';
+  static String selectedInfo(int n, String size) => '$n selected · $size';
+  static String downloadsRemoved(int n) => 'Removed $n downloads';
+  static String downloaded(String title) => 'Downloaded "$title"';
+  static String downloadFailed(String title) => 'Couldn\'t download "$title"';
+  static String downloadRemoved(String title) => 'Removed "$title" from downloads';
+  static String minLeft(int minutes) => '$minutes min left';
+  static String minutes(int minutes) => '$minutes min';
+  static String episodeCount(int n) => n == 1 ? '1 episode' : '$n episodes';
 }
