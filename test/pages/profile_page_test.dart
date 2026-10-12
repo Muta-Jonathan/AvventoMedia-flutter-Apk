@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:avvento_media/components/app_constants.dart';
+import 'package:avvento_media/controller/download_controller.dart';
 import 'package:avvento_media/controller/library_controller.dart';
 import 'package:avvento_media/controller/settings_controller.dart';
 import 'package:avvento_media/pages/profile_page.dart';
@@ -29,6 +32,8 @@ void main() {
     push = FakePushNotifications(grant: false);
     settings = Get.put(await SettingsController.load(push: push));
     Get.put(LibraryController());
+    Get.put(DownloadController(
+        directory: () async => Directory.systemTemp.createTempSync('dl')));
 
     await tester.pumpWidget(const GetMaterialApp(home: ProfilePage()));
     await tester.pumpAndSettle();
@@ -49,16 +54,48 @@ void main() {
     expect(find.text(AppConstants.darkMode), findsOneWidget);
   });
 
-  testWidgets('Dark Mode segments set the theme mode', (tester) async {
+  testWidgets('Dark Mode row opens a sheet that sets the theme mode',
+      (tester) async {
     await pumpPage(tester);
+    expect(find.text(AppConstants.themeAuto), findsOneWidget);
 
+    await tester.tap(find.text(AppConstants.darkMode));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.darkModeMessage), findsOneWidget);
     await tester.tap(find.text(AppConstants.themeOn));
     await tester.pumpAndSettle();
     expect(settings.themeMode.value, ThemeMode.dark);
 
-    await tester.tap(find.text(AppConstants.themeOff));
+    await tester.tap(find.text(AppConstants.darkMode));
+    await tester.pumpAndSettle();
+    await tester.tap(find.descendant(
+        of: find.byType(BottomSheet),
+        matching: find.text(AppConstants.themeOff)));
     await tester.pumpAndSettle();
     expect(settings.themeMode.value, ThemeMode.light);
+  });
+
+  testWidgets('Downloads settings: Wi-Fi only and Remove played',
+      (tester) async {
+    await pumpPage(tester);
+    expect(settings.downloadWifiOnly.value, isTrue);
+
+    await tester.ensureVisible(rowSwitch(AppConstants.downloadWifiOnly));
+    await tester.pumpAndSettle();
+    await tester.tap(rowSwitch(AppConstants.downloadWifiOnly));
+    await tester.pumpAndSettle();
+    expect(settings.downloadWifiOnly.value, isFalse);
+
+    // Row shows the value; tapping opens the picker sheet.
+    await tester.ensureVisible(find.text(AppConstants.removePlayed));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AppConstants.removePlayed));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.removePlayedMessage), findsOneWidget);
+    await tester.tap(find.text('After 30 days'));
+    await tester.pumpAndSettle();
+    expect(settings.removePlayed.value, RemovePlayed.month);
+    expect(find.text('30 days'), findsOneWidget);
   });
 
   testWidgets('Allow Mini Player switch updates the setting', (tester) async {
