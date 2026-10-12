@@ -14,8 +14,6 @@ class FavoritesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final library = Get.find<LibraryController>();
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -26,47 +24,59 @@ class FavoritesPage extends StatelessWidget {
           style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
-      body: Obx(() {
-        if (library.favorites.isEmpty) {
-          return const EmptyState(
-            icon: CupertinoIcons.heart_fill,
-            color: Color(0xFFFF5252),
-            title: AppConstants.noFavorites,
-            message: AppConstants.noFavoritesMessage,
-          );
-        }
-
-        final grouped = library.favoritesGrouped;
-        final groups = grouped.entries.toList();
-
-        return ListView.builder(
-          padding: const EdgeInsets.only(bottom: 24),
-          itemCount: groups.fold<int>(
-              0, (sum, e) => sum + 1 + e.value.length), // headers + items
-          itemBuilder: (context, idx) {
-            // Flatten grouped data into a sequential list
-            int cursor = 0;
-            for (final entry in groups) {
-              if (idx == cursor) {
-                // Section header
-                return _SectionHeader(title: entry.key);
-              }
-              cursor++;
-              final items = entry.value;
-              if (idx < cursor + items.length) {
-                final item = items[idx - cursor];
-                return _SavedItemTile(
-                  item: item,
-                  onRemove: () => library.removeFavorite(item.id),
-                );
-              }
-              cursor += items.length;
-            }
-            return const SizedBox.shrink();
-          },
-        );
-      }),
+      body: const FavoritesView(),
     );
+  }
+}
+
+/// Favorites list (or empty state), shared by the page and the home chips.
+class FavoritesView extends StatelessWidget {
+  const FavoritesView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final library = Get.find<LibraryController>();
+
+    return Obx(() {
+      if (library.favorites.isEmpty) {
+        return const EmptyState(
+          icon: CupertinoIcons.heart_fill,
+          color: Color(0xFFFF5252),
+          title: AppConstants.noFavorites,
+          message: AppConstants.noFavoritesMessage,
+        );
+      }
+
+      final grouped = library.favoritesGrouped;
+      final groups = grouped.entries.toList();
+
+      return ListView.builder(
+        padding: const EdgeInsets.only(bottom: 24),
+        itemCount: groups.fold<int>(
+            0, (sum, e) => sum + 1 + e.value.length), // headers + items
+        itemBuilder: (context, idx) {
+          // Flatten grouped data into a sequential list
+          int cursor = 0;
+          for (final entry in groups) {
+            if (idx == cursor) {
+              // Section header
+              return _SectionHeader(title: entry.key);
+            }
+            cursor++;
+            final items = entry.value;
+            if (idx < cursor + items.length) {
+              final item = items[idx - cursor];
+              return _SavedItemTile(
+                item: item,
+                onRemove: () => library.removeFavorite(item.id),
+              );
+            }
+            cursor += items.length;
+          }
+          return const SizedBox.shrink();
+        },
+      );
+    });
   }
 }
 

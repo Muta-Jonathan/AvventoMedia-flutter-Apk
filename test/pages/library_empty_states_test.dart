@@ -70,4 +70,16 @@ void main() {
     expect(find.text(AppConstants.emptyPlaylistMessage), findsOneWidget);
     expectVisiblePictogram(tester);
   });
+
+  testWidgets('playlists view can offer a New Playlist row (home chips)',
+      (tester) async {
+    await pump(tester, const Scaffold(body: PlaylistsView(showCreateRow: true)));
+    await Get.find<LibraryController>().createPlaylist('Gospel');
+    await tester.pumpAndSettle();
+
+    expect(find.text('Gospel'), findsOneWidget);
+    await tester.tap(find.text(AppConstants.newPlaylist));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextFormField), findsOneWidget);
+  });
 }
