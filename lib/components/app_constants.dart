@@ -186,6 +186,9 @@ class AppConstants {
       "Notifications are off for AvventoMedia in your phone's settings";
   static const String favorites = "Favorites";
   static const String myPlaylists = "My Playlists";
+  // Home chips
+  static const String homeCatalog = "Catalog";
+  static const String homePlaylists = "Playlists";
   static const String newPlaylist = "New Playlist";
   static const String save = "+ Save";
   static const String addToFavorites = "Add to Favorites";
