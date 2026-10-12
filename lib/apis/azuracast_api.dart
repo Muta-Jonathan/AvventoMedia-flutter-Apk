@@ -150,13 +150,16 @@ class AzuraCastAPI {
   //fetch radio podcasts episodes from avventoRadio
   static Future<List<PodcastEpisode>> fetchRadioPodcastsEpisodes(String apiUrl) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? cachedData = prefs.getString(_cachedPodcastEpisodeKey);
+    // Per show, so offline never shows another show's episodes.
+    final cacheKey = '$_cachedPodcastEpisodeKey:$apiUrl';
+    final String? cachedData = prefs.getString(cacheKey);
 
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
 
     if (connectivityResult == ConnectivityResult.none) {
-      final data = json.decode(cachedData!);
+      if (cachedData == null) throw Exception('No cached episodes');
+      final data = json.decode(cachedData);
       final List<PodcastEpisode> cachedEpisodes = List<PodcastEpisode>.from(data.map((item) => PodcastEpisode.fromJson(item)));
       // Resort the cached episodes
       cachedEpisodes.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
@@ -176,7 +179,7 @@ class AzuraCastAPI {
         final List<dynamic> jsonResult = json.decode(response.body);
 
         // Cache the fetched data in SharedPreferences.
-        prefs.setString(_cachedPodcastEpisodeKey, response.body);
+        prefs.setString(cacheKey, response.body);
 
         // Create a list of RadioPodcast objects from the JSON data
         final podcastEpisodes = jsonResult.map((json) => PodcastEpisode.fromJson(json)).toList();
