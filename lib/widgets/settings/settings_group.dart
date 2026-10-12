@@ -13,12 +13,10 @@ class _SettingsColors {
       : Colors.black.withValues(alpha: 0.08);
   Color get header => _dark ? const Color(0xFF9E9CB0) : Colors.black54;
   Color get trailing => _dark ? const Color(0xFF6F6C85) : Colors.black38;
-  Color get segmentTrack =>
-      _dark ? const Color(0xFF161424) : Colors.black.withValues(alpha: 0.06);
   Color get switchTrack => _dark ? const Color(0xFF3A3750) : Colors.black12;
 }
 
-/// Accent for switches, the selected segment and badges' default.
+/// Accent for switches and badges' default.
 const Color settingsAccent = Color(0xFFFFB300);
 
 /// A titled, rounded card of [SettingsTile]s with hairline separators.
@@ -58,9 +56,7 @@ class SettingsGroup extends StatelessWidget {
                       // Separator starts after the icon tile, iOS-style.
                       padding: const EdgeInsets.only(left: 60),
                       child: Divider(
-                          height: 0.5,
-                          thickness: 0.5,
-                          color: colors.separator),
+                          height: 0.5, thickness: 0.5, color: colors.separator),
                     ),
                   tiles[i],
                 ],
@@ -84,6 +80,7 @@ class SettingsTile extends StatelessWidget {
     this.external = false,
     this.showChevron = true,
     this.badge,
+    this.value,
     this.trailing,
   });
 
@@ -98,6 +95,9 @@ class SettingsTile extends StatelessWidget {
 
   /// Count pill (hidden when null or 0).
   final int? badge;
+
+  /// Current choice, shown before the chevron (e.g. "30 days").
+  final String? value;
 
   /// Replaces the default trailing (e.g. a switch or segmented control).
   final Widget? trailing;
@@ -145,6 +145,11 @@ class SettingsTile extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
               ],
+              if (value != null) ...[
+                Text(value!,
+                    style: TextStyle(color: colors.header, fontSize: 14)),
+                const SizedBox(width: 6),
+              ],
               if (trailing != null)
                 trailing!
               else if (external)
@@ -176,66 +181,4 @@ class SettingsSwitch extends StatelessWidget {
         activeTrackColor: settingsAccent,
         inactiveTrackColor: _SettingsColors(context).switchTrack,
       );
-}
-
-/// Compact segmented control (e.g. Auto / On / Off).
-class SettingsSegmented<T> extends StatelessWidget {
-  const SettingsSegmented({
-    super.key,
-    required this.segments,
-    required this.selected,
-    required this.onChanged,
-  });
-
-  /// Value → label, in display order.
-  final Map<T, String> segments;
-  final T selected;
-  final ValueChanged<T> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = _SettingsColors(context);
-    final unselected = Theme.of(context).colorScheme.onSecondary;
-
-    return Container(
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: colors.segmentTrack,
-        borderRadius: BorderRadius.circular(9),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final entry in segments.entries)
-            Semantics(
-              button: true,
-              selected: entry.key == selected,
-              child: GestureDetector(
-                onTap: () => onChanged(entry.key),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: entry.key == selected
-                        ? settingsAccent
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color:
-                          entry.key == selected ? Colors.black : unselected,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }

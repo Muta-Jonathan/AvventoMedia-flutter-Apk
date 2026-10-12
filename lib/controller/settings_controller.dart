@@ -33,6 +33,17 @@ class OneSignalPushNotifications implements PushNotifications {
   Future<void> disable() => OneSignal.User.pushSubscription.optOut();
 }
 
+/// When played downloads are removed automatically.
+enum RemovePlayed {
+  off(null),
+  day(Duration(hours: 24)),
+  month(Duration(days: 30)),
+  twoMonths(Duration(days: 60));
+
+  const RemovePlayed(this.after);
+  final Duration? after;
+}
+
 /// User preferences from the More tab, persisted in SharedPreferences.
 class SettingsController extends GetxController {
   SettingsController(this._prefs, {PushNotifications? push})
@@ -40,6 +51,8 @@ class SettingsController extends GetxController {
 
   static const _themeKey = 'settings_theme_mode';
   static const _miniPlayerKey = 'settings_mini_player';
+  static const _wifiOnlyKey = 'settings_download_wifi_only';
+  static const _removePlayedKey = 'settings_remove_played';
 
   final SharedPreferences _prefs;
   final PushNotifications _push;
@@ -49,6 +62,11 @@ class SettingsController extends GetxController {
       .obs;
   late final RxBool miniPlayerEnabled =
       (_prefs.getBool(_miniPlayerKey) ?? true).obs;
+  late final RxBool downloadWifiOnly =
+      (_prefs.getBool(_wifiOnlyKey) ?? true).obs;
+  late final Rx<RemovePlayed> removePlayed = RemovePlayed.values
+      .byName(_prefs.getString(_removePlayedKey) ?? RemovePlayed.off.name)
+      .obs;
 
   /// Mirrors OneSignal; call [refreshNotifications] once it's initialised.
   final RxBool notificationsEnabled = false.obs;
@@ -68,6 +86,16 @@ class SettingsController extends GetxController {
   Future<void> setMiniPlayerEnabled(bool enabled) async {
     miniPlayerEnabled.value = enabled;
     await _prefs.setBool(_miniPlayerKey, enabled);
+  }
+
+  Future<void> setDownloadWifiOnly(bool value) async {
+    downloadWifiOnly.value = value;
+    await _prefs.setBool(_wifiOnlyKey, value);
+  }
+
+  Future<void> setRemovePlayed(RemovePlayed value) async {
+    removePlayed.value = value;
+    await _prefs.setString(_removePlayedKey, value.name);
   }
 
   /// Returns the resulting state (stays off if permission is declined).

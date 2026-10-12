@@ -6,12 +6,14 @@ import 'package:get/get.dart';
 import '../components/app_constants.dart';
 import '../components/app_snackbar.dart';
 import '../components/utils.dart';
+import '../controller/download_controller.dart';
 import '../controller/library_controller.dart';
 import '../controller/settings_controller.dart';
 import '../routes/routes.dart';
 import '../widgets/settings/app_creaters_widget.dart';
 import '../widgets/settings/app_version_widget.dart';
 import '../widgets/settings/donate_bottom_sheet.dart';
+import '../widgets/settings/settings_choice_sheet.dart';
 import '../widgets/settings/settings_group.dart';
 
 /// Icon-tile colours from the More redesign.
@@ -33,6 +35,7 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final library = Get.find<LibraryController>();
     final settings = Get.find<SettingsController>();
+    final downloads = Get.find<DownloadController>();
     final onSurface = Theme.of(context).colorScheme.onPrimary;
 
     return Scaffold(
@@ -53,7 +56,6 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const _SupportBanner(),
-
             Obx(() => SettingsGroup(
                   title: AppConstants.myLibrary,
                   tiles: [
@@ -73,9 +75,15 @@ class ProfilePage extends StatelessWidget {
                       onTap: () =>
                           Get.toNamed(Routes.getLibraryPlaylistsRoute()),
                     ),
+                    SettingsTile(
+                      icon: Icons.download_rounded,
+                      color: _Tint.teal,
+                      label: AppConstants.downloads,
+                      badge: downloads.downloads.length,
+                      onTap: () => Get.toNamed(Routes.getDownloadsRoute()),
+                    ),
                   ],
                 )),
-
             Obx(() => SettingsGroup(
                   title: AppConstants.preferences,
                   tiles: [
@@ -83,11 +91,18 @@ class ProfilePage extends StatelessWidget {
                       icon: CupertinoIcons.moon_fill,
                       color: _Tint.purple,
                       label: AppConstants.darkMode,
-                      trailing: SettingsSegmented<ThemeMode>(
-                        segments: const {
-                          ThemeMode.system: AppConstants.themeAuto,
-                          ThemeMode.dark: AppConstants.themeOn,
-                          ThemeMode.light: AppConstants.themeOff,
+                      value: AppConstants.themeLabel(settings.themeMode.value),
+                      onTap: () => SettingsChoiceSheet.show<ThemeMode>(
+                        context,
+                        title: AppConstants.darkMode,
+                        message: AppConstants.darkModeMessage,
+                        options: {
+                          for (final m in [
+                            ThemeMode.system,
+                            ThemeMode.dark,
+                            ThemeMode.light
+                          ])
+                            m: AppConstants.themeLabel(m),
                         },
                         selected: settings.themeMode.value,
                         onChanged: settings.setThemeMode,
@@ -119,7 +134,38 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ],
                 )),
-
+            Obx(() => SettingsGroup(
+                  title: AppConstants.downloadsTitle,
+                  tiles: [
+                    SettingsTile(
+                      icon: Icons.wifi_rounded,
+                      color: _Tint.blue,
+                      label: AppConstants.downloadWifiOnly,
+                      trailing: SettingsSwitch(
+                        value: settings.downloadWifiOnly.value,
+                        onChanged: settings.setDownloadWifiOnly,
+                      ),
+                    ),
+                    SettingsTile(
+                      icon: CupertinoIcons.trash_fill,
+                      color: _Tint.amber,
+                      label: AppConstants.removePlayed,
+                      value: AppConstants.removePlayedValue(
+                          settings.removePlayed.value),
+                      onTap: () => SettingsChoiceSheet.show<RemovePlayed>(
+                        context,
+                        title: AppConstants.removePlayed,
+                        message: AppConstants.removePlayedMessage,
+                        options: {
+                          for (final v in RemovePlayed.values)
+                            v: AppConstants.removePlayedOption(v),
+                        },
+                        selected: settings.removePlayed.value,
+                        onChanged: settings.setRemovePlayed,
+                      ),
+                    ),
+                  ],
+                )),
             SettingsGroup(
               title: AppConstants.general,
               tiles: [
@@ -147,7 +193,6 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-
             SettingsGroup(
               title: AppConstants.radio,
               tiles: [
@@ -185,7 +230,6 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-
             SettingsGroup(
               title: AppConstants.youtubeChannels,
               tiles: [
@@ -212,7 +256,6 @@ class ProfilePage extends StatelessWidget {
                   ),
               ],
             ),
-
             SettingsGroup(
               title: AppConstants.followUs,
               tiles: [
@@ -234,7 +277,6 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-
             SettingsGroup(
               title: AppConstants.getTheApp,
               tiles: [
@@ -256,7 +298,6 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-
             SettingsGroup(
               title: AppConstants.supportAndLegal,
               tiles: [
@@ -271,8 +312,7 @@ class ProfilePage extends StatelessWidget {
                   color: _Tint.grey,
                   label: AppConstants.termsOfService,
                   external: true,
-                  onTap: () =>
-                      Utils.openBrowserURL(url: AppConstants.termsUrl),
+                  onTap: () => Utils.openBrowserURL(url: AppConstants.termsUrl),
                 ),
                 SettingsTile(
                   icon: CupertinoIcons.lock_fill,
@@ -284,7 +324,6 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 32),
             const Center(child: AppCreatorsWidget()),
             const SizedBox(height: 12),

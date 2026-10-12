@@ -21,6 +21,8 @@ import '../models/musicplayermodels/music_player_position.dart';
 import '../models/saved_item_model.dart';
 import '../widgets/audio_players/controls.dart';
 import '../widgets/audio_players/speed_control.dart';
+import '../widgets/podcast/episode/episode_actions_sheet.dart';
+import '../widgets/podcast/episode/episode_download_button.dart';
 import '../widgets/common/favorite_button.dart';
 import '../widgets/common/save_button.dart';
 
@@ -55,7 +57,7 @@ class PodcastPageState extends State<PodcastPage> {
       _audioPlayerController.isLive.value = false;
     });
 
-    // The playlist was already set by EpisodeListScreen before navigation.
+    // The playlist was already set by EpisodePlayback before navigation.
     // Only seed currentMediaItem for the UI if the controller doesn't have one
     // yet (e.g. sequenceStateStream hasn't fired). Never call setAudioSource
     // here — doing so would interrupt the in-flight setAudioPlaylist load.
@@ -213,6 +215,17 @@ class PodcastPageState extends State<PodcastPage> {
             ),
           ),
           actions: [
+            // Follows the episode as the queue advances.
+            Obx(() {
+              final episode = episodeController.selectedEpisode.value;
+              if (episode == null) return const SizedBox.shrink();
+              return EpisodeDownloadButton(
+                episode: episode,
+                showTitle: episode.playlistMediaAlbum,
+                onDownloaded: () => EpisodeActionsSheet.show(context, episode,
+                    showTitle: episode.playlistMediaAlbum),
+              );
+            }),
             IconButton(
               icon: const Icon(CupertinoIcons.share,),
               onPressed: () async {

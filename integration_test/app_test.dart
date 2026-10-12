@@ -1,7 +1,10 @@
+import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
+import 'package:avvento_media/controller/nav_bar_controller.dart';
 import 'package:avvento_media/main.dart' as app;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:integration_test/integration_test.dart';
@@ -21,12 +24,16 @@ void main() {
   }) async {
     final deadline = DateTime.now().add(timeout);
     while (!condition()) {
-      if (DateTime.now().isAfter(deadline)) fail('Timed out: $reason');
+      if (DateTime.now().isAfter(deadline)) {
+        debugPrint('E2E timed out: $reason');
+        fail('Timed out: $reason');
+      }
       await tester.pump(const Duration(milliseconds: 200));
     }
   }
 
-  /// Upgrader may show an update dialog depending on the store version.
+  /// Upgrader may show an update dialog depending on the store version, and
+  /// late on a slow emulator.
   Future<void> dismissUpdateDialog(WidgetTester tester) async {
     final later = find.textContaining(RegExp('later', caseSensitive: false));
     if (later.evaluate().isNotEmpty) {
@@ -52,6 +59,21 @@ void main() {
     }
     expect(find.byType(BottomNavigationBar), findsOneWidget);
 
+    // Record what the app tells Android about Back (predictive back): if
+    // it says "can't handle", Android closes the app on Back.
+    bool? frameworkHandlesBack;
+    final messenger = tester.binding.defaultBinaryMessenger;
+    const platform = SystemChannels.platform;
+    messenger.setMockMessageHandler(platform.name, (data) {
+      final call = platform.codec.decodeMethodCall(data);
+      if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
+        frameworkHandlesBack = call.arguments as bool;
+      }
+      // Pass every call on so the app behaves as usual.
+      return messenger.delegate.send(platform.name, data);
+    });
+    addTearDown(() => messenger.setMockMessageHandler(platform.name, null));
+
     // Live radio opens the full player
     await tester
         .tap(find.byIcon(CupertinoIcons.antenna_radiowaves_left_right).first);
@@ -61,6 +83,7 @@ void main() {
         reason: 'radio station loads');
 
     // Back collapses the player and keeps the app on the Audio tab
+    await dismissUpdateDialog(tester);
     await tester.binding.handlePopRoute();
     await pumpUntil(tester, () => audio.panelPercentage.value < 0.05,
         reason: 'player collapses on back');
@@ -71,9 +94,26 @@ void main() {
     await pumpUntil(tester, () => find.text('LIVE').evaluate().isNotEmpty,
         reason: 'mini bar shows LIVE');
 
+    // The full player's own Navigator must not tell Android "can't pop".
+    expect(frameworkHandlesBack, isNot(false),
+        reason: 'Back would close the app');
+
     // Close hides the mini bar
     await tester.tap(find.byIcon(CupertinoIcons.xmark));
     await pumpUntil(tester, () => !audio.isPlayerActive.value,
         reason: 'close hides the player');
+
+    // Back on another tab goes Home; on Home it asks to press again.
+    final nav = Get.find<NavBarController>();
+    expect(nav.tabIndex, 1);
+    await dismissUpdateDialog(tester);
+    await tester.binding.handlePopRoute();
+    await pumpUntil(tester, () => nav.tabIndex == 0, reason: 'back goes Home');
+    await dismissUpdateDialog(tester);
+    await tester.binding.handlePopRoute();
+    await pumpUntil(
+        tester, () => find.text(AppConstants.exitApp).evaluate().isNotEmpty,
+        reason: 'exit hint on Home');
+    expect(frameworkHandlesBack, isNot(false));
   });
 }

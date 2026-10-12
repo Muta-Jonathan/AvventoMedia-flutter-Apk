@@ -154,7 +154,9 @@ class AudioPlayerController extends GetxController {
     await handler?.updateMediaItem(mediaItemTag);
   }
 
-  Future<void> setAudioPlaylist(List<AudioSource> sources, int initialIndex) async {
+  /// [initialPosition] resumes the first track part-way.
+  Future<void> setAudioPlaylist(List<AudioSource> sources, int initialIndex,
+      {Duration? initialPosition}) async {
     playlist = ConcatenatingAudioSource(
       useLazyPreparation: true,
       children: sources,
@@ -174,18 +176,22 @@ class AudioPlayerController extends GetxController {
       handler.setLivePlayback(false);
     }
 
-    await _load(playlist!, initialIndex: initialIndex);
+    await _load(playlist!,
+        initialIndex: initialIndex, initialPosition: initialPosition);
   }
 
   /// Loads [source]; false if a stop / close / newer load interrupted it.
   /// just_audio throws PlayerInterruptedException for that, which callers
   /// are expected to catch.
-  Future<bool> _load(AudioSource source, {int? initialIndex}) async {
+  Future<bool> _load(AudioSource source,
+      {int? initialIndex, Duration? initialPosition}) async {
     try {
       await audioPlayer.setAudioSource(
         source,
         initialIndex: initialIndex,
-        initialPosition: initialIndex == null ? null : Duration.zero,
+        initialPosition: initialIndex == null
+            ? null
+            : (initialPosition ?? Duration.zero),
       );
       return true;
     } on PlayerInterruptedException {

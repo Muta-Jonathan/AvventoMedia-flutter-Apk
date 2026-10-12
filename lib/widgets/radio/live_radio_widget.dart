@@ -125,12 +125,16 @@ class _LiveRadioWidget extends State<LiveRadioWidget> {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                radioModel.name,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
+                              Flexible(
+                                child: Text(
+                                  radioModel.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),

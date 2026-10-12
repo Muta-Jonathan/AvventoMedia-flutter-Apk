@@ -1,3 +1,4 @@
+import 'app_constants.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
@@ -74,7 +75,8 @@ class LibraryNavigation {
         isPublished: true,
         episodes: 0,
         categories: [],
-        episodesLink: '',
+        // Saved shows don't store it; AzuraCast's per-show endpoint.
+        episodesLink: '${AppConstants.azuracastPodcastAPI.replaceFirst(RegExp(r'podcasts$'), 'podcast')}/${item.id}/episodes',
         lastUpdated: item.publishedAtItem != null ? DateTime.parse(item.publishedAtItem!) : DateTime.now(),
       );
       Get.find<PodcastController>().setSelectedEpisode(model);

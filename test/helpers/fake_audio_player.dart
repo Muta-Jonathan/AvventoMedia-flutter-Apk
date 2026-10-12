@@ -31,6 +31,16 @@ class FakeAudioPlayer implements AudioPlayer {
   Stream<SequenceState> get sequenceStateStream => _sequence.stream;
   @override
   Duration? get duration => fakeDuration;
+  Duration fakePosition = Duration.zero;
+  @override
+  Duration get position => fakePosition;
+  @override
+  SequenceState get sequenceState => SequenceState(
+      sequence: const [],
+      currentIndex: null,
+      shuffleIndices: const [],
+      shuffleModeEnabled: false,
+      loopMode: LoopMode.off);
   @override
   bool get playing => _playerState.playing;
   @override

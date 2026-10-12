@@ -1,9 +1,9 @@
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
 import 'package:avvento_media/controller/nav_bar_controller.dart';
-import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:upgrader/upgrader.dart';
 
@@ -31,11 +31,8 @@ class _NavBarState extends State<NavBar> {
       return UpgradeAlert(
         child: Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
-          body: DoubleBackToCloseApp(
-            snackBar: SnackBar(
-              backgroundColor: Theme.of(context).colorScheme.onPrimary,
-              content: const Text(AppConstants.exitApp),
-            ),
+          body: _BackToExit(
+            controller: controller,
             child: IndexedStack(
               index: controller.tabIndex,
               children: const [
@@ -101,4 +98,54 @@ class _NavBarState extends State<NavBar> {
       );
     });
   }
+}
+
+/// Back on the home screen: closes the expanded player first, goes to the
+/// Home tab from the others, then needs a second press within 2 s to exit.
+class _BackToExit extends StatefulWidget {
+  const _BackToExit({required this.controller, required this.child});
+
+  final NavBarController controller;
+  final Widget child;
+
+  @override
+  State<_BackToExit> createState() => _BackToExitState();
+}
+
+class _BackToExitState extends State<_BackToExit> {
+  static const _window = Duration(seconds: 2);
+  DateTime? _lastBack;
+
+  void _onBack() {
+    // Expanded player (or another LocalHistoryEntry): let it handle Back.
+    if (ModalRoute.of(context)?.willHandlePopInternally ?? false) {
+      Navigator.of(context).pop();
+      return;
+    }
+    if (widget.controller.tabIndex != 0) {
+      widget.controller.changeTabIndex(0);
+      return;
+    }
+    final now = DateTime.now();
+    if (_lastBack != null && now.difference(_lastBack!) < _window) {
+      SystemNavigator.pop();
+      return;
+    }
+    _lastBack = now;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(const SnackBar(
+        content: Text(AppConstants.exitApp),
+        duration: _window,
+      ));
+  }
+
+  @override
+  Widget build(BuildContext context) => PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _onBack();
+        },
+        child: widget.child,
+      );
 }

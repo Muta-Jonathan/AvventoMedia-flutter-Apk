@@ -1,3 +1,4 @@
+import '../pages/downloads_page.dart';
 import 'package:avvento_media/pages/podcast_page.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
@@ -42,6 +43,7 @@ class Routes {
   static String search = "/search";
   static String libraryFavorites = "/library/favorites";
   static String libraryPlaylists = "/library/playlists";
+  static String downloads = "/library/downloads";
 
   static  String getHomeRoute() => home;
   static  String getListenRoute() => listen;
@@ -63,6 +65,7 @@ class Routes {
   static  String getSearchRoute() => search;
   static  String getLibraryFavoritesRoute() => libraryFavorites;
   static  String getLibraryPlaylistsRoute() => libraryPlaylists;
+  static  String getDownloadsRoute() => downloads;
 
   static List<GetPage> routes = [
     GetPage(name: home, page: () => const MainPage()),
@@ -85,5 +88,6 @@ class Routes {
     GetPage(name: search, page: () => const SearchPage()),
     GetPage(name: libraryFavorites, page: () => const FavoritesPage()),
     GetPage(name: libraryPlaylists, page: () => const MyPlaylistsPage()),
+    GetPage(name: downloads, page: () => const DownloadsPage()),
   ];
 }
