@@ -10,6 +10,7 @@ import '../widgets/liveTv/horizontal/live_tv_widget.dart';
 import '../widgets/youtube/playlist/horizontal/youtube_kids_playlist_widget.dart';
 import '../widgets/youtube/playlist/horizontal/youtube_main_playlist_widget.dart';
 import '../widgets/youtube/playlist/horizontal/youtube_music_playlist_widget.dart';
+import 'downloads_page.dart';
 import 'favorites_page.dart';
 import 'my_playlists_page.dart';
 
@@ -25,6 +26,7 @@ class _HomePageState extends State<HomePage> {
     AppConstants.homeCatalog,
     AppConstants.favorites,
     AppConstants.homePlaylists,
+    AppConstants.downloads,
   ];
 
   int _section = 0;
@@ -80,6 +82,7 @@ class _HomePageState extends State<HomePage> {
             _CatalogView(),
             FavoritesView(),
             PlaylistsView(showCreateRow: true),
+            DownloadsView(),
           ],
         ),
       ),

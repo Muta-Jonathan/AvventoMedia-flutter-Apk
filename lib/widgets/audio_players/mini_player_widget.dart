@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../../components/app_constants.dart';
 import '../../controller/audio_player_controller.dart';
+import '../../controller/download_controller.dart';
 
 /// The collapsed mini-player bar. No Positioned wrapper — it is placed
 /// inside the PlayerPanel builder in main.dart.
@@ -53,6 +55,10 @@ class MiniPlayerWidget extends StatelessWidget {
   ) {
     final colorScheme = Theme.of(context).colorScheme;
     final artUri = mediaItem.artUri?.toString();
+    // Downloaded episodes play from the device.
+    final offline = !isLive &&
+        Get.isRegistered<DownloadController>() &&
+        Get.find<DownloadController>().isDownloaded(mediaItem.id);
 
     final bar = GestureDetector(
       onTap: () {
@@ -173,10 +179,17 @@ class MiniPlayerWidget extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                             ],
+                            if (offline) ...[
+                              const Icon(Icons.download_rounded,
+                                  size: 12, color: Color(0xFFFFCA28)),
+                              const SizedBox(width: 3),
+                            ],
                             Flexible(
                               child: Text(
-                                mediaItem.artist ??
-                                    (isLive ? 'Live Radio' : 'Podcast'),
+                                offline
+                                    ? AppConstants.playingOffline
+                                    : mediaItem.artist ??
+                                        (isLive ? 'Live Radio' : 'Podcast'),
                                 style: TextStyle(
                                   color: colorScheme.onSecondary,
                                   fontSize: 11,
