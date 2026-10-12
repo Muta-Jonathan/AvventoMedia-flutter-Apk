@@ -132,9 +132,9 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: true
-          # On failure, keep the app's log and print the Flutter part: the
-          # test reporter doesn't print the reason.
-          script: flutter test integration_test --timeout 10m || (adb logcat -d > logcat.txt; grep -i flutter logcat.txt | tail -200; exit 1)
+          # Expanded reporter prints failures inline (the GitHub one folds
+          # them). On failure, also keep the app's log.
+          script: flutter test integration_test --timeout 10m --reporter expanded || (adb logcat -d > logcat.txt; grep -i flutter logcat.txt | tail -200; exit 1)
 
       - name: Upload logcat
         if: failure()
