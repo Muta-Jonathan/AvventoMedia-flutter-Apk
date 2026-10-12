@@ -14,6 +14,11 @@ class LibraryController extends GetxController {
   final RxList<SavedItem> favorites = <SavedItem>[].obs;
   final RxList<CustomPlaylistMeta> playlists = <CustomPlaylistMeta>[].obs;
 
+  /// Ids of items saved to any playlist, for the filled bookmark.
+  final RxSet<String> playlistItemIds = <String>{}.obs;
+
+  bool isInAnyPlaylist(String id) => playlistItemIds.contains(id);
+
   int get favoritesCount => favorites.length;
   int get playlistsCount => playlists.length;
 
@@ -43,6 +48,17 @@ class LibraryController extends GetxController {
       playlists.assignAll(list
           .map((e) => CustomPlaylistMeta.fromJson(e as Map<String, dynamic>)));
     }
+    await _refreshPlaylistItemIds();
+  }
+
+  Future<void> _refreshPlaylistItemIds() async {
+    final ids = <String>{};
+    for (final p in playlists) {
+      ids.addAll((await getPlaylistItems(p.id)).map((i) => i.id));
+    }
+    playlistItemIds
+      ..clear()
+      ..addAll(ids);
   }
 
   Future<void> _saveFavorites() async {
@@ -125,6 +141,7 @@ class LibraryController extends GetxController {
     await _savePlaylistMeta();
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_playlistItemsKey(playlistId));
+    await _refreshPlaylistItemIds();
   }
 
   Future<List<SavedItem>> getPlaylistItems(String playlistId) async {
@@ -143,6 +160,7 @@ class LibraryController extends GetxController {
     if (items.any((i) => i.id == item.id)) return false;
     items.insert(0, item);
     await _savePlaylistItems(playlistId, items);
+    playlistItemIds.add(item.id);
     return true;
   }
 
@@ -150,6 +168,7 @@ class LibraryController extends GetxController {
     final items = await getPlaylistItems(playlistId);
     items.removeWhere((i) => i.id == itemId);
     await _savePlaylistItems(playlistId, items);
+    await _refreshPlaylistItemIds();
   }
 
   /// Items in a playlist grouped by groupTitle.
