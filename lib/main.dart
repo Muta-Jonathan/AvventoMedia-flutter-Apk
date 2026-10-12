@@ -253,14 +253,22 @@ class _PanelContent extends StatelessWidget {
                     // HeroControllerScope.none: the app's HeroController can
                     // only belong to the root Navigator.
                     body: HeroControllerScope.none(
-                      child: Navigator(
-                        onGenerateRoute: (_) => PageRouteBuilder(
-                          pageBuilder: (context, __, ___) {
-                            audioCtrl.fullPlayerNavigator =
-                                Navigator.of(context);
-                            return const FullPlayerWidget();
-                          },
-                          transitionDuration: Duration.zero,
+                      // Swallow its NavigationNotifications: with only one
+                      // page it reports "can't pop", which on Android 14+
+                      // predictive back overrides the root Navigator and makes
+                      // Back close the app. Back here is handled by the
+                      // expanded panel's LocalHistoryEntry instead.
+                      child: NotificationListener<NavigationNotification>(
+                        onNotification: (_) => true,
+                        child: Navigator(
+                          onGenerateRoute: (_) => PageRouteBuilder(
+                            pageBuilder: (context, __, ___) {
+                              audioCtrl.fullPlayerNavigator =
+                                  Navigator.of(context);
+                              return const FullPlayerWidget();
+                            },
+                            transitionDuration: Duration.zero,
+                          ),
                         ),
                       ),
                     ),
