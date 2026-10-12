@@ -56,7 +56,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
-            android:name="com.ryanheise.audioservice.AudioServiceActivity"
+            android:name="tv.avventomedia.avvento_media.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:supportsPictureInPicture="true"
