@@ -24,12 +24,16 @@ void main() {
   }) async {
     final deadline = DateTime.now().add(timeout);
     while (!condition()) {
-      if (DateTime.now().isAfter(deadline)) fail('Timed out: $reason');
+      if (DateTime.now().isAfter(deadline)) {
+        debugPrint('E2E timed out: $reason');
+        fail('Timed out: $reason');
+      }
       await tester.pump(const Duration(milliseconds: 200));
     }
   }
 
-  /// Upgrader may show an update dialog depending on the store version.
+  /// Upgrader may show an update dialog depending on the store version, and
+  /// late on a slow emulator.
   Future<void> dismissUpdateDialog(WidgetTester tester) async {
     final later = find.textContaining(RegExp('later', caseSensitive: false));
     if (later.evaluate().isNotEmpty) {
@@ -58,13 +62,17 @@ void main() {
     // Record what the app tells Android about Back (predictive back): if
     // it says "can't handle", Android closes the app on Back.
     bool? frameworkHandlesBack;
-    tester.binding.defaultBinaryMessenger
-        .setMockMethodCallHandler(SystemChannels.platform, (call) async {
+    final messenger = tester.binding.defaultBinaryMessenger;
+    const platform = SystemChannels.platform;
+    messenger.setMockMessageHandler(platform.name, (data) {
+      final call = platform.codec.decodeMethodCall(data);
       if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
         frameworkHandlesBack = call.arguments as bool;
       }
-      return null;
+      // Pass every call on so the app behaves as usual.
+      return messenger.delegate.send(platform.name, data);
     });
+    addTearDown(() => messenger.setMockMessageHandler(platform.name, null));
 
     // Live radio opens the full player
     await tester
@@ -75,6 +83,7 @@ void main() {
         reason: 'radio station loads');
 
     // Back collapses the player and keeps the app on the Audio tab
+    await dismissUpdateDialog(tester);
     await tester.binding.handlePopRoute();
     await pumpUntil(tester, () => audio.panelPercentage.value < 0.05,
         reason: 'player collapses on back');
@@ -97,8 +106,10 @@ void main() {
     // Back on another tab goes Home; on Home it asks to press again.
     final nav = Get.find<NavBarController>();
     expect(nav.tabIndex, 1);
+    await dismissUpdateDialog(tester);
     await tester.binding.handlePopRoute();
     await pumpUntil(tester, () => nav.tabIndex == 0, reason: 'back goes Home');
+    await dismissUpdateDialog(tester);
     await tester.binding.handlePopRoute();
     await pumpUntil(
         tester, () => find.text(AppConstants.exitApp).evaluate().isNotEmpty,
