@@ -404,7 +404,7 @@ void main() {
     expect(find.text('CHAPTER 1'), findsNWidgets(2));
     // The book pill shows the first book.
     expect(find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis'),
-        findsOneWidget);
+        findsWidgets);
 
     // Newest first drops the grouping.
     await tester.tap(find.text(AppConstants.inOrder));
@@ -424,7 +424,7 @@ void main() {
         podcast: podcastNamed('Old Testament KJV Dramatized', 35));
 
     await tester
-        .tap(find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis'));
+        .tap(find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis').first);
     await tester.pumpAndSettle();
     expect(find.text(AppConstants.jumpToBook), findsOneWidget);
     // One testament only: no toggle.
@@ -438,12 +438,21 @@ void main() {
     expect(find.text('Exodus 1'), findsOneWidget);
     expect(find.text('Genesis 1'), findsNothing);
 
+    // Mid-scroll, the pinned header opens the book jump too.
+    await tester.tap(
+        find.bySemanticsLabel('${AppConstants.jumpToBook}, Exodus').first);
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.jumpToBook), findsOneWidget);
+    await tester.tap(find.text('Genesis').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Genesis 1'), findsOneWidget);
+
     // Scrolling back up hands the pill back to Genesis.
     await tester.fling(
         find.byType(CustomScrollView), const Offset(0, 4000), 3000);
     await tester.pumpAndSettle();
     expect(find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis'),
-        findsOneWidget);
+        findsWidgets);
   });
 
   testWidgets('Bible page and book picker fit a 360dp phone at 130% text',
@@ -466,7 +475,7 @@ void main() {
     expect(tester.takeException(), isNull);
 
     await tester.tap(
-        find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis'));
+        find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis').first);
     await tester.pumpAndSettle();
     expect(find.text(AppConstants.newTestament), findsOneWidget);
     await tester.tap(find.text(AppConstants.newTestament));

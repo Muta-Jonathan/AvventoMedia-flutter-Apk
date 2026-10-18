@@ -389,6 +389,9 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                                 book: bibleBooks[g.book - 1],
                                 colors: c,
                                 textScaler: MediaQuery.textScalerOf(context),
+                                onTap: books.length > 1
+                                    ? () => _openBookPicker(context, books)
+                                    : null,
                               ),
                             ),
                           SliverList.builder(
@@ -986,19 +989,24 @@ class _BookPill extends StatelessWidget {
   }
 }
 
-/// "Genesis  50 chapters", pinned while the book is on screen.
+/// "Genesis  50 chapters", pinned while the book is on screen. Tapping it
+/// opens the book jump, so another book is one tap away mid-scroll.
 class _BookHeaderDelegate extends SliverPersistentHeaderDelegate {
   _BookHeaderDelegate({
     required this.headerKey,
     required this.book,
     required this.colors,
     required this.textScaler,
+    this.onTap,
   });
 
   final GlobalKey headerKey;
   final BibleBook book;
   final AvventoColors colors;
   final TextScaler textScaler;
+
+  /// Null when the feed has a single book.
+  final VoidCallback? onTap;
 
   @override
   double get maxExtent => 16 + textScaler.scale(28) + 6;
@@ -1009,7 +1017,7 @@ class _BookHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
+    final header = Container(
       key: headerKey,
       color: colors.bg,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 6),
@@ -1038,7 +1046,23 @@ class _BookHeaderDelegate extends SliverPersistentHeaderDelegate {
                   fontSize: 12,
                   height: 16 / 12,
                   fontWeight: FontWeight.w500)),
+          if (onTap != null) ...[
+            const SizedBox(width: 2),
+            Icon(Icons.keyboard_arrow_down_rounded,
+                size: 18, color: colors.text3),
+          ],
         ],
+      ),
+    );
+    if (onTap == null) return header;
+    return Semantics(
+      button: true,
+      label: '${AppConstants.jumpToBook}, ${book.name}',
+      excludeSemantics: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: header,
       ),
     );
   }
@@ -1048,7 +1072,8 @@ class _BookHeaderDelegate extends SliverPersistentHeaderDelegate {
       old.book != book ||
       old.colors != colors ||
       old.textScaler != textScaler ||
-      old.headerKey != headerKey;
+      old.headerKey != headerKey ||
+      (old.onTap == null) != (onTap == null);
 }
 
 /// "Jump to book": Old/New Testament toggle (when the feed has both) and a
