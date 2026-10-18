@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../components/utils.dart';
+import '../models/radiomodel/radio_station_model.dart';
 import '../widgets/audio_players/player_panel.dart';
 import 'settings_controller.dart';
 import '../main.dart';
@@ -33,8 +35,24 @@ class AudioPlayerController extends GetxController {
   MediaItem? get currentMediaItem => _currentMediaItem;
   set currentMediaItem(MediaItem? item) {
     _currentMediaItem = item;
-    runOutsideBuild(() => currentMediaItemRx.value = _currentMediaItem);
+    runOutsideBuild(() {
+      final next = _currentMediaItem;
+      final shown = currentMediaItemRx.value;
+      // MediaItem == only compares ids, so Rx would keep the old item when
+      // live radio changes the song. Clear it first to store the new one.
+      if (next != null && shown == next && !_sameContent(shown!, next)) {
+        currentMediaItemRx.value = null;
+      }
+      currentMediaItemRx.value = next;
+    });
   }
+
+  static bool _sameContent(MediaItem a, MediaItem b) =>
+      a.title == b.title &&
+      a.artist == b.artist &&
+      a.album == b.album &&
+      a.artUri == b.artUri &&
+      a.duration == b.duration;
 
   final RxBool hasNext = false.obs;
   final RxBool hasPrevious = false.obs;
@@ -87,7 +105,10 @@ class AudioPlayerController extends GetxController {
     // Listen to sequence state changes to dynamically update current item and next/prev availability
     audioPlayer.sequenceStateStream.listen((sequenceState) {
       final currentItem = sequenceState.currentSource?.tag as MediaItem?;
-      if (currentItem != null) {
+      // Keep live now-playing metadata; the stream's tag still holds the
+      // song that was on when it started.
+      if (currentItem != null &&
+          !(isLive.value && currentItem.id == currentMediaItem?.id)) {
         currentMediaItem = currentItem;
       }
       
@@ -130,6 +151,27 @@ class AudioPlayerController extends GetxController {
       currentMediaItem = updatedItem;
       await handler?.updateMediaItem(updatedItem);
     }
+  }
+
+  /// Pushes the station's now-playing song to the mini player, full player
+  /// and notification while the radio is loaded, from any screen.
+  void syncRadioStation(RadioStation station) {
+    if (!isLive.value || !isPlayerActive.value || currentMediaItem == null) {
+      return;
+    }
+    final item = currentMediaItem!;
+    if (item.title == station.nowPlayingTitle &&
+        item.artist == station.artist &&
+        item.artUri.toString() == station.imageUrl) {
+      return; // Only the elapsed time moved.
+    }
+    updateRadioProgram(
+      station.nowPlayingTitle,
+      station.artist,
+      station.imageUrl,
+      Utils.parseDuration(station.duration),
+      Utils.parseDuration(station.elapsed),
+    );
   }
 
   Future<void> setAudioSource(String url, MediaItem mediaItemTag) async {
