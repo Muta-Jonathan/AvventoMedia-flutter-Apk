@@ -1,3 +1,9 @@
+/// AzuraCast's private art URLs need the API key, which the player, mini
+/// player and lock screen can't send; the public route serves the same
+/// image without it.
+String publicArtUrl(String url) => url.replaceFirstMapped(
+    RegExp(r'(/api/station/[^/]+/)podcast/'), (m) => '${m[1]}public/podcast/');
+
 class PodcastEpisode {
   final String id;
   final String title;
@@ -37,7 +43,7 @@ class PodcastEpisode {
       downloadLink: json['links']['download'],
       publicLink: json['links']['public'],
       isPublished: json['is_published'],
-      art: json['art'],
+      art: publicArtUrl(json['art']),
       media: json['links']['media'],
     );
   }
