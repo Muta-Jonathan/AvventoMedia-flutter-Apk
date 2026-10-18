@@ -15,7 +15,6 @@ import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -183,48 +182,19 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
                         ),
                       ],
                     ),
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: CachedNetworkImage(
-                            imageUrl: station.imageUrl,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                            placeholder: (_, __) => const Center(child: LoadingWidget()),
-                            errorWidget: (_, __, ___) => Icon(
-                              Icons.error,
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                          ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: CachedNetworkImage(
+                        imageUrl: station.imageUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        placeholder: (_, __) => const Center(child: LoadingWidget()),
+                        errorWidget: (_, __, ___) => Icon(
+                          Icons.error,
+                          color: Theme.of(context).colorScheme.error,
                         ),
-                        Positioned(
-                          top: 10,
-                          left: 10,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.redAccent[100]!,
-                                  Colors.red[500]!,
-                                  Colors.red[900]!.withValues(alpha: 0.9),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: const Row(
-                              children: [
-                                Icon(Icons.music_note, color: Colors.white, size: 15),
-                                SizedBox(width: 5),
-                                Text(AppConstants.onAIR,
-                                    style: TextStyle(color: Colors.white)),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -369,54 +339,17 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
                     ),
                   ],
                 ),
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: CachedNetworkImage(
-                        imageUrl: selectedEpisode.art,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        placeholder: (_, __) => const Center(child: LoadingWidget()),
-                        errorWidget: (_, __, ___) =>
-                            Icon(Icons.error, color: Theme.of(context).colorScheme.error),
-                      ),
-                    ),
-                    Positioned(
-                      top: 10,
-                      left: 10,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.redAccent[100]!,
-                              Colors.red[500]!,
-                              Colors.red[900]!.withValues(alpha: 0.9),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/podcast.svg',
-                              // ignore: deprecated_member_use
-                              color: Colors.white,
-                              width: 20,
-                              height: 20,
-                            ),
-                            const SizedBox(width: 5),
-                            Text(
-                              selectedEpisode.playlistMediaAlbum,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    imageUrl: selectedEpisode.art,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    placeholder: (_, __) => const Center(child: LoadingWidget()),
+                    errorWidget: (_, __, ___) =>
+                        Icon(Icons.error, color: Theme.of(context).colorScheme.error),
+                  ),
                 ),
               ),
             ),

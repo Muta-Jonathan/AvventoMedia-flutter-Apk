@@ -201,58 +201,22 @@ class _OnlineRadioPageState extends State<OnlineRadioPage> {
                                     ),
                                   ],
                                 ),
-                                child:  Stack(
-                                  children: [
-                                    // Cached Network Image
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: CachedNetworkImage(
-                                        imageUrl: radioProvider.radioStation!.imageUrl,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        placeholder: (context, url) => const Center(
-                                          child: SizedBox(
-                                            width: AppConstants.width40, // Adjust the width to control the size
-                                            height: AppConstants.height40, // Adjust the height to control the size
-                                            child: LoadingWidget()
-                                          ),
-                                        ), // Placeholder widget
-                                        errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: CachedNetworkImage(
+                                    imageUrl: radioProvider.radioStation!.imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    placeholder: (context, url) => const Center(
+                                      child: SizedBox(
+                                        width: AppConstants.width40, // Adjust the width to control the size
+                                        height: AppConstants.height40, // Adjust the height to control the size
+                                        child: LoadingWidget()
                                       ),
-                                    ),
-
-                                    // Top Left Container with Stream Icon and Text
-                                    Positioned(
-                                      top: 10,
-                                      left: 10,
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.centerLeft,
-                                            end: Alignment.centerRight,
-                                            colors: [Colors.redAccent[100]!, Colors.red[500]!, Colors.red[900]!.withOpacity(0.9)],
-                                          ),
-                                          borderRadius: BorderRadius.circular(5),
-                                        ),
-                                        child: const Row(
-                                          children: [
-                                            Icon(
-                                              Icons.music_note,
-                                              color: Colors.white,
-                                              size: 15,
-                                            ),
-                                            SizedBox(width: 5),
-                                            Text(
-                                              AppConstants.onAIR,
-                                              style: TextStyle(color: Colors.white),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                    ), // Placeholder widget
+                                    errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
+                                  ),
                                 ),
                               ),
                             ),

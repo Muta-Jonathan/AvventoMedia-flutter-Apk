@@ -8,7 +8,6 @@ import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:just_audio/just_audio.dart';
@@ -257,58 +256,21 @@ class PodcastPageState extends State<PodcastPage> {
                             ),
                           ],
                         ),
-                        child:  Stack(
-                          children: [
-                            // Cached Network Image
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: CachedNetworkImage(
-                                imageUrl: selectedEpisode.art,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                                placeholder: (context, url) => const Center(
-                                  child: SizedBox(
-                                      width: AppConstants.width40, // Adjust the width to control the size
-                                      height: AppConstants.height40, // Adjust the height to control the size
-                                      child: LoadingWidget()
-                                  ),), // Placeholder widget
-                                errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
-                              ),
-                            ),
-
-                            // Top Left Container with Stream Icon and Text
-                            Positioned(
-                              top: 10,
-                              left: 10,
-                              child: Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [Colors.redAccent[100]!, Colors.red[500]!, Colors.red[900]!.withOpacity(0.9)],
-                                  ),
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                      'assets/icon/podcast.svg',
-                                      color: Colors.white,
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      selectedEpisode.playlistMediaAlbum,
-                                      style: const TextStyle(color: Colors.white),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                        child:  ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: CachedNetworkImage(
+                            imageUrl: selectedEpisode.art,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                            placeholder: (context, url) => const Center(
+                              child: SizedBox(
+                                  width: AppConstants.width40, // Adjust the width to control the size
+                                  height: AppConstants.height40, // Adjust the height to control the size
+                                  child: LoadingWidget()
+                              ),), // Placeholder widget
+                            errorWidget: (context, _, error) => Icon(Icons.error,color: Theme.of(context).colorScheme.error,), // Error widget
+                          ),
                         ),
                       ),
                     ),
