@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'avvento_colors.dart';
 import 'avvento_tokens.dart';
@@ -14,27 +13,37 @@ abstract final class AvventoTheme {
   static ThemeData of(Brightness brightness) =>
       brightness == Brightness.dark ? dark : light;
 
-  /// Newsreader is only for page titles, the live song title and Bible book headers.
+  /// Bundled font families (see pubspec.yaml).
+  static const figtree = 'Figtree';
+
+  /// Only for page titles, the live song title and Bible book headers.
+  static const newsreader = 'Newsreader';
+
   static TextTheme textTheme(AvventoColors c) {
-    TextStyle figtree(double size, double lh, FontWeight w, Color color) =>
-        GoogleFonts.figtree(
-            fontSize: size, height: lh / size, fontWeight: w, color: color);
-    TextStyle newsreader(double size, double lh) => GoogleFonts.newsreader(
+    TextStyle ui(double size, double lh, FontWeight w, Color color) =>
+        TextStyle(
+            fontFamily: figtree,
+            fontSize: size,
+            height: lh / size,
+            fontWeight: w,
+            color: color);
+    TextStyle display(double size, double lh) => TextStyle(
+        fontFamily: newsreader,
         fontSize: size,
         height: lh / size,
         fontWeight: FontWeight.w600,
         color: c.text);
 
     return TextTheme(
-      displaySmall: newsreader(28, 34),
-      headlineSmall: newsreader(22, 28),
-      titleLarge: figtree(18, 24, FontWeight.w700, c.text),
-      titleMedium: figtree(16, 21, FontWeight.w700, c.text),
-      bodyMedium: figtree(14, 21, FontWeight.w400, c.text),
-      bodySmall: figtree(13, 19, FontWeight.w400, c.text2),
-      labelMedium: figtree(12, 16, FontWeight.w700, c.text2),
-      labelSmall: figtree(11, 14, FontWeight.w700, c.text2)
-          .copyWith(letterSpacing: 0.6),
+      displaySmall: display(28, 34),
+      headlineSmall: display(22, 28),
+      titleLarge: ui(18, 24, FontWeight.w700, c.text),
+      titleMedium: ui(16, 21, FontWeight.w700, c.text),
+      bodyMedium: ui(14, 21, FontWeight.w400, c.text),
+      bodySmall: ui(13, 19, FontWeight.w400, c.text2),
+      labelMedium: ui(12, 16, FontWeight.w700, c.text2),
+      labelSmall:
+          ui(11, 14, FontWeight.w700, c.text2).copyWith(letterSpacing: 0.6),
     );
   }
 
@@ -72,6 +81,7 @@ abstract final class AvventoTheme {
 
     return ThemeData(
       brightness: brightness,
+      fontFamily: figtree,
       colorScheme: scheme,
       scaffoldBackgroundColor: c.bg,
       canvasColor: c.bg,
