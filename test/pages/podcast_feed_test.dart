@@ -125,8 +125,11 @@ void main() {
     double y(String title) => tester.getTopLeft(find.text(title)).dy;
 
     expect(y('Episode 1'), lessThan(y('Episode 2')));
-    await tester.tap(find.text(AppConstants.oldest));
+    await tester.tap(find.text(AppConstants.newestFirst));
     await tester.pumpAndSettle();
+    await tester.tap(find.text(AppConstants.oldestFirst));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.oldestFirst), findsOneWidget);
     expect(y('Episode 2'), lessThan(y('Episode 1')));
   });
 
@@ -155,10 +158,11 @@ void main() {
 
     Get.find<EpisodeProgressController>().setPlayed('a', true);
     await tester.pumpAndSettle();
-    final resume = AppConstants.resumeEpisode('Faith Pt. 2');
-    expect(find.text(resume), findsOneWidget);
+    // "Resume" with the episode underneath.
+    expect(find.text(AppConstants.resume), findsOneWidget);
+    expect(find.text('Faith Pt. 2'), findsNWidgets(2));
 
-    await tester.tap(find.text(resume));
+    await tester.tap(find.text(AppConstants.resume));
     await tester.pumpAndSettle();
     expect(Get.find<AudioPlayerController>().currentMediaItem?.id, 'b');
     // The queue follows the list as shown.
@@ -172,7 +176,7 @@ void main() {
     await pump(tester, page());
     final downloads = Get.find<DownloadController>();
 
-    await tester.tap(find.text(AppConstants.downloadAll(2)));
+    await tester.tap(find.bySemanticsLabel(AppConstants.downloadAll(2)));
     // File I/O needs real async.
     for (var i = 0; i < 100 && downloads.downloads.length < 2; i++) {
       await tester.runAsync(
@@ -180,17 +184,20 @@ void main() {
       await tester.pump();
     }
     await tester.pumpAndSettle();
-    expect(find.text(AppConstants.downloadedLabel), findsWidgets);
+    expect(find.text(AppConstants.downloadedLabel), findsNWidgets(2));
 
-    await tester.tap(find.text(AppConstants.remove));
+    await tester.tap(find.bySemanticsLabel(AppConstants.downloadedLabel));
     await tester.pumpAndSettle();
     expect(find.text(AppConstants.removeDownloadsQuestion(2)), findsOneWidget);
     await tester.tap(find.widgetWithText(TextButton, AppConstants.remove));
-    await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 50)));
+    for (var i = 0; i < 100 && downloads.downloads.isNotEmpty; i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
     await tester.pumpAndSettle();
     expect(downloads.downloads, isEmpty);
-    expect(find.text(AppConstants.downloadAll(2)), findsOneWidget);
+    expect(find.bySemanticsLabel(AppConstants.downloadAll(2)), findsOneWidget);
   });
 
   testWidgets('offline, episodes not downloaded are dimmed and disabled',

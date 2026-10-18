@@ -88,9 +88,12 @@ class EpisodeDownloadButton extends StatelessWidget {
 
 /// 26 ring with a stop square; spins while the size is unknown.
 class DownloadRing extends StatelessWidget {
-  const DownloadRing({super.key, required this.fraction});
+  const DownloadRing({super.key, required this.fraction, this.track});
 
   final double? fraction;
+
+  /// Defaults to surface2; pass line when the ring sits on surface2.
+  final Color? track;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +107,7 @@ class DownloadRing extends StatelessWidget {
             value: fraction,
             strokeWidth: 2.5,
             color: c.accent,
-            backgroundColor: c.surface2,
+            backgroundColor: track ?? c.surface2,
           ),
         ),
         Container(

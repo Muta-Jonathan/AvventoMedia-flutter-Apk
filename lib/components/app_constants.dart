@@ -228,6 +228,9 @@ class AppConstants {
   static const String newest = "Newest";
   static const String oldest = "Oldest";
   static const String inOrder = "In order";
+  static const String newestFirst = "Newest first";
+  static const String oldestFirst = "Oldest first";
+  static const String sort = "Sort";
   static const String part = "Part";
   static const String chapter = "Chapter";
   static const String played = "Played";
@@ -315,6 +318,5 @@ class AppConstants {
       'Downloading ${percent(fraction)}';
   static String removeDownloadsQuestion(int n) =>
       n == 1 ? 'Remove 1 download?' : 'Remove $n downloads?';
-  static String resumeEpisode(String title) => 'Resume $title';
   static String episodeCount(int n) => n == 1 ? '1 episode' : '$n episodes';
 }

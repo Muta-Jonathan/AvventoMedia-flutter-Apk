@@ -117,12 +117,17 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                   child: _Header(
                     show: show,
                     episodeCount: _episodes?.length ?? show.episodes,
-                    playAllLabel: currentIndex >= 0
+                    playLabel: currentIndex >= 0
                         ? (playing ? AppConstants.pause : AppConstants.resume)
                         : resumeIndex != null
-                            ? AppConstants.resumeEpisode(
-                                episodes[resumeIndex].title)
+                            ? AppConstants.resume
                             : AppConstants.playAll,
+                    // Which episode Pause / Resume applies to.
+                    playSub: currentIndex >= 0
+                        ? episodes[currentIndex].title
+                        : resumeIndex != null
+                            ? episodes[resumeIndex].title
+                            : null,
                     playing: currentIndex >= 0 && playing,
                     onPlayAll: episodes.isEmpty
                         ? null
@@ -133,32 +138,27 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                         ? null
                         : () => EpisodePlayback.play(
                             List.of(episodes)..shuffle(), 0),
+                    downloadAll: episodes.isEmpty
+                        ? null
+                        : _DownloadAllButton(
+                            episodes: episodes, showTitle: show.title),
                   ),
                 ),
-                if (episodes.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                      child: _DownloadAllBar(
-                          episodes: episodes, showTitle: show.title),
-                    ),
-                  ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 18, 20, 4),
-                    child: Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 8,
+                    child: Row(
                       children: [
-                        Text(AppConstants.episodes,
-                            style: TextStyle(
-                                color: c.text,
-                                fontSize: 15,
-                                height: 20 / 15,
-                                fontWeight: FontWeight.w700)),
-                        _SortControl(
+                        Expanded(
+                          child: Text(AppConstants.episodes,
+                              style: TextStyle(
+                                  color: c.text,
+                                  fontSize: 15,
+                                  height: 20 / 15,
+                                  fontWeight: FontWeight.w700)),
+                        ),
+                        const SizedBox(width: 8),
+                        _SortMenu(
                           selected: _sort ?? EpisodeSort.newest,
                           onSelected: (sort) => setState(() => _sort = sort),
                         ),
@@ -255,18 +255,24 @@ class _Header extends StatelessWidget {
   const _Header({
     required this.show,
     required this.episodeCount,
-    required this.playAllLabel,
+    required this.playLabel,
+    required this.playSub,
     required this.playing,
     required this.onPlayAll,
     required this.onShuffle,
+    required this.downloadAll,
   });
 
   final RadioPodcast show;
   final int episodeCount;
-  final String playAllLabel;
+  final String playLabel;
+
+  /// Episode title on a second line, e.g. under "Resume".
+  final String? playSub;
   final bool playing;
   final VoidCallback? onPlayAll;
   final VoidCallback? onShuffle;
+  final Widget? downloadAll;
 
   @override
   Widget build(BuildContext context) {
@@ -373,12 +379,11 @@ class _Header extends StatelessWidget {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(24),
                         onTap: onPlayAll,
-                        // Grows for "Resume <long title>" and large text.
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(minHeight: 48),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 8),
+                                horizontal: 14, vertical: 4),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -388,14 +393,36 @@ class _Header extends StatelessWidget {
                                         : Icons.play_arrow_rounded,
                                     size: 20,
                                     color: c.onAccent),
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 10),
                                 Flexible(
-                                  child: Text(playAllLabel,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: c.onAccent,
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w700)),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Shrinks rather than clips beside
+                                      // four buttons at large text sizes.
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(playLabel,
+                                            style: TextStyle(
+                                                color: c.onAccent,
+                                                fontSize: 15,
+                                                height: 18 / 15,
+                                                fontWeight: FontWeight.w700)),
+                                      ),
+                                      if (playSub != null)
+                                        Text(playSub!,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: c.onAccent
+                                                    .withValues(alpha: 0.8),
+                                                fontSize: 11,
+                                                height: 13 / 11,
+                                                fontWeight: FontWeight.w600)),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -405,14 +432,14 @@ class _Header extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 _CircleButton(
                   icon: CupertinoIcons.shuffle,
                   label: AppConstants.shuffle,
                   iconColor: c.text,
                   onTap: onShuffle,
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Obx(() {
                   final fav = library.isFavorite(show.id);
                   return _CircleButton(
@@ -423,7 +450,7 @@ class _Header extends StatelessWidget {
                     onTap: () => library.toggleFavorite(saved),
                   );
                 }),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Obx(() {
                   final inPlaylist = library.isInAnyPlaylist(show.id);
                   return _CircleButton(
@@ -435,6 +462,10 @@ class _Header extends StatelessWidget {
                     onTap: () => SaveBottomSheet.show(context, saved),
                   );
                 }),
+                if (downloadAll != null) ...[
+                  const SizedBox(width: 8),
+                  downloadAll!,
+                ],
               ],
             ),
           ),
@@ -546,11 +577,10 @@ class _CircleButton extends StatelessWidget {
       );
 }
 
-/// "Download all · N" → "Downloading 39%" with Cancel → "Downloaded" with
-/// Remove. The percent covers the whole show; tapping anywhere runs the
-/// action.
-class _DownloadAllBar extends StatelessWidget {
-  const _DownloadAllBar({required this.episodes, required this.showTitle});
+/// Download all as a 48 circle: arrow → progress ring (tap to cancel) →
+/// check (tap to remove, after asking). The ring covers the whole show.
+class _DownloadAllButton extends StatelessWidget {
+  const _DownloadAllButton({required this.episodes, required this.showTitle});
 
   final List<PodcastEpisode> episodes;
   final String showTitle;
@@ -574,74 +604,35 @@ class _DownloadAllBar extends StatelessWidget {
 
       final Widget icon;
       final String label;
-      final String action;
       final VoidCallback onTap;
       if (active.isNotEmpty) {
         final fraction = (done.length +
                 active.fold<double>(0, (sum, t) => sum + (t.fraction ?? 0))) /
             episodes.length;
-        icon = DownloadRing(fraction: fraction);
+        icon = DownloadRing(fraction: fraction, track: c.line);
         label = AppConstants.downloadingPercent(fraction);
-        action = AppConstants.cancel;
         onTap = () => downloads.cancelAll(active.map((t) => t.episode.id));
       } else if (missing.isEmpty) {
         icon = const DownloadDoneBadge();
         label = AppConstants.downloadedLabel;
-        action = AppConstants.remove;
         onTap = () => _confirmRemove(context, downloads, done);
       } else {
-        icon = Icon(Icons.download_rounded, size: 22, color: c.accentText);
+        icon = Icon(Icons.download_rounded, size: 20, color: c.text);
         label = AppConstants.downloadAll(missing.length);
-        action = AppConstants.download;
         onTap = () => downloads.enqueueAll(missing, showTitle: showTitle);
       }
 
       return Semantics(
         button: true,
-        label: '$label, $action',
+        label: label,
         excludeSemantics: true,
         child: Material(
-          color: c.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-            side: BorderSide(color: c.line),
-          ),
+          color: c.surface2,
+          shape: const CircleBorder(),
           child: InkWell(
-            borderRadius: BorderRadius.circular(14),
+            customBorder: const CircleBorder(),
             onTap: onTap,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 48),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                child: Row(
-                  children: [
-                    SizedBox.square(dimension: 28, child: Center(child: icon)),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(label,
-                          style: TextStyle(
-                              color: c.text,
-                              fontSize: 14,
-                              height: 19 / 14,
-                              fontWeight: FontWeight.w700)),
-                    ),
-                    const SizedBox(width: 12),
-                    ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 44),
-                      child: Center(
-                        widthFactor: 1,
-                        child: Text(action,
-                            style: TextStyle(
-                                color: c.accentText,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700)),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            child: SizedBox.square(dimension: 48, child: Center(child: icon)),
           ),
         ),
       );
@@ -668,67 +659,98 @@ class _DownloadAllBar extends StatelessWidget {
   }
 }
 
-/// Segmented In order / Newest / Oldest on a surface2 track; the selected
-/// segment is raised to surface. The track is 44 tall.
-class _SortControl extends StatelessWidget {
-  const _SortControl({required this.selected, required this.onSelected});
+/// Sort pill ("In order" / "Newest first" / "Oldest first") that opens a
+/// small menu with a check on the current choice.
+class _SortMenu extends StatelessWidget {
+  const _SortMenu({required this.selected, required this.onSelected});
 
   final EpisodeSort selected;
   final ValueChanged<EpisodeSort> onSelected;
 
   static const _labels = {
     EpisodeSort.inOrder: AppConstants.inOrder,
-    EpisodeSort.newest: AppConstants.newest,
-    EpisodeSort.oldest: AppConstants.oldest,
+    EpisodeSort.newest: AppConstants.newestFirst,
+    EpisodeSort.oldest: AppConstants.oldestFirst,
   };
 
   @override
   Widget build(BuildContext context) {
     final c = Theme.of(context).avvento;
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: c.surface2,
-        borderRadius: BorderRadius.circular(12),
+    return PopupMenuButton<EpisodeSort>(
+      tooltip: AppConstants.sort,
+      initialValue: selected,
+      onSelected: onSelected,
+      position: PopupMenuPosition.under,
+      offset: const Offset(0, 2),
+      color: c.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 8,
+      constraints: const BoxConstraints(minWidth: 200, maxWidth: 260),
+      menuPadding: const EdgeInsets.all(6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: c.line),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final sort in EpisodeSort.values) ...[
-            if (sort != EpisodeSort.values.first) const SizedBox(width: 2),
-            // Shares the width so labels wrap rather than overflow.
-            Flexible(
-              child: Semantics(
-                button: true,
-                selected: sort == selected,
-                child: Material(
-                  color: sort == selected ? c.surface : Colors.transparent,
-                  borderRadius: BorderRadius.circular(9),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(9),
-                    onTap: () => onSelected(sort),
-                    child: ConstrainedBox(
-                      constraints:
-                          const BoxConstraints(minHeight: 38, minWidth: 44),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Center(
-                          widthFactor: 1,
-                          child: Text(_labels[sort]!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: sort == selected ? c.text : c.text2,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700)),
-                        ),
-                      ),
-                    ),
+      itemBuilder: (_) => [
+        for (final sort in EpisodeSort.values)
+          PopupMenuItem(
+            value: sort,
+            height: 44,
+            padding: EdgeInsets.zero,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 44),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: sort == selected ? c.surface2 : null,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(_labels[sort]!,
+                        style: TextStyle(
+                            color: c.text,
+                            fontSize: 14,
+                            height: 18 / 14,
+                            fontWeight: FontWeight.w600)),
                   ),
-                ),
+                  if (sort == selected)
+                    Icon(Icons.check_rounded, size: 18, color: c.accentText),
+                ],
               ),
             ),
-          ],
-        ],
+          ),
+      ],
+      // The 36 pill sits in a 44 hit area.
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 44),
+        child: Center(
+          widthFactor: 1,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 36),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: c.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: c.line),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.sort_rounded, size: 16, color: c.text),
+                const SizedBox(width: 8),
+                Text(_labels[selected]!,
+                    style: TextStyle(
+                        color: c.text,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700)),
+                const SizedBox(width: 8),
+                Icon(Icons.keyboard_arrow_down_rounded,
+                    size: 16, color: c.text3),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
