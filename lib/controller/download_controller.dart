@@ -18,20 +18,29 @@ import 'audio_player_controller.dart';
 import 'episode_progress_controller.dart';
 import 'settings_controller.dart';
 
-enum DownloadStatus { waiting, waitingForWifi, downloading, paused }
+enum DownloadStatus { waiting, waitingForWifi, downloading, paused, failed }
 
-/// A queued or in-flight download.
+/// A queued, in-flight or failed download.
 class DownloadTask {
-  DownloadTask(this.episode, this.showTitle);
+  DownloadTask(this.episode, this.showTitle, {this.quiet = false});
 
   final PodcastEpisode episode;
   final String showTitle;
+
+  /// Part of a "Download all": no per-episode snackbars.
+  final bool quiet;
   DownloadStatus status = DownloadStatus.waiting;
   int received = 0;
   int? total;
 
   /// Set by "Download now" to skip the Wi-Fi-only rule.
   bool allowCellular = false;
+
+  http.Client? _client;
+  bool _stopRequested = false;
+
+  /// Queued, running or paused; not failed.
+  bool get active => status != DownloadStatus.failed;
 
   /// 0..1, or null when the size is unknown.
   double? get fraction =>
@@ -45,9 +54,10 @@ class StorageInfo {
   final int total;
 }
 
-/// Downloads podcast episodes to app storage for offline listening, one at
+/// Downloads podcast episodes to app storage for offline listening, two at
 /// a time. Paused downloads resume where they stopped; downloads cut off by
-/// closing the app are discarded.
+/// closing the app are discarded. Failed ones stay listed until retried or
+/// cancelled.
 class DownloadController extends GetxController {
   /// The parameters exist for tests.
   DownloadController({
@@ -67,6 +77,7 @@ class DownloadController extends GetxController {
         _now = clock ?? DateTime.now;
 
   static const _prefsKey = 'podcast_downloads';
+  static const maxConcurrent = 2;
   static const _storageChannel = MethodChannel('tv.avventomedia.app/storage');
 
   final http.Client Function() _newClient;
@@ -87,9 +98,7 @@ class DownloadController extends GetxController {
   /// "Pause all" is on.
   final RxBool paused = false.obs;
 
-  String? _currentId;
-  http.Client? _currentClient;
-  bool _stopRequested = false;
+  final Set<String> _running = {};
   StreamSubscription? _connectivitySub;
   AppLifecycleListener? _lifecycle;
   late final Future<void> ready;
@@ -180,7 +189,10 @@ class DownloadController extends GetxController {
   }
 
   bool isDownloaded(String id) => downloads.containsKey(id);
+
+  /// Queued, running, paused or failed.
   bool isQueued(String id) => tasks.containsKey(id);
+  bool isFailed(String id) => tasks[id]?.status == DownloadStatus.failed;
 
   /// Local file for [id], or null when it isn't downloaded.
   String? localPath(String id) => downloads[id]?.filePath;
@@ -191,18 +203,47 @@ class DownloadController extends GetxController {
 
   int get totalBytes => downloads.values.fold(0, (sum, d) => sum + d.bytes);
 
-  /// Queues [episode]. With Wi-Fi only on and no Wi-Fi it waits, and the
-  /// snackbar offers "Download now".
-  Future<void> download(PodcastEpisode episode,
-      {required String showTitle}) async {
-    final id = episode.id;
-    if (isDownloaded(id) || isQueued(id)) return;
-    tasks[id] = DownloadTask(episode, showTitle);
+  /// Queues [episode], or retries it if it failed. With Wi-Fi only on and
+  /// no Wi-Fi it waits, and the snackbar offers "Download now".
+  Future<void> download(PodcastEpisode episode, {required String showTitle}) =>
+      _enqueue([episode], showTitle, quiet: false);
+
+  /// Queues every episode not yet downloaded or queued, with no
+  /// per-episode snackbars.
+  Future<void> enqueueAll(Iterable<PodcastEpisode> episodes,
+          {required String showTitle}) =>
+      _enqueue(episodes, showTitle, quiet: true);
+
+  Future<void> _enqueue(Iterable<PodcastEpisode> episodes, String showTitle,
+      {required bool quiet}) async {
+    final added = <String>[];
+    for (final episode in episodes) {
+      final id = episode.id;
+      if (isFailed(id)) {
+        tasks[id]!.status = DownloadStatus.waiting;
+      } else if (isDownloaded(id) || isQueued(id)) {
+        continue;
+      } else {
+        tasks[id] = DownloadTask(episode, showTitle, quiet: quiet);
+      }
+      added.add(id);
+    }
+    if (added.isEmpty) return;
+    tasks.refresh();
     if (_wifiOnly && !await _onWifi()) {
       _notify(AppConstants.waitingForWifi,
           actionLabel: AppConstants.downloadNow,
-          onAction: () => downloadNow(id));
+          onAction: () => added.forEach(downloadNow));
     }
+    _pump();
+  }
+
+  /// Tries a failed download again.
+  void retry(String id) {
+    final task = tasks[id];
+    if (task == null || task.active) return;
+    task.status = DownloadStatus.waiting;
+    tasks.refresh();
     _pump();
   }
 
@@ -221,25 +262,38 @@ class DownloadController extends GetxController {
   bool get _wifiOnly => _settings?.downloadWifiOnly.value ?? false;
 
   bool _pumping = false;
+  bool _pumpAgain = false;
 
-  /// Starts the next queued download if none is running.
+  /// Starts queued downloads while fewer than [maxConcurrent] are running.
   Future<void> _pump() async {
-    if (_pumping || _currentId != null || paused.value) return;
+    if (_pumping) {
+      _pumpAgain = true; // Don't drop a wake-up that lands mid-pump.
+      return;
+    }
     _pumping = true;
     try {
-      await ready;
-      final onWifi = await _onWifi();
-      for (final task in tasks.values) {
-        if (task.status == DownloadStatus.paused) continue;
-        if (_wifiOnly && !onWifi && !task.allowCellular) {
-          task.status = DownloadStatus.waitingForWifi;
-          continue;
+      do {
+        _pumpAgain = false;
+        await ready;
+        if (paused.value || _running.length >= maxConcurrent) break;
+        final onWifi = await _onWifi();
+        for (final task in tasks.values.toList()) {
+          if (_running.length >= maxConcurrent) break;
+          final id = task.episode.id;
+          if (_running.contains(id) ||
+              task.status == DownloadStatus.paused ||
+              task.status == DownloadStatus.failed) {
+            continue;
+          }
+          if (_wifiOnly && !onWifi && !task.allowCellular) {
+            task.status = DownloadStatus.waitingForWifi;
+            continue;
+          }
+          _running.add(id);
+          unawaited(_run(task));
         }
         tasks.refresh();
-        unawaited(_run(task));
-        return;
-      }
-      tasks.refresh();
+      } while (_pumpAgain);
     } finally {
       _pumping = false;
     }
@@ -247,11 +301,10 @@ class DownloadController extends GetxController {
 
   Future<void> _run(DownloadTask task) async {
     final id = task.episode.id;
-    _currentId = id;
-    _stopRequested = false;
+    task._stopRequested = false;
     task.status = DownloadStatus.downloading;
     tasks.refresh();
-    final client = _currentClient = _newClient();
+    final client = task._client = _newClient();
     final dir = await _directory();
     await dir.create(recursive: true);
     final name = id.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_');
@@ -276,7 +329,7 @@ class DownloadController extends GetxController {
       var lastShown = task.fraction ?? 0;
       try {
         await for (final chunk in response.stream) {
-          if (_stopRequested) break;
+          if (task._stopRequested) break;
           sink.add(chunk);
           task.received += chunk.length;
           // Redraw per whole percent, not per chunk.
@@ -289,7 +342,7 @@ class DownloadController extends GetxController {
       } finally {
         await sink.close();
       }
-      if (_stopRequested) return; // Paused or cancelled; see _stop.
+      if (task._stopRequested) return; // Paused or cancelled; see _stop.
 
       final file = await part.rename('${dir.path}/$name.mp3');
       downloads[id] = DownloadedEpisode(
@@ -301,53 +354,59 @@ class DownloadController extends GetxController {
       );
       finished = true;
       await _save();
-      _notify(AppConstants.downloaded(task.episode.title));
+      if (!task.quiet) _notify(AppConstants.downloaded(task.episode.title));
     } catch (_) {
-      if (!_stopRequested) {
+      if (!task._stopRequested) {
         if (part.existsSync()) part.deleteSync();
-        _notify(AppConstants.downloadFailed(task.episode.title));
-        finished = true; // Dropped from the queue.
+        task.status = DownloadStatus.failed;
+        if (!task.quiet) {
+          _notify(AppConstants.downloadFailed(task.episode.title));
+        }
       }
     } finally {
       client.close();
-      _currentClient = null;
-      _currentId = null;
+      task._client = null;
+      _running.remove(id);
       if (finished) tasks.remove(id);
       tasks.refresh();
       _pump();
     }
   }
 
-  /// Stops the running download, keeping its partial file for resume.
-  void _stopCurrent() {
-    if (_currentId == null) return;
-    _stopRequested = true;
-    _currentClient?.close(); // Aborts the response stream.
+  /// Stops a running download, keeping its partial file for resume.
+  void _stop(DownloadTask task) {
+    if (!_running.contains(task.episode.id)) return;
+    task._stopRequested = true;
+    task._client?.close(); // Aborts the response stream.
   }
 
   void pauseAll() {
     paused.value = true;
     for (final t in tasks.values) {
+      if (!t.active) continue;
       t.status = DownloadStatus.paused;
+      _stop(t);
     }
-    _stopCurrent();
     tasks.refresh();
   }
 
   void resumeAll() {
     paused.value = false;
     for (final t in tasks.values) {
-      t.status = DownloadStatus.waiting;
+      if (t.status == DownloadStatus.paused) t.status = DownloadStatus.waiting;
     }
     tasks.refresh();
     _pump();
   }
 
-  /// Drops a queued or running download and its partial file.
+  Future<void> cancelAll(Iterable<String> ids) =>
+      Future.wait(ids.toList().map(cancel));
+
+  /// Drops a queued, running or failed download and its partial file.
   Future<void> cancel(String id) async {
     final task = tasks.remove(id);
     if (task == null) return;
-    if (_currentId == id) _stopCurrent();
+    _stop(task);
     final dir = await _directory();
     final name = id.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_');
     // Let the running stream close its sink first.
@@ -417,7 +476,7 @@ class DownloadController extends GetxController {
   void onClose() {
     _connectivitySub?.cancel();
     _lifecycle?.dispose();
-    _stopCurrent();
+    tasks.values.forEach(_stop);
     super.onClose();
   }
 }

@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
+import 'package:avvento_media/controller/connectivity_controller.dart';
 import 'package:avvento_media/controller/download_controller.dart';
 import 'package:avvento_media/controller/episode_progress_controller.dart';
 import 'package:avvento_media/controller/library_controller.dart';
@@ -11,11 +13,12 @@ import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:avvento_media/pages/downloads_page.dart';
 import 'package:avvento_media/pages/podcast_episode_list_page.dart';
+import 'package:avvento_media/themes/avvento_colors.dart';
 import 'package:avvento_media/themes/dark_theme.dart';
 import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/podcast/episode/episode_feed_tile.dart';
 import 'package:avvento_media/models/saved_item_model.dart';
-import 'package:avvento_media/widgets/podcast/podcast_palette.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,9 +32,10 @@ import '../helpers/fake_audio_player.dart';
 
 final _now = DateTime.now();
 
-PodcastEpisode episode(String id, {int daysAgo = 0}) => PodcastEpisode(
+PodcastEpisode episode(String id, {int daysAgo = 0, String? title}) =>
+    PodcastEpisode(
       id: id,
-      title: 'Episode $id',
+      title: title ?? 'Episode $id',
       description: 'About episode $id',
       playlistMediaArtist: 'AvventoRadio',
       playlistMediaAlbum: '',
@@ -70,7 +74,7 @@ void main() {
 
   // Controllers are created inside each test body (fake-async zone).
   Future<void> pump(WidgetTester tester, Widget home,
-      {ThemeData? theme}) async {
+      {ThemeData? theme, bool offline = false}) async {
     SharedPreferences.setMockInitialValues({});
     dir = Directory.systemTemp.createTempSync('feed_test');
     player = FakeAudioPlayer();
@@ -86,6 +90,11 @@ void main() {
           const StorageInfo(free: 100 << 30, total: 400 << 30),
     ));
     Get.put(LibraryController());
+    Get.put(ConnectivityController(
+      changes: const Stream.empty(),
+      check: () async =>
+          [offline ? ConnectivityResult.none : ConnectivityResult.wifi],
+    ));
     Get.put(PodcastController()).setSelectedEpisode(show);
     await tester.pumpWidget(
         GetMaterialApp(theme: theme ?? darkTheme, home: home));
@@ -110,15 +119,97 @@ void main() {
     expect(find.textContaining(AppConstants.newLabel), findsOneWidget);
   });
 
-  testWidgets('sort flips to oldest first', (tester) async {
+  testWidgets('shows default to newest; Oldest flips the list',
+      (tester) async {
     await pump(tester, page());
     double y(String title) => tester.getTopLeft(find.text(title)).dy;
 
     expect(y('Episode 1'), lessThan(y('Episode 2')));
-    await tester.tap(find.text(AppConstants.newest));
+    await tester.tap(find.text(AppConstants.newestFirst));
     await tester.pumpAndSettle();
-    expect(find.text(AppConstants.oldest), findsOneWidget);
+    await tester.tap(find.text(AppConstants.oldestFirst));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.oldestFirst), findsOneWidget);
     expect(y('Episode 2'), lessThan(y('Episode 1')));
+  });
+
+  testWidgets('series play in order and resume where you left off',
+      (tester) async {
+    // Tall enough to build every row.
+    tester.view.physicalSize = const Size(800, 2000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    // API order is newest first; parts were published out of order.
+    await pump(
+        tester,
+        PodcastEpisodeListPage(
+          fetchEpisodes: (_) async => [
+            episode('b', daysAgo: 0, title: 'Faith Pt. 2'),
+            episode('c', daysAgo: 5, title: 'Faith Pt. 3'),
+            episode('a', daysAgo: 10, title: 'Faith Pt. 1'),
+          ],
+        ));
+    double y(String title) => tester.getTopLeft(find.text(title)).dy;
+
+    expect(y('Faith Pt. 1'), lessThan(y('Faith Pt. 2')));
+    expect(y('Faith Pt. 2'), lessThan(y('Faith Pt. 3')));
+    expect(find.text('PART 1'), findsOneWidget);
+    expect(find.text(AppConstants.playAll), findsOneWidget);
+
+    Get.find<EpisodeProgressController>().setPlayed('a', true);
+    await tester.pumpAndSettle();
+    // "Resume" with the episode underneath.
+    expect(find.text(AppConstants.resume), findsOneWidget);
+    expect(find.text('Faith Pt. 2'), findsNWidgets(2));
+
+    await tester.tap(find.text(AppConstants.resume));
+    await tester.pumpAndSettle();
+    expect(Get.find<AudioPlayerController>().currentMediaItem?.id, 'b');
+    // The queue follows the list as shown.
+    final queue = Get.find<AudioPlayerController>().playlist!.children;
+    expect(queue.map((s) => ((s as IndexedAudioSource).tag as MediaItem).id),
+        ['a', 'b', 'c']);
+  });
+
+  testWidgets('Download all saves every episode; Remove deletes them',
+      (tester) async {
+    await pump(tester, page());
+    final downloads = Get.find<DownloadController>();
+
+    await tester.tap(find.bySemanticsLabel(AppConstants.downloadAll(2)));
+    // File I/O needs real async.
+    for (var i = 0; i < 100 && downloads.downloads.length < 2; i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.downloadedLabel), findsNWidgets(2));
+
+    await tester.tap(find.bySemanticsLabel(AppConstants.downloadedLabel));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.removeDownloadsQuestion(2)), findsOneWidget);
+    await tester.tap(find.widgetWithText(TextButton, AppConstants.remove));
+    for (var i = 0; i < 100 && downloads.downloads.isNotEmpty; i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+    await tester.pumpAndSettle();
+    expect(downloads.downloads, isEmpty);
+    expect(find.bySemanticsLabel(AppConstants.downloadAll(2)), findsOneWidget);
+  });
+
+  testWidgets('offline, episodes not downloaded are dimmed and disabled',
+      (tester) async {
+    await pump(tester, page(), offline: true);
+
+    expect(find.text(AppConstants.notDownloaded), findsNWidgets(2));
+    expect(find.bySemanticsLabel(AppConstants.notAvailableOffline),
+        findsNWidgets(2));
+    await tester.tap(find.text(AppConstants.notDownloaded).first);
+    await tester.pumpAndSettle();
+    expect(player.calls, isNot(contains('play')));
   });
 
   testWidgets('play pill starts the episode; Play All becomes Pause',
@@ -213,7 +304,7 @@ void main() {
     Icon bookmark() => tester.widget<Icon>(find.descendant(
         of: find.bySemanticsLabel(AppConstants.saveToPlaylist),
         matching: find.byType(Icon)));
-    expect(bookmark().color, isNot(PodcastPalette.accent));
+    expect(bookmark().color, isNot(AvventoColors.dark.accent));
 
     final library = Get.find<LibraryController>();
     await tester.runAsync(() async {
@@ -231,7 +322,7 @@ void main() {
           ));
     });
     await tester.pumpAndSettle();
-    expect(bookmark().color, PodcastPalette.accent);
+    expect(bookmark().color, AvventoColors.dark.accent);
     expect(bookmark().icon, CupertinoIcons.bookmark_fill);
   });
 
@@ -248,6 +339,29 @@ void main() {
     final title = tester.widget<Text>(find.text('Episode 2'));
     expect(title.style!.color, isNot(lightTheme.colorScheme.surface));
     expect(title.style!.color!.computeLuminance(), lessThan(0.2));
+  });
+
+  testWidgets('fits a 360dp phone at 130% text in both themes',
+      (tester) async {
+    tester.view.physicalSize = const Size(360 * 3, 740 * 3);
+    tester.view.devicePixelRatio = 3;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    // Long titles must wrap, never overflow.
+    final long = PodcastEpisodeListPage(
+      fetchEpisodes: (_) async => [
+        episode('1',
+            title: 'Victory Amidst Troubles Pt. 3: Waiting on God in Prison'),
+        episode('2', title: 'Victory Amidst Troubles Pt. 2'),
+      ],
+    );
+    await pump(tester, long);
+    expect(tester.takeException(), isNull);
+    Get.reset();
+    await pump(tester, long, theme: lightTheme);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('empty Downloads explains how to download', (tester) async {

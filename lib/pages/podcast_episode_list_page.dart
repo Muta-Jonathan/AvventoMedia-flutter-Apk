@@ -4,7 +4,10 @@ import 'package:get/get.dart';
 
 import '../apis/azuracast_api.dart';
 import '../components/app_constants.dart';
+import '../components/episode_order.dart';
 import '../components/episode_playback.dart';
+import '../controller/connectivity_controller.dart';
+import '../controller/download_controller.dart';
 import '../controller/episode_progress_controller.dart';
 import '../controller/library_controller.dart';
 import '../controller/podcast_controller.dart';
@@ -19,9 +22,12 @@ import '../widgets/podcast/episode/episode_download_button.dart';
 import '../widgets/podcast/episode/episode_feed_tile.dart';
 import '../widgets/podcast/player_state_builder.dart';
 import '../widgets/podcast/podcast_palette.dart';
+import '../themes/avvento_colors.dart';
+import '../themes/avvento_theme.dart';
 
-/// A podcast's page: header with Play All / Shuffle / Favorite / Save, then
-/// the editorial episode feed.
+/// A podcast's page: header with Play All / Shuffle / Favorite / Save,
+/// Download all, sort, then the editorial episode feed. Playback queues
+/// follow the list as displayed.
 class PodcastEpisodeListPage extends StatefulWidget {
   /// [fetchEpisodes] exists for tests.
   const PodcastEpisodeListPage({super.key, this.fetchEpisodes});
@@ -37,7 +43,9 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
       Get.find<PodcastController>().selectedEpisode.value!;
   List<PodcastEpisode>? _episodes;
   bool _failed = false;
-  bool _oldestFirst = false;
+
+  /// Chosen once episodes load: in order for numbered series, else newest.
+  EpisodeSort? _sort;
 
   @override
   void initState() {
@@ -54,6 +62,9 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
       setState(() {
         _episodes = episodes;
         _failed = false;
+        _sort ??= looksLikeSeries(episodes)
+            ? EpisodeSort.inOrder
+            : EpisodeSort.newest;
       });
     } catch (_) {
       if (mounted) setState(() => _failed = true);
@@ -61,25 +72,43 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
   }
 
   /// API order is newest first.
-  List<PodcastEpisode> get _sorted {
-    final list = _episodes ?? const <PodcastEpisode>[];
-    return _oldestFirst ? list.reversed.toList() : list;
+  List<PodcastEpisode> get _sorted => sortEpisodes(
+      _episodes ?? const <PodcastEpisode>[], _sort ?? EpisodeSort.newest);
+
+  /// In order with some progress: the first unplayed episode, to resume
+  /// the series there. Null starts from the top.
+  int? _resumeIndex(
+      List<PodcastEpisode> episodes, Map<String, EpisodeProgress> progress) {
+    if (_sort != EpisodeSort.inOrder) return null;
+    EpisodeProgress p(PodcastEpisode e) =>
+        progress[e.id] ?? const EpisodeProgress();
+    final started =
+        episodes.any((e) => p(e).played || p(e).position > Duration.zero);
+    if (!started) return null;
+    final i = episodes.indexWhere((e) => !p(e).played);
+    return i < 0 ? null : i;
   }
 
   @override
-  Widget build(BuildContext context) {
-    final palette = PodcastPalette(context);
+  Widget build(BuildContext context) =>
+      AvventoThemeScope(child: Builder(builder: _buildPage));
+
+  Widget _buildPage(BuildContext context) {
+    final c = Theme.of(context).avvento;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: c.bg,
       body: RefreshIndicator(
-        backgroundColor: Colors.white,
-        color: PodcastPalette.accent,
+        backgroundColor: c.surface,
+        color: c.accent,
         onRefresh: _load,
         child: PlayerStateBuilder(
           builder: (context, currentId, playing, progress) {
             final episodes = _sorted;
             final currentIndex = episodes.indexWhere((e) => e.id == currentId);
+            final resumeIndex = _resumeIndex(episodes, progress);
+            final downloads = Get.find<DownloadController>();
+            final inOrder = _sort == EpisodeSort.inOrder;
 
             return CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -88,40 +117,50 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                   child: _Header(
                     show: show,
                     episodeCount: _episodes?.length ?? show.episodes,
-                    playAllLabel: currentIndex < 0
-                        ? AppConstants.playAll
-                        : playing
-                            ? AppConstants.pause
-                            : AppConstants.resume,
+                    playLabel: currentIndex >= 0
+                        ? (playing ? AppConstants.pause : AppConstants.resume)
+                        : resumeIndex != null
+                            ? AppConstants.resume
+                            : AppConstants.playAll,
+                    // Which episode Pause / Resume applies to.
+                    playSub: currentIndex >= 0
+                        ? episodes[currentIndex].title
+                        : resumeIndex != null
+                            ? episodes[resumeIndex].title
+                            : null,
                     playing: currentIndex >= 0 && playing,
                     onPlayAll: episodes.isEmpty
                         ? null
                         : () => currentIndex < 0
-                            ? EpisodePlayback.play(episodes, 0)
+                            ? EpisodePlayback.play(episodes, resumeIndex ?? 0)
                             : EpisodePlayback.toggle(episodes, currentIndex),
                     onShuffle: episodes.isEmpty
                         ? null
                         : () => EpisodePlayback.play(
                             List.of(episodes)..shuffle(), 0),
+                    downloadAll: episodes.isEmpty
+                        ? null
+                        : _DownloadAllButton(
+                            episodes: episodes, showTitle: show.title),
                   ),
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 26, 20, 6),
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 4),
                     child: Row(
                       children: [
-                        Text(AppConstants.episodes,
-                            style: TextStyle(
-                                color: palette.title,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700)),
-                        const Spacer(),
-                        _SortChip(
-                          label: _oldestFirst
-                              ? AppConstants.oldest
-                              : AppConstants.newest,
-                          onTap: () =>
-                              setState(() => _oldestFirst = !_oldestFirst),
+                        Expanded(
+                          child: Text(AppConstants.episodes,
+                              style: TextStyle(
+                                  color: c.text,
+                                  fontSize: 15,
+                                  height: 20 / 15,
+                                  fontWeight: FontWeight.w700)),
+                        ),
+                        const SizedBox(width: 8),
+                        _SortMenu(
+                          selected: _sort ?? EpisodeSort.newest,
+                          onSelected: (sort) => setState(() => _sort = sort),
                         ),
                       ],
                     ),
@@ -141,7 +180,7 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                     child: _failed
                         ? EmptyState(
                             icon: Icons.wifi_off_rounded,
-                            color: PodcastPalette.accent,
+                            color: c.accent,
                             title: AppConstants.episodesLoadFailed,
                             message: AppConstants.episodesLoadFailedMessage,
                             actionLabel: AppConstants.retry,
@@ -151,9 +190,9 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                               _load();
                             },
                           )
-                        : const EmptyState(
+                        : EmptyState(
                             icon: Icons.podcasts_rounded,
-                            color: PodcastPalette.accent,
+                            color: c.accent,
                             title: AppConstants.noEpisodes,
                             message: '',
                           ),
@@ -169,21 +208,35 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                         void more() =>
                             EpisodeActionsSheet.show(context, episode,
                                 showTitle: show.title);
-                        return EpisodeFeedTile(
-                          episode: episode,
-                          progress:
-                              progress[episode.id] ?? const EpisodeProgress(),
-                          isCurrent: isCurrent,
-                          isPlaying: isCurrent && playing,
-                          onTap: () => EpisodePlayback.open(episodes, i),
-                          onPlayTap: () => EpisodePlayback.toggle(episodes, i),
-                          onMore: more,
-                          download: EpisodeDownloadButton(
+                        return Obx(() {
+                          // Read both so Obx always has something to watch.
+                          final downloaded = downloads.isDownloaded(episode.id);
+                          final offline =
+                              Get.isRegistered<ConnectivityController>() &&
+                                  Get.find<ConnectivityController>()
+                                      .offline
+                                      .value;
+                          return EpisodeFeedTile(
                             episode: episode,
-                            showTitle: show.title,
-                            onDownloaded: more,
-                          ),
-                        );
+                            progress:
+                                progress[episode.id] ?? const EpisodeProgress(),
+                            isCurrent: isCurrent,
+                            isPlaying: isCurrent && playing,
+                            available: !offline || downloaded,
+                            numbered: inOrder,
+                            onTap: () => EpisodePlayback.open(episodes, i),
+                            onPlayTap: () =>
+                                EpisodePlayback.toggle(episodes, i),
+                            onMore: more,
+                            downloadLabel:
+                                EpisodeDownloadLabel(episodeId: episode.id),
+                            download: EpisodeDownloadButton(
+                              episode: episode,
+                              showTitle: show.title,
+                              onDownloaded: more,
+                            ),
+                          );
+                        });
                       },
                     ),
                   ),
@@ -196,26 +249,34 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
   }
 }
 
+/// Back, then a 124 cover beside the overline, title, host and count, then
+/// Play All, Shuffle, Favorite and Save. No text on the cover.
 class _Header extends StatelessWidget {
   const _Header({
     required this.show,
     required this.episodeCount,
-    required this.playAllLabel,
+    required this.playLabel,
+    required this.playSub,
     required this.playing,
     required this.onPlayAll,
     required this.onShuffle,
+    required this.downloadAll,
   });
 
   final RadioPodcast show;
   final int episodeCount;
-  final String playAllLabel;
+  final String playLabel;
+
+  /// Episode title on a second line, e.g. under "Resume".
+  final String? playSub;
   final bool playing;
   final VoidCallback? onPlayAll;
   final VoidCallback? onShuffle;
+  final Widget? downloadAll;
 
   @override
   Widget build(BuildContext context) {
-    final palette = PodcastPalette(context);
+    final c = Theme.of(context).avvento;
     final library = Get.find<LibraryController>();
     final saved = SavedItem(
       id: show.id,
@@ -229,105 +290,100 @@ class _Header extends StatelessWidget {
       savedAt: DateTime.now(),
     );
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [palette.headerGlow, palette.headerGlow.withValues(alpha: 0)],
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _CircleButton(
-                icon: Icons.arrow_back_ios_new_rounded,
-                label: MaterialLocalizations.of(context).backButtonTooltip,
-                color:
-                    Colors.black.withValues(alpha: palette.dark ? 0.3 : 0.06),
-                iconColor: palette.title,
-                size: 40,
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 4, 10, 0),
+            child: Semantics(
+              button: true,
+              label: MaterialLocalizations.of(context).backButtonTooltip,
+              child: InkResponse(
                 onTap: () => Navigator.maybePop(context),
+                radius: 22,
+                child: SizedBox.square(
+                  dimension: 44,
+                  child: Icon(Icons.arrow_back_ios_new_rounded,
+                      size: 22, color: c.text),
+                ),
               ),
-              const SizedBox(height: 14),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black
-                                .withValues(alpha: palette.dark ? 0.5 : 0.18),
-                            blurRadius: 28,
-                            offset: const Offset(0, 12)),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+            child: Row(
+              children: [
+                PodcastArt(url: show.art, size: 124, radius: 14),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(AppConstants.podcastLabel,
+                          style: TextStyle(
+                              color: c.accentText,
+                              fontSize: 11,
+                              height: 14 / 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.88)),
+                      const SizedBox(height: 4),
+                      Text(show.title,
+                          style: TextStyle(
+                              fontFamily: AvventoTheme.newsreader,
+                              color: c.text,
+                              fontSize: 22,
+                              height: 27 / 22,
+                              fontWeight: FontWeight.w600)),
+                      if (show.author.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(show.author,
+                            style: TextStyle(
+                                color: c.text2,
+                                fontSize: 13,
+                                height: 18 / 13,
+                                fontWeight: FontWeight.w500)),
                       ],
-                    ),
-                    child: PodcastArt(url: show.art, size: 132, radius: 14),
+                      if (episodeCount > 0) ...[
+                        const SizedBox(height: 2),
+                        Text(AppConstants.episodeCount(episodeCount),
+                            style: TextStyle(
+                                color: c.text3,
+                                fontSize: 12,
+                                height: 16 / 12,
+                                fontWeight: FontWeight.w500)),
+                      ],
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(AppConstants.podcastLabel,
-                              style: TextStyle(
-                                  color: palette.highlight,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.8)),
-                          const SizedBox(height: 4),
-                          Text(show.title,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: palette.title,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                  height: 1.15)),
-                          if (show.author.isNotEmpty) ...[
-                            const SizedBox(height: 6),
-                            Text(show.author,
-                                style: TextStyle(
-                                    color: palette.subtitle, fontSize: 13)),
-                          ],
-                          if (episodeCount > 0) ...[
-                            const SizedBox(height: 2),
-                            Text(AppConstants.episodeCount(episodeCount),
-                                style: TextStyle(
-                                    color: palette.muted, fontSize: 12)),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              if (show.description.trim().isNotEmpty) ...[
-                const SizedBox(height: 16),
-                _Description(text: show.description.trim(), title: show.title),
+                ),
               ],
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Semantics(
-                      button: true,
-                      child: Material(
-                        color: PodcastPalette.accent,
+            ),
+          ),
+          if (show.description.trim().isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+              child: _Description(
+                  text: show.description.trim(), title: show.title),
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    child: Material(
+                      color: c.accent,
+                      borderRadius: BorderRadius.circular(24),
+                      child: InkWell(
                         borderRadius: BorderRadius.circular(24),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(24),
-                          onTap: onPlayAll,
-                          child: SizedBox(
-                            height: 48,
+                        onTap: onPlayAll,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 48),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 4),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -335,13 +391,39 @@ class _Header extends StatelessWidget {
                                     playing
                                         ? Icons.pause_rounded
                                         : Icons.play_arrow_rounded,
-                                    color: Colors.black),
-                                const SizedBox(width: 6),
-                                Text(playAllLabel,
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700)),
+                                    size: 20,
+                                    color: c.onAccent),
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // Shrinks rather than clips beside
+                                      // four buttons at large text sizes.
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(playLabel,
+                                            style: TextStyle(
+                                                color: c.onAccent,
+                                                fontSize: 15,
+                                                height: 18 / 15,
+                                                fontWeight: FontWeight.w700)),
+                                      ),
+                                      if (playSub != null)
+                                        Text(playSub!,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: c.onAccent
+                                                    .withValues(alpha: 0.8),
+                                                fontSize: 11,
+                                                height: 13 / 11,
+                                                fontWeight: FontWeight.w600)),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -349,46 +431,45 @@ class _Header extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  _CircleButton(
-                    icon: CupertinoIcons.shuffle,
-                    label: AppConstants.shuffle,
-                    color: palette.button,
-                    iconColor: palette.title,
-                    onTap: onShuffle,
-                  ),
-                  const SizedBox(width: 10),
-                  Obx(() {
-                    final fav = library.isFavorite(show.id);
-                    return _CircleButton(
-                      icon: fav
-                          ? CupertinoIcons.heart_fill
-                          : CupertinoIcons.heart,
-                      label: AppConstants.addToFavorites,
-                      color: palette.button,
-                      iconColor: fav ? const Color(0xFFFF5252) : palette.title,
-                      onTap: () => library.toggleFavorite(saved),
-                    );
-                  }),
-                  const SizedBox(width: 10),
-                  Obx(() {
-                    final inPlaylist = library.isInAnyPlaylist(show.id);
-                    return _CircleButton(
-                      icon: inPlaylist
-                          ? CupertinoIcons.bookmark_fill
-                          : CupertinoIcons.bookmark,
-                      label: AppConstants.saveToPlaylist,
-                      color: palette.button,
-                      iconColor:
-                          inPlaylist ? PodcastPalette.accent : palette.title,
-                      onTap: () => SaveBottomSheet.show(context, saved),
-                    );
-                  }),
+                ),
+                const SizedBox(width: 8),
+                _CircleButton(
+                  icon: CupertinoIcons.shuffle,
+                  label: AppConstants.shuffle,
+                  iconColor: c.text,
+                  onTap: onShuffle,
+                ),
+                const SizedBox(width: 8),
+                Obx(() {
+                  final fav = library.isFavorite(show.id);
+                  return _CircleButton(
+                    icon:
+                        fav ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
+                    label: AppConstants.addToFavorites,
+                    iconColor: fav ? c.liveDot : c.text,
+                    onTap: () => library.toggleFavorite(saved),
+                  );
+                }),
+                const SizedBox(width: 8),
+                Obx(() {
+                  final inPlaylist = library.isInAnyPlaylist(show.id);
+                  return _CircleButton(
+                    icon: inPlaylist
+                        ? CupertinoIcons.bookmark_fill
+                        : CupertinoIcons.bookmark,
+                    label: AppConstants.saveToPlaylist,
+                    iconColor: inPlaylist ? c.accent : c.text,
+                    onTap: () => SaveBottomSheet.show(context, saved),
+                  );
+                }),
+                if (downloadAll != null) ...[
+                  const SizedBox(width: 8),
+                  downloadAll!,
                 ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -403,14 +484,15 @@ class _Description extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = PodcastPalette(context);
-    final style = TextStyle(color: palette.subtitle, fontSize: 13, height: 1.5);
+    final c = Theme.of(context).avvento;
+    final style = TextStyle(color: c.text2, fontSize: 13, height: 19 / 13);
 
     return LayoutBuilder(builder: (context, constraints) {
       final painter = TextPainter(
         text: TextSpan(text: text, style: style),
         maxLines: 3,
         textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
       )..layout(maxWidth: constraints.maxWidth);
       final overflows = painter.didExceedMaxLines;
 
@@ -424,7 +506,7 @@ class _Description extends StatelessWidget {
             if (overflows)
               Text(AppConstants.moreLower,
                   style: TextStyle(
-                      color: palette.title,
+                      color: c.text,
                       fontSize: 13,
                       fontWeight: FontWeight.w600)),
           ],
@@ -434,30 +516,28 @@ class _Description extends StatelessWidget {
   }
 
   void _showFull(BuildContext context) {
-    final palette = PodcastPalette(context);
+    final c = Theme.of(context).avvento;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: palette.sheet,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (_) => DraggableScrollableSheet(
         expand: false,
         initialChildSize: 0.5,
         maxChildSize: 0.9,
         builder: (_, controller) => ListView(
           controller: controller,
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
           children: [
             Text(title,
                 style: TextStyle(
-                    color: palette.title,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700)),
+                    fontFamily: AvventoTheme.newsreader,
+                    color: c.text,
+                    fontSize: 22,
+                    height: 27 / 22,
+                    fontWeight: FontWeight.w600)),
             const SizedBox(height: 12),
             Text(text,
-                style: TextStyle(
-                    color: palette.subtitle, fontSize: 15, height: 1.5)),
+                style: TextStyle(color: c.text2, fontSize: 15, height: 1.5)),
           ],
         ),
       ),
@@ -469,32 +549,27 @@ class _CircleButton extends StatelessWidget {
   const _CircleButton({
     required this.icon,
     required this.label,
-    required this.color,
     required this.iconColor,
     required this.onTap,
-    this.size = 48,
   });
 
   final IconData icon;
   final String label;
-  final Color color;
   final Color iconColor;
   final VoidCallback? onTap;
-  final double size;
 
   @override
   Widget build(BuildContext context) => Semantics(
         button: true,
         label: label,
         child: Material(
-          color: color,
+          color: Theme.of(context).avvento.surface2,
           shape: const CircleBorder(),
           child: InkWell(
             customBorder: const CircleBorder(),
             onTap: onTap,
-            child: SizedBox(
-              width: size,
-              height: size,
+            child: SizedBox.square(
+              dimension: 48,
               child: Icon(icon, size: 20, color: iconColor),
             ),
           ),
@@ -502,31 +577,178 @@ class _CircleButton extends StatelessWidget {
       );
 }
 
-class _SortChip extends StatelessWidget {
-  const _SortChip({required this.label, required this.onTap});
+/// Download all as a 48 circle: arrow → progress ring (tap to cancel) →
+/// check (tap to remove, after asking). The ring covers the whole show.
+class _DownloadAllButton extends StatelessWidget {
+  const _DownloadAllButton({required this.episodes, required this.showTitle});
 
-  final String label;
-  final VoidCallback onTap;
+  final List<PodcastEpisode> episodes;
+  final String showTitle;
 
   @override
   Widget build(BuildContext context) {
-    final palette = PodcastPalette(context);
-    return Material(
-      color: palette.card,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.swap_vert_rounded, size: 16, color: palette.subtitle),
-              const SizedBox(width: 6),
-              Text(label,
-                  style: TextStyle(color: palette.subtitle, fontSize: 13)),
-            ],
+    final downloads = Get.find<DownloadController>();
+    final c = Theme.of(context).avvento;
+
+    return Obx(() {
+      final done = [
+        for (final e in episodes)
+          if (downloads.isDownloaded(e.id)) e.id
+      ];
+      final active = [
+        for (final e in episodes)
+          if (downloads.tasks[e.id]?.active ?? false) downloads.tasks[e.id]!
+      ];
+      final missing =
+          episodes.where((e) => !downloads.isDownloaded(e.id)).toList();
+
+      final Widget icon;
+      final String label;
+      final VoidCallback onTap;
+      if (active.isNotEmpty) {
+        final fraction = (done.length +
+                active.fold<double>(0, (sum, t) => sum + (t.fraction ?? 0))) /
+            episodes.length;
+        icon = DownloadRing(fraction: fraction, track: c.line);
+        label = AppConstants.downloadingPercent(fraction);
+        onTap = () => downloads.cancelAll(active.map((t) => t.episode.id));
+      } else if (missing.isEmpty) {
+        icon = const DownloadDoneBadge();
+        label = AppConstants.downloadedLabel;
+        onTap = () => _confirmRemove(context, downloads, done);
+      } else {
+        icon = Icon(Icons.download_rounded, size: 20, color: c.text);
+        label = AppConstants.downloadAll(missing.length);
+        onTap = () => downloads.enqueueAll(missing, showTitle: showTitle);
+      }
+
+      return Semantics(
+        button: true,
+        label: label,
+        excludeSemantics: true,
+        child: Material(
+          color: c.surface2,
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onTap,
+            child: SizedBox.square(dimension: 48, child: Center(child: icon)),
+          ),
+        ),
+      );
+    });
+  }
+
+  Future<void> _confirmRemove(BuildContext context,
+      DownloadController downloads, List<String> ids) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppConstants.removeDownloadsQuestion(ids.length)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text(AppConstants.cancel)),
+          TextButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text(AppConstants.remove)),
+        ],
+      ),
+    );
+    if (ok == true) await downloads.removeAll(ids);
+  }
+}
+
+/// Sort pill ("In order" / "Newest first" / "Oldest first") that opens a
+/// small menu with a check on the current choice.
+class _SortMenu extends StatelessWidget {
+  const _SortMenu({required this.selected, required this.onSelected});
+
+  final EpisodeSort selected;
+  final ValueChanged<EpisodeSort> onSelected;
+
+  static const _labels = {
+    EpisodeSort.inOrder: AppConstants.inOrder,
+    EpisodeSort.newest: AppConstants.newestFirst,
+    EpisodeSort.oldest: AppConstants.oldestFirst,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
+    return PopupMenuButton<EpisodeSort>(
+      tooltip: AppConstants.sort,
+      initialValue: selected,
+      onSelected: onSelected,
+      position: PopupMenuPosition.under,
+      offset: const Offset(0, 2),
+      color: c.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 8,
+      constraints: const BoxConstraints(minWidth: 200, maxWidth: 260),
+      menuPadding: const EdgeInsets.all(6),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: c.line),
+      ),
+      itemBuilder: (_) => [
+        for (final sort in EpisodeSort.values)
+          PopupMenuItem(
+            value: sort,
+            height: 44,
+            padding: EdgeInsets.zero,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 44),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: sort == selected ? c.surface2 : null,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(_labels[sort]!,
+                        style: TextStyle(
+                            color: c.text,
+                            fontSize: 14,
+                            height: 18 / 14,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                  if (sort == selected)
+                    Icon(Icons.check_rounded, size: 18, color: c.accentText),
+                ],
+              ),
+            ),
+          ),
+      ],
+      // The 36 pill sits in a 44 hit area.
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 44),
+        child: Center(
+          widthFactor: 1,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 36),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: c.surface,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: c.line),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.sort_rounded, size: 16, color: c.text),
+                const SizedBox(width: 8),
+                Text(_labels[selected]!,
+                    style: TextStyle(
+                        color: c.text,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700)),
+                const SizedBox(width: 8),
+                Icon(Icons.keyboard_arrow_down_rounded,
+                    size: 16, color: c.text3),
+              ],
+            ),
           ),
         ),
       ),
