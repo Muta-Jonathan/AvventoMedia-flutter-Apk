@@ -1,3 +1,5 @@
+import 'podcast_episode_model.dart' show publicArtUrl;
+
 class RadioPodcast {
   final String id;
   final String title;
@@ -52,7 +54,7 @@ class RadioPodcast {
       description: json['description'],
       author: json['author'],
       email: json['email'] ?? '',
-      art: json['links']['art'],
+      art: publicArtUrl(json['links']['art']),
       isPublished: json['is_published'],
       episodes: json['episodes'],
       categories: categoriesList,
