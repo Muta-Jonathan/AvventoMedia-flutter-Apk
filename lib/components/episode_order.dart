@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../models/radiomodel/podcast_episode_model.dart';
 import 'app_constants.dart';
+import 'feed_kind.dart';
 
 enum EpisodeSort { inOrder, newest, oldest }
 
@@ -33,20 +34,21 @@ String seriesNumberLabel(PodcastEpisode e) =>
         ? AppConstants.chapter
         : AppConstants.part;
 
-/// Most episodes are numbered ("Part N", "Chapter N" or an AzuraCast
-/// episode number): play it in order by default. Daily and weekly shows
-/// ("Episode 312") default to newest.
+/// Most titles say "Part N" / "Chapter N": play it in order by default.
+/// AzuraCast numbers daily shows too, so its episode number alone doesn't
+/// count; "Episode 312" and "Day 266" shows default to newest.
 bool looksLikeSeries(List<PodcastEpisode> episodes) {
   if (episodes.length < 2) return false;
-  final numbered = episodes
-      .where((e) => e.episodeNumber != null || _seriesLabel.hasMatch(e.title));
+  final numbered = episodes.where((e) => _seriesLabel.hasMatch(e.title));
   return numbered.length >= episodes.length * 0.6;
 }
 
-/// [episodes] arrive newest first. In order sorts by part number; ties and
-/// unnumbered episodes keep publish order, unnumbered last.
+/// [episodes] arrive newest first. In order sorts by part number (Bible:
+/// book, then chapter; otherwise season, then number); ties and unnumbered
+/// episodes keep publish order, unnumbered last.
 List<PodcastEpisode> sortEpisodes(
-    List<PodcastEpisode> episodes, EpisodeSort sort) {
+    List<PodcastEpisode> episodes, EpisodeSort sort,
+    {FeedKind kind = FeedKind.series}) {
   switch (sort) {
     case EpisodeSort.newest:
       return episodes;
@@ -54,7 +56,7 @@ List<PodcastEpisode> sortEpisodes(
       return episodes.reversed.toList();
     case EpisodeSort.inOrder:
       final list = episodes.reversed.toList();
-      final numbers = {for (final e in list) e.id: seriesNumber(e)};
+      final numbers = {for (final e in list) e.id: _orderKey(e, kind)};
       mergeSort(list, compare: (a, b) {
         final x = numbers[a.id], y = numbers[b.id];
         if (x == null || y == null) {
@@ -64,4 +66,13 @@ List<PodcastEpisode> sortEpisodes(
       });
       return list;
   }
+}
+
+int? _orderKey(PodcastEpisode e, FeedKind kind) {
+  if (kind == FeedKind.bible) {
+    final ref = bibleRef(e);
+    if (ref != null) return ref.book * 1000 + ref.chapter;
+  }
+  final n = seriesNumber(e);
+  return n == null ? null : (e.seasonNumber ?? 0) * 100000 + n;
 }
