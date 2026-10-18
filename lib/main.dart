@@ -117,8 +117,11 @@ class MyApp extends StatelessWidget {
           // Root-level builder: the player panel sits above ALL routes
           // (tabs, pushed pages, modals) exactly like Spotify / YouTube Music.
           builder: (context, child) {
-            return _MiniPlayerOverlay(
-              child: child ?? const SizedBox.shrink(),
+            return MediaQuery.withClampedTextScaling(
+              maxScaleFactor: 1.3,
+              child: _MiniPlayerOverlay(
+                child: child ?? const SizedBox.shrink(),
+              ),
             );
           },
         ),
