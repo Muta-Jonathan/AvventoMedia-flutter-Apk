@@ -11,6 +11,9 @@ class PodcastEpisode {
   final String art;
   final String media;
 
+  /// AzuraCast's episode number, when the show sets one.
+  final int? episodeNumber;
+
   PodcastEpisode({
     required this.id,
     required this.title,
@@ -22,7 +25,8 @@ class PodcastEpisode {
     required this.publicLink,
     required this.isPublished,
     required this.art,
-    required this.media
+    required this.media,
+    this.episodeNumber,
   });
 
   factory PodcastEpisode.fromJson(Map<String, dynamic> json) {
@@ -39,6 +43,7 @@ class PodcastEpisode {
       isPublished: json['is_published'],
       art: json['art'],
       media: json['links']['media'],
+      episodeNumber: (json['episode_number'] as num?)?.toInt(),
     );
   }
 
@@ -59,6 +64,7 @@ class PodcastEpisode {
       },
       'is_published': isPublished,
       'art': art,
+      'episode_number': episodeNumber,
     };
   }
 }
