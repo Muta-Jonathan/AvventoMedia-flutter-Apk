@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../components/app_constants.dart';
-import '../../../components/episode_order.dart';
 import '../../../controller/episode_progress_controller.dart';
 import '../../../models/radiomodel/podcast_episode_model.dart';
 import '../../../themes/avvento_colors.dart';
@@ -33,14 +32,11 @@ String episodeTimeLabel(EpisodeProgress p) {
       : AppConstants.minutes(minutes);
 }
 
-/// "PART 3 · 45 MIN" in a numbered series, else "OCT 11 · 51 MIN". The
+/// "PART 3 · 45 MIN" when [lead] is given, else "OCT 11 · 51 MIN". The
 /// length is only known once the episode has been loaded.
 String episodeOverline(PodcastEpisode episode, EpisodeProgress progress,
-    {bool numbered = false}) {
-  final number = numbered ? seriesNumber(episode) : null;
-  final lead = number != null
-      ? '${seriesNumberLabel(episode)} $number'
-      : episodeDateLabel(episode.publishedAt);
+    {String? lead}) {
+  lead ??= episodeDateLabel(episode.publishedAt);
   final length = progress.duration;
   final text = length == null
       ? lead
@@ -65,7 +61,9 @@ class EpisodeFeedTile extends StatelessWidget {
     required this.download,
     this.downloadLabel,
     this.available = true,
-    this.numbered = false,
+    this.overlineLead,
+    this.title,
+    this.showSummary = true,
   });
 
   final PodcastEpisode episode;
@@ -79,13 +77,17 @@ class EpisodeFeedTile extends StatelessWidget {
   final Widget? downloadLabel;
   final bool available;
 
-  /// Overline shows the part/chapter number instead of the date.
-  final bool numbered;
+  /// Replaces the date in the overline, e.g. "Chapter 3".
+  final String? overlineLead;
+
+  /// Display title; defaults to the episode's.
+  final String? title;
+  final bool showSummary;
 
   @override
   Widget build(BuildContext context) {
     final c = Theme.of(context).avvento;
-    final showNew = !numbered &&
+    final showNew = overlineLead == null &&
         !isCurrent &&
         !progress.played &&
         isNewEpisode(episode.publishedAt);
@@ -94,7 +96,8 @@ class EpisodeFeedTile extends StatelessWidget {
         : progress.played
             ? c.text3
             : c.text;
-    final summary = episode.description.trim();
+    final summary = showSummary ? episode.description.trim() : '';
+    final title = this.title ?? episode.title;
 
     return Opacity(
       opacity: available ? 1 : 0.45,
@@ -118,7 +121,7 @@ class EpisodeFeedTile extends StatelessWidget {
                         style: TextStyle(color: c.accentText)),
                   TextSpan(
                       text: episodeOverline(episode, progress,
-                          numbered: numbered)),
+                          lead: overlineLead)),
                 ]),
                 style: TextStyle(
                   color: c.text3,
@@ -130,7 +133,7 @@ class EpisodeFeedTile extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                episode.title,
+                title,
                 style: TextStyle(
                   color: titleColor,
                   fontSize: 16,
@@ -156,7 +159,7 @@ class EpisodeFeedTile extends StatelessWidget {
                         ? episodeTimeLabel(progress)
                         : AppConstants.notDownloaded,
                     semanticsLabel: available
-                        ? '${isPlaying ? AppConstants.pause : AppConstants.play} ${episode.title}'
+                        ? '${isPlaying ? AppConstants.pause : AppConstants.play} $title'
                         : AppConstants.notAvailableOffline,
                     fraction: progress.played ? 0 : progress.fraction,
                     active: isCurrent,

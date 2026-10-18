@@ -32,7 +32,8 @@ import '../helpers/fake_audio_player.dart';
 
 final _now = DateTime.now();
 
-PodcastEpisode episode(String id, {int daysAgo = 0, String? title}) =>
+PodcastEpisode episode(String id,
+        {int daysAgo = 0, String? title, int? season, int? number}) =>
     PodcastEpisode(
       id: id,
       title: title ?? 'Episode $id',
@@ -40,14 +41,37 @@ PodcastEpisode episode(String id, {int daysAgo = 0, String? title}) =>
       playlistMediaArtist: 'AvventoRadio',
       playlistMediaAlbum: '',
       publishedAt:
-          _now.subtract(Duration(days: daysAgo)).millisecondsSinceEpoch ~/
-              1000,
+          _now.subtract(Duration(days: daysAgo)).millisecondsSinceEpoch ~/ 1000,
       downloadLink: 'https://example.org/$id.mp3',
       publicLink: '',
       isPublished: true,
       art: '',
       media: '',
+      seasonNumber: season,
+      episodeNumber: number,
     );
+
+RadioPodcast podcastNamed(String title, int episodes) => RadioPodcast(
+      id: title,
+      title: title,
+      description: '',
+      author: 'Avvento Radio',
+      email: '',
+      art: '',
+      isPublished: true,
+      episodes: episodes,
+      categories: const [],
+      episodesLink: 'https://example.org/$title',
+      lastUpdated: DateTime(2026),
+    );
+
+/// Genesis 1–[genesis] and Exodus 1–[exodus], newest first like the API.
+List<PodcastEpisode> bibleEpisodes({int genesis = 3, int exodus = 2}) => [
+      for (var c = exodus; c >= 1; c--)
+        episode('x$c', title: 'Exodus $c', season: 2, number: c),
+      for (var c = genesis; c >= 1; c--)
+        episode('g$c', title: 'Genesis $c', season: 1, number: c),
+    ];
 
 final show = RadioPodcast(
   id: 'show',
@@ -74,7 +98,7 @@ void main() {
 
   // Controllers are created inside each test body (fake-async zone).
   Future<void> pump(WidgetTester tester, Widget home,
-      {ThemeData? theme, bool offline = false}) async {
+      {ThemeData? theme, bool offline = false, RadioPodcast? podcast}) async {
     SharedPreferences.setMockInitialValues({});
     dir = Directory.systemTemp.createTempSync('feed_test');
     player = FakeAudioPlayer();
@@ -86,8 +110,7 @@ void main() {
           (_) async => http.Response.bytes(List.filled(2048, 1), 200)),
       directory: () async => dir,
       notify: (_, {actionLabel, onAction}) {},
-      storage: () async =>
-          const StorageInfo(free: 100 << 30, total: 400 << 30),
+      storage: () async => const StorageInfo(free: 100 << 30, total: 400 << 30),
     ));
     Get.put(LibraryController());
     Get.put(ConnectivityController(
@@ -95,9 +118,9 @@ void main() {
       check: () async =>
           [offline ? ConnectivityResult.none : ConnectivityResult.wifi],
     ));
-    Get.put(PodcastController()).setSelectedEpisode(show);
-    await tester.pumpWidget(
-        GetMaterialApp(theme: theme ?? darkTheme, home: home));
+    Get.put(PodcastController()).setSelectedEpisode(podcast ?? show);
+    await tester
+        .pumpWidget(GetMaterialApp(theme: theme ?? darkTheme, home: home));
     await tester.pumpAndSettle();
   }
 
@@ -119,8 +142,7 @@ void main() {
     expect(find.textContaining(AppConstants.newLabel), findsOneWidget);
   });
 
-  testWidgets('shows default to newest; Oldest flips the list',
-      (tester) async {
+  testWidgets('shows default to newest; Oldest flips the list', (tester) async {
     await pump(tester, page());
     double y(String title) => tester.getTopLeft(find.text(title)).dy;
 
@@ -226,8 +248,7 @@ void main() {
     expect(find.text(AppConstants.pause), findsOneWidget);
   });
 
-  testWidgets('download arrow saves the episode for Downloads',
-      (tester) async {
+  testWidgets('download arrow saves the episode for Downloads', (tester) async {
     await pump(tester, page());
 
     await tester.tap(find.bySemanticsLabel(AppConstants.download).first);
@@ -269,8 +290,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('1 selected'), findsOneWidget);
     await tester.tap(find.text(AppConstants.delete));
-    await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester
+        .runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
     await tester.pumpAndSettle();
     expect(downloads.isDownloaded('1'), isFalse);
     expect(find.text(AppConstants.noDownloads), findsOneWidget);
@@ -341,8 +362,7 @@ void main() {
     expect(title.style!.color!.computeLuminance(), lessThan(0.2));
   });
 
-  testWidgets('fits a 360dp phone at 130% text in both themes',
-      (tester) async {
+  testWidgets('fits a 360dp phone at 130% text in both themes', (tester) async {
     tester.view.physicalSize = const Size(360 * 3, 740 * 3);
     tester.view.devicePixelRatio = 3;
     tester.platformDispatcher.textScaleFactorTestValue = 1.3;
@@ -364,6 +384,132 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Bible feeds group chapters under pinned book headers',
+      (tester) async {
+    tester.view.physicalSize = const Size(800, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await pump(tester,
+        PodcastEpisodeListPage(fetchEpisodes: (_) async => bibleEpisodes()),
+        podcast: podcastNamed('Old Testament KJV Dramatized', 5));
+    double y(String text) => tester.getTopLeft(find.text(text)).dy;
+
+    expect(find.text(AppConstants.bibleLabel), findsOneWidget);
+    expect(find.text(AppConstants.chapterCount(50)), findsOneWidget);
+    expect(find.text(AppConstants.chapterCount(40)), findsOneWidget);
+    // In order: book, then chapter (episode numbers repeat per book).
+    expect(y('Genesis 1'), lessThan(y('Genesis 3')));
+    expect(y('Genesis 3'), lessThan(y('Exodus 1')));
+    expect(y('Exodus'), lessThan(y('Exodus 1')));
+    expect(find.text('CHAPTER 1'), findsNWidgets(2));
+    // The book pill shows the first book.
+    expect(find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis'),
+        findsOneWidget);
+
+    // Newest first drops the grouping.
+    await tester.tap(find.text(AppConstants.inOrder));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AppConstants.newestFirst));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.chapterCount(50)), findsNothing);
+    expect(y('Exodus 2'), lessThan(y('Genesis 1')));
+  });
+
+  testWidgets('book jump scrolls to the book; the pill follows scrolling',
+      (tester) async {
+    await pump(
+        tester,
+        PodcastEpisodeListPage(
+            fetchEpisodes: (_) async => bibleEpisodes(genesis: 20, exodus: 15)),
+        podcast: podcastNamed('Old Testament KJV Dramatized', 35));
+
+    await tester
+        .tap(find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis'));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.jumpToBook), findsOneWidget);
+    // One testament only: no toggle.
+    expect(find.text(AppConstants.newTestament), findsNothing);
+    await tester.tap(find.text('Exodus').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppConstants.jumpToBook), findsNothing);
+    // Exodus's header is pinned at the top, with its first chapter below.
+    expect(tester.getTopLeft(find.text('Exodus')).dy, lessThan(40));
+    expect(find.text('Exodus 1'), findsOneWidget);
+    expect(find.text('Genesis 1'), findsNothing);
+
+    // Scrolling back up hands the pill back to Genesis.
+    await tester.fling(
+        find.byType(CustomScrollView), const Offset(0, 4000), 3000);
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis'),
+        findsOneWidget);
+  });
+
+  testWidgets('Bible page and book picker fit a 360dp phone at 130% text',
+      (tester) async {
+    tester.view.physicalSize = const Size(360 * 3, 740 * 3);
+    tester.view.devicePixelRatio = 3;
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await pump(
+        tester,
+        PodcastEpisodeListPage(
+          fetchEpisodes: (_) async => [
+            episode('m1', title: '1 Thessalonians 1', season: 52, number: 1),
+            episode('s1', title: 'Song of Solomon 1', season: 22, number: 1),
+            ...bibleEpisodes(),
+          ],
+        ),
+        podcast: podcastNamed('Bible', 7));
+    expect(tester.takeException(), isNull);
+
+    await tester.tap(
+        find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis'));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.newTestament), findsOneWidget);
+    await tester.tap(find.text(AppConstants.newTestament));
+    await tester.pumpAndSettle();
+    expect(find.text('1 Thessalonians'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Ellen G. White books list chapters without the book name',
+      (tester) async {
+    await pump(
+        tester,
+        PodcastEpisodeListPage(
+          fetchEpisodes: (_) async => [
+            episode('c2',
+                daysAgo: 0,
+                title: 'Ch. 2 - The Creation (Patriarchs and Prophets)',
+                number: 2),
+            episode('c1',
+                daysAgo: 1,
+                title:
+                    'Ch. 1 - Why Was Sin Permitted (Patriarchs and Prophets)',
+                number: 1),
+          ],
+        ),
+        podcast: podcastNamed('Patriarchs and Prophets (Dramatized)', 2));
+    double y(String text) => tester.getTopLeft(find.text(text)).dy;
+
+    expect(find.text(AppConstants.egwLabel), findsOneWidget);
+    // Header meta and the count beside the sort pill.
+    expect(find.text(AppConstants.chapterCount(2)), findsNWidgets(2));
+    expect(y('Ch. 1 – Why Was Sin Permitted'),
+        lessThan(y('Ch. 2 – The Creation')));
+    expect(find.text('CHAPTER 1'), findsOneWidget);
+    // No summaries on book chapters.
+    expect(find.textContaining('About episode'), findsNothing);
+
+    Get.find<EpisodeProgressController>().setPlayed('c1', true);
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.resume), findsOneWidget);
+    expect(find.text(AppConstants.chapterShort(2)), findsOneWidget);
+  });
+
   testWidgets('empty Downloads explains how to download', (tester) async {
     await pump(tester, const Scaffold(body: DownloadsView()));
 
@@ -379,8 +525,7 @@ void main() {
         '48 min');
     expect(
         episodeTimeLabel(const EpisodeProgress(
-            position: Duration(minutes: 30),
-            duration: Duration(minutes: 48))),
+            position: Duration(minutes: 30), duration: Duration(minutes: 48))),
         '18 min left');
     expect(episodeTimeLabel(const EpisodeProgress(played: true)),
         AppConstants.played);
@@ -391,7 +536,6 @@ void main() {
     int ts(DateTime d) => d.millisecondsSinceEpoch ~/ 1000;
     expect(episodeDateLabel(ts(now), now: now), 'TODAY');
     expect(episodeDateLabel(ts(DateTime(2026, 10, 4)), now: now), 'OCT 4');
-    expect(episodeDateLabel(ts(DateTime(2024, 3, 1)), now: now),
-        'MAR 1, 2024');
+    expect(episodeDateLabel(ts(DateTime(2024, 3, 1)), now: now), 'MAR 1, 2024');
   });
 }
