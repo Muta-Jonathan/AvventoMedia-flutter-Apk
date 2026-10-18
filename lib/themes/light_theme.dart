@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'avvento_colors.dart';
+
 ThemeData lightTheme = ThemeData(
+  extensions: const [AvventoColors.light],
   brightness: Brightness.light,
   appBarTheme: AppBarTheme(
     backgroundColor: Colors.transparent,
