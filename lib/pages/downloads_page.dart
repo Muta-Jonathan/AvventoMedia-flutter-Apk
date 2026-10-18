@@ -72,7 +72,7 @@ class _EditToggle extends StatelessWidget {
       );
 }
 
-enum _Filter { all, unplayed, inProgress }
+enum _Filter { all, unplayed, inProgress, played }
 
 /// Saved episodes grouped by show, with storage used, filters, the download
 /// queue and an edit mode for deleting. Shared by the page and the home
@@ -114,6 +114,7 @@ class _DownloadsViewState extends State<DownloadsView> {
         _Filter.all => true,
         _Filter.unplayed => !p.played,
         _Filter.inProgress => !p.played && p.position > Duration.zero,
+        _Filter.played => p.played,
       };
 
   @override
@@ -360,6 +361,7 @@ class _FilterRow extends StatelessWidget {
     _Filter.all: AppConstants.all,
     _Filter.unplayed: AppConstants.unplayed,
     _Filter.inProgress: AppConstants.inProgress,
+    _Filter.played: AppConstants.played,
   };
 
   @override
