@@ -65,9 +65,9 @@ void main() {
   MockClient bytes(int n) =>
       MockClient((_) async => http.Response.bytes(List.filled(n, 7), 200));
 
-  /// Waits for the queue to drain.
+  /// Waits until nothing is queued or running (failed ones stay listed).
   Future<void> settle(DownloadController d) async {
-    for (var i = 0; i < 100 && d.tasks.isNotEmpty; i++) {
+    for (var i = 0; i < 100 && d.tasks.values.any((t) => t.active); i++) {
       await Future<void>.delayed(const Duration(milliseconds: 5));
     }
   }
@@ -97,31 +97,90 @@ void main() {
     expect(reloaded.localPath('a'), file.path);
   });
 
-  test('downloads one at a time, in order', () async {
-    final order = <String>[];
-    final downloads = create(() => MockClient((r) async {
-          order.add(r.url.pathSegments.last);
-          return http.Response.bytes([1, 2, 3], 200);
+  test('runs two downloads at a time, in queue order', () async {
+    final started = <String>[];
+    final bodies = <String, StreamController<List<int>>>{};
+    final downloads = create(() => MockClient.streaming((r, _) async {
+          final name = r.url.pathSegments.last;
+          started.add(name);
+          final body = bodies[name] = StreamController<List<int>>();
+          return http.StreamedResponse(body.stream, 200, contentLength: 3);
         }));
 
-    await downloads.download(episode('a'), showTitle: 'Show');
-    await downloads.download(episode('b'), showTitle: 'Show');
-    await settle(downloads);
+    for (final id in ['a', 'b', 'c']) {
+      await downloads.download(episode(id), showTitle: 'Show');
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    expect(started, ['a.mp3', 'b.mp3']);
+    expect(downloads.tasks['c']!.status, DownloadStatus.waiting);
 
-    expect(order, ['a.mp3', 'b.mp3']);
-    expect(downloads.downloads.keys, containsAll(['a', 'b']));
+    bodies['a.mp3']!
+      ..add([1, 2, 3])
+      ..close();
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    expect(started, ['a.mp3', 'b.mp3', 'c.mp3']);
+
+    for (final name in ['b.mp3', 'c.mp3']) {
+      bodies[name]!
+        ..add([1, 2, 3])
+        ..close();
+    }
+    await settle(downloads);
+    expect(downloads.downloads.keys, containsAll(['a', 'b', 'c']));
   });
 
-  test('a failed download leaves nothing behind', () async {
-    final downloads =
-        create(() => MockClient((_) async => http.Response('', 404)));
+  test('a failed download stays listed as failed and can be retried',
+      () async {
+    var fail = true;
+    final downloads = create(() => MockClient((_) async => fail
+        ? http.Response('', 404)
+        : http.Response.bytes([1, 2, 3], 200)));
 
     await downloads.download(episode('a'), showTitle: 'Show');
     await settle(downloads);
 
     expect(downloads.isDownloaded('a'), isFalse);
+    expect(downloads.isFailed('a'), isTrue);
     expect(dir.listSync(), isEmpty);
     expect(messages.single, startsWith("Couldn't download"));
+
+    fail = false;
+    downloads.retry('a');
+    await settle(downloads);
+    expect(downloads.isDownloaded('a'), isTrue);
+    expect(downloads.tasks, isEmpty);
+  });
+
+  test('enqueueAll downloads every episode without per-episode messages',
+      () async {
+    final downloads = create(() => bytes(10));
+    await downloads.download(episode('a'), showTitle: 'Show');
+    await settle(downloads);
+    messages.clear();
+
+    await downloads.enqueueAll([episode('a'), episode('b'), episode('c')],
+        showTitle: 'Show');
+    await settle(downloads);
+
+    expect(downloads.downloads.keys, containsAll(['a', 'b', 'c']));
+    expect(messages, isEmpty);
+  });
+
+  test('cancelAll stops queued and running downloads', () async {
+    final downloads = create(() => MockClient.streaming((_, __) async =>
+        http.StreamedResponse(StreamController<List<int>>().stream, 200,
+            contentLength: 100)));
+
+    await downloads.enqueueAll([episode('a'), episode('b'), episode('c')],
+        showTitle: 'Show');
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    expect(downloads.tasks.length, 3);
+
+    await downloads.cancelAll(['a', 'b', 'c']);
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    expect(downloads.tasks, isEmpty);
+    expect(dir.listSync(), isEmpty);
+    expect(messages, isEmpty);
   });
 
   test('pause keeps the partial file; resume asks for the rest', () async {

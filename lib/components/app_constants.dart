@@ -227,6 +227,9 @@ class AppConstants {
   static const String shuffle = "Shuffle";
   static const String newest = "Newest";
   static const String oldest = "Oldest";
+  static const String inOrder = "In order";
+  static const String part = "Part";
+  static const String chapter = "Chapter";
   static const String played = "Played";
   static const String play = "Play";
   static const String today = "Today";
@@ -238,6 +241,16 @@ class AppConstants {
   static const String downloads = "Downloads";
   static const String removeDownload = "Remove download";
   static const String cancelDownload = "Cancel download";
+  static const String retryDownload = "Retry download";
+  static const String queued = "Queued";
+  static const String downloadedLabel = "Downloaded";
+  static const String failed = "Failed";
+  static const String notDownloaded = "Not downloaded";
+  static const String notAvailableOffline = "Not available offline";
+  static const String remove = "Remove";
+  static const String saveToLibrary = "Save to library";
+  static const String removeFromLibrary = "Remove from library";
+  static const String addToPlaylist = "Add to playlist";
   static const String noDownloads = "No downloads yet";
   static const String noDownloadsMessage =
       "Tap the download icon on any episode to listen offline, even without data.";
@@ -296,5 +309,12 @@ class AppConstants {
   static String downloadRemoved(String title) => 'Removed "$title" from downloads';
   static String minLeft(int minutes) => '$minutes min left';
   static String minutes(int minutes) => '$minutes min';
+  static String percent(double fraction) => '${(fraction * 100).round()}%';
+  static String downloadAll(int n) => 'Download all · $n';
+  static String downloadingPercent(double fraction) =>
+      'Downloading ${percent(fraction)}';
+  static String removeDownloadsQuestion(int n) =>
+      n == 1 ? 'Remove 1 download?' : 'Remove $n downloads?';
+  static String resumeEpisode(String title) => 'Resume $title';
   static String episodeCount(int n) => n == 1 ? '1 episode' : '$n episodes';
 }

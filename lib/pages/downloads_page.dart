@@ -504,6 +504,7 @@ class _QueueRow extends StatelessWidget {
           : '${AppConstants.paused} · $got of $total',
       DownloadStatus.waitingForWifi => AppConstants.waitingForWifiShort,
       DownloadStatus.waiting => AppConstants.waiting,
+      DownloadStatus.failed => AppConstants.failed,
     };
     final running = task.status == DownloadStatus.downloading;
 
