@@ -55,7 +55,17 @@ Future<void> main() async {
           create: (_) => ProgramsProvider(),
         ),
         ChangeNotifierProvider<RadioStationProvider>(
-          create: (_) => RadioStationProvider(),
+          create: (_) {
+            final radio = RadioStationProvider();
+            // Song changes reach the player wherever the user is.
+            radio.addListener(() {
+              final station = radio.radioStation;
+              if (station != null && Get.isRegistered<AudioPlayerController>()) {
+                Get.find<AudioPlayerController>().syncRadioStation(station);
+              }
+            });
+            return radio;
+          },
         ),
         ChangeNotifierProvider<RadioPodcastProvider>(
           create: (_) => RadioPodcastProvider(),

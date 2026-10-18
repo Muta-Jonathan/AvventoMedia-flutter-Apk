@@ -1,5 +1,6 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
+import 'package:avvento_media/models/radiomodel/radio_station_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -41,6 +42,58 @@ void main() {
 
     await Future<void>.delayed(Duration.zero);
     expect(controller.currentMediaItemRx.value, item);
+  });
+
+  test('a new song with the same id reaches the Rx (live radio)', () async {
+    controller.currentMediaItem = const MediaItem(id: 'radio', title: 'Song A');
+    await Future<void>.delayed(Duration.zero);
+    // MediaItem == compares ids only; the new title must still show.
+    controller.currentMediaItem = const MediaItem(id: 'radio', title: 'Song B');
+    await Future<void>.delayed(Duration.zero);
+
+    expect(controller.currentMediaItemRx.value?.title, 'Song B');
+  });
+
+  RadioStation station(String title) => RadioStation(
+        id: 1,
+        artist: 'Heritage Singers',
+        imageUrl: 'https://example.com/art.jpg',
+        nowPlayingTitle: title,
+        streamUrl: 'https://example.com/stream',
+        duration: 240,
+        elapsed: 10,
+        nextProgram: '',
+      );
+
+  test('radio song changes update the player from any screen', () async {
+    controller.isLive.value = true;
+    await controller.setAudioSource(
+        'https://example.com/stream',
+        MediaItem(
+            id: '1',
+            title: 'Song A',
+            artist: 'Heritage Singers',
+            artUri: Uri.parse('https://example.com/art.jpg')));
+    await Future<void>.delayed(Duration.zero);
+
+    controller.syncRadioStation(station('It Is Well With My Soul'));
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(controller.currentMediaItem?.title, 'It Is Well With My Soul');
+    expect(controller.currentMediaItemRx.value?.title,
+        'It Is Well With My Soul');
+  });
+
+  test('radio updates are ignored while a podcast plays', () async {
+    controller.isLive.value = false;
+    await controller.setAudioSource(
+        'https://example.com/ep.mp3', const MediaItem(id: 'ep', title: 'Ep 1'));
+
+    controller.syncRadioStation(station('Live song'));
+    await Future<void>.delayed(Duration.zero);
+
+    expect(controller.currentMediaItem?.title, 'Ep 1');
   });
 
   test('setAudioSource works without a ready AudioService', () async {
