@@ -185,6 +185,28 @@ void main() {
     expect(find.text(AppConstants.noDownloads), findsOneWidget);
   });
 
+  testWidgets('Played filter shows only finished downloads', (tester) async {
+    await pump(tester, const Scaffold(body: DownloadsView()));
+    final downloads = Get.find<DownloadController>();
+    downloads.download(episode('1'), showTitle: show.title);
+    downloads.download(episode('2'), showTitle: show.title);
+    // File I/O needs real async.
+    for (var i = 0; i < 100 && downloads.downloads.length < 2; i++) {
+      await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+    Get.find<EpisodeProgressController>().setPlayed('1', true);
+    await tester.pumpAndSettle();
+    expect(find.text('Episode 2'), findsOneWidget);
+
+    // The chip sits above the list; the played row's pill also says Played.
+    await tester.tap(find.text(AppConstants.played).first);
+    await tester.pumpAndSettle();
+    expect(find.text('Episode 1'), findsOneWidget);
+    expect(find.text('Episode 2'), findsNothing);
+  });
+
   testWidgets('bookmark turns amber once the show is in a playlist',
       (tester) async {
     await pump(tester, page());
