@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart' show ScaffoldMessenger;
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -56,8 +57,14 @@ class AudioPlayerController extends GetxController {
 
   final RxBool hasNext = false.obs;
   final RxBool hasPrevious = false.obs;
-  List<double> speeds = [1.0, 1.25, 1.5, 1.75, 2.0];
-  int currentSpeedIndex = 0;
+  List<double> speeds = [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+  int currentSpeedIndex = 1;
+
+  /// Playback speed, for the player's speed pill.
+  final RxDouble speed = 1.0.obs;
+
+  /// Shuffle within the current episode queue.
+  final RxBool shuffleOn = false.obs;
 
   /// Whether the current audio source is live radio (true) or podcast (false)
   final RxBool isLive = false.obs;
@@ -199,6 +206,11 @@ class AudioPlayerController extends GetxController {
   /// [initialPosition] resumes the first track part-way.
   Future<void> setAudioPlaylist(List<AudioSource> sources, int initialIndex,
       {Duration? initialPosition}) async {
+    // A new queue plays in the order it was built (e.g. as a feed shows it).
+    if (shuffleOn.value) {
+      shuffleOn.value = false;
+      await audioPlayer.setShuffleModeEnabled(false);
+    }
     playlist = ConcatenatingAudioSource(
       useLazyPreparation: true,
       children: sources,
@@ -239,6 +251,19 @@ class AudioPlayerController extends GetxController {
     } on PlayerInterruptedException {
       return false;
     }
+  }
+
+  Future<void> setSpeed(double value) async {
+    speed.value = value;
+    currentSpeedIndex = speeds.indexOf(value);
+    await audioPlayer.setSpeed(value);
+  }
+
+  Future<void> toggleShuffle() async {
+    final on = !shuffleOn.value;
+    shuffleOn.value = on;
+    if (on) await audioPlayer.shuffle();
+    await audioPlayer.setShuffleModeEnabled(on);
   }
 
   Future<void> playNext() async {
@@ -289,7 +314,9 @@ class AudioPlayerController extends GetxController {
 
   void onPanelPercentageChanged(double percentage) {
     final wasOpen = panelPercentage.value > 0.01;
+    final wasExpanded = panelPercentage.value >= 0.99;
     panelPercentage.value = percentage;
+    if (wasExpanded && percentage < 0.99) _closePlayerOverlays();
     if (percentage >= 0.99) {
       _addExpandedBackEntry();
     } else if (percentage <= 0.01) {
@@ -297,6 +324,15 @@ class AudioPlayerController extends GetxController {
       // Mini bar disabled: collapsing closes the player (audio continues).
       if (wasOpen && !_miniBarAllowed) isMiniPlayerVisible.value = false;
     }
+  }
+
+  /// Sheets and snackbars opened in the full player live in its navigator;
+  /// close them before the panel shrinks, or they're squeezed into the bar.
+  void _closePlayerOverlays() {
+    final navigator = fullPlayerNavigator;
+    if (navigator == null || !navigator.mounted) return;
+    navigator.popUntil((route) => route.isFirst);
+    ScaffoldMessenger.maybeOf(navigator.context)?.clearSnackBars();
   }
 
   /// "Allow Mini Player" in More; on when there are no settings (tests).

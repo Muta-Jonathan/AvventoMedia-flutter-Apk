@@ -52,6 +52,7 @@ class SettingsController extends GetxController {
   static const _themeKey = 'settings_theme_mode';
   static const _miniPlayerKey = 'settings_mini_player';
   static const _wifiOnlyKey = 'settings_download_wifi_only';
+  static const _totalTimeKey = 'settings_player_total_time';
   static const _removePlayedKey = 'settings_remove_played';
 
   final SharedPreferences _prefs;
@@ -64,6 +65,10 @@ class SettingsController extends GetxController {
       (_prefs.getBool(_miniPlayerKey) ?? true).obs;
   late final RxBool downloadWifiOnly =
       (_prefs.getBool(_wifiOnlyKey) ?? true).obs;
+
+  /// The player shows the episode's length instead of the time left.
+  late final RxBool playerShowsTotal =
+      (_prefs.getBool(_totalTimeKey) ?? false).obs;
   late final Rx<RemovePlayed> removePlayed = RemovePlayed.values
       .byName(_prefs.getString(_removePlayedKey) ?? RemovePlayed.off.name)
       .obs;
@@ -86,6 +91,11 @@ class SettingsController extends GetxController {
   Future<void> setMiniPlayerEnabled(bool enabled) async {
     miniPlayerEnabled.value = enabled;
     await _prefs.setBool(_miniPlayerKey, enabled);
+  }
+
+  Future<void> setPlayerShowsTotal(bool value) async {
+    playerShowsTotal.value = value;
+    await _prefs.setBool(_totalTimeKey, value);
   }
 
   Future<void> setDownloadWifiOnly(bool value) async {

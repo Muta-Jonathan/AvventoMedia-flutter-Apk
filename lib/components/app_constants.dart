@@ -12,6 +12,7 @@ class AppConstants {
   static const String missNot = "Programs You shouldn't miss";
   static const String liveTv = "LIVE TV";
   static const String live = "LIVE";
+  static const String liveSpoken = "Live";
   static const String avventoMusic = "Music";
   static const String avventoKids = "Kids";
   static const String avventoMain = "Avvento Productions";
@@ -236,6 +237,18 @@ class AppConstants {
   static const String bibleLabel = "BIBLE";
   static const String egwLabel = "ELLEN G. WHITE";
   static const String jumpToBook = "Jump to book";
+  static const String playingFrom = "PLAYING FROM";
+  static const String closePlayer = "Close player";
+  static const String previous = "Previous";
+  static const String next = "Next";
+  static const String replay = "Replay";
+  static const String speed = "Speed";
+  static const String playbackSpeed = "Playback speed";
+  static const String favorite = "Favorite";
+  static const String saveLabel = "Save";
+  static const String switchTimeHint = "Switches between time left and length";
+  static const String sharePodcastMessage =
+      "Come join me, listen to this podcast on AvventoMedia 💫";
   static const String oldTestament = "Old Testament";
   static const String newTestament = "New Testament";
   static const String played = "Played";
@@ -326,5 +339,16 @@ class AppConstants {
   static String episodeCount(int n) => n == 1 ? '1 episode' : '$n episodes';
   static String chapterCount(int n) => n == 1 ? '1 chapter' : '$n chapters';
   static String chapterShort(int n) => 'Ch. $n';
+  static String speedSemantics(String speed) => 'Playback speed, $speed';
+  static String timeLeftSemantics(Duration d) => '${_spoken(d)} left';
+  static String lengthSemantics(Duration d) => 'Length ${_spoken(d)}';
+  static String _spoken(Duration d) {
+    final h = d.inHours, m = d.inMinutes % 60, s = d.inSeconds % 60;
+    return [
+      if (h > 0) '$h ${h == 1 ? 'hour' : 'hours'}',
+      if (m > 0) '$m ${m == 1 ? 'minute' : 'minutes'}',
+      if (h == 0 && (s > 0 || m == 0)) '$s ${s == 1 ? 'second' : 'seconds'}',
+    ].join(' ');
+  }
   static String chaptersAbbrev(int n) => '$n ch.';
 }
