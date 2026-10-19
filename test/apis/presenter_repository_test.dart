@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:avvento_media/apis/azuracast_api.dart';
 import 'package:avvento_media/apis/mock_presenter_repository.dart';
 import 'package:avvento_media/apis/presenter_repository.dart';
 import 'package:avvento_media/controller/presenters_controller.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -26,8 +28,21 @@ Map<String, dynamic> episodeJson(String id, String title, int publishAt) => {
 void main() {
   tearDown(Get.reset);
 
-  test('without the API switch the mock is used', () {
-    expect(PresenterRepository.create(), isA<MockPresenterRepository>());
+  test('without the API switch presenters come from Firestore', () {
+    // Creating it touches no Firebase; it connects on first fetch.
+    expect(PresenterRepository.create(), isA<FirestorePresenterRepository>());
+  });
+
+  test('only private AzuraCast media links get the API key', () {
+    dotenv.loadFromString(envString: 'AZURACAST_APIKEY=secret');
+    expect(
+        AzuraCastAPI.mediaHeaders(
+            'https://radio1.avventomedia.org/api/station/avventoradio/file/9766/play'),
+        {'X-API-Key': 'secret'});
+    expect(
+        AzuraCastAPI.mediaHeaders(
+            'https://radio1.avventomedia.org/api/station/avventoradio/public/podcast/a/episode/b/download.mp3'),
+        isNull);
   });
 
   test('mock presenters: summaries by sermon count, details with sermons',

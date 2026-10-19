@@ -13,6 +13,7 @@ import 'package:avvento_media/pages/presenters_page.dart';
 import 'package:avvento_media/themes/dark_theme.dart';
 import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/podcast/episode/episode_actions_sheet.dart';
+import 'package:avvento_media/widgets/presenters/presenters_rail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -149,6 +150,15 @@ void main() {
       await pump(tester, const PresentersPage(), theme: lightTheme);
       expect(tester.takeException(), isNull);
     });
+  });
+
+  testWidgets('rail shows presenters and opens a presenter', (tester) async {
+    await pump(tester, const Scaffold(body: PresentersRail()));
+
+    expect(find.text('Pr. Okello Samuel'), findsOneWidget);
+    expect(find.text('37 sermons'), findsOneWidget);
+    expect(
+        find.bySemanticsLabel('Pr. Okello Samuel, 37 sermons'), findsOneWidget);
   });
 
   testWidgets('episode ⋯ offers Go to presenter when the artist matches',

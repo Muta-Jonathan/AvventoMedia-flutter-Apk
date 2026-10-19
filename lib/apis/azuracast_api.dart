@@ -20,6 +20,14 @@ class AzuraCastAPI {
   static const _cachedPodcastEpisodeKey = 'cachedPodcastEpisodeKey';
   static String? azuracastAPIKey = dotenv.env["AZURACAST_APIKEY"];
 
+  /// The API key for AzuraCast's private media links (sermons from the
+  /// media library, `/api/station/…/file/{id}/play`); none for public URLs.
+  static Map<String, String>? mediaHeaders(String url) {
+    if (!RegExp(r'/api/station/[^/]+/file/\d+').hasMatch(url)) return null;
+    final key = dotenv.isInitialized ? dotenv.env['AZURACAST_APIKEY'] : null;
+    return key == null || key.isEmpty ? null : {'X-API-Key': key.trim()};
+  }
+
   static void establishWebsocketConnection() {
     _channel = WebSocketChannel.connect(
       Uri.parse(AppConstants.azuracastWebSocketAPI),

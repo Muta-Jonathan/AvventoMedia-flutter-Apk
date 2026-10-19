@@ -24,12 +24,19 @@ class PresenterPortrait extends StatelessWidget {
     required this.image,
     required this.size,
     this.ring = false,
+    this.ringGap = 3,
+    this.ringWidth = 2,
   });
 
   final String name;
   final String image;
   final double size;
   final bool ring;
+
+  /// Page-colored gap and accent ring width: 3/2 on the presenter page,
+  /// 2/1.5 on the rail.
+  final double ringGap;
+  final double ringWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +66,12 @@ class PresenterPortrait extends StatelessWidget {
             ),
     );
     if (!ring) return ExcludeSemantics(child: portrait);
-    // 3px page-colored gap, then a 2px accent ring.
     return ExcludeSemantics(
       child: Container(
-        padding: const EdgeInsets.all(5),
+        padding: EdgeInsets.all(ringGap + ringWidth),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: c.accent, width: 2),
+          border: Border.all(color: c.accent, width: ringWidth),
         ),
         child: portrait,
       ),

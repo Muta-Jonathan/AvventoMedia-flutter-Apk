@@ -1,22 +1,23 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/presenter_model.dart';
-import 'mock_presenter_repository.dart';
 
-/// Where presenters come from.
+/// Where presenters come from. By default Firestore, filled from the
+/// AzuraCast media library by avvento-cache-server (syncPresenters.js).
 abstract class PresenterRepository {
   /// The one switch: true uses [ApiPresenterRepository] with
-  /// PRESENTERS_API_URL from .env (falls back to the mock if it's unset).
+  /// PRESENTERS_API_URL from .env instead of Firestore.
   static const useApi = false;
 
   static PresenterRepository create() {
     final url = dotenv.isInitialized ? dotenv.env['PRESENTERS_API_URL'] : null;
     return useApi && url != null && url.isNotEmpty
         ? ApiPresenterRepository(url)
-        : MockPresenterRepository();
+        : FirestorePresenterRepository();
   }
 
   /// Summaries, most sermons first.
@@ -57,4 +58,35 @@ class ApiPresenterRepository implements PresenterRepository {
   @override
   Future<Presenter> fetchPresenter(String id) async =>
       Presenter.fromJson(await _get('/presenters/$id'));
+}
+
+/// The `presenters` collection: one document per presenter with series and
+/// singles, written by avvento-cache-server.
+class FirestorePresenterRepository implements PresenterRepository {
+  FirestorePresenterRepository({FirebaseFirestore? firestore})
+      : _firestore = firestore;
+
+  final FirebaseFirestore? _firestore;
+
+  /// Resolved on first use, so creating the repository needs no Firebase.
+  CollectionReference<Map<String, dynamic>> get _presenters =>
+      (_firestore ?? FirebaseFirestore.instance).collection('presenters');
+
+  @override
+  Future<List<Presenter>> fetchPresenters() async {
+    final snapshot = await _presenters.get();
+    return [
+      for (final doc in snapshot.docs)
+        // Summaries only; the page fetches sermons when opened.
+        Presenter.fromJson({...doc.data(), 'series': null, 'singles': null})
+    ]..sort((a, b) => b.sermonCount.compareTo(a.sermonCount));
+  }
+
+  @override
+  Future<Presenter> fetchPresenter(String id) async {
+    final doc = await _presenters.doc(id).get();
+    final data = doc.data();
+    if (data == null) throw Exception('Presenter $id not found');
+    return Presenter.fromJson(data);
+  }
 }
