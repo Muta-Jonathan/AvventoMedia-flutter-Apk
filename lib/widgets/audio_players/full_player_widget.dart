@@ -11,7 +11,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
 
 /// The full-screen inline player that is rendered inside the expanded PlayerPanel.
@@ -60,13 +59,7 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
           _radioInitialized = true;
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             final station = radioProvider.radioStation!;
-            final item = MediaItem(
-              id: station.id.toString(),
-              title: station.nowPlayingTitle,
-              artist: station.artist,
-              artUri: Uri.parse(station.imageUrl),
-              duration: Utils.parseDuration(station.duration),
-            );
+            final item = AudioPlayerController.liveItem(station);
             if (!_controller.audioPlayer.playerState.playing) {
               await _controller.setAudioSource(station.streamUrl, item);
             }

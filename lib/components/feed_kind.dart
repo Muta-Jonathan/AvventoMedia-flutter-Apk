@@ -168,6 +168,17 @@ const _inOrderShows = ["children's bible journey", 'manya baibuli'];
 /// would mix the stories.
 const _newestShows = ['rendezvous'];
 
+/// Whether a show plays in order, judged by its title alone (the Listen
+/// home groups shows before any episodes load): the Bible readings,
+/// Ellen G. White books and the shows in [_inOrderShows].
+bool playsInOrderByTitle(String showTitle) {
+  final title = showTitle.toLowerCase();
+  return title.contains('kjv') ||
+      title.contains('testament') ||
+      _egwBooks.any(title.contains) ||
+      _inOrderShows.any(title.contains);
+}
+
 /// Series, Bible and books start in order; shows start newest first.
 EpisodeSort defaultSort(FeedKind kind) =>
     kind == FeedKind.show ? EpisodeSort.newest : EpisodeSort.inOrder;

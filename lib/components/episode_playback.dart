@@ -24,14 +24,14 @@ class EpisodePlayback {
   /// episodes play from the device, and a part-played one resumes.
   /// [expand] opens the full player.
   static Future<void> play(List<PodcastEpisode> queue, int index,
-      {bool expand = false}) async {
+      {bool expand = false, String showTitle = ''}) async {
     final audio = _audio;
     final downloads = _maybe<DownloadController>();
     final episode = queue[index];
 
     Get.find<PodcastEpisodeController>()
       ..setSelectedEpisode(episode)
-      ..setQueue(queue);
+      ..setQueue(queue, showTitle: showTitle);
     audio.isLive.value = false;
 
     final sources = [
@@ -48,10 +48,11 @@ class EpisodePlayback {
   }
 
   /// Play/pause when [queue]`[index]` is loaded, otherwise start it.
-  static void toggle(List<PodcastEpisode> queue, int index) {
+  static void toggle(List<PodcastEpisode> queue, int index,
+      {String showTitle = ''}) {
     final audio = _audio;
     if (!isCurrent(queue[index].id)) {
-      play(queue, index);
+      play(queue, index, showTitle: showTitle);
     } else if (audio.audioPlayer.processingState == ProcessingState.completed) {
       audio.replay();
     } else {
@@ -60,11 +61,12 @@ class EpisodePlayback {
   }
 
   /// Opens the full player on `queue[index]`, starting it if needed.
-  static void open(List<PodcastEpisode> queue, int index) {
+  static void open(List<PodcastEpisode> queue, int index,
+      {String showTitle = ''}) {
     if (isCurrent(queue[index].id)) {
       _audio.panelController.expand();
     } else {
-      play(queue, index, expand: true);
+      play(queue, index, expand: true, showTitle: showTitle);
     }
   }
 

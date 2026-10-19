@@ -1,18 +1,23 @@
-import 'package:avvento_media/widgets/podcast/audio_list_screen.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../components/app_constants.dart';
-import '../controller/audio_player_controller.dart';
+import '../controller/presenters_controller.dart';
+import '../controller/schedule_controller.dart';
 import '../routes/routes.dart';
-import '../widgets/providers/programs_provider.dart';
-import '../widgets/providers/radio_podcast_provider.dart';
+import '../themes/avvento_colors.dart';
+import '../themes/avvento_theme.dart';
+import '../widgets/listen/continue_listening_rail.dart';
+import '../widgets/listen/live_hero_card.dart';
+import '../widgets/listen/podcast_rails.dart';
+import '../widgets/listen/section_header.dart';
+import '../widgets/listen/up_next_strip.dart';
 import '../widgets/presenters/presenters_rail.dart';
-import '../widgets/text/label_place_holder.dart';
-import '../widgets/explore/carousel_slider.dart';
+import '../widgets/providers/radio_podcast_provider.dart';
 
+/// Listen home: the live radio, what's on next, where you left off,
+/// presenters and podcasts.
 class ListenPage extends StatefulWidget {
   const ListenPage({super.key});
 
@@ -22,201 +27,99 @@ class ListenPage extends StatefulWidget {
 
 class ListenPageState extends State<ListenPage> {
   @override
-  Widget build(BuildContext context) {
-    Future<void> refreshData() async {
-      // Fetch fresh data for HomeExploreScreen
-      await Provider.of<ProgramsProvider>(context, listen: false).fetchData();
-      if (!context.mounted) return;
-      // Fetch fresh data for AudioListScreen
-      await Provider.of<RadioPodcastProvider>(context, listen: false).fetchAllPodcasts();
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<RadioPodcastProvider>().fetchAllPodcasts();
+      }
+    });
+  }
 
-      await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
-    }
+  Future<void> _refresh() => Future.wait([
+        context.read<RadioPodcastProvider>().fetchAllPodcasts(),
+        Get.find<PresentersController>().load(),
+        Get.find<ScheduleController>().load(),
+      ]);
+
+  @override
+  Widget build(BuildContext context) =>
+      AvventoThemeScope(child: Builder(builder: _buildPage));
+
+  Widget _buildPage(BuildContext context) {
+    final c = Theme.of(context).avvento;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: RefreshIndicator(
-        backgroundColor: Colors.white,
-        color: Colors.amber,
-        onRefresh: refreshData,
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              backgroundColor: Theme.of(context).colorScheme.surface,
-              iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
-              floating: true,
-              title: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.amber.shade600, Colors.amber.shade400],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      CupertinoIcons.headphones,
-                      color: Colors.black,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    AppConstants.radioName,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 20,
-                    ),
-                  ),
-                ],
+      backgroundColor: c.bg,
+      body: SafeArea(
+        bottom: false,
+        child: RefreshIndicator(
+          color: c.accent,
+          backgroundColor: c.surface,
+          onRefresh: _refresh,
+          child: ListView(
+            children: [
+              const _Header(),
+              const LiveHeroCard(),
+              const UpNextStrip(),
+              const ContinueListeningRail(),
+              ListenSectionHeader(
+                title: AppConstants.presenters,
+                action: AppConstants.seeAll,
+                onAction: () => Get.toNamed(Routes.getPresentersRoute()),
               ),
-              actions: [
-                Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(CupertinoIcons.antenna_radiowaves_left_right, size: 20),
-                    onPressed: () {
-                      final audioController = Get.find<AudioPlayerController>();
-                      audioController.isLive.value = true;
-                      audioController.isPlayerActive.value = true;
-                      audioController.isMiniPlayerVisible.value = true;
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        audioController.panelController.expand();
-                      });
-                    },
-                  ),
-                ),
-              ],
+              const PresentersRail(),
+              const PodcastRails(),
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Logo, "Listen" and search. The slot before search is for the Offline pill.
+class _Header extends StatelessWidget {
+  const _Header();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 6, 10, 0),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 56),
+        child: Row(
+          children: [
+            ExcludeSemantics(
+              child: Container(
+                width: 36,
+                height: 36,
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10)),
+                child: Image.asset('assets/icon/icon.png', fit: BoxFit.contain),
+              ),
             ),
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 12),
-                  // Live Radio banner
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppConstants.leftMain,
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        final audioController = Get.find<AudioPlayerController>();
-                        audioController.isLive.value = true;
-                        audioController.isPlayerActive.value = true;
-                        audioController.isMiniPlayerVisible.value = true;
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          audioController.panelController.expand();
-                        });
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).colorScheme.secondary,
-                              Colors.amber.shade900.withValues(alpha: 0.4),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: Colors.amber.withValues(alpha: 0.2),
-                            width: 0.5,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(
-                                CupertinoIcons.antenna_radiowaves_left_right,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                size: 24,
-                              ),
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        AppConstants.liveRadio,
-                                        style: TextStyle(
-                                          color: Theme.of(context).colorScheme.onPrimary,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Container(
-                                        width: 7,
-                                        height: 7,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.redAccent,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 3),
-                                  Text(
-                                    'Tune in to ${AppConstants.radioName}',
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.onSecondary,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              CupertinoIcons.chevron_right,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                              size: 18,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  LabelPlaceHolder(
-                    title: AppConstants.presenters,
-                    moreIcon: true,
-                    onMoreTap: () =>
-                        Get.toNamed(Routes.getPresentersRoute()),
-                  ),
-                  const PresentersRail(),
-                  const SizedBox(height: 16),
-                  const LabelPlaceHolder(title: AppConstants.missNot),
-                  const SizedBox(height: 12),
-                  const SizedBox(
-                    height: 210, // 👈 give CarouselPage a fixed height
-                    child: CarouselSlider(),
-                  ),
-                  const SizedBox(height: 8),
-                  const AudioListScreen(),
-                  const SizedBox(height: 24),
-                ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Semantics(
+                header: true,
+                child: Text(AppConstants.listenTitle,
+                    style: TextStyle(
+                        fontFamily: AvventoTheme.newsreader,
+                        color: c.text,
+                        fontSize: 28,
+                        height: 34 / 28,
+                        fontWeight: FontWeight.w600)),
               ),
+            ),
+            IconButton(
+              tooltip: AppConstants.search,
+              constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+              icon: Icon(Icons.search_rounded, size: 24, color: c.text),
+              onPressed: () => Get.toNamed(Routes.getSearchRoute()),
             ),
           ],
         ),

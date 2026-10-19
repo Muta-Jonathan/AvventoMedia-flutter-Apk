@@ -147,6 +147,27 @@ class AppConstants {
   /// ***************** PODCAST PAGE ****************
   static const String podcastThumbImage = "https://avventomedia.org/wp-content/uploads/2024/05/podcast_thumbnail.png";
   static const String podcasts = 'Podcasts';
+  static const String listenTitle = 'Listen';
+  static const String upNext = 'Up next';
+  static const String onNowLabel = 'ON NOW';
+  static const String upNextLabel = 'UP NEXT';
+  static const String laterLabel = 'LATER';
+  static const String continueListening = 'Continue listening';
+  static const String seriesAndBible = 'Series & Bible';
+  static const String dailyAndWeekly = 'Daily & weekly shows';
+  static const String playsInOrder = 'Plays in order';
+  static const String newestFirstTag = 'Newest first';
+  static const String liveBadge = 'LIVE';
+  static const String listenLive = 'Listen live';
+  static const String playingLive = 'Playing live';
+  static const String seeAll = 'See all';
+  static const String search = 'Search';
+  static const String playLiveRadio = 'Play live radio';
+  static const String pauseLiveRadio = 'Pause live radio';
+  static const String connecting = 'Connecting…';
+  static String yourTime(String zone) =>
+      zone.isEmpty ? 'Your time' : 'Your time · $zone';
+  static String seeAllCount(int n) => 'See all $n';
 
   /// ***************** PADDING ****************
   static const double leftMain = 20;

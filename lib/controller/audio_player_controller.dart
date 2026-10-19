@@ -160,6 +160,34 @@ class AudioPlayerController extends GetxController {
     }
   }
 
+  /// The radio's now-playing song as a player item.
+  static MediaItem liveItem(RadioStation station) => MediaItem(
+        id: station.id.toString(),
+        title: station.nowPlayingTitle,
+        artist: station.artist,
+        artUri: Uri.parse(station.imageUrl),
+        duration: Utils.parseDuration(station.duration),
+      );
+
+  /// Opens the full radio player, which starts the stream if needed.
+  void openLive() {
+    isLive.value = true;
+    isPlayerActive.value = true;
+    isMiniPlayerVisible.value = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) => panelController.expand());
+  }
+
+  /// Whether the radio is the loaded source.
+  bool get liveLoaded => isLive.value && isPlayerActive.value;
+
+  /// Starts the radio stream from the Listen home.
+  Future<void> playLive(RadioStation station) async {
+    isLive.value = true;
+    isMiniPlayerVisible.value = true;
+    await setAudioSource(station.streamUrl, liveItem(station));
+    play();
+  }
+
   /// Pushes the station's now-playing song to the mini player, full player
   /// and notification while the radio is loaded, from any screen.
   void syncRadioStation(RadioStation station) {

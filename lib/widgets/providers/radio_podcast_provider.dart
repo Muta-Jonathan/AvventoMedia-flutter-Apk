@@ -3,7 +3,10 @@ import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:flutter/material.dart';
 
 class RadioPodcastProvider extends ChangeNotifier {
-  List<RadioPodcast> _podcasts = [];
+  RadioPodcastProvider({List<RadioPodcast> podcasts = const []})
+      : _podcasts = List.of(podcasts);
+
+  List<RadioPodcast> _podcasts;
 
   List<RadioPodcast> get podcasts => _podcasts;
 
