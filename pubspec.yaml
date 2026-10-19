@@ -160,19 +160,8 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-  # Bundled so they work offline and every weight is real (OFL, see assets/fonts).
+  # Bundled so it works offline (OFL, see assets/fonts). Everything else uses the system font.
   fonts:
-    - family: Figtree
-      fonts:
-        - asset: assets/fonts/Figtree-Regular.ttf
-        - asset: assets/fonts/Figtree-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Figtree-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Figtree-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Figtree-ExtraBold.ttf
-          weight: 800
     - family: Newsreader
       fonts:
         - asset: assets/fonts/Newsreader-SemiBold.ttf
