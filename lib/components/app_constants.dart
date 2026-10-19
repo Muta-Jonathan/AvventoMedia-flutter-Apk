@@ -168,6 +168,10 @@ class AppConstants {
   static const String offline = 'Offline';
   static const String showingDownloadsOnly = 'Showing downloads only.';
   static const String openDownloads = 'Open downloads';
+  static const String navWatch = 'Watch';
+  static const String navListen = 'Listen';
+  static const String navSearch = 'Search';
+  static const String navMore = 'More';
   static const String openPlayer = 'Open player';
   static const String liveSubtitle = 'AvventoRadio · Live';
   static const String noConnection = 'No connection';
