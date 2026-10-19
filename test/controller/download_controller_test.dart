@@ -66,11 +66,16 @@ void main() {
       MockClient((_) async => http.Response.bytes(List.filled(n, 7), 200));
 
   /// Waits until nothing is queued or running (failed ones stay listed).
-  Future<void> settle(DownloadController d) async {
-    for (var i = 0; i < 100 && d.tasks.values.any((t) => t.active); i++) {
+  /// Waits for [condition] in real time. File I/O and the queue run on real
+  /// timers, so a fixed pause is too short on a slow CI machine.
+  Future<void> until(bool Function() condition) async {
+    for (var i = 0; i < 1000 && !condition(); i++) {
       await Future<void>.delayed(const Duration(milliseconds: 5));
     }
   }
+
+  Future<void> settle(DownloadController d) =>
+      until(() => !d.tasks.values.any((t) => t.active));
 
   Future<SettingsController> settings() async {
     final s = Get.put(await SettingsController.load(push: FakePushNotifications()));
@@ -110,15 +115,20 @@ void main() {
     for (final id in ['a', 'b', 'c']) {
       await downloads.download(episode(id), showTitle: 'Show');
     }
-    await Future<void>.delayed(const Duration(milliseconds: 20));
-    expect(started, ['a.mp3', 'b.mp3']);
+    await until(() => started.length >= 2);
+    // Give a wrongly started third download the chance to show up.
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    // Two run at once; which request goes out first isn't defined.
+    expect(started.toSet(), {'a.mp3', 'b.mp3'});
     expect(downloads.tasks['c']!.status, DownloadStatus.waiting);
 
     bodies['a.mp3']!
       ..add([1, 2, 3])
       ..close();
-    await Future<void>.delayed(const Duration(milliseconds: 20));
-    expect(started, ['a.mp3', 'b.mp3', 'c.mp3']);
+    await until(() => started.length >= 3);
+    // The queued one starts once a slot frees up, and last.
+    expect(started.last, 'c.mp3');
+    expect(started.toSet(), {'a.mp3', 'b.mp3', 'c.mp3'});
 
     for (final name in ['b.mp3', 'c.mp3']) {
       bodies[name]!
