@@ -32,10 +32,12 @@ import '../themes/avvento_theme.dart';
 /// chapters by book with a book jump; Ellen G. White books list chapters.
 /// Playback queues follow the list as displayed.
 class PodcastEpisodeListPage extends StatefulWidget {
-  /// [fetchEpisodes] exists for tests.
-  const PodcastEpisodeListPage({super.key, this.fetchEpisodes});
+  /// [fetchEpisodes] and [cachedEpisodes] exist for tests.
+  const PodcastEpisodeListPage(
+      {super.key, this.fetchEpisodes, this.cachedEpisodes});
 
   final Future<List<PodcastEpisode>> Function(String url)? fetchEpisodes;
+  final Future<List<PodcastEpisode>?> Function(String url)? cachedEpisodes;
 
   @override
   State<PodcastEpisodeListPage> createState() => _PodcastEpisodeListPageState();
@@ -72,21 +74,44 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
     _load();
   }
 
+  /// Shows the episodes saved last time at once, then the fresh list. The
+  /// server can take seconds for big feeds like the Old Testament.
   Future<void> _load() async {
     final fetch =
         widget.fetchEpisodes ?? AzuraCastAPI.fetchRadioPodcastsEpisodes;
-    try {
-      final episodes = await fetch(show.episodesLink);
-      if (!mounted) return;
-      setState(() {
-        _episodes = episodes;
-        _failed = false;
-        _kind = feedKindOf(show.title, episodes);
-        _sort ??= defaultSort(_kind);
-      });
-    } catch (_) {
-      if (mounted) setState(() => _failed = true);
+    // Started first and caught at once, so a quick failure isn't unhandled
+    // while the cache loads.
+    final fresh = fetch(show.episodesLink)
+        .then<Object>((episodes) => episodes, onError: (Object e) => e);
+    if (_episodes == null) {
+      final cached =
+          widget.cachedEpisodes ?? AzuraCastAPI.cachedRadioPodcastsEpisodes;
+      try {
+        final saved = await cached(show.episodesLink);
+        if (saved != null && saved.isNotEmpty && _episodes == null) {
+          _show(saved);
+        }
+      } catch (_) {
+        // A bad cache just means waiting for the network.
+      }
     }
+    final result = await fresh;
+    if (result is List<PodcastEpisode>) {
+      _show(result);
+    } else if (mounted && _episodes == null) {
+      // Saved episodes stay on screen if the refresh fails.
+      setState(() => _failed = true);
+    }
+  }
+
+  void _show(List<PodcastEpisode> episodes) {
+    if (!mounted) return;
+    setState(() {
+      _episodes = episodes;
+      _failed = false;
+      _kind = feedKindOf(show.title, episodes);
+      _sort ??= defaultSort(_kind);
+    });
   }
 
   /// API order is newest first.

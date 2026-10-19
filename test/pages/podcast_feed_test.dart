@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -517,6 +518,37 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(AppConstants.resume), findsOneWidget);
     expect(find.text(AppConstants.chapterShort(2)), findsOneWidget);
+  });
+
+  testWidgets('saved episodes show at once, then the fresh list',
+      (tester) async {
+    final network = Completer<List<PodcastEpisode>>();
+    await pump(
+        tester,
+        PodcastEpisodeListPage(
+          cachedEpisodes: (_) async => [episode('old')],
+          fetchEpisodes: (_) => network.future,
+        ));
+
+    // The server hasn't answered yet: last visit's episodes are shown.
+    expect(find.text('Episode old'), findsOneWidget);
+
+    network.complete([episode('new'), episode('old', daysAgo: 1)]);
+    await tester.pumpAndSettle();
+    expect(find.text('Episode new'), findsOneWidget);
+    expect(find.text('Episode old'), findsOneWidget);
+  });
+
+  testWidgets('a failed refresh keeps the saved episodes', (tester) async {
+    await pump(
+        tester,
+        PodcastEpisodeListPage(
+          cachedEpisodes: (_) async => [episode('old')],
+          fetchEpisodes: (_) async => throw Exception('offline'),
+        ));
+
+    expect(find.text('Episode old'), findsOneWidget);
+    expect(find.text(AppConstants.episodesLoadFailed), findsNothing);
   });
 
   testWidgets('empty Downloads explains how to download', (tester) async {

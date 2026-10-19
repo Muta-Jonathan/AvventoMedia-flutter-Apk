@@ -3,6 +3,7 @@ import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -106,8 +107,9 @@ class AzuraCastAPI {
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
 
-    if (connectivityResult == ConnectivityResult.none) {
-      final data = json.decode(cachedData!);
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      if (cachedData == null) throw Exception('No cached podcasts');
+      final data = json.decode(cachedData);
       final List<RadioPodcast> cachedPodcasts = List<RadioPodcast>.from(data.map((data) => RadioPodcast.fromJson(data)));
       // Filter podcasts with non-zero episodes
       final filteredPodcasts = cachedPodcasts.where((podcast) => podcast.episodes > 0).toList();
@@ -147,6 +149,23 @@ class AzuraCastAPI {
     }
   }
 
+  /// The show's episodes saved on the last visit, or null. The page shows
+  /// them at once while [fetchRadioPodcastsEpisodes] refreshes.
+  static Future<List<PodcastEpisode>?> cachedRadioPodcastsEpisodes(
+      String apiUrl) async {
+    final prefs = await SharedPreferences.getInstance();
+    final cached = prefs.getString('$_cachedPodcastEpisodeKey:$apiUrl');
+    return cached == null ? null : compute(_parseEpisodes, cached);
+  }
+
+  /// Newest first. Runs in a background isolate: the Old Testament is
+  /// about 1.3 MB of JSON.
+  static List<PodcastEpisode> _parseEpisodes(String body) =>
+      (json.decode(body) as List)
+          .map((item) => PodcastEpisode.fromJson(item))
+          .toList()
+        ..sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+
   //fetch radio podcasts episodes from avventoRadio
   static Future<List<PodcastEpisode>> fetchRadioPodcastsEpisodes(String apiUrl) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -157,40 +176,25 @@ class AzuraCastAPI {
     // Check network connectivity
     final connectivityResult = await Connectivity().checkConnectivity();
 
-    if (connectivityResult == ConnectivityResult.none) {
+    if (connectivityResult.contains(ConnectivityResult.none)) {
       if (cachedData == null) throw Exception('No cached episodes');
-      final data = json.decode(cachedData);
-      final List<PodcastEpisode> cachedEpisodes = List<PodcastEpisode>.from(data.map((item) => PodcastEpisode.fromJson(item)));
-      // Resort the cached episodes
-      cachedEpisodes.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
-      return cachedEpisodes;
-    } else {
-      final url = Uri.parse(apiUrl);
-
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $azuracastAPIKey'
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final List<dynamic> jsonResult = json.decode(response.body);
-
-        // Cache the fetched data in SharedPreferences.
-        prefs.setString(cacheKey, response.body);
-
-        // Create a list of RadioPodcast objects from the JSON data
-        final podcastEpisodes = jsonResult.map((json) => PodcastEpisode.fromJson(json)).toList();
-
-        // Sort episodes by publish_at timestamp
-        podcastEpisodes.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
-
-        return podcastEpisodes;
-      } else {
-        throw Exception('Failed to load radio podcast data');
-      }
+      return compute(_parseEpisodes, cachedData);
     }
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $azuracastAPIKey'
+      },
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load radio podcast data');
+    }
+    // Rewriting 1 MB+ on every visit is wasted work when nothing changed.
+    if (response.body != cachedData) {
+      await prefs.setString(cacheKey, response.body);
+    }
+    return compute(_parseEpisodes, response.body);
   }
 }
