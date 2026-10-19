@@ -64,6 +64,8 @@ class LibraryNavigation {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         audioController.panelController.expand();
       });
+    } else if (item.type == 'presenter') {
+      Get.toNamed(Routes.getPresenterRoute(), arguments: item.id);
     } else if (item.type == 'podcast_show') {
       final model = RadioPodcast(
         id: item.id,

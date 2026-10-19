@@ -3,11 +3,14 @@ import 'package:get/get.dart';
 
 import '../../../components/app_constants.dart';
 import '../../../components/utils.dart';
+import '../../../controller/audio_player_controller.dart';
 import '../../../controller/download_controller.dart';
 import '../../../controller/episode_progress_controller.dart';
 import '../../../controller/library_controller.dart';
+import '../../../controller/presenters_controller.dart';
 import '../../../models/radiomodel/podcast_episode_model.dart';
 import '../../../models/saved_item_model.dart';
+import '../../../routes/routes.dart';
 import '../../common/save_bottom_sheet.dart';
 import '../../../themes/avvento_colors.dart';
 
@@ -30,6 +33,10 @@ class EpisodeActionsSheet {
         final played = progress.isPlayed(id);
         final library = Get.find<LibraryController>();
         final inLibrary = library.isFavorite(id);
+        final presenter = Get.isRegistered<PresentersController>()
+            ? Get.find<PresentersController>()
+                .byName(episode.playlistMediaArtist)
+            : null;
         final saved = SavedItem(
           id: id,
           type: 'podcast_episode',
@@ -119,6 +126,17 @@ class EpisodeActionsSheet {
               else
                 action(Icons.download_rounded, AppConstants.download,
                     () => downloads.download(episode, showTitle: showTitle)),
+              if (presenter != null)
+                action(Icons.person_outline_rounded, AppConstants.goToPresenter,
+                    () {
+                  // From the full player: collapse it so the page shows.
+                  final audio = Get.find<AudioPlayerController>();
+                  if (audio.panelPercentage.value > 0.01) {
+                    audio.collapsePlayer();
+                  }
+                  Get.toNamed(Routes.getPresenterRoute(),
+                      arguments: presenter.id);
+                }),
               action(
                 played
                     ? Icons.radio_button_unchecked_rounded

@@ -9,6 +9,7 @@ import '../controller/episode_progress_controller.dart';
 import '../controller/library_controller.dart';
 import '../controller/podcast_controller.dart';
 import '../controller/podcast_episode_controller.dart';
+import '../controller/presenters_controller.dart';
 
 class InitialBinding extends Bindings {
   @override
@@ -22,5 +23,6 @@ class InitialBinding extends Bindings {
     Get.put(EpisodeProgressController());
     Get.put(DownloadController());
     Get.put(ConnectivityController());
+    Get.put(PresentersController());
   }
 }

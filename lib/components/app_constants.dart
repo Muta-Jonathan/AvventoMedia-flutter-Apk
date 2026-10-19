@@ -237,6 +237,17 @@ class AppConstants {
   static const String bibleLabel = "BIBLE";
   static const String egwLabel = "ELLEN G. WHITE";
   static const String jumpToBook = "Jump to book";
+  static const String presenters = "Presenters";
+  static const String presenterLabel = "PRESENTER";
+  static const String allGenres = "All";
+  static const String searchPresenters = "Search presenters";
+  static const String clearSearch = "Clear search";
+  static const String noPresentersFound = "No presenters found";
+  static const String presentersLoadFailed = "Couldn't load presenters";
+  static const String playLatest = "Play latest";
+  static const String series = "Series";
+  static const String singleSermons = "Single sermons";
+  static const String goToPresenter = "Go to presenter";
   static const String playingFrom = "PLAYING FROM";
   static const String closePlayer = "Close player";
   static const String previous = "Previous";
@@ -339,6 +350,15 @@ class AppConstants {
   static String episodeCount(int n) => n == 1 ? '1 episode' : '$n episodes';
   static String chapterCount(int n) => n == 1 ? '1 chapter' : '$n chapters';
   static String chapterShort(int n) => 'Ch. $n';
+  static String noResultsFor(String q) => 'No results for “$q”.';
+  static String sermonCount(int n) => n == 1 ? '1 sermon' : '$n sermons';
+  static String seriesCount(int n) => '$n series';
+  static String partCount(int n) => n == 1 ? '1 part' : '$n parts';
+  static String showMoreParts(int n) =>
+      n == 1 ? 'Show 1 more part' : 'Show $n more parts';
+  static String playSeries(String title) => 'Play $title';
+  static String listenToPresenter(String name) =>
+      'Listen to $name on AvventoMedia 💫';
   static String speedSemantics(String speed) => 'Playback speed, $speed';
   static String timeLeftSemantics(Duration d) => '${_spoken(d)} left';
   static String lengthSemantics(Duration d) => 'Length ${_spoken(d)}';
