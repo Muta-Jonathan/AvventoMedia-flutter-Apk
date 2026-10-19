@@ -3,6 +3,7 @@ import 'package:avvento_media/controller/youtube_playlist_controller.dart';
 import 'package:avvento_media/controller/youtube_playlist_item_controller.dart';
 import 'package:avvento_media/models/saved_item_model.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
+import '../widgets/common/loading_widget.dart';
 import '../widgets/common/favorite_button.dart';
 import '../widgets/common/save_button.dart';
 import 'package:avvento_media/widgets/common/share_button.dart';
@@ -304,9 +305,7 @@ class _YoutubeWatchPageState extends State<YoutubeWatchPage> {
     if (_isLoadingRelated) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 20),
-        child: Center(
-          child: CircularProgressIndicator(color: Colors.amber),
-        ),
+        child: LoadingWidget(),
       );
     }
 

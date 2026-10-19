@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../widgets/common/skeletons.dart';
 import '../components/app_constants.dart';
 import '../components/episode_playback.dart';
 import '../components/utils.dart';
@@ -12,7 +13,6 @@ import '../routes/routes.dart';
 import '../themes/avvento_colors.dart';
 import '../themes/avvento_theme.dart';
 import '../widgets/common/empty_state.dart';
-import '../widgets/common/loading_widget.dart';
 import '../widgets/podcast/episode/download_all_button.dart';
 import '../widgets/podcast/episode/feed_episode_row.dart';
 import '../widgets/podcast/feed_action_row.dart';
@@ -89,7 +89,7 @@ class _PresenterPageState extends State<PresenterPage> {
                       _load();
                     },
                   )
-                : const Center(child: LoadingWidget()))
+                : const _LoadingPage())
             : PlayerStateBuilder(
                 builder: (context, currentId, playing, progress) =>
                     _content(context, p, currentId, playing, progress),
@@ -474,6 +474,36 @@ class _SeriesCard extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Back button over the page's skeleton while the presenter loads.
+class _LoadingPage extends StatelessWidget {
+  const _LoadingPage();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 4, 10, 0),
+              child: IconButton(
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                icon: Icon(Icons.arrow_back_ios_new_rounded,
+                    size: 22, color: c.text),
+                onPressed: () => Navigator.maybePop(context),
+              ),
+            ),
+          ),
+          const PresenterPageSkeleton(),
+        ],
       ),
     );
   }

@@ -11,6 +11,7 @@ import '../../models/radiomodel/radio_station_model.dart';
 import '../../themes/avvento_colors.dart';
 import '../../themes/avvento_theme.dart';
 import '../providers/radio_station_provider.dart';
+import '../common/shimmer.dart';
 import 'equalizer_bars.dart';
 
 /// What's on the radio now: cover, LIVE badge, song, artist and a round
@@ -68,86 +69,89 @@ class LiveHeroCard extends StatelessWidget {
               onTap: audio.openLive,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: Opacity(
-                        opacity: offline ? 0.45 : 1,
-                        child: SizedBox.square(
-                          dimension: 120,
-                          child: station == null || station.imageUrl.isEmpty
-                              ? ColoredBox(color: c.surface2)
-                              : CachedNetworkImage(
-                                  imageUrl: station.imageUrl,
-                                  fit: BoxFit.cover,
-                                  placeholder: (_, __) =>
-                                      ColoredBox(color: c.surface2),
-                                  errorWidget: (_, __, ___) =>
-                                      ColoredBox(color: c.surface2),
-                                ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minHeight: 120),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Wrap(
-                                  spacing: 8,
-                                  runSpacing: 4,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    _LiveBadge(),
-                                    Text(AppConstants.radioName,
-                                        style: TextStyle(
-                                            color: c.text3,
-                                            fontSize: 12,
-                                            height: 16 / 12,
-                                            fontWeight: FontWeight.w600)),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                    station?.nowPlayingTitle ??
-                                        AppConstants.connecting,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontFamily: AvventoTheme.newsreader,
-                                        color: c.text,
-                                        fontSize: 20,
-                                        height: 25 / 20,
-                                        fontWeight: FontWeight.w600)),
-                                if (station != null &&
-                                    station.artist.isNotEmpty)
-                                  Text(station.artist,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: c.text2,
-                                          fontSize: 14,
-                                          height: 20 / 14,
-                                          fontWeight: FontWeight.w500)),
-                              ],
+                child: station == null
+                    ? const _HeroSkeleton()
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(14),
+                            child: Opacity(
+                              opacity: offline ? 0.45 : 1,
+                              child: SizedBox.square(
+                                dimension: 120,
+                                child: station.imageUrl.isEmpty
+                                    ? ColoredBox(color: c.surface2)
+                                    : CachedNetworkImage(
+                                        imageUrl: station.imageUrl,
+                                        fit: BoxFit.cover,
+                                        placeholder: (_, __) =>
+                                            ColoredBox(color: c.surface2),
+                                        errorWidget: (_, __, ___) =>
+                                            ColoredBox(color: c.surface2),
+                                      ),
+                              ),
                             ),
-                            const SizedBox(height: 8),
-                            EqualizerBars(
-                                color: c.accentText, playing: playing),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(minHeight: 120),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 4,
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
+                                        children: [
+                                          _LiveBadge(),
+                                          Text(AppConstants.radioName,
+                                              style: TextStyle(
+                                                  color: c.text3,
+                                                  fontSize: 12,
+                                                  height: 16 / 12,
+                                                  fontWeight: FontWeight.w600)),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(station.nowPlayingTitle,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              fontFamily:
+                                                  AvventoTheme.newsreader,
+                                              color: c.text,
+                                              fontSize: 20,
+                                              height: 25 / 20,
+                                              fontWeight: FontWeight.w600)),
+                                      if (station.artist.isNotEmpty)
+                                        Text(station.artist,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                color: c.text2,
+                                                fontSize: 14,
+                                                height: 20 / 14,
+                                                fontWeight: FontWeight.w500)),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  EqualizerBars(
+                                      color: c.accentText, playing: playing),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ),
@@ -272,6 +276,39 @@ class _NoConnection extends StatelessWidget {
           child: const Text(AppConstants.retry),
         ),
       ],
+    );
+  }
+}
+
+/// The card's cover and text while the station hasn't arrived.
+class _HeroSkeleton extends StatelessWidget {
+  const _HeroSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Shimmer(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SkeletonBox(width: 120, height: 120, radius: 14),
+          SizedBox(width: 14),
+          Expanded(
+            child: SizedBox(
+              height: 120,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SkeletonBox(width: 90, height: 24, radius: 6),
+                  SizedBox(height: 12),
+                  SkeletonBox(height: 20),
+                  SizedBox(height: 8),
+                  SkeletonBox(width: 110, height: 14),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

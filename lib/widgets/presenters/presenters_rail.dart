@@ -5,6 +5,7 @@ import '../../components/app_constants.dart';
 import '../../controller/presenters_controller.dart';
 import '../../routes/routes.dart';
 import '../../themes/avvento_colors.dart';
+import '../common/skeletons.dart';
 import '../listen/inline_notice.dart';
 import 'presenter_portrait.dart';
 
@@ -24,6 +25,9 @@ class PresentersRail extends StatelessWidget {
     return Obx(() {
       final controller = Get.find<PresentersController>();
       final presenters = controller.presenters.value;
+      if (presenters == null && !controller.failed.value) {
+        return const PresentersRailSkeleton();
+      }
       if (presenters == null && controller.failed.value) {
         return InlineNotice(
             message: AppConstants.presentersLoadFailed,

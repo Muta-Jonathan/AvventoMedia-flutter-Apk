@@ -11,6 +11,7 @@ import '../../themes/avvento_colors.dart';
 import '../podcast/podcast_palette.dart';
 import '../providers/radio_podcast_provider.dart';
 import 'inline_notice.dart';
+import '../common/skeletons.dart';
 import 'section_header.dart';
 
 /// "Podcasts" with two rails: Series & Bible (play in order) and Daily &
@@ -22,6 +23,7 @@ class PodcastRails extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<RadioPodcastProvider>();
     final shows = provider.podcasts;
+    if (provider.loading) return const PodcastRailsSkeleton();
     if (shows.isEmpty) {
       if (!provider.failed) return const SizedBox.shrink();
       return Column(
