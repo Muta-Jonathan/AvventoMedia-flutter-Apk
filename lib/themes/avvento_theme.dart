@@ -13,16 +13,13 @@ abstract final class AvventoTheme {
   static ThemeData of(Brightness brightness) =>
       brightness == Brightness.dark ? dark : light;
 
-  /// Bundled font families (see pubspec.yaml).
-  static const figtree = 'Figtree';
-
-  /// Only for page titles, the live song title and Bible book headers.
+  /// Bundled serif (see pubspec.yaml). Only for page titles, the live song
+  /// title and Bible book headers; everything else uses the system font.
   static const newsreader = 'Newsreader';
 
   static TextTheme textTheme(AvventoColors c) {
     TextStyle ui(double size, double lh, FontWeight w, Color color) =>
         TextStyle(
-            fontFamily: figtree,
             fontSize: size,
             height: lh / size,
             fontWeight: w,
@@ -81,7 +78,6 @@ abstract final class AvventoTheme {
 
     return ThemeData(
       brightness: brightness,
-      fontFamily: figtree,
       colorScheme: scheme,
       scaffoldBackgroundColor: c.bg,
       canvasColor: c.bg,
