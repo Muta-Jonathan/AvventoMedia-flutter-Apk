@@ -1,5 +1,4 @@
 import '../pages/downloads_page.dart';
-import 'package:avvento_media/pages/podcast_page.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 
 import '../pages/favorites_page.dart';
@@ -7,7 +6,6 @@ import '../pages/listen_page.dart';
 import '../pages/live_tv_list_page.dart';
 import '../pages/main_page.dart';
 import '../pages/my_playlists_page.dart';
-import '../pages/online_radio_page.dart';
 import '../pages/podcast_episode_list_page.dart';
 import '../pages/presenter_page.dart';
 import '../pages/presenters_page.dart';
@@ -29,13 +27,11 @@ class Routes {
   static String home = "/";
   static String listen = "/listen";
   static String profile = "/profile";
-  static String podcast = "/podcast";
   static String podcastList = "/podcastList";
   static String podcastEpisodeList = "/podcastEpisode/List";
   static String presenters = "/presenters";
   static String presenter = "/presenter";
   static String presenterSeries = "/presenter/series";
-  static String onlineRadio = "/onlineRadio";
   static String liveTv = "/liveTv";
   static String liveTvList = "/liveTv/list";
   static String prayerRequest = "/prayerRequest";
@@ -54,7 +50,6 @@ class Routes {
   static  String getHomeRoute() => home;
   static  String getListenRoute() => listen;
   static  String getProfileRoute() => profile;
-  static  String getPodcastRoute() => podcast;
   static  String getPodcastListRoute() => podcastList;
   static  String getPodcastEpisodeListRoute() => podcastEpisodeList;
   static  String getPresentersRoute() => presenters;
@@ -62,7 +57,6 @@ class Routes {
   static  String getPresenterRoute() => presenter;
   /// Pass (presenter, series) as the route argument.
   static  String getPresenterSeriesRoute() => presenterSeries;
-  static  String getOnlineRadioRoute() => onlineRadio;
   static  String getLiveTvRoute() => liveTv;
   static  String getLiveTvListRoute() => liveTvList;
   static  String getPrayerRequestRoute() => prayerRequest;
@@ -82,13 +76,11 @@ class Routes {
     GetPage(name: home, page: () => const MainPage()),
     GetPage(name: listen, page: () => const ListenPage()),
     GetPage(name: profile, page: () => const ProfilePage()),
-    GetPage(name: podcast, page: () => const PodcastPage()),
     GetPage(name: podcastList, page: () => const PodcastListPage()),
     GetPage(name: podcastEpisodeList, page: () => const PodcastEpisodeListPage()),
     GetPage(name: presenters, page: () => const PresentersPage()),
     GetPage(name: presenter, page: () => const PresenterPage()),
     GetPage(name: presenterSeries, page: () => const SeriesPage()),
-    GetPage(name: onlineRadio, page: () => const OnlineRadioPage()),
     GetPage(name: liveTv, page: () => const WatchPage()),
     GetPage(name: liveTvList, page: () => const LiveTvListPage()),
     GetPage(name: prayerRequest, page: () => const PrayerRequestPage()),
