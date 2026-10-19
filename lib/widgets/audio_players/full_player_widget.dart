@@ -3,6 +3,7 @@ import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
 import 'package:avvento_media/widgets/audio_players/controls.dart';
 import 'package:avvento_media/widgets/audio_players/episode_player.dart';
+import 'package:avvento_media/themes/avvento_colors.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
@@ -112,27 +113,9 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
                         color: Theme.of(context).colorScheme.onPrimary,
                         onPressed: () => _controller.panelController.collapse(),
                       ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TextOverlay(
-                              label: AppConstants.nowPlaying,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              fontSize: AppConstants.fontSize18,
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      // "● LIVE" over the station, like "PLAYING FROM"
+                      // over the show in the episode player.
+                      const Expanded(child: _LiveHeader()),
                       IconButton(
                         icon: Icon(CupertinoIcons.share,
                             color: Theme.of(context).colorScheme.onPrimary),
@@ -205,6 +188,50 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
           ),
         );
       },
+    );
+  }
+}
+
+class _LiveHeader extends StatelessWidget {
+  const _LiveHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
+    return Semantics(
+      label: '${AppConstants.liveSpoken}, ${AppConstants.radioName}',
+      excludeSemantics: true,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 7,
+                height: 7,
+                decoration:
+                    BoxDecoration(color: c.liveDot, shape: BoxShape.circle),
+              ),
+              const SizedBox(width: 6),
+              Text(AppConstants.live,
+                  style: TextStyle(
+                      color: c.liveText,
+                      fontSize: 11,
+                      height: 14 / 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.88)),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(AppConstants.radioName,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: c.text,
+                  fontSize: 14,
+                  height: 19 / 14,
+                  fontWeight: FontWeight.w700)),
+        ],
+      ),
     );
   }
 }

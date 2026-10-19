@@ -12,6 +12,7 @@ class AppConstants {
   static const String missNot = "Programs You shouldn't miss";
   static const String liveTv = "LIVE TV";
   static const String live = "LIVE";
+  static const String liveSpoken = "Live";
   static const String avventoMusic = "Music";
   static const String avventoKids = "Kids";
   static const String avventoMain = "Avvento Productions";
