@@ -153,27 +153,7 @@ class _EpisodePlayerBody extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(28, 28, 28, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title,
-                      style: TextStyle(
-                          fontFamily: AvventoTheme.newsreader,
-                          color: c.text,
-                          fontSize: 22,
-                          height: 28 / 22,
-                          fontWeight: FontWeight.w600)),
-                  if (artist != null && artist!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(artist!,
-                        style: TextStyle(
-                            color: c.text2,
-                            fontSize: 15,
-                            height: 21 / 15,
-                            fontWeight: FontWeight.w500)),
-                  ],
-                ],
-              ),
+              child: PlayerTitle(title: title, artist: artist),
             ),
             const Padding(
               padding: EdgeInsets.fromLTRB(28, 20, 28, 0),
@@ -194,15 +174,61 @@ class _EpisodePlayerBody extends StatelessWidget {
   }
 }
 
-/// 4px bar with a thumb; elapsed on the left, and on the right the time
-/// left or the length (tap to switch, remembered).
-class _Progress extends StatelessWidget {
-  const _Progress();
+/// Title in Newsreader with the artist below; shared by the episode and
+/// radio players.
+class PlayerTitle extends StatelessWidget {
+  const PlayerTitle({super.key, required this.title, this.artist});
+
+  final String title;
+  final String? artist;
 
   @override
   Widget build(BuildContext context) {
     final c = Theme.of(context).avvento;
-    final player = Get.find<AudioPlayerController>().audioPlayer;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title,
+            style: TextStyle(
+                fontFamily: AvventoTheme.newsreader,
+                color: c.text,
+                fontSize: 22,
+                height: 28 / 22,
+                fontWeight: FontWeight.w600)),
+        if (artist != null && artist!.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Text(artist!,
+              style: TextStyle(
+                  color: c.text2,
+                  fontSize: 15,
+                  height: 21 / 15,
+                  fontWeight: FontWeight.w500)),
+        ],
+      ],
+    );
+  }
+}
+
+/// 4px bar; elapsed on the left, and on the right the time left or the
+/// length (tap to switch, remembered). Without [onSeek] (live radio) the
+/// bar has no thumb and ignores touches.
+class PlayerProgress extends StatelessWidget {
+  const PlayerProgress({
+    super.key,
+    required this.position,
+    required this.total,
+    this.buffered = Duration.zero,
+    this.onSeek,
+  });
+
+  final Duration position;
+  final Duration total;
+  final Duration buffered;
+  final ValueChanged<Duration>? onSeek;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
     final settings = Get.isRegistered<SettingsController>()
         ? Get.find<SettingsController>()
         : null;
@@ -213,7 +239,78 @@ class _Progress extends StatelessWidget {
       fontWeight: FontWeight.w600,
       fontFeatures: const [FontFeature.tabularFigures()],
     );
+    final left =
+        total - position < Duration.zero ? Duration.zero : total - position;
+    final seekable = onSeek != null;
 
+    return Column(
+      children: [
+        IgnorePointer(
+          ignoring: !seekable,
+          child: ProgressBar(
+            progress: position,
+            buffered: buffered,
+            total: total,
+            onSeek: onSeek,
+            barHeight: 4,
+            baseBarColor: c.text.withValues(alpha: 0.16),
+            bufferedBarColor: c.text.withValues(alpha: 0.24),
+            progressBarColor: c.accent,
+            thumbColor: seekable ? c.accent : Colors.transparent,
+            thumbRadius: seekable ? 7 : 0,
+            thumbGlowRadius: seekable ? 18 : 0,
+            thumbGlowColor: c.accentSoft,
+            timeLabelLocation: TimeLabelLocation.none,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Text(formatPlayerTime(position), style: timeStyle),
+            const Spacer(),
+            Obx(() {
+              final showTotal = settings?.playerShowsTotal.value ?? false;
+              return Semantics(
+                button: true,
+                label: showTotal
+                    ? AppConstants.lengthSemantics(total)
+                    : AppConstants.timeLeftSemantics(left),
+                hint: AppConstants.switchTimeHint,
+                excludeSemantics: true,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => settings?.setPlayerShowsTotal(!showTotal),
+                  // 44 hit area around the small label.
+                  child: ConstrainedBox(
+                    constraints:
+                        const BoxConstraints(minWidth: 44, minHeight: 44),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      widthFactor: 1,
+                      child: Text(
+                          showTotal
+                              ? formatPlayerTime(total)
+                              : '-${formatPlayerTime(left)}',
+                          style: timeStyle),
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// The episode's position from the player.
+class _Progress extends StatelessWidget {
+  const _Progress();
+
+  @override
+  Widget build(BuildContext context) {
+    final player = Get.find<AudioPlayerController>().audioPlayer;
     return StreamBuilder<(Duration, Duration, Duration)>(
       stream: rx.Rx.combineLatest3(
           player.positionStream,
@@ -223,63 +320,11 @@ class _Progress extends StatelessWidget {
       builder: (context, snapshot) {
         final (position, buffered, total) = snapshot.data ??
             (player.position, Duration.zero, player.duration ?? Duration.zero);
-        final left =
-            total - position < Duration.zero ? Duration.zero : total - position;
-
-        return Column(
-          children: [
-            ProgressBar(
-              progress: position,
-              buffered: buffered,
-              total: total,
-              onSeek: player.seek,
-              barHeight: 4,
-              baseBarColor: c.text.withValues(alpha: 0.16),
-              bufferedBarColor: c.text.withValues(alpha: 0.24),
-              progressBarColor: c.accent,
-              thumbColor: c.accent,
-              thumbRadius: 7,
-              thumbGlowRadius: 18,
-              thumbGlowColor: c.accentSoft,
-              timeLabelLocation: TimeLabelLocation.none,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Text(formatPlayerTime(position), style: timeStyle),
-                const Spacer(),
-                Obx(() {
-                  final showTotal = settings?.playerShowsTotal.value ?? false;
-                  return Semantics(
-                    button: true,
-                    label: showTotal
-                        ? AppConstants.lengthSemantics(total)
-                        : AppConstants.timeLeftSemantics(left),
-                    hint: AppConstants.switchTimeHint,
-                    excludeSemantics: true,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => settings?.setPlayerShowsTotal(!showTotal),
-                      // 44 hit area around the small label.
-                      child: ConstrainedBox(
-                        constraints:
-                            const BoxConstraints(minWidth: 44, minHeight: 44),
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          widthFactor: 1,
-                          child: Text(
-                              showTotal
-                                  ? formatPlayerTime(total)
-                                  : '-${formatPlayerTime(left)}',
-                              style: timeStyle),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-              ],
-            ),
-          ],
+        return PlayerProgress(
+          position: position,
+          buffered: buffered,
+          total: total,
+          onSeek: player.seek,
         );
       },
     );

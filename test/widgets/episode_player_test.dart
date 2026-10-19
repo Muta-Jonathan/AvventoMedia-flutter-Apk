@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
 import 'package:avvento_media/controller/download_controller.dart';
@@ -56,16 +57,16 @@ void main() {
     player = FakeAudioPlayer()
       ..fakeDuration = const Duration(minutes: 45)
       ..fakePosition = const Duration(minutes: 27, seconds: 4);
-    settings = Get.put(
-        await SettingsController.load(push: FakePushNotifications()));
+    settings =
+        Get.put(await SettingsController.load(push: FakePushNotifications()));
     final audio = Get.put(
         AudioPlayerController(player: player, startAudioService: false));
     Get.put(PodcastEpisodeController()).setSelectedEpisode(ep);
     Get.put(LibraryController());
     Get.put(DownloadController(
         directory: () async => dir, notify: (_, {actionLabel, onAction}) {}));
-    audio.currentMediaItem = MediaItem(
-        id: ep.id, title: ep.title, artist: ep.playlistMediaArtist);
+    audio.currentMediaItem =
+        MediaItem(id: ep.id, title: ep.title, artist: ep.playlistMediaArtist);
     await tester.pumpWidget(GetMaterialApp(
         theme: theme ?? darkTheme,
         home: const Scaffold(body: EpisodePlayer())));
@@ -92,15 +93,15 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('45:00'), findsOneWidget);
     expect(settings.playerShowsTotal.value, isTrue);
-    expect(find.bySemanticsLabel(AppConstants.lengthSemantics(
-            const Duration(minutes: 45))),
+    expect(
+        find.bySemanticsLabel(
+            AppConstants.lengthSemantics(const Duration(minutes: 45))),
         findsOneWidget);
 
     await tester.tap(find.text('45:00'));
     await tester.pumpAndSettle();
     expect(find.text('-17:56'), findsOneWidget);
-    expect(find.bySemanticsLabel('17 minutes 56 seconds left'),
-        findsOneWidget);
+    expect(find.bySemanticsLabel('17 minutes 56 seconds left'), findsOneWidget);
   });
 
   testWidgets('shuffle toggles shuffle mode', (tester) async {
@@ -163,8 +164,32 @@ void main() {
     expect(find.text(AppConstants.playbackSpeed), findsNothing);
   });
 
-  testWidgets('fits a 360dp phone at 130% text in both themes',
+  testWidgets('radio progress follows the song and cannot be dragged',
       (tester) async {
+    await pump(tester);
+    await tester.pumpWidget(GetMaterialApp(
+        theme: darkTheme,
+        home: const Scaffold(
+          body: PlayerProgress(
+              position: Duration(minutes: 1, seconds: 30),
+              total: Duration(minutes: 4)),
+        )));
+
+    expect(find.text('1:30'), findsOneWidget);
+    expect(find.text('-2:30'), findsOneWidget);
+    final ignore = tester.widget<IgnorePointer>(find
+        .ancestor(
+            of: find.byType(ProgressBar), matching: find.byType(IgnorePointer))
+        .first);
+    expect(ignore.ignoring, isTrue);
+
+    // Same remembered switch as the episode player.
+    await tester.tap(find.text('-2:30'));
+    await tester.pumpAndSettle();
+    expect(find.text('4:00'), findsOneWidget);
+  });
+
+  testWidgets('fits a 360dp phone at 130% text in both themes', (tester) async {
     tester.view.physicalSize = const Size(360 * 3, 740 * 3);
     tester.view.devicePixelRatio = 3;
     tester.platformDispatcher.textScaleFactorTestValue = 1.3;

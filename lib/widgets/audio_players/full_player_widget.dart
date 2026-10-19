@@ -1,4 +1,3 @@
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
@@ -177,49 +176,21 @@ class _FullPlayerWidgetState extends State<FullPlayerWidget> {
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.03),
-                // Track info
+                // Same title, artist and times as the episode player. Live
+                // radio can't seek: the bar follows the song.
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: paddingWidth),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      TextOverlay(
-                        label: station.nowPlayingTitle,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: AppConstants.fontSize20,
-                        fontWeight: FontWeight.bold,
-                        textAlign: TextAlign.center,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextOverlay(
-                          label: station.artist,
-                          color: Theme.of(context).colorScheme.onSecondary,
-                          fontSize: 14,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
+                  padding: const EdgeInsets.fromLTRB(28, 0, 28, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: PlayerTitle(
+                        title: station.nowPlayingTitle, artist: station.artist),
                   ),
                 ),
-                // Progress bar (non-interactive for live radio)
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: paddingWidth, vertical: paddingTop),
-                  child: IgnorePointer(
-                    child: ProgressBar(
-                      baseBarColor: Colors.grey[600],
-                      bufferedBarColor: Colors.grey,
-                      thumbColor: Colors.transparent,
-                      thumbGlowRadius: 0,
-                      thumbRadius: 0,
-                      progressBarColor: Colors.redAccent,
-                      buffered: Utils.parseDuration(station.elapsed),
-                      progress: Utils.parseDuration(station.elapsed),
-                      total: Utils.parseDuration(station.duration),
-                      timeLabelTextStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary),
-                    ),
+                  padding: EdgeInsets.fromLTRB(28, 20, 28, paddingTop),
+                  child: PlayerProgress(
+                    position: Utils.parseDuration(station.elapsed),
+                    total: Utils.parseDuration(station.duration),
                   ),
                 ),
                 Controls(audioPlayerController: _controller),
