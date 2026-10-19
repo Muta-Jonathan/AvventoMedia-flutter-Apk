@@ -233,6 +233,11 @@ class AppConstants {
   static const String sort = "Sort";
   static const String part = "Part";
   static const String chapter = "Chapter";
+  static const String bibleLabel = "BIBLE";
+  static const String egwLabel = "ELLEN G. WHITE";
+  static const String jumpToBook = "Jump to book";
+  static const String oldTestament = "Old Testament";
+  static const String newTestament = "New Testament";
   static const String played = "Played";
   static const String play = "Play";
   static const String today = "Today";
@@ -319,4 +324,7 @@ class AppConstants {
   static String removeDownloadsQuestion(int n) =>
       n == 1 ? 'Remove 1 download?' : 'Remove $n downloads?';
   static String episodeCount(int n) => n == 1 ? '1 episode' : '$n episodes';
+  static String chapterCount(int n) => n == 1 ? '1 chapter' : '$n chapters';
+  static String chapterShort(int n) => 'Ch. $n';
+  static String chaptersAbbrev(int n) => '$n ch.';
 }
