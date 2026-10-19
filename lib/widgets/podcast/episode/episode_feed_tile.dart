@@ -238,6 +238,9 @@ class EpisodePlayPill extends StatelessWidget {
       enabled: onTap != null,
       label:
           semanticsLabel ?? (playing ? AppConstants.pause : AppConstants.play),
+      // One labeled button: the InkWell inside would add an unlabeled node.
+      excludeSemantics: true,
+      onTap: onTap,
       child: GestureDetector(
         // Catches taps in the padding that makes up the 44 target.
         behavior: HitTestBehavior.translucent,

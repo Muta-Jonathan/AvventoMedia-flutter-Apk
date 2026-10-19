@@ -49,10 +49,16 @@ class FakeAudioPlayer implements AudioPlayer {
   bool get playing => _playerState.playing;
   @override
   ProcessingState get processingState => _playerState.processingState;
+  bool fakeHasNext = false;
+  bool fakeHasPrevious = false;
   @override
-  bool get hasNext => false;
+  bool get hasNext => fakeHasNext;
   @override
-  bool get hasPrevious => false;
+  bool get hasPrevious => fakeHasPrevious;
+  @override
+  Future<void> seekToNext() async => calls.add('next');
+  @override
+  Future<void> seekToPrevious() async => calls.add('previous');
 
   @override
   Future<void> setLoopMode(LoopMode mode) async {}
@@ -86,6 +92,7 @@ class FakeAudioPlayer implements AudioPlayer {
     }
     return fakeDuration;
   }
+
   @override
   Future<void> dispose() async {}
 

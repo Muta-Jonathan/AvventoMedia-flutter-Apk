@@ -27,7 +27,9 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final titleColor = dark ? Colors.white : const Color(0xFF161424);
-    final messageColor = dark ? const Color(0xFF9E9CB0) : Colors.black54;
+    // 4.5:1 on the light grey page; black54 was 4.46.
+    final messageColor =
+        dark ? const Color(0xFF9E9CB0) : const Color(0xFF595959);
 
     return Center(
       child: SingleChildScrollView(

@@ -12,6 +12,7 @@ import '../../pages/home_page.dart';
 import '../../pages/listen_page.dart';
 import '../../pages/profile_page.dart';
 import '../../pages/search_page.dart';
+import '../../themes/avvento_colors.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
@@ -69,24 +70,29 @@ class _NavBarState extends State<NavBar> {
                       type: BottomNavigationBarType.fixed,
                       backgroundColor: Theme.of(context).colorScheme.surface,
                       selectedItemColor:
-                          Theme.of(context).colorScheme.onPrimary,
-                      unselectedItemColor: Theme.of(context).iconTheme.color,
+                          Theme.of(context).avvento.accentText,
+                      unselectedItemColor: Theme.of(context).avvento.text3,
+                      selectedLabelStyle:
+                          const TextStyle(fontWeight: FontWeight.w700),
+                      unselectedLabelStyle:
+                          const TextStyle(fontWeight: FontWeight.w500),
                       showSelectedLabels: true,
                       showUnselectedLabels: true,
-                      selectedFontSize: 10,
-                      unselectedFontSize: 10,
+                      selectedFontSize: 11,
+                      unselectedFontSize: 11,
                       elevation: 0,
                       items: const [
                         BottomNavigationBarItem(
-                            label: "Videos",
+                            label: AppConstants.navWatch,
                             icon: Icon(CupertinoIcons.play_circle)),
                         BottomNavigationBarItem(
-                            label: "Audio",
+                            label: AppConstants.navListen,
                             icon: Icon(CupertinoIcons.headphones)),
                         BottomNavigationBarItem(
-                            label: "Search", icon: Icon(CupertinoIcons.search)),
+                            label: AppConstants.navSearch,
+                            icon: Icon(CupertinoIcons.search)),
                         BottomNavigationBarItem(
-                            label: "More",
+                            label: AppConstants.navMore,
                             icon: Icon(CupertinoIcons.person_crop_circle)),
                       ],
                     ),
