@@ -64,6 +64,11 @@ class LibraryNavigation {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         audioController.panelController.expand();
       });
+    } else if (item.type == 'presenter') {
+      Get.toNamed(Routes.getPresenterRoute(), arguments: item.id);
+    } else if (item.type == 'presenter_series') {
+      // A saved series opens its presenter, where the series is listed.
+      Get.toNamed(Routes.getPresenterRoute(), arguments: item.groupId);
     } else if (item.type == 'podcast_show') {
       final model = RadioPodcast(
         id: item.id,

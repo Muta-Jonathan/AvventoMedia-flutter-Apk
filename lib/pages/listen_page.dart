@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 
 import '../components/app_constants.dart';
 import '../controller/audio_player_controller.dart';
+import '../routes/routes.dart';
 import '../widgets/providers/programs_provider.dart';
 import '../widgets/providers/radio_podcast_provider.dart';
+import '../widgets/presenters/presenters_rail.dart';
 import '../widgets/text/label_place_holder.dart';
 import '../widgets/explore/carousel_slider.dart';
 
@@ -195,6 +197,14 @@ class ListenPageState extends State<ListenPage> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  LabelPlaceHolder(
+                    title: AppConstants.presenters,
+                    moreIcon: true,
+                    onMoreTap: () =>
+                        Get.toNamed(Routes.getPresentersRoute()),
+                  ),
+                  const PresentersRail(),
                   const SizedBox(height: 16),
                   const LabelPlaceHolder(title: AppConstants.missNot),
                   const SizedBox(height: 12),

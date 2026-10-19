@@ -9,6 +9,9 @@ import '../pages/main_page.dart';
 import '../pages/my_playlists_page.dart';
 import '../pages/online_radio_page.dart';
 import '../pages/podcast_episode_list_page.dart';
+import '../pages/presenter_page.dart';
+import '../pages/presenters_page.dart';
+import '../pages/series_page.dart';
 import '../pages/podcast_list_page.dart';
 import '../pages/prayer_request_page.dart';
 import '../pages/profile_page.dart';
@@ -29,6 +32,9 @@ class Routes {
   static String podcast = "/podcast";
   static String podcastList = "/podcastList";
   static String podcastEpisodeList = "/podcastEpisode/List";
+  static String presenters = "/presenters";
+  static String presenter = "/presenter";
+  static String presenterSeries = "/presenter/series";
   static String onlineRadio = "/onlineRadio";
   static String liveTv = "/liveTv";
   static String liveTvList = "/liveTv/list";
@@ -51,6 +57,11 @@ class Routes {
   static  String getPodcastRoute() => podcast;
   static  String getPodcastListRoute() => podcastList;
   static  String getPodcastEpisodeListRoute() => podcastEpisodeList;
+  static  String getPresentersRoute() => presenters;
+  /// Pass the presenter id as the route argument.
+  static  String getPresenterRoute() => presenter;
+  /// Pass (presenter, series) as the route argument.
+  static  String getPresenterSeriesRoute() => presenterSeries;
   static  String getOnlineRadioRoute() => onlineRadio;
   static  String getLiveTvRoute() => liveTv;
   static  String getLiveTvListRoute() => liveTvList;
@@ -74,6 +85,9 @@ class Routes {
     GetPage(name: podcast, page: () => const PodcastPage()),
     GetPage(name: podcastList, page: () => const PodcastListPage()),
     GetPage(name: podcastEpisodeList, page: () => const PodcastEpisodeListPage()),
+    GetPage(name: presenters, page: () => const PresentersPage()),
+    GetPage(name: presenter, page: () => const PresenterPage()),
+    GetPage(name: presenterSeries, page: () => const SeriesPage()),
     GetPage(name: onlineRadio, page: () => const OnlineRadioPage()),
     GetPage(name: liveTv, page: () => const WatchPage()),
     GetPage(name: liveTvList, page: () => const LiveTvListPage()),

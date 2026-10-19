@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../apis/azuracast_api.dart';
 import '../components/app_constants.dart';
 import '../components/app_snackbar.dart';
 import '../models/radiomodel/downloaded_episode_model.dart';
@@ -312,7 +313,9 @@ class DownloadController extends GetxController {
     var finished = false;
 
     try {
-      final request = http.Request('GET', Uri.parse(task.episode.downloadLink));
+      final request = http.Request('GET', Uri.parse(task.episode.downloadLink))
+        ..headers.addAll(
+            AzuraCastAPI.mediaHeaders(task.episode.downloadLink) ?? const {});
       final resumeFrom = part.existsSync() ? part.lengthSync() : 0;
       if (resumeFrom > 0) request.headers['Range'] = 'bytes=$resumeFrom-';
       final response = await client.send(request);

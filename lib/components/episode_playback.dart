@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../apis/azuracast_api.dart';
 import '../controller/audio_player_controller.dart';
 import '../controller/download_controller.dart';
 import '../controller/episode_progress_controller.dart';
@@ -76,6 +77,7 @@ class EpisodePlayback {
     );
     return localPath != null
         ? AudioSource.file(localPath, tag: tag)
-        : AudioSource.uri(Uri.parse(ep.downloadLink), tag: tag);
+        : AudioSource.uri(Uri.parse(ep.downloadLink),
+            headers: AzuraCastAPI.mediaHeaders(ep.downloadLink), tag: tag);
   }
 }

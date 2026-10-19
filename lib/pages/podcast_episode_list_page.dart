@@ -8,20 +8,16 @@ import '../components/app_constants.dart';
 import '../components/episode_order.dart';
 import '../components/feed_kind.dart';
 import '../components/episode_playback.dart';
-import '../controller/connectivity_controller.dart';
-import '../controller/download_controller.dart';
 import '../controller/episode_progress_controller.dart';
-import '../controller/library_controller.dart';
 import '../controller/podcast_controller.dart';
 import '../models/radiomodel/podcast_episode_model.dart';
 import '../models/radiomodel/radio_podcast_model.dart';
 import '../models/saved_item_model.dart';
 import '../widgets/common/empty_state.dart';
 import '../widgets/common/loading_widget.dart';
-import '../widgets/common/save_bottom_sheet.dart';
-import '../widgets/podcast/episode/episode_actions_sheet.dart';
-import '../widgets/podcast/episode/episode_download_button.dart';
-import '../widgets/podcast/episode/episode_feed_tile.dart';
+import '../widgets/podcast/episode/download_all_button.dart';
+import '../widgets/podcast/episode/feed_episode_row.dart';
+import '../widgets/podcast/feed_action_row.dart';
 import '../widgets/podcast/player_state_builder.dart';
 import '../widgets/podcast/podcast_palette.dart';
 import '../themes/avvento_colors.dart';
@@ -32,10 +28,28 @@ import '../themes/avvento_theme.dart';
 /// chapters by book with a book jump; Ellen G. White books list chapters.
 /// Playback queues follow the list as displayed.
 class PodcastEpisodeListPage extends StatefulWidget {
-  /// [fetchEpisodes] and [cachedEpisodes] exist for tests.
-  const PodcastEpisodeListPage(
-      {super.key, this.fetchEpisodes, this.cachedEpisodes});
+  /// Defaults to the selected podcast. A presenter's series passes its own
+  /// [show], [overline], [countLabel] and [saved] (see SeriesPage).
+  const PodcastEpisodeListPage({
+    super.key,
+    this.show,
+    this.overline,
+    this.countLabel,
+    this.saved,
+    this.fetchEpisodes,
+    this.cachedEpisodes,
+  });
 
+  final RadioPodcast? show;
+
+  /// Replaces "PODCAST" / "BIBLE" / "ELLEN G. WHITE".
+  final String? overline;
+
+  /// "6 parts" instead of "6 episodes".
+  final String Function(int count)? countLabel;
+
+  /// What Favorite and Save store; defaults to the podcast.
+  final SavedItem? saved;
   final Future<List<PodcastEpisode>> Function(String url)? fetchEpisodes;
   final Future<List<PodcastEpisode>?> Function(String url)? cachedEpisodes;
 
@@ -44,8 +58,8 @@ class PodcastEpisodeListPage extends StatefulWidget {
 }
 
 class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
-  final RadioPodcast show =
-      Get.find<PodcastController>().selectedEpisode.value!;
+  late final RadioPodcast show =
+      widget.show ?? Get.find<PodcastController>().selectedEpisode.value!;
   List<PodcastEpisode>? _episodes;
   bool _failed = false;
 
@@ -222,7 +236,6 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
               final currentIndex =
                   episodes.indexWhere((e) => e.id == currentId);
               final resumeIndex = _resumeIndex(episodes, progress);
-              final downloads = Get.find<DownloadController>();
               final inOrder = _sort == EpisodeSort.inOrder;
               final groups = _kind == FeedKind.bible && inOrder
                   ? _bookGroups(episodes)
@@ -235,38 +248,18 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                 _currentBook = books.first;
               }
 
-              Widget tile(int i) {
-                final episode = episodes[i];
-                final isCurrent = i == currentIndex;
-                void more() => EpisodeActionsSheet.show(context, episode,
-                    showTitle: show.title);
-                return Obx(() {
-                  // Read both so Obx always has something to watch.
-                  final downloaded = downloads.isDownloaded(episode.id);
-                  final offline = Get.isRegistered<ConnectivityController>() &&
-                      Get.find<ConnectivityController>().offline.value;
-                  return EpisodeFeedTile(
-                    episode: episode,
-                    title: episodeDisplayTitle(episode, _kind),
+              Widget tile(int i) => FeedEpisodeRow(
+                    queue: episodes,
+                    index: i,
+                    showTitle: show.title,
+                    progress: progress,
+                    currentId: currentId,
+                    playing: playing,
+                    title: episodeDisplayTitle(episodes[i], _kind),
                     showSummary: _kind != FeedKind.egwBook,
-                    progress: progress[episode.id] ?? const EpisodeProgress(),
-                    isCurrent: isCurrent,
-                    isPlaying: isCurrent && playing,
-                    available: !offline || downloaded,
                     overlineLead:
-                        inOrder ? episodeNumberLead(episode, _kind) : null,
-                    onTap: () => EpisodePlayback.open(episodes, i),
-                    onPlayTap: () => EpisodePlayback.toggle(episodes, i),
-                    onMore: more,
-                    downloadLabel: EpisodeDownloadLabel(episodeId: episode.id),
-                    download: EpisodeDownloadButton(
-                      episode: episode,
-                      showTitle: show.title,
-                      onDownloaded: more,
-                    ),
+                        inOrder ? episodeNumberLead(episodes[i], _kind) : null,
                   );
-                });
-              }
 
               return NotificationListener<ScrollUpdateNotification>(
                 onNotification: (_) {
@@ -279,16 +272,18 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                     SliverToBoxAdapter(
                       child: _Header(
                         show: show,
-                        overline: switch (_kind) {
-                          FeedKind.bible => AppConstants.bibleLabel,
-                          FeedKind.egwBook => AppConstants.egwLabel,
-                          _ => AppConstants.podcastLabel,
-                        },
-                        meta: _kind == FeedKind.egwBook
-                            ? AppConstants.chapterCount(
-                                _episodes?.length ?? show.episodes)
-                            : AppConstants.episodeCount(
-                                _episodes?.length ?? show.episodes),
+                        overline: widget.overline ??
+                            switch (_kind) {
+                              FeedKind.bible => AppConstants.bibleLabel,
+                              FeedKind.egwBook => AppConstants.egwLabel,
+                              _ => AppConstants.podcastLabel,
+                            },
+                        meta: (widget.countLabel ??
+                                (_kind == FeedKind.egwBook
+                                    ? AppConstants.chapterCount
+                                    : AppConstants.episodeCount))(
+                            _episodes?.length ?? show.episodes),
+                        saved: widget.saved,
                         playLabel: currentIndex >= 0
                             ? (playing
                                 ? AppConstants.pause
@@ -316,7 +311,7 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                                 List.of(episodes)..shuffle(), 0),
                         downloadAll: episodes.isEmpty
                             ? null
-                            : _DownloadAllButton(
+                            : DownloadAllButton(
                                 episodes: episodes, showTitle: show.title),
                       ),
                     ),
@@ -459,9 +454,13 @@ class _Header extends StatelessWidget {
     required this.onPlayAll,
     required this.onShuffle,
     required this.downloadAll,
+    this.saved,
   });
 
   final RadioPodcast show;
+
+  /// Overrides what Favorite and Save store.
+  final SavedItem? saved;
 
   /// "PODCAST", "BIBLE" or "ELLEN G. WHITE".
   final String overline;
@@ -480,18 +479,18 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Theme.of(context).avvento;
-    final library = Get.find<LibraryController>();
-    final saved = SavedItem(
-      id: show.id,
-      type: 'podcast_show',
-      title: show.title,
-      thumbnailUrl: show.art,
-      groupId: show.id,
-      groupTitle: show.title,
-      description: show.description,
-      publishedAtItem: show.lastUpdated.toIso8601String(),
-      savedAt: DateTime.now(),
-    );
+    final saved = this.saved ??
+        SavedItem(
+          id: show.id,
+          type: 'podcast_show',
+          title: show.title,
+          thumbnailUrl: show.art,
+          groupId: show.id,
+          groupTitle: show.title,
+          description: show.description,
+          publishedAtItem: show.lastUpdated.toIso8601String(),
+          savedAt: DateTime.now(),
+        );
 
     return SafeArea(
       top: false, // The page handles the top inset.
@@ -572,105 +571,14 @@ class _Header extends StatelessWidget {
             ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Semantics(
-                    button: true,
-                    child: Material(
-                      color: c.accent,
-                      borderRadius: BorderRadius.circular(24),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: onPlayAll,
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 48),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 4),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                    playing
-                                        ? Icons.pause_rounded
-                                        : Icons.play_arrow_rounded,
-                                    size: 20,
-                                    color: c.onAccent),
-                                const SizedBox(width: 10),
-                                Flexible(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // Shrinks rather than clips beside
-                                      // four buttons at large text sizes.
-                                      FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        child: Text(playLabel,
-                                            style: TextStyle(
-                                                color: c.onAccent,
-                                                fontSize: 15,
-                                                height: 18 / 15,
-                                                fontWeight: FontWeight.w700)),
-                                      ),
-                                      if (playSub != null)
-                                        Text(playSub!,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                color: c.onAccent
-                                                    .withValues(alpha: 0.8),
-                                                fontSize: 11,
-                                                height: 13 / 11,
-                                                fontWeight: FontWeight.w600)),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                _CircleButton(
-                  icon: CupertinoIcons.shuffle,
-                  label: AppConstants.shuffle,
-                  iconColor: c.text,
-                  onTap: onShuffle,
-                ),
-                const SizedBox(width: 8),
-                Obx(() {
-                  final fav = library.isFavorite(show.id);
-                  return _CircleButton(
-                    icon:
-                        fav ? CupertinoIcons.heart_fill : CupertinoIcons.heart,
-                    label: AppConstants.addToFavorites,
-                    iconColor: fav ? c.liveDot : c.text,
-                    onTap: () => library.toggleFavorite(saved),
-                  );
-                }),
-                const SizedBox(width: 8),
-                Obx(() {
-                  final inPlaylist = library.isInAnyPlaylist(show.id);
-                  return _CircleButton(
-                    icon: inPlaylist
-                        ? CupertinoIcons.bookmark_fill
-                        : CupertinoIcons.bookmark,
-                    label: AppConstants.saveToPlaylist,
-                    iconColor: inPlaylist ? c.accent : c.text,
-                    onTap: () => SaveBottomSheet.show(context, saved),
-                  );
-                }),
-                if (downloadAll != null) ...[
-                  const SizedBox(width: 8),
-                  downloadAll!,
-                ],
-              ],
+            child: FeedActionRow(
+              playLabel: playLabel,
+              playSub: playSub,
+              playing: playing,
+              onPlay: onPlayAll,
+              onShuffle: onShuffle,
+              saved: saved,
+              downloadAll: downloadAll,
             ),
           ),
         ],
@@ -746,120 +654,6 @@ class _Description extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _CircleButton extends StatelessWidget {
-  const _CircleButton({
-    required this.icon,
-    required this.label,
-    required this.iconColor,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color iconColor;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-        button: true,
-        label: label,
-        child: Material(
-          color: Theme.of(context).avvento.surface2,
-          shape: const CircleBorder(),
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: onTap,
-            child: SizedBox.square(
-              dimension: 48,
-              child: Icon(icon, size: 20, color: iconColor),
-            ),
-          ),
-        ),
-      );
-}
-
-/// Download all as a 48 circle: arrow → progress ring (tap to cancel) →
-/// check (tap to remove, after asking). The ring covers the whole show.
-class _DownloadAllButton extends StatelessWidget {
-  const _DownloadAllButton({required this.episodes, required this.showTitle});
-
-  final List<PodcastEpisode> episodes;
-  final String showTitle;
-
-  @override
-  Widget build(BuildContext context) {
-    final downloads = Get.find<DownloadController>();
-    final c = Theme.of(context).avvento;
-
-    return Obx(() {
-      final done = [
-        for (final e in episodes)
-          if (downloads.isDownloaded(e.id)) e.id
-      ];
-      final active = [
-        for (final e in episodes)
-          if (downloads.tasks[e.id]?.active ?? false) downloads.tasks[e.id]!
-      ];
-      final missing =
-          episodes.where((e) => !downloads.isDownloaded(e.id)).toList();
-
-      final Widget icon;
-      final String label;
-      final VoidCallback onTap;
-      if (active.isNotEmpty) {
-        final fraction = (done.length +
-                active.fold<double>(0, (sum, t) => sum + (t.fraction ?? 0))) /
-            episodes.length;
-        icon = DownloadRing(fraction: fraction, track: c.line);
-        label = AppConstants.downloadingPercent(fraction);
-        onTap = () => downloads.cancelAll(active.map((t) => t.episode.id));
-      } else if (missing.isEmpty) {
-        icon = const DownloadDoneBadge();
-        label = AppConstants.downloadedLabel;
-        onTap = () => _confirmRemove(context, downloads, done);
-      } else {
-        icon = Icon(Icons.download_rounded, size: 20, color: c.text);
-        label = AppConstants.downloadAll(missing.length);
-        onTap = () => downloads.enqueueAll(missing, showTitle: showTitle);
-      }
-
-      return Semantics(
-        button: true,
-        label: label,
-        excludeSemantics: true,
-        child: Material(
-          color: c.surface2,
-          shape: const CircleBorder(),
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: onTap,
-            child: SizedBox.square(dimension: 48, child: Center(child: icon)),
-          ),
-        ),
-      );
-    });
-  }
-
-  Future<void> _confirmRemove(BuildContext context,
-      DownloadController downloads, List<String> ids) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(AppConstants.removeDownloadsQuestion(ids.length)),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text(AppConstants.cancel)),
-          TextButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              child: const Text(AppConstants.remove)),
-        ],
-      ),
-    );
-    if (ok == true) await downloads.removeAll(ids);
   }
 }
 
