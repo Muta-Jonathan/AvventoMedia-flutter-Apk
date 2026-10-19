@@ -177,6 +177,9 @@ void main() {
               name: Routes.presenters,
               page: () => const Scaffold(body: Text('presenters page'))),
           GetPage(
+              name: Routes.downloads,
+              page: () => const Scaffold(body: Text('downloads page'))),
+          GetPage(
               name: Routes.podcastList,
               page: () => const Scaffold(body: Text('podcast list page'))),
           GetPage(
@@ -318,6 +321,13 @@ void main() {
       expect(find.text(AppConstants.noConnection), findsOneWidget);
       expect(find.text(AppConstants.retry), findsOneWidget);
       expect(find.bySemanticsLabel(AppConstants.playLiveRadio), findsNothing);
+    });
+
+    listenTest('the banner opens Downloads', (tester) async {
+      await pump(tester, offline: true);
+      await tester.tap(find.text(AppConstants.showingDownloadsOnly));
+      await tester.pumpAndSettle();
+      expect(find.text('downloads page'), findsOneWidget);
     });
 
     listenTest('Continue listening keeps only downloaded episodes',

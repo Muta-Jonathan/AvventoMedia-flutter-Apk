@@ -167,6 +167,7 @@ class AppConstants {
   static const String connecting = 'Connecting…';
   static const String offline = 'Offline';
   static const String showingDownloadsOnly = 'Showing downloads only.';
+  static const String openDownloads = 'Open downloads';
   static const String noConnection = 'No connection';
   static const String podcastsLoadFailed = "Couldn't load podcasts";
   static String yourTime(String zone) =>

@@ -177,17 +177,48 @@ class _OfflineBanner extends StatelessWidget {
       if (!Get.find<ConnectivityController>().offline.value) {
         return const SizedBox.shrink();
       }
-      return Container(
-        margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-            color: c.surface2, borderRadius: BorderRadius.circular(14)),
-        child: Text(AppConstants.showingDownloadsOnly,
-            style: TextStyle(
-                color: c.text2,
-                fontSize: 13,
-                height: 19 / 13,
-                fontWeight: FontWeight.w500)),
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+        child: Semantics(
+          button: true,
+          label:
+              '${AppConstants.showingDownloadsOnly} ${AppConstants.openDownloads}',
+          excludeSemantics: true,
+          child: Material(
+            color: c.surface2,
+            borderRadius: BorderRadius.circular(14),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(14),
+              onTap: () => Get.toNamed(Routes.getDownloadsRoute()),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 44),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 6, 10, 6),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(AppConstants.showingDownloadsOnly,
+                            style: TextStyle(
+                                color: c.text2,
+                                fontSize: 13,
+                                height: 19 / 13,
+                                fontWeight: FontWeight.w500)),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(AppConstants.downloads,
+                          style: TextStyle(
+                              color: c.accentText,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700)),
+                      Icon(Icons.chevron_right_rounded,
+                          size: 20, color: c.accentText),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       );
     });
   }
