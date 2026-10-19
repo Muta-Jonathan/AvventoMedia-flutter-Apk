@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
+import '../widgets/common/skeletons.dart';
 import '../apis/podcast_repository.dart';
 import '../components/app_constants.dart';
 import '../components/episode_order.dart';
@@ -14,7 +15,6 @@ import '../models/radiomodel/podcast_episode_model.dart';
 import '../models/radiomodel/radio_podcast_model.dart';
 import '../models/saved_item_model.dart';
 import '../widgets/common/empty_state.dart';
-import '../widgets/common/loading_widget.dart';
 import '../widgets/podcast/episode/download_all_button.dart';
 import '../widgets/podcast/episode/feed_episode_row.dart';
 import '../widgets/podcast/feed_action_row.dart';
@@ -361,13 +361,7 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                       ),
                     ),
                     if (_episodes == null && !_failed)
-                      const SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Padding(
-                          padding: EdgeInsets.only(top: 40),
-                          child: LoadingWidget(),
-                        ),
-                      )
+                      const SliverToBoxAdapter(child: EpisodeRowsSkeleton())
                     else if (episodes.isEmpty)
                       SliverFillRemaining(
                         hasScrollBody: false,

@@ -14,6 +14,7 @@ import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:avvento_media/pages/downloads_page.dart';
 import 'package:avvento_media/pages/podcast_episode_list_page.dart';
+import 'package:avvento_media/widgets/common/skeletons.dart';
 import 'package:avvento_media/themes/avvento_colors.dart';
 import 'package:avvento_media/themes/dark_theme.dart';
 import 'package:avvento_media/themes/light_theme.dart';
@@ -100,7 +101,10 @@ void main() {
 
   // Controllers are created inside each test body (fake-async zone).
   Future<void> pump(WidgetTester tester, Widget home,
-      {ThemeData? theme, bool offline = false, RadioPodcast? podcast}) async {
+      {ThemeData? theme,
+      bool offline = false,
+      RadioPodcast? podcast,
+      bool settle = true}) async {
     SharedPreferences.setMockInitialValues({});
     dir = Directory.systemTemp.createTempSync('feed_test');
     player = FakeAudioPlayer();
@@ -123,7 +127,8 @@ void main() {
     Get.put(PodcastController()).setSelectedEpisode(podcast ?? show);
     await tester
         .pumpWidget(GetMaterialApp(theme: theme ?? darkTheme, home: home));
-    await tester.pumpAndSettle();
+    // A skeleton shimmers forever, so it can't settle.
+    settle ? await tester.pumpAndSettle() : await tester.pump();
   }
 
   Widget page({bool fail = false}) => PodcastEpisodeListPage(
@@ -579,6 +584,24 @@ void main() {
     expect(episodeDateLabel(ts(now), now: now), 'TODAY');
     expect(episodeDateLabel(ts(DateTime(2026, 10, 4)), now: now), 'OCT 4');
     expect(episodeDateLabel(ts(DateTime(2024, 3, 1)), now: now), 'MAR 1, 2024');
+  });
+
+  testWidgets('shows episode skeletons while the episodes load',
+      (tester) async {
+    await pump(
+        tester,
+        PodcastEpisodeListPage(
+          fetchEpisodes: (_) => Completer<List<PodcastEpisode>>().future,
+          cachedEpisodes: (_) async => null,
+        ),
+        settle: false);
+    await tester.pump();
+
+    expect(find.byType(EpisodeRowsSkeleton), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    // The header is already there.
+    expect(find.text('Sabbath Messages'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
   });
 
   group('accessibility', () {

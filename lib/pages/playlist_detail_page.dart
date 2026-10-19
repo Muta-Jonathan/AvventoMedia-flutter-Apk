@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../widgets/common/loading_widget.dart';
 import '../components/app_constants.dart';
 import '../components/app_snackbar.dart';
 import '../components/library_navigation.dart';
@@ -52,7 +53,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
+          ? const LoadingWidget()
           : _items.isEmpty
               ? const EmptyState(
                   icon: CupertinoIcons.music_note_list,

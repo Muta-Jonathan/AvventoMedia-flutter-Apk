@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../widgets/common/skeletons.dart';
 import '../components/app_constants.dart';
 import '../controller/presenters_controller.dart';
 import '../models/presenter_model.dart';
@@ -8,7 +9,6 @@ import '../routes/routes.dart';
 import '../themes/avvento_colors.dart';
 import '../themes/avvento_theme.dart';
 import '../widgets/common/empty_state.dart';
-import '../widgets/common/loading_widget.dart';
 import '../widgets/presenters/presenter_portrait.dart';
 
 /// Presenters · See all: search, genre chips and a list that keeps full
@@ -117,9 +117,11 @@ class _PresentersPageState extends State<PresentersPage> {
               SliverToBoxAdapter(child: _searchField(c)),
               SliverToBoxAdapter(child: _chips(c)),
               if (all == null && !controller.failed.value)
-                const SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(child: LoadingWidget()),
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: PresenterRowsSkeleton(),
+                  ),
                 )
               else if (all == null)
                 SliverFillRemaining(

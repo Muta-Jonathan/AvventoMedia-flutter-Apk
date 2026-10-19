@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../components/app_constants.dart';
 import '../../controller/schedule_controller.dart';
 import '../../themes/avvento_colors.dart';
+import '../common/skeletons.dart';
 
 /// On now / Up next / Later, in the listener's own time zone. Hidden until
 /// the schedule loads.
@@ -17,6 +18,9 @@ class UpNextStrip extends StatelessWidget {
 
     return Obx(() {
       final entries = schedule.upcoming;
+      if (schedule.slots.value == null && !schedule.failed.value) {
+        return const UpNextSkeleton();
+      }
       if (entries.isEmpty) return const SizedBox.shrink();
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,

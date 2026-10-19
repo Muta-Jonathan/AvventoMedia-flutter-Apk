@@ -164,10 +164,10 @@ class AppConstants {
   static const String search = 'Search';
   static const String playLiveRadio = 'Play live radio';
   static const String pauseLiveRadio = 'Pause live radio';
-  static const String connecting = 'Connecting…';
   static const String offline = 'Offline';
   static const String showingDownloadsOnly = 'Showing downloads only.';
   static const String openDownloads = 'Open downloads';
+  static const String loading = 'Loading';
   static const String navWatch = 'Watch';
   static const String navListen = 'Listen';
   static const String navSearch = 'Search';
