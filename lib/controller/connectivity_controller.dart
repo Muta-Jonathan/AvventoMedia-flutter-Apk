@@ -37,6 +37,15 @@ class ConnectivityController extends GetxController {
     }
   }
 
+  /// Checks again now (Retry buttons).
+  Future<void> recheck() async {
+    try {
+      _update(await (_check ?? Connectivity().checkConnectivity)());
+    } catch (_) {
+      // Keep the last known state.
+    }
+  }
+
   void _update(List<ConnectivityResult> result) =>
       offline.value = result.every((r) => r == ConnectivityResult.none);
 

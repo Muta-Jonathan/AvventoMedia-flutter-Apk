@@ -30,14 +30,26 @@ class RadioStationProvider extends ChangeNotifier {
 
   Timer? _elapsedTimer;
 
+  StreamSubscription<RadioStation>? _updates;
+
   void fetchRadioStationUpdates() {
-    AzuraCastAPI.getRadioStationUpdates().listen((updatedRadioStation) {
+    _updates = AzuraCastAPI.getRadioStationUpdates().listen(
+        (updatedRadioStation) {
       _radioStation = updatedRadioStation;
       _startElapsedTimer();
       notifyListeners(); // Notify listeners of changes
-    }, onError: (error) {
-      throw error;
+    }, onError: (_) {
+      // Offline or dropped: keep the last song until [reconnect].
     });
+  }
+
+  /// Opens a fresh connection, e.g. when the device is back online.
+  void reconnect() {
+    _updates?.cancel();
+    AzuraCastAPI.closeWebsocketConnection();
+    establishWebSocketConnection();
+    sendInitialMessage();
+    fetchRadioStationUpdates();
   }
 
   void _startElapsedTimer() {
@@ -64,6 +76,7 @@ class RadioStationProvider extends ChangeNotifier {
   @override
   void dispose() {
     _elapsedTimer?.cancel();
+    _updates?.cancel();
     AzuraCastAPI.closeWebsocketConnection();
     super.dispose();
   }

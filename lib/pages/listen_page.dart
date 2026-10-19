@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../components/app_constants.dart';
+import '../controller/connectivity_controller.dart';
 import '../controller/presenters_controller.dart';
 import '../controller/schedule_controller.dart';
 import '../routes/routes.dart';
@@ -64,6 +65,7 @@ class ListenPageState extends State<ListenPage> {
           child: ListView(
             children: [
               const _Header(),
+              const _OfflineBanner(),
               const LiveHeroCard(),
               const UpNextStrip(),
               const ContinueListeningRail(),
@@ -120,6 +122,9 @@ class _Header extends StatelessWidget {
                         fontWeight: FontWeight.w600)),
               ),
             ),
+            Obx(() => Get.find<ConnectivityController>().offline.value
+                ? const _OfflinePill()
+                : const SizedBox.shrink()),
             IconButton(
               tooltip: AppConstants.search,
               constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
@@ -130,5 +135,60 @@ class _Header extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _OfflinePill extends StatelessWidget {
+  const _OfflinePill();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
+    return Container(
+      height: 28,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+          color: c.surface2, borderRadius: BorderRadius.circular(14)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.wifi_off_rounded, size: 14, color: c.text),
+          const SizedBox(width: 6),
+          Text(AppConstants.offline,
+              style: TextStyle(
+                  color: c.text,
+                  fontSize: 12,
+                  height: 1,
+                  fontWeight: FontWeight.w700)),
+        ],
+      ),
+    );
+  }
+}
+
+/// One line under the header while offline.
+class _OfflineBanner extends StatelessWidget {
+  const _OfflineBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
+    return Obx(() {
+      if (!Get.find<ConnectivityController>().offline.value) {
+        return const SizedBox.shrink();
+      }
+      return Container(
+        margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+            color: c.surface2, borderRadius: BorderRadius.circular(14)),
+        child: Text(AppConstants.showingDownloadsOnly,
+            style: TextStyle(
+                color: c.text2,
+                fontSize: 13,
+                height: 19 / 13,
+                fontWeight: FontWeight.w500)),
+      );
+    });
   }
 }

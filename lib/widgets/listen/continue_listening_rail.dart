@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 
 import '../../components/app_constants.dart';
 import '../../components/episode_playback.dart';
+import '../../controller/connectivity_controller.dart';
+import '../../controller/download_controller.dart';
 import '../../controller/episode_progress_controller.dart';
 import '../../themes/avvento_colors.dart';
 import '../podcast/podcast_palette.dart';
@@ -19,7 +21,13 @@ class ContinueListeningRail extends StatelessWidget {
     final controller = Get.find<EpisodeProgressController>();
 
     return Obx(() {
-      final items = controller.continueListening;
+      final offline = ConnectivityController.isOffline;
+      final downloads = Get.find<DownloadController>();
+      // Offline, only what's on the device can play.
+      final items = [
+        for (final r in controller.continueListening)
+          if (!offline || downloads.isDownloaded(r.episode.id)) r
+      ];
       if (items.isEmpty) return const SizedBox.shrink();
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,

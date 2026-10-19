@@ -5,6 +5,7 @@ import '../../components/app_constants.dart';
 import '../../controller/presenters_controller.dart';
 import '../../routes/routes.dart';
 import '../../themes/avvento_colors.dart';
+import '../listen/inline_notice.dart';
 import 'presenter_portrait.dart';
 
 /// Horizontal rail of presenters: 80 portrait (accent ring when there's a
@@ -23,6 +24,12 @@ class PresentersRail extends StatelessWidget {
     return Obx(() {
       final controller = Get.find<PresentersController>();
       final presenters = controller.presenters.value;
+      if (presenters == null && controller.failed.value) {
+        return InlineNotice(
+            message: AppConstants.presentersLoadFailed,
+            actionLabel: AppConstants.retry,
+            onAction: controller.load);
+      }
       if (presenters == null || presenters.isEmpty) {
         return const SizedBox.shrink();
       }
