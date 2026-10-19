@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
-import '../apis/azuracast_api.dart';
+import '../apis/podcast_repository.dart';
 import '../components/app_constants.dart';
 import '../components/episode_order.dart';
 import '../components/feed_kind.dart';
@@ -50,8 +50,9 @@ class PodcastEpisodeListPage extends StatefulWidget {
 
   /// What Favorite and Save store; defaults to the podcast.
   final SavedItem? saved;
-  final Future<List<PodcastEpisode>> Function(String url)? fetchEpisodes;
-  final Future<List<PodcastEpisode>?> Function(String url)? cachedEpisodes;
+  /// By show id; default [PodcastRepository].
+  final Future<List<PodcastEpisode>> Function(String showId)? fetchEpisodes;
+  final Future<List<PodcastEpisode>?> Function(String showId)? cachedEpisodes;
 
   @override
   State<PodcastEpisodeListPage> createState() => _PodcastEpisodeListPageState();
@@ -88,20 +89,20 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
     _load();
   }
 
-  /// Shows the episodes saved last time at once, then the fresh list. The
-  /// server can take seconds for big feeds like the Old Testament.
+  /// Shows the episodes Firestore cached on the device at once, then the
+  /// fresh list.
   Future<void> _load() async {
     final fetch =
-        widget.fetchEpisodes ?? AzuraCastAPI.fetchRadioPodcastsEpisodes;
+        widget.fetchEpisodes ?? PodcastRepository.instance.fetchEpisodes;
     // Started first and caught at once, so a quick failure isn't unhandled
     // while the cache loads.
-    final fresh = fetch(show.episodesLink)
+    final fresh = fetch(show.id)
         .then<Object>((episodes) => episodes, onError: (Object e) => e);
     if (_episodes == null) {
       final cached =
-          widget.cachedEpisodes ?? AzuraCastAPI.cachedRadioPodcastsEpisodes;
+          widget.cachedEpisodes ?? PodcastRepository.instance.cachedEpisodes;
       try {
-        final saved = await cached(show.episodesLink);
+        final saved = await cached(show.id);
         if (saved != null && saved.isNotEmpty && _episodes == null) {
           _show(saved);
         }
