@@ -33,7 +33,7 @@ void main() {
         home: Scaffold(
           body: PlayerPanel(
             controller: audio.panelController,
-            minHeight: 70,
+            minHeight: 72,
             maxHeight: 500,
             onChanged: audio.onPanelPercentageChanged,
             builder: (_, __) => const SizedBox.expand(),

@@ -32,7 +32,8 @@ late AudioHandler audioHandler;
 final popupRouteObserver = PopupRouteObserver();
 
 /// Height of the collapsed mini player bar (content area only)
-const double miniPlayerMinHeight = 70.0;
+/// 64dp card plus 8dp below it.
+const double miniPlayerMinHeight = 72.0;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
