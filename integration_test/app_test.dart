@@ -32,6 +32,10 @@ void main() {
     }
   }
 
+  /// A bottom navigation tab by its label (Listen is also a page title).
+  Finder navTab(String label) => find.descendant(
+      of: find.byType(BottomNavigationBar), matching: find.text(label));
+
   /// Upgrader may show an update dialog depending on the store version, and
   /// late on a slow emulator.
   Future<void> dismissUpdateDialog(WidgetTester tester) async {
@@ -47,14 +51,20 @@ void main() {
   testWidgets('app smoke test: tabs and live radio mini player',
       (tester) async {
     await app.main();
-    await pumpUntil(tester, () => find.text('Audio').evaluate().isNotEmpty,
+    await pumpUntil(
+        tester, () => navTab(AppConstants.navListen).evaluate().isNotEmpty,
         reason: 'bottom navigation');
     await dismissUpdateDialog(tester);
     final audio = Get.find<AudioPlayerController>();
 
     // Tabs
-    for (final tab in ['Search', 'More', 'Videos', 'Audio']) {
-      await tester.tap(find.text(tab).last);
+    for (final tab in [
+      AppConstants.navSearch,
+      AppConstants.navMore,
+      AppConstants.navWatch,
+      AppConstants.navListen,
+    ]) {
+      await tester.tap(navTab(tab));
       await tester.pump(const Duration(milliseconds: 500));
     }
     expect(find.byType(BottomNavigationBar), findsOneWidget);
@@ -74,15 +84,17 @@ void main() {
     });
     addTearDown(() => messenger.setMockMessageHandler(platform.name, null));
 
-    // Live radio opens the full player
-    await tester
-        .tap(find.byIcon(CupertinoIcons.antenna_radiowaves_left_right).first);
+    // The live card on Listen opens the full radio player
+    await pumpUntil(
+        tester, () => find.text(AppConstants.liveBadge).evaluate().isNotEmpty,
+        reason: 'live card on Listen');
+    await tester.tap(find.text(AppConstants.liveBadge).first);
     await pumpUntil(tester, () => audio.panelPercentage.value > 0.95,
         reason: 'full player expands');
     await pumpUntil(tester, () => audio.currentMediaItem != null,
         reason: 'radio station loads');
 
-    // Back collapses the player and keeps the app on the Audio tab
+    // Back collapses the player and keeps the app on the Listen tab
     await dismissUpdateDialog(tester);
     await tester.binding.handlePopRoute();
     await pumpUntil(tester, () => audio.panelPercentage.value < 0.05,
@@ -91,8 +103,9 @@ void main() {
     await pumpUntil(
         tester, () => find.byType(BottomNavigationBar).evaluate().isNotEmpty,
         reason: 'bottom navigation returns');
-    await pumpUntil(tester, () => find.text('LIVE').evaluate().isNotEmpty,
-        reason: 'mini bar shows LIVE');
+    await pumpUntil(tester,
+        () => find.text(AppConstants.liveSubtitle).evaluate().isNotEmpty,
+        reason: 'mini bar shows Live');
 
     // The full player's own Navigator must not tell Android "can't pop".
     expect(frameworkHandlesBack, isNot(false),
