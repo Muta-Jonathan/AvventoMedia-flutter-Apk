@@ -43,13 +43,18 @@ class ListenPageState extends State<ListenPage> {
       ]);
 
   @override
-  Widget build(BuildContext context) =>
-      AvventoThemeScope(child: Builder(builder: _buildPage));
+  Widget build(BuildContext context) {
+    // The other tabs and the nav bar use the app theme's surface, so take it
+    // from outside the redesign scope.
+    final background = Theme.of(context).colorScheme.surface;
+    return AvventoThemeScope(
+        child: Builder(builder: (context) => _buildPage(context, background)));
+  }
 
-  Widget _buildPage(BuildContext context) {
+  Widget _buildPage(BuildContext context, Color background) {
     final c = Theme.of(context).avvento;
     return Scaffold(
-      backgroundColor: c.bg,
+      backgroundColor: background,
       body: SafeArea(
         bottom: false,
         child: RefreshIndicator(
