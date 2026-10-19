@@ -11,6 +11,7 @@ import '../controller/podcast_controller.dart';
 import '../controller/podcast_episode_controller.dart';
 import '../controller/presenters_controller.dart';
 import '../controller/schedule_controller.dart';
+import '../controller/search_index_controller.dart';
 
 class InitialBinding extends Bindings {
   @override
@@ -26,5 +27,6 @@ class InitialBinding extends Bindings {
     Get.put(ConnectivityController());
     Get.put(PresentersController());
     Get.lazyPut(ScheduleController.new);
+    Get.lazyPut(SearchIndexController.new);
   }
 }

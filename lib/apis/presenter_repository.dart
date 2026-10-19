@@ -77,8 +77,9 @@ class FirestorePresenterRepository implements PresenterRepository {
     final snapshot = await _presenters.get();
     return [
       for (final doc in snapshot.docs)
-        // Summaries only; the page fetches sermons when opened.
-        Presenter.fromJson({...doc.data(), 'series': null, 'singles': null})
+        // The documents are fetched whole anyway; keeping the sermons lets
+        // Search find them without a read per presenter.
+        Presenter.fromJson(doc.data())
     ]..sort((a, b) => b.sermonCount.compareTo(a.sermonCount));
   }
 
