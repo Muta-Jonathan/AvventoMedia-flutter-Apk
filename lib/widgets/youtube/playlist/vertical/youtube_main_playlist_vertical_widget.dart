@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:avvento_media/search/search_source.dart';
+import 'package:avvento_media/widgets/search/group_search.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/youtube/playlist/vertical/youtube_playlist_details_vertical_widget.dart';
@@ -10,7 +13,10 @@ import '../../../../components/app_constants.dart';
 import '../../../../controller/youtube_playlist_controller.dart';
 import '../../../../routes/routes.dart';
 class YoutubeMainPlaylistVerticalWidget extends StatefulWidget {
-  const YoutubeMainPlaylistVerticalWidget({super.key});
+  const YoutubeMainPlaylistVerticalWidget({super.key, this.query});
+
+  /// Narrows the list; set by the page's search field.
+  final ValueListenable<String>? query;
 
   @override
   YoutubeMainPlaylistVerticalWidgetState createState() =>
@@ -44,10 +50,14 @@ class YoutubeMainPlaylistVerticalWidgetState
               child: Center(child: Text('No items found')));
         }
 
-        return SliverList(
+        return GroupSearchList<YoutubePlaylistModel>(
+          items: playlists,
+          query: widget.query,
+          entryOf: SearchEntries.fromPlaylist,
+          builder: (context, shown) => SliverList(
           delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-              final playlist = playlists[index];
+              final playlist = shown[index];
               return GestureDetector(
                 onTap: () {
                   youtubePlaylistController.setSelectedPlaylist(playlist);
@@ -58,8 +68,9 @@ class YoutubeMainPlaylistVerticalWidgetState
                 ),
               );
             },
-            childCount: playlists.length,
+            childCount: shown.length,
           ),
+        ),
         );
       },
     );
