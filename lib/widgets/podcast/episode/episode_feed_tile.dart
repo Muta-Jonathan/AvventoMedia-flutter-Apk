@@ -64,6 +64,7 @@ class EpisodeFeedTile extends StatelessWidget {
     this.overlineLead,
     this.title,
     this.showSummary = true,
+    this.horizontalMargin = 20,
   });
 
   final PodcastEpisode episode;
@@ -83,6 +84,9 @@ class EpisodeFeedTile extends StatelessWidget {
   /// Display title; defaults to the episode's.
   final String? title;
   final bool showSummary;
+
+  /// Page margin; 0 inside a card that has its own padding.
+  final double horizontalMargin;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +108,7 @@ class EpisodeFeedTile extends StatelessWidget {
       child: InkWell(
         onTap: available ? onTap : null,
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
+          margin: EdgeInsets.symmetric(horizontal: horizontalMargin),
           // The action row's 44 hit areas supply the rest of the bottom gap.
           padding: const EdgeInsets.only(top: 14, bottom: 8),
           decoration: BoxDecoration(
