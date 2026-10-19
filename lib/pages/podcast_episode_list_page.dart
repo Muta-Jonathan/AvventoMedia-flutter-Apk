@@ -882,7 +882,6 @@ class _SortMenu extends StatelessWidget {
     final c = Theme.of(context).avvento;
     return PopupMenuButton<EpisodeSort>(
       tooltip: AppConstants.sort,
-      initialValue: selected,
       onSelected: onSelected,
       position: PopupMenuPosition.under,
       offset: const Offset(0, 2),
