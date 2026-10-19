@@ -248,6 +248,9 @@ class AppConstants {
   static const String series = "Series";
   static const String singleSermons = "Single sermons";
   static const String goToPresenter = "Go to presenter";
+  static const String newSermon = "new sermon";
+  static const String sermonsTab = "Sermons";
+  static const String seriesLabel = "SERIES";
   static const String playingFrom = "PLAYING FROM";
   static const String closePlayer = "Close player";
   static const String previous = "Previous";
@@ -354,9 +357,7 @@ class AppConstants {
   static String sermonCount(int n) => n == 1 ? '1 sermon' : '$n sermons';
   static String seriesCount(int n) => '$n series';
   static String partCount(int n) => n == 1 ? '1 part' : '$n parts';
-  static String showMoreParts(int n) =>
-      n == 1 ? 'Show 1 more part' : 'Show $n more parts';
-  static String playSeries(String title) => 'Play $title';
+  static String partsOf(int done, int total) => '$done of $total';
   static String listenToPresenter(String name) =>
       'Listen to $name on AvventoMedia 💫';
   static String speedSemantics(String speed) => 'Playback speed, $speed';

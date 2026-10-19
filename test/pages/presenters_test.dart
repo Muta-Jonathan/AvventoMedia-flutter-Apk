@@ -8,8 +8,11 @@ import 'package:avvento_media/controller/episode_progress_controller.dart';
 import 'package:avvento_media/controller/library_controller.dart';
 import 'package:avvento_media/controller/podcast_episode_controller.dart';
 import 'package:avvento_media/controller/presenters_controller.dart';
+import 'package:avvento_media/models/presenter_model.dart';
 import 'package:avvento_media/pages/presenter_page.dart';
 import 'package:avvento_media/pages/presenters_page.dart';
+import 'package:avvento_media/pages/series_page.dart';
+import 'package:avvento_media/routes/routes.dart';
 import 'package:avvento_media/themes/dark_theme.dart';
 import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/podcast/episode/episode_actions_sheet.dart';
@@ -25,22 +28,23 @@ import '../helpers/fake_audio_player.dart';
 
 void main() {
   late FakeAudioPlayer player;
-  late Directory dir;
+  Directory? dir;
 
   tearDown(() {
     Get.reset();
-    if (dir.existsSync()) dir.deleteSync(recursive: true);
+    if (dir?.existsSync() ?? false) dir!.deleteSync(recursive: true);
+    dir = null;
   });
 
   Future<void> pump(WidgetTester tester, Widget home,
-      {ThemeData? theme}) async {
+      {ThemeData? theme, List<GetPage>? routes}) async {
     if (tester.view.physicalSize == const Size(2400, 1800)) {
       tester.view.physicalSize = const Size(390 * 3, 1400 * 3);
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
     }
     SharedPreferences.setMockInitialValues({});
-    dir = Directory.systemTemp.createTempSync('presenters_test');
+    final tmp = dir = Directory.systemTemp.createTempSync('presenters_test');
     player = FakeAudioPlayer();
     Get.put(AudioPlayerController(player: player, startAudioService: false));
     Get.put(PodcastEpisodeController());
@@ -49,12 +53,12 @@ void main() {
     Get.put(DownloadController(
       client: () => MockClient(
           (_) async => http.Response.bytes(List.filled(512, 1), 200)),
-      directory: () async => dir,
+      directory: () async => tmp,
       notify: (_, {actionLabel, onAction}) {},
     ));
     Get.put(PresentersController(repository: MockPresenterRepository()));
-    await tester
-        .pumpWidget(GetMaterialApp(theme: theme ?? darkTheme, home: home));
+    await tester.pumpWidget(GetMaterialApp(
+        theme: theme ?? darkTheme, home: home, getPages: routes));
     await tester.pumpAndSettle();
   }
 
@@ -97,32 +101,66 @@ void main() {
   });
 
   group('Presenter page', () {
-    testWidgets('series in part order with Show more, then singles',
+    testWidgets('Series and Sermons tabs; the tab is kept per presenter',
         (tester) async {
-      await pump(
-          tester, const PresenterPage(presenterId: 'kiiza-samuel-akiki'));
+      await pump(tester, const PresenterPage(presenterId: 'denis-mukaisa'));
 
-      expect(find.text(AppConstants.presenterLabel), findsOneWidget);
-      expect(find.text('Bro. Kiiza Samuel Akiki'), findsOneWidget);
-      expect(find.text('6 sermons · 1 series'), findsOneWidget);
-      expect(find.text('Victory Amidst Troubles'), findsOneWidget);
-      expect(find.text('6 parts'), findsOneWidget);
-      expect(find.text('Victory Amidst Troubles Pt. 3'), findsOneWidget);
-      expect(find.text('Victory Amidst Troubles Pt. 4'), findsNothing);
-      expect(find.text('PART 1'), findsOneWidget);
+      expect(find.text('Series  1', findRichText: true), findsOneWidget);
+      expect(find.text('Sermons  3', findRichText: true), findsOneWidget);
+      expect(find.text('Final Forerunner'), findsOneWidget);
+      expect(find.text('3 parts'), findsOneWidget);
+      expect(find.text('Standing Firm in the Last Days'), findsNothing);
 
-      await tester.tap(find.text(AppConstants.showMoreParts(3)));
+      await tester.tap(find.text('Sermons  3', findRichText: true));
       await tester.pumpAndSettle();
-      expect(find.text('Victory Amidst Troubles Pt. 6'), findsOneWidget);
+      expect(find.text('Standing Firm in the Last Days'), findsOneWidget);
+      expect(find.text('Final Forerunner'), findsNothing);
+
+      // Reopening the presenter keeps the Sermons tab.
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(GetMaterialApp(
+          theme: darkTheme,
+          home: const PresenterPage(presenterId: 'denis-mukaisa')));
+      await tester.pumpAndSettle();
+      expect(find.text('Standing Firm in the Last Days'), findsOneWidget);
     });
 
-    testWidgets('Download all on a series queues every part', (tester) async {
+    testWidgets('series only: a grid, no tabs; a card opens the series',
+        (tester) async {
+      await pump(tester, const PresenterPage(presenterId: 'kiiza-samuel-akiki'),
+          routes: Routes.routes);
+
+      expect(find.text('Series  1', findRichText: true), findsNothing);
+      expect(find.text('6 parts'), findsOneWidget);
+
+      await tester.tap(find.text('Victory Amidst Troubles'));
+      await tester.pumpAndSettle();
+      expect(find.byType(SeriesPage), findsOneWidget);
+      expect(find.text(AppConstants.seriesLabel), findsOneWidget);
+      expect(find.text('Victory Amidst Troubles Pt. 1'), findsOneWidget);
+    });
+
+    testWidgets('a started series shows its progress', (tester) async {
+      await pump(tester, const PresenterPage(presenterId: 'denis-mukaisa'));
+      await tester.tap(find.text('Series  1', findRichText: true));
+      await tester.pumpAndSettle();
+      expect(find.text(AppConstants.partsOf(1, 3)), findsNothing);
+
+      Get.find<EpisodeProgressController>().progress['mock-ff1'] =
+          const EpisodeProgress(played: true);
+      await tester.pumpAndSettle();
+      expect(find.text(AppConstants.partsOf(1, 3)), findsOneWidget);
+    });
+
+    testWidgets('Download all on the series page queues every part',
+        (tester) async {
+      final kiiza =
+          await MockPresenterRepository().fetchPresenter('kiiza-samuel-akiki');
       await pump(
-          tester, const PresenterPage(presenterId: 'kiiza-samuel-akiki'));
+          tester, SeriesPage(presenter: kiiza, series: kiiza.series.single));
       final downloads = Get.find<DownloadController>();
 
-      // The series card's button (the header's covers all sermons).
-      await tester.tap(find.bySemanticsLabel(AppConstants.downloadAll(6)).last);
+      await tester.tap(find.bySemanticsLabel(AppConstants.downloadAll(6)));
       await tester.pump();
       expect(downloads.tasks.length + downloads.downloads.length, 6);
     });
@@ -172,5 +210,49 @@ void main() {
         showTitle: 'Devotions');
     await tester.pumpAndSettle();
     expect(find.text(AppConstants.goToPresenter), findsOneWidget);
+  });
+
+  group('New-sermon ring', () {
+    const day = 86400;
+    final now = DateTime(2026, 10, 19);
+    final nowSecs = now.millisecondsSinceEpoch ~/ 1000;
+    Presenter presenter(int latestAt) => Presenter(
+        id: 'p',
+        name: 'Pr. P',
+        image: '',
+        genre: '',
+        sermonCount: 1,
+        seriesCount: 0,
+        latestAt: latestAt);
+
+    test('shows for 14 days until the presenter is opened', () async {
+      SharedPreferences.setMockInitialValues({});
+      final controller = PresentersController(
+          repository: MockPresenterRepository(), clock: () => now);
+      final fresh = presenter(nowSecs - 3 * day);
+
+      expect(controller.hasNew(fresh), isTrue);
+      expect(controller.hasNew(presenter(nowSecs - 15 * day)), isFalse);
+      expect(controller.hasNew(presenter(0)), isFalse);
+
+      await controller.markSeen(fresh);
+      expect(controller.hasNew(fresh), isFalse);
+      // Something newer brings it back.
+      expect(controller.hasNew(presenter(nowSecs - day)), isTrue);
+    });
+
+    test('seen presenters are remembered', () async {
+      SharedPreferences.setMockInitialValues({});
+      final fresh = presenter(nowSecs - day);
+      await PresentersController(
+          repository: MockPresenterRepository(),
+          clock: () => now).markSeen(fresh);
+
+      final next = PresentersController(
+          repository: MockPresenterRepository(), clock: () => now);
+      next.onInit();
+      await Future<void>.delayed(Duration.zero);
+      expect(next.hasNew(fresh), isFalse);
+    });
   });
 }

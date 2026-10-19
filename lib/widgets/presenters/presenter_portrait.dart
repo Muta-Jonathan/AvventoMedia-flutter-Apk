@@ -16,25 +16,27 @@ String presenterInitials(String name) {
 
 /// Circular portrait cropped from sermon art. Aligned high so the AVVENTO
 /// RADIO band at the bottom of most covers stays out; initials when there's
-/// no image. [ring] adds the accent ring used on the presenter page.
+/// no image.
+///
+/// [ring]: null draws no ring; false keeps the ring's space (so a row of
+/// portraits lines up) and true draws the accent "new sermon" ring.
 class PresenterPortrait extends StatelessWidget {
   const PresenterPortrait({
     super.key,
     required this.name,
     required this.image,
     required this.size,
-    this.ring = false,
-    this.ringGap = 3,
-    this.ringWidth = 2,
+    this.ring,
+    this.ringGap = 2.5,
+    this.ringWidth = 2.5,
   });
 
   final String name;
   final String image;
   final double size;
-  final bool ring;
+  final bool? ring;
 
-  /// Page-colored gap and accent ring width: 3/2 on the presenter page,
-  /// 2/1.5 on the rail.
+  /// Page-colored gap and ring width around the portrait.
   final double ringGap;
   final double ringWidth;
 
@@ -65,13 +67,14 @@ class PresenterPortrait extends StatelessWidget {
               errorWidget: (_, __, ___) => initials,
             ),
     );
-    if (!ring) return ExcludeSemantics(child: portrait);
+    if (ring == null) return ExcludeSemantics(child: portrait);
     return ExcludeSemantics(
       child: Container(
         padding: EdgeInsets.all(ringGap + ringWidth),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: c.accent, width: ringWidth),
+          border: Border.all(
+              color: ring! ? c.accent : Colors.transparent, width: ringWidth),
         ),
         child: portrait,
       ),

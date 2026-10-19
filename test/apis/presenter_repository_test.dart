@@ -6,6 +6,7 @@ import 'package:avvento_media/apis/presenter_repository.dart';
 import 'package:avvento_media/controller/presenters_controller.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -112,6 +113,7 @@ void main() {
   });
 
   test('controller finds a presenter by an episode artist', () async {
+    SharedPreferences.setMockInitialValues({});
     final controller =
         Get.put(PresentersController(repository: MockPresenterRepository()));
     await Future<void>.delayed(Duration.zero);

@@ -274,7 +274,12 @@ class _PresenterRow extends StatelessWidget {
         child: Row(
           children: [
             PresenterPortrait(
-                name: presenter.name, image: presenter.image, size: 56),
+                name: presenter.name,
+                image: presenter.image,
+                size: 56,
+                ring: Get.find<PresentersController>().hasNew(presenter),
+                ringGap: 2,
+                ringWidth: 2),
             const SizedBox(width: 14),
             Expanded(
               child: Padding(

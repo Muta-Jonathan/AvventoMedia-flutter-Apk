@@ -28,10 +28,28 @@ import '../themes/avvento_theme.dart';
 /// chapters by book with a book jump; Ellen G. White books list chapters.
 /// Playback queues follow the list as displayed.
 class PodcastEpisodeListPage extends StatefulWidget {
-  /// [fetchEpisodes] and [cachedEpisodes] exist for tests.
-  const PodcastEpisodeListPage(
-      {super.key, this.fetchEpisodes, this.cachedEpisodes});
+  /// Defaults to the selected podcast. A presenter's series passes its own
+  /// [show], [overline], [countLabel] and [saved] (see SeriesPage).
+  const PodcastEpisodeListPage({
+    super.key,
+    this.show,
+    this.overline,
+    this.countLabel,
+    this.saved,
+    this.fetchEpisodes,
+    this.cachedEpisodes,
+  });
 
+  final RadioPodcast? show;
+
+  /// Replaces "PODCAST" / "BIBLE" / "ELLEN G. WHITE".
+  final String? overline;
+
+  /// "6 parts" instead of "6 episodes".
+  final String Function(int count)? countLabel;
+
+  /// What Favorite and Save store; defaults to the podcast.
+  final SavedItem? saved;
   final Future<List<PodcastEpisode>> Function(String url)? fetchEpisodes;
   final Future<List<PodcastEpisode>?> Function(String url)? cachedEpisodes;
 
@@ -40,8 +58,8 @@ class PodcastEpisodeListPage extends StatefulWidget {
 }
 
 class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
-  final RadioPodcast show =
-      Get.find<PodcastController>().selectedEpisode.value!;
+  late final RadioPodcast show =
+      widget.show ?? Get.find<PodcastController>().selectedEpisode.value!;
   List<PodcastEpisode>? _episodes;
   bool _failed = false;
 
@@ -254,16 +272,18 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                     SliverToBoxAdapter(
                       child: _Header(
                         show: show,
-                        overline: switch (_kind) {
-                          FeedKind.bible => AppConstants.bibleLabel,
-                          FeedKind.egwBook => AppConstants.egwLabel,
-                          _ => AppConstants.podcastLabel,
-                        },
-                        meta: _kind == FeedKind.egwBook
-                            ? AppConstants.chapterCount(
-                                _episodes?.length ?? show.episodes)
-                            : AppConstants.episodeCount(
-                                _episodes?.length ?? show.episodes),
+                        overline: widget.overline ??
+                            switch (_kind) {
+                              FeedKind.bible => AppConstants.bibleLabel,
+                              FeedKind.egwBook => AppConstants.egwLabel,
+                              _ => AppConstants.podcastLabel,
+                            },
+                        meta: (widget.countLabel ??
+                                (_kind == FeedKind.egwBook
+                                    ? AppConstants.chapterCount
+                                    : AppConstants.episodeCount))(
+                            _episodes?.length ?? show.episodes),
+                        saved: widget.saved,
                         playLabel: currentIndex >= 0
                             ? (playing
                                 ? AppConstants.pause
@@ -434,9 +454,13 @@ class _Header extends StatelessWidget {
     required this.onPlayAll,
     required this.onShuffle,
     required this.downloadAll,
+    this.saved,
   });
 
   final RadioPodcast show;
+
+  /// Overrides what Favorite and Save store.
+  final SavedItem? saved;
 
   /// "PODCAST", "BIBLE" or "ELLEN G. WHITE".
   final String overline;
@@ -455,17 +479,18 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Theme.of(context).avvento;
-    final saved = SavedItem(
-      id: show.id,
-      type: 'podcast_show',
-      title: show.title,
-      thumbnailUrl: show.art,
-      groupId: show.id,
-      groupTitle: show.title,
-      description: show.description,
-      publishedAtItem: show.lastUpdated.toIso8601String(),
-      savedAt: DateTime.now(),
-    );
+    final saved = this.saved ??
+        SavedItem(
+          id: show.id,
+          type: 'podcast_show',
+          title: show.title,
+          thumbnailUrl: show.art,
+          groupId: show.id,
+          groupTitle: show.title,
+          description: show.description,
+          publishedAtItem: show.lastUpdated.toIso8601String(),
+          savedAt: DateTime.now(),
+        );
 
     return SafeArea(
       top: false, // The page handles the top inset.

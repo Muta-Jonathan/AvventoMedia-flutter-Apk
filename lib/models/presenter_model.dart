@@ -34,6 +34,7 @@ class Presenter {
     required this.genre,
     required this.sermonCount,
     required this.seriesCount,
+    this.latestAt = 0,
     this.series = const [],
     this.singles = const [],
   });
@@ -48,6 +49,9 @@ class Presenter {
   final String genre;
   final int sermonCount;
   final int seriesCount;
+
+  /// Newest upload, in seconds since the epoch; 0 when unknown.
+  final int latestAt;
   final List<SermonSeries> series;
 
   /// Newest first.
@@ -73,6 +77,7 @@ class Presenter {
         genre: json['genre'] ?? '',
         sermonCount: (json['sermon_count'] as num?)?.toInt() ?? 0,
         seriesCount: (json['series_count'] as num?)?.toInt() ?? 0,
+        latestAt: (json['latest_at'] as num?)?.toInt() ?? 0,
         series: [
           for (final s in (json['series'] as List?) ?? const [])
             SermonSeries.fromJson(s)
