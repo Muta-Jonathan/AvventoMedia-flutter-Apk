@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'dart:io';
 
-import 'package:avvento_media/apis/podcast_repository.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
 import 'package:avvento_media/controller/popup_route_observer.dart';
@@ -49,8 +47,6 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await Upgrader.clearSavedSettings();
   Get.put(await SettingsController.load(), permanent: true);
-  // Podcasts now come from Firestore's offline cache.
-  unawaited(PodcastRepository.clearLegacyCache());
 
   runApp(
     MultiProvider(

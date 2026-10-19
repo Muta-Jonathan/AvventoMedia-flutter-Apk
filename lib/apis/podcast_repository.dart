@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/radiomodel/podcast_episode_model.dart';
 import '../models/radiomodel/radio_podcast_model.dart';
 
 /// Where podcasts come from: Firestore, filled from AzuraCast by
-/// avvento-cache-server (syncPodcasts.js). Firestore's offline cache
-/// replaces the old SharedPreferences copies.
+/// avvento-cache-server (syncPodcasts.js). Firestore's offline cache keeps
+/// shows readable without a connection.
 abstract class PodcastRepository {
   static final PodcastRepository instance = FirestorePodcastRepository();
 
@@ -19,18 +18,6 @@ abstract class PodcastRepository {
 
   /// Newest first.
   Future<List<PodcastEpisode>> fetchEpisodes(String showId);
-
-  /// Drops the SharedPreferences podcast copies older versions saved
-  /// (over 1 MB for the Old Testament).
-  static Future<void> clearLegacyCache() async {
-    final prefs = await SharedPreferences.getInstance();
-    for (final key in prefs.getKeys().toList()) {
-      if (key == 'cachedRadioPodcastKey' ||
-          key.startsWith('cachedPodcastEpisodeKey')) {
-        await prefs.remove(key);
-      }
-    }
-  }
 }
 
 /// `podcasts/{id}` holds the show; `podcasts/{id}/pages/{n}` its episodes,

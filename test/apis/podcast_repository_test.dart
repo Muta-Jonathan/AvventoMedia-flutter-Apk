@@ -1,6 +1,5 @@
 import 'package:avvento_media/apis/podcast_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Map<String, dynamic> episode(String id, int publishAt) => {
       'id': id,
@@ -28,16 +27,5 @@ void main() {
       },
     ]);
     expect(episodes.map((e) => e.id), ['d', 'c', 'b', 'a']);
-  });
-
-  test('clears the old SharedPreferences podcast copies only', () async {
-    SharedPreferences.setMockInitialValues({
-      'cachedRadioPodcastKey': '[]',
-      'cachedPodcastEpisodeKey:https://x/podcast/1/episodes': '[]',
-      'cachedRadioStationKey': '{}',
-    });
-    await PodcastRepository.clearLegacyCache();
-    final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getKeys(), {'cachedRadioStationKey'});
   });
 }
