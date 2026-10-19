@@ -59,9 +59,17 @@ class RadioPodcast {
       episodes: json['episodes'],
       categories: categoriesList,
       episodesLink: json['links']['episodes'],
-      lastUpdated: DateTime.fromMillisecondsSinceEpoch(json['art_updated_at'] * 1000),
+      // The newest episode, so a show with a new one rises in the lists;
+      // the cover's date until the server provides it.
+      lastUpdated: DateTime.fromMillisecondsSinceEpoch(
+          (_seconds(json['last_episode_at']) ?? json['art_updated_at']) * 1000),
     );
   }
+}
+
+int? _seconds(Object? value) {
+  final n = (value as num?)?.toInt();
+  return n == null || n <= 0 ? null : n;
 }
 
 class Category {
