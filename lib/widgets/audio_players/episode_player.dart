@@ -521,9 +521,10 @@ class _Utilities extends StatelessWidget {
             toggled: saved,
             onTap: () => SaveBottomSheet.show(
                 context, _saved(audio.audioPlayer.duration)),
+            // Bookmark with a plus; filled amber once in a playlist.
             visual: Icon(
-                saved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
-                size: 22,
+                saved ? Icons.bookmark_rounded : Icons.bookmark_add_outlined,
+                size: 24,
                 color: saved ? c.accent : c.text),
           );
         }),
@@ -538,10 +539,12 @@ class _Utilities extends StatelessWidget {
     final audio = Get.find<AudioPlayerController>();
     showModalBottomSheet<void>(
       context: context,
+      // Sizes to its content and scrolls if squeezed.
+      isScrollControlled: true,
       builder: (sheetContext) {
         final c = Theme.of(sheetContext).avvento;
         return SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,

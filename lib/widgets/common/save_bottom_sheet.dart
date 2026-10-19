@@ -6,6 +6,7 @@ import '../../components/app_constants.dart';
 import '../../components/app_snackbar.dart';
 import '../../controller/library_controller.dart';
 import '../../models/saved_item_model.dart';
+import '../../themes/avvento_colors.dart';
 import 'new_playlist_bottom_sheet.dart';
 
 class SaveBottomSheet {
@@ -13,7 +14,10 @@ class SaveBottomSheet {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      // Draws its own handle; the redesigned theme would add a second one.
+      showDragHandle: false,
+      // Tokens look right under the old and the redesigned theme.
+      backgroundColor: Theme.of(context).avvento.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -59,6 +63,7 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
 
   @override
   Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
     return Obx(() {
       final playlists = _library.playlists.toList();
 
@@ -78,7 +83,7 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                   width: 40,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.4),
+                    color: c.line,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -91,7 +96,7 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                   Text(
                     _titleString,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
+                      color: c.text,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -121,7 +126,7 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                             navigator: navigator);
                       }
                     },
-                    icon: const Icon(CupertinoIcons.add_circled_solid, color: Colors.amber, size: 28),
+                    icon: Icon(CupertinoIcons.add_circled_solid, color: c.accent, size: 28),
                     tooltip: AppConstants.newPlaylist,
                   )
                 ],
@@ -153,7 +158,7 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: c.text,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
@@ -161,7 +166,7 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                         Text(
                           widget.item.groupTitle,
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSecondary,
+                            color: c.text2,
                             fontSize: 12,
                           ),
                         ),
@@ -171,10 +176,7 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                 ],
               ),
               const SizedBox(height: 20),
-              Divider(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .tertiaryContainer),
+              Divider(color: c.line),
               
               // ── Checkbox List ──────────────────────────────────────
 
@@ -185,15 +187,16 @@ class _SaveBottomSheetContentState extends State<_SaveBottomSheetContent> {
                   contentPadding: EdgeInsets.zero,
                   controlAffinity: ListTileControlAffinity.leading,
                   value: inPlaylist,
-                  activeColor: Colors.amber,
+                  activeColor: c.accent,
+                  checkColor: c.onAccent,
                   side: BorderSide(
-                    color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.5),
+                    color: c.text3,
                     width: 1.5,
                   ),
                   title: Text(
                     pl.title,
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary),
+                        color: c.text),
                   ),
                   onChanged: (val) async {
                     if (val == true) {

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../components/app_constants.dart';
 import '../../components/app_snackbar.dart';
 import '../../controller/library_controller.dart';
+import '../../themes/avvento_colors.dart';
 
 class NewPlaylistBottomSheet {
   /// [confirm]: show "Playlist created". Callers that follow up with their
@@ -15,11 +16,14 @@ class NewPlaylistBottomSheet {
     return showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      // Draws its own handle; tokens suit both themes.
+      showDragHandle: false,
+      backgroundColor: Theme.of(context).avvento.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) {
+        final c = Theme.of(ctx).avvento;
         return Padding(
           padding: EdgeInsets.only(
             left: 20,
@@ -39,7 +43,7 @@ class NewPlaylistBottomSheet {
                     width: 40,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.4),
+                      color: c.line,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -48,7 +52,7 @@ class NewPlaylistBottomSheet {
                 Text(
                   AppConstants.newPlaylist,
                   style: TextStyle(
-                    color: Theme.of(ctx).colorScheme.onPrimary,
+                    color: c.text,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -57,13 +61,13 @@ class NewPlaylistBottomSheet {
                 TextFormField(
                   controller: controller,
                   autofocus: true,
-                  style: TextStyle(color: Theme.of(ctx).colorScheme.onPrimary),
+                  style: TextStyle(color: c.text),
                   decoration: InputDecoration(
                     hintText: AppConstants.playlistNameHint,
                     hintStyle: TextStyle(
-                        color: Theme.of(ctx).colorScheme.onSecondary),
+                        color: c.text3),
                     filled: true,
-                    fillColor: Theme.of(ctx).colorScheme.secondary,
+                    fillColor: c.surface2,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -79,8 +83,8 @@ class NewPlaylistBottomSheet {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amber,
-                      foregroundColor: Colors.black,
+                      backgroundColor: c.accent,
+                      foregroundColor: c.onAccent,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),

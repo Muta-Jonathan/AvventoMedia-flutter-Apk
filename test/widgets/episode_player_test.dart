@@ -8,6 +8,7 @@ import 'package:avvento_media/controller/library_controller.dart';
 import 'package:avvento_media/controller/podcast_episode_controller.dart';
 import 'package:avvento_media/controller/settings_controller.dart';
 import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
+import 'package:avvento_media/themes/avvento_colors.dart';
 import 'package:avvento_media/themes/dark_theme.dart';
 import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/audio_players/episode_player.dart';
@@ -129,6 +130,37 @@ void main() {
     expect(player.calls, contains('speed:1.5'));
     expect(find.bySemanticsLabel(AppConstants.speedSemantics('1.5×')),
         findsOneWidget);
+  });
+
+  testWidgets('Save opens a readable save sheet with a single handle',
+      (tester) async {
+    await pump(tester);
+
+    await tester.tap(find.bySemanticsLabel(AppConstants.saveToPlaylist));
+    await tester.pumpAndSettle();
+
+    // Text used to take onPrimary, which is dark in the redesigned theme.
+    final title = tester.widget<Text>(find.text('Save podcast to...'));
+    expect(title.style!.color, AvventoColors.dark.text);
+    // The sheet draws its own handle; the theme must not add another.
+    expect(tester.widget<BottomSheet>(find.byType(BottomSheet)).showDragHandle,
+        isFalse);
+  });
+
+  testWidgets('collapsing the player closes its open sheets', (tester) async {
+    await pump(tester);
+    final audio = Get.find<AudioPlayerController>();
+    audio.fullPlayerNavigator =
+        tester.state<NavigatorState>(find.byType(Navigator).first);
+
+    await tester.tap(find.bySemanticsLabel(AppConstants.speedSemantics('1×')));
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.playbackSpeed), findsOneWidget);
+
+    audio.onPanelPercentageChanged(1);
+    audio.onPanelPercentageChanged(0.6);
+    await tester.pumpAndSettle();
+    expect(find.text(AppConstants.playbackSpeed), findsNothing);
   });
 
   testWidgets('fits a 360dp phone at 130% text in both themes',

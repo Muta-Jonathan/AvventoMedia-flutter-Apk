@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart' show ScaffoldMessenger;
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -313,7 +314,9 @@ class AudioPlayerController extends GetxController {
 
   void onPanelPercentageChanged(double percentage) {
     final wasOpen = panelPercentage.value > 0.01;
+    final wasExpanded = panelPercentage.value >= 0.99;
     panelPercentage.value = percentage;
+    if (wasExpanded && percentage < 0.99) _closePlayerOverlays();
     if (percentage >= 0.99) {
       _addExpandedBackEntry();
     } else if (percentage <= 0.01) {
@@ -321,6 +324,15 @@ class AudioPlayerController extends GetxController {
       // Mini bar disabled: collapsing closes the player (audio continues).
       if (wasOpen && !_miniBarAllowed) isMiniPlayerVisible.value = false;
     }
+  }
+
+  /// Sheets and snackbars opened in the full player live in its navigator;
+  /// close them before the panel shrinks, or they're squeezed into the bar.
+  void _closePlayerOverlays() {
+    final navigator = fullPlayerNavigator;
+    if (navigator == null || !navigator.mounted) return;
+    navigator.popUntil((route) => route.isFirst);
+    ScaffoldMessenger.maybeOf(navigator.context)?.clearSnackBars();
   }
 
   /// "Allow Mini Player" in More; on when there are no settings (tests).
