@@ -10,6 +10,7 @@ import '../../routes/routes.dart';
 import '../../themes/avvento_colors.dart';
 import '../podcast/podcast_palette.dart';
 import '../providers/radio_podcast_provider.dart';
+import 'inline_notice.dart';
 import 'section_header.dart';
 
 /// "Podcasts" with two rails: Series & Bible (play in order) and Daily &
@@ -19,8 +20,21 @@ class PodcastRails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final shows = context.watch<RadioPodcastProvider>().podcasts;
-    if (shows.isEmpty) return const SizedBox.shrink();
+    final provider = context.watch<RadioPodcastProvider>();
+    final shows = provider.podcasts;
+    if (shows.isEmpty) {
+      if (!provider.failed) return const SizedBox.shrink();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ListenSectionHeader(title: AppConstants.podcasts),
+          InlineNotice(
+              message: AppConstants.podcastsLoadFailed,
+              actionLabel: AppConstants.retry,
+              onAction: provider.fetchAllPodcasts),
+        ],
+      );
+    }
 
     final inOrder = [
       for (final s in shows)

@@ -1,7 +1,9 @@
 import 'package:avvento_media/apis/mock_presenter_repository.dart';
 import 'package:avvento_media/apis/schedule_repository.dart';
 import 'package:avvento_media/components/app_constants.dart';
+import 'package:avvento_media/apis/presenter_repository.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
+import 'package:avvento_media/controller/connectivity_controller.dart';
 import 'package:avvento_media/controller/download_controller.dart';
 import 'package:avvento_media/controller/episode_progress_controller.dart';
 import 'package:avvento_media/controller/library_controller.dart';
@@ -9,6 +11,8 @@ import 'package:avvento_media/controller/podcast_controller.dart';
 import 'package:avvento_media/controller/podcast_episode_controller.dart';
 import 'package:avvento_media/controller/presenters_controller.dart';
 import 'package:avvento_media/controller/schedule_controller.dart';
+import 'package:avvento_media/models/presenter_model.dart';
+import 'package:avvento_media/models/radiomodel/downloaded_episode_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_station_model.dart';
 import 'package:avvento_media/models/schedule_slot.dart';
@@ -18,6 +22,7 @@ import 'package:avvento_media/themes/dark_theme.dart';
 import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -26,6 +31,15 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/fake_audio_player.dart';
+
+/// Presenters that never load.
+class _FailingPresenters implements PresenterRepository {
+  @override
+  Future<List<Presenter>> fetchPresenters() async => throw Exception('offline');
+  @override
+  Future<Presenter> fetchPresenter(String id) async =>
+      throw Exception('offline');
+}
 
 class _Schedule implements ScheduleRepository {
   @override
@@ -54,6 +68,9 @@ RadioPodcast show(String id, String title, int episodes) => RadioPodcast(
 
 void main() {
   late FakeAudioPlayer player;
+
+  /// What the connectivity check reports; change it before tapping Retry.
+  var connection = ConnectivityResult.wifi;
 
   /// A widget test that removes the page and the controllers (the schedule
   /// keeps a timer) before it ends.
@@ -90,7 +107,12 @@ void main() {
     ThemeData? theme,
     bool continueListening = true,
     double width = 390,
+    bool offline = false,
+    bool presentersFail = false,
+    bool podcastsFail = false,
+    bool downloadFirst = false,
   }) async {
+    connection = offline ? ConnectivityResult.none : ConnectivityResult.wifi;
     tester.view.physicalSize = Size(width * 3, 1800 * 3);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -101,7 +123,11 @@ void main() {
     Get.put(LibraryController());
     Get.put(DownloadController());
     Get.put(PodcastController());
-    Get.put(PresentersController(repository: MockPresenterRepository()));
+    Get.put(ConnectivityController(
+        changes: const Stream.empty(), check: () async => [connection]));
+    Get.put(PresentersController(
+        repository:
+            presentersFail ? _FailingPresenters() : MockPresenterRepository()));
     Get.put(ScheduleController(
         repository: _Schedule(),
         clock: () => DateTime.utc(2026, 10, 20, 9, 30)));
@@ -117,6 +143,15 @@ void main() {
       progress.progress[genesis.id] = const EpisodeProgress(
           position: Duration(minutes: 6), duration: Duration(minutes: 20));
       progress.recents.add(RecentEpisode(genesis, 'Devotions'));
+      if (downloadFirst) {
+        Get.find<DownloadController>().downloads[genesis.id] =
+            DownloadedEpisode(
+                episode: genesis,
+                showTitle: 'Devotions',
+                filePath: '/tmp/${genesis.id}.mp3',
+                bytes: 1,
+                downloadedAt: DateTime(2026));
+      }
     }
 
     await tester.pumpWidget(MultiProvider(
@@ -125,12 +160,14 @@ void main() {
             create: (_) => RadioStationProvider.fixed(live ?? station)),
         ChangeNotifierProvider<RadioPodcastProvider>(
             create: (_) => RadioPodcastProvider(
-                podcasts: shows ??
-                    [
-                      show('1', 'Old Testament KJV Dramatized', 748),
-                      show('2', 'The Desire of Ages (Dramatized)', 87),
-                      show('3', 'Wellness Voice', 25),
-                    ])),
+                podcasts: podcastsFail
+                    ? const []
+                    : shows ??
+                        [
+                          show('1', 'Old Testament KJV Dramatized', 748),
+                          show('2', 'The Desire of Ages (Dramatized)', 87),
+                          show('3', 'Wellness Voice', 25),
+                        ])),
       ],
       child: GetMaterialApp(
         theme: theme ?? darkTheme,
@@ -139,6 +176,9 @@ void main() {
           GetPage(
               name: Routes.presenters,
               page: () => const Scaffold(body: Text('presenters page'))),
+          GetPage(
+              name: Routes.downloads,
+              page: () => const Scaffold(body: Text('downloads page'))),
           GetPage(
               name: Routes.podcastList,
               page: () => const Scaffold(body: Text('podcast list page'))),
@@ -269,5 +309,71 @@ void main() {
     Get.reset();
     await pump(tester, theme: lightTheme, width: 360);
     expect(tester.takeException(), isNull);
+  });
+
+  group('offline', () {
+    listenTest('shows the pill, the banner and a disabled live card',
+        (tester) async {
+      await pump(tester, offline: true);
+
+      expect(find.text(AppConstants.offline), findsOneWidget);
+      expect(find.text(AppConstants.showingDownloadsOnly), findsOneWidget);
+      expect(find.text(AppConstants.noConnection), findsOneWidget);
+      expect(find.text(AppConstants.retry), findsOneWidget);
+      expect(find.bySemanticsLabel(AppConstants.playLiveRadio), findsNothing);
+    });
+
+    listenTest('the banner opens Downloads', (tester) async {
+      await pump(tester, offline: true);
+      await tester.tap(find.text(AppConstants.showingDownloadsOnly));
+      await tester.pumpAndSettle();
+      expect(find.text('downloads page'), findsOneWidget);
+    });
+
+    listenTest('Continue listening keeps only downloaded episodes',
+        (tester) async {
+      await pump(tester, offline: true);
+      expect(find.text(AppConstants.continueListening), findsNothing);
+    });
+
+    listenTest('a downloaded episode can still be resumed offline',
+        (tester) async {
+      await pump(tester, offline: true, downloadFirst: true);
+      expect(find.text(AppConstants.continueListening), findsOneWidget);
+    });
+
+    listenTest('Retry brings the page back when the connection returns',
+        (tester) async {
+      await pump(tester, offline: true);
+
+      connection = ConnectivityResult.wifi;
+      await tester.tap(find.text(AppConstants.retry));
+      await tester.pumpAndSettle();
+
+      expect(find.text(AppConstants.showingDownloadsOnly), findsNothing);
+      expect(find.text(AppConstants.noConnection), findsNothing);
+      expect(find.text(AppConstants.listenLive), findsOneWidget);
+      expect(find.text(AppConstants.continueListening), findsOneWidget);
+    });
+
+    listenTest('nothing offline appears while online', (tester) async {
+      await pump(tester);
+      expect(find.text(AppConstants.offline), findsNothing);
+      expect(find.text(AppConstants.showingDownloadsOnly), findsNothing);
+    });
+  });
+
+  group('rails that could not load', () {
+    listenTest('podcasts offer Retry', (tester) async {
+      await pump(tester, podcastsFail: true);
+      expect(find.text(AppConstants.podcastsLoadFailed), findsOneWidget);
+      expect(find.text(AppConstants.retry), findsWidgets);
+    });
+
+    listenTest('presenters offer Retry', (tester) async {
+      await pump(tester, presentersFail: true);
+      expect(find.text(AppConstants.presentersLoadFailed), findsOneWidget);
+      expect(find.text(AppConstants.retry), findsWidgets);
+    });
   });
 }

@@ -10,12 +10,17 @@ class RadioPodcastProvider extends ChangeNotifier {
 
   List<RadioPodcast> get podcasts => _podcasts;
 
+  /// The last fetch failed (offline, no cache yet).
+  bool failed = false;
+
   Future<void> fetchAllPodcasts() async {
     try {
       _podcasts = await PodcastRepository.instance.fetchPodcasts();
-      notifyListeners();
-    } catch (error) {
-      // Handle error
+      failed = false;
+    } catch (_) {
+      // Keep what we have; only an empty list is a failure.
+      failed = _podcasts.isEmpty;
     }
+    notifyListeners();
   }
 }

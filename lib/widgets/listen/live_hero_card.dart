@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../components/app_constants.dart';
 import '../../controller/audio_player_controller.dart';
+import '../../controller/connectivity_controller.dart';
 import '../../models/radiomodel/radio_station_model.dart';
 import '../../themes/avvento_colors.dart';
 import '../../themes/avvento_theme.dart';
@@ -20,7 +21,8 @@ class LiveHeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audio = Get.find<AudioPlayerController>();
-    final station = context.watch<RadioStationProvider>().radioStation;
+    final radio = context.watch<RadioStationProvider>();
+    final station = radio.radioStation;
 
     return StreamBuilder<PlayerState>(
       stream: audio.audioPlayer.playerStateStream,
@@ -30,14 +32,16 @@ class LiveHeroCard extends StatelessWidget {
         final playing = loaded &&
             (snapshot.data?.playing ?? false) &&
             snapshot.data?.processingState != ProcessingState.completed;
-        return _card(context, audio, station, playing);
+        return _card(context, audio, station, playing, radio);
       }),
     );
   }
 
   Widget _card(BuildContext context, AudioPlayerController audio,
-      RadioStation? station, bool playing) {
+      RadioStation? station, bool playing, RadioStationProvider radio) {
     final c = Theme.of(context).avvento;
+    // Nothing to start while offline; a stream already playing can pause.
+    final offline = ConnectivityController.isOffline && !playing;
     final ready = station != null && station.streamUrl.isNotEmpty;
     final label = playing ? AppConstants.playingLive : AppConstants.listenLive;
 
@@ -69,18 +73,21 @@ class LiveHeroCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(14),
-                      child: SizedBox.square(
-                        dimension: 120,
-                        child: station == null || station.imageUrl.isEmpty
-                            ? ColoredBox(color: c.surface2)
-                            : CachedNetworkImage(
-                                imageUrl: station.imageUrl,
-                                fit: BoxFit.cover,
-                                placeholder: (_, __) =>
-                                    ColoredBox(color: c.surface2),
-                                errorWidget: (_, __, ___) =>
-                                    ColoredBox(color: c.surface2),
-                              ),
+                      child: Opacity(
+                        opacity: offline ? 0.45 : 1,
+                        child: SizedBox.square(
+                          dimension: 120,
+                          child: station == null || station.imageUrl.isEmpty
+                              ? ColoredBox(color: c.surface2)
+                              : CachedNetworkImage(
+                                  imageUrl: station.imageUrl,
+                                  fit: BoxFit.cover,
+                                  placeholder: (_, __) =>
+                                      ColoredBox(color: c.surface2),
+                                  errorWidget: (_, __, ___) =>
+                                      ColoredBox(color: c.surface2),
+                                ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -146,48 +153,54 @@ class LiveHeroCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-            child: Row(
-              children: [
-                Semantics(
-                  button: true,
-                  enabled: ready,
-                  label: playing
-                      ? AppConstants.pauseLiveRadio
-                      : AppConstants.playLiveRadio,
-                  excludeSemantics: true,
-                  child: Material(
-                    color: ready ? c.accent : c.surface2,
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: ready
-                          ? () => audio.liveLoaded
-                              ? (playing ? audio.pause() : audio.play())
-                              : audio.playLive(station)
-                          : null,
-                      child: SizedBox.square(
-                        dimension: 52,
-                        child: Icon(
-                            playing
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            size: 28,
-                            color: c.onAccent),
+            child: offline
+                ? _NoConnection(onRetry: () async {
+                    final connectivity = Get.find<ConnectivityController>();
+                    await connectivity.recheck();
+                    if (!connectivity.offline.value) radio.reconnect();
+                  })
+                : Row(
+                    children: [
+                      Semantics(
+                        button: true,
+                        enabled: ready,
+                        label: playing
+                            ? AppConstants.pauseLiveRadio
+                            : AppConstants.playLiveRadio,
+                        excludeSemantics: true,
+                        child: Material(
+                          color: ready ? c.accent : c.surface2,
+                          shape: const CircleBorder(),
+                          child: InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: ready
+                                ? () => audio.liveLoaded
+                                    ? (playing ? audio.pause() : audio.play())
+                                    : audio.playLive(station)
+                                : null,
+                            child: SizedBox.square(
+                              dimension: 52,
+                              child: Icon(
+                                  playing
+                                      ? Icons.pause_rounded
+                                      : Icons.play_arrow_rounded,
+                                  size: 28,
+                                  color: c.onAccent),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(label,
+                            style: TextStyle(
+                                color: c.text,
+                                fontSize: 15,
+                                height: 20 / 15,
+                                fontWeight: FontWeight.w700)),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(label,
-                      style: TextStyle(
-                          color: c.text,
-                          fontSize: 15,
-                          height: 20 / 15,
-                          fontWeight: FontWeight.w700)),
-                ),
-              ],
-            ),
           ),
         ],
       ),
@@ -222,6 +235,43 @@ class _LiveBadge extends StatelessWidget {
                   letterSpacing: 0.88)),
         ],
       ),
+    );
+  }
+}
+
+/// "No connection" and a Retry pill in place of the play button.
+class _NoConnection extends StatelessWidget {
+  const _NoConnection({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = Theme.of(context).avvento;
+    return Row(
+      children: [
+        Expanded(
+          child: Text(AppConstants.noConnection,
+              style: TextStyle(
+                  color: c.text2,
+                  fontSize: 13,
+                  height: 19 / 13,
+                  fontWeight: FontWeight.w500)),
+        ),
+        OutlinedButton(
+          onPressed: onRetry,
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(44, 44),
+            padding: const EdgeInsets.symmetric(horizontal: 18),
+            foregroundColor: c.text,
+            side: BorderSide(color: c.line, width: 1.5),
+            shape: const StadiumBorder(),
+            textStyle:
+                const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+          ),
+          child: const Text(AppConstants.retry),
+        ),
+      ],
     );
   }
 }

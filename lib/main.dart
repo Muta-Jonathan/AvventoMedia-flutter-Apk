@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
+import 'package:avvento_media/controller/connectivity_controller.dart';
 import 'package:avvento_media/controller/popup_route_observer.dart';
 import 'package:avvento_media/controller/settings_controller.dart';
 import 'package:avvento_media/firebase_options.dart';
@@ -57,6 +58,11 @@ Future<void> main() async {
         ChangeNotifierProvider<RadioStationProvider>(
           create: (_) {
             final radio = RadioStationProvider();
+            // Back online: the old connection won't recover on its own.
+            if (Get.isRegistered<ConnectivityController>()) {
+              ever<bool>(Get.find<ConnectivityController>().offline,
+                  (offline) => offline ? null : radio.reconnect());
+            }
             // Song changes reach the player wherever the user is.
             radio.addListener(() {
               final station = radio.radioStation;
