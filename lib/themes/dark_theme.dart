@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'avvento_colors.dart';
+import 'avvento_theme.dart';
 
 ThemeData darkTheme = ThemeData(
+  fontFamily: AvventoTheme.figtree,
   extensions: const [AvventoColors.dark],
     brightness: Brightness.dark,
     appBarTheme: const AppBarTheme(
