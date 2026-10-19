@@ -31,6 +31,10 @@ class FakeAudioPlayer implements AudioPlayer {
   Stream<SequenceState> get sequenceStateStream => _sequence.stream;
   @override
   Duration? get duration => fakeDuration;
+  @override
+  Stream<Duration?> get durationStream => Stream.value(fakeDuration);
+  @override
+  Stream<Duration> get bufferedPositionStream => Stream.value(Duration.zero);
   Duration fakePosition = Duration.zero;
   @override
   Duration get position => fakePosition;
@@ -52,6 +56,13 @@ class FakeAudioPlayer implements AudioPlayer {
 
   @override
   Future<void> setLoopMode(LoopMode mode) async {}
+  @override
+  Future<void> setShuffleModeEnabled(bool enabled) async =>
+      calls.add('shuffle:$enabled');
+  @override
+  Future<void> shuffle() async => calls.add('shuffle');
+  @override
+  Future<void> setSpeed(double speed) async => calls.add('speed:$speed');
   @override
   Future<void> play() async => calls.add('play');
   @override

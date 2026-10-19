@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
 import 'package:avvento_media/models/radiomodel/radio_station_model.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 
@@ -94,6 +95,19 @@ void main() {
     await Future<void>.delayed(Duration.zero);
 
     expect(controller.currentMediaItem?.title, 'Ep 1');
+  });
+
+  test('a new queue turns shuffle off so it plays as built', () async {
+    await controller.toggleShuffle();
+    expect(controller.shuffleOn.value, isTrue);
+
+    await controller.setAudioPlaylist([
+      AudioSource.uri(Uri.parse('https://example.com/1.mp3'),
+          tag: const MediaItem(id: '1', title: 'One')),
+    ], 0);
+
+    expect(controller.shuffleOn.value, isFalse);
+    expect(player.calls, containsAllInOrder(['shuffle:true', 'shuffle:false']));
   });
 
   test('setAudioSource works without a ready AudioService', () async {

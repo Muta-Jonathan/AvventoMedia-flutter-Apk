@@ -17,11 +17,15 @@ class EpisodeDownloadButton extends StatelessWidget {
     required this.episode,
     required this.showTitle,
     this.onDownloaded,
+    this.idleColor,
   });
 
   final PodcastEpisode episode;
   final String showTitle;
   final VoidCallback? onDownloaded;
+
+  /// The arrow's color; muted text by default.
+  final Color? idleColor;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +84,8 @@ class EpisodeDownloadButton extends StatelessWidget {
       return _Tap(
         label: AppConstants.download,
         onTap: () => downloads.download(episode, showTitle: showTitle),
-        child: Icon(Icons.download_rounded, size: 22, color: c.text3),
+        child: Icon(Icons.download_rounded,
+            size: 22, color: idleColor ?? c.text3),
       );
     });
   }
