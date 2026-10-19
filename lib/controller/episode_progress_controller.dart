@@ -6,7 +6,9 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/radiomodel/podcast_episode_model.dart';
 import 'audio_player_controller.dart';
+import 'podcast_episode_controller.dart';
 
 /// Where the listener got to in one episode.
 class EpisodeProgress {
@@ -64,6 +66,20 @@ class EpisodeProgress {
       };
 }
 
+/// An episode you listened to, with the show it came from.
+class RecentEpisode {
+  const RecentEpisode(this.episode, this.showTitle);
+
+  final PodcastEpisode episode;
+  final String showTitle;
+
+  factory RecentEpisode.fromJson(Map<String, dynamic> json) => RecentEpisode(
+      PodcastEpisode.fromJson(Map<String, dynamic>.from(json['e'])),
+      json['s'] ?? '');
+
+  Map<String, dynamic> toJson() => {'e': episode.toJson(), 's': showTitle};
+}
+
 /// Remembers resume position, length and played state per podcast episode,
 /// following the shared player. Live radio is ignored.
 class EpisodeProgressController extends GetxController {
@@ -71,6 +87,10 @@ class EpisodeProgressController extends GetxController {
       : _injectedPlayer = player;
 
   static const _prefsKey = 'episode_progress';
+  static const _recentsKey = 'episode_recents';
+
+  /// Episodes kept for "Continue listening".
+  static const _maxRecents = 20;
 
   /// Saved every this often while playing, and on pause.
   static const _saveEvery = Duration(seconds: 5);
@@ -82,6 +102,8 @@ class EpisodeProgressController extends GetxController {
   late final AudioPlayerController _player;
   final RxMap<String, EpisodeProgress> progress =
       <String, EpisodeProgress>{}.obs;
+  /// Most recently listened first.
+  final RxList<RecentEpisode> recents = <RecentEpisode>[].obs;
   final List<StreamSubscription> _subs = [];
   late final Future<void> ready;
 
@@ -98,11 +120,25 @@ class EpisodeProgressController extends GetxController {
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_prefsKey);
-    if (raw == null) return;
-    final map = (json.decode(raw) as Map<String, dynamic>)
-        .map((k, v) => MapEntry(k, EpisodeProgress.fromJson(v)));
-    // Keep anything recorded while loading.
-    progress.assignAll({...map, ...progress});
+    if (raw != null) {
+      final map = (json.decode(raw) as Map<String, dynamic>)
+          .map((k, v) => MapEntry(k, EpisodeProgress.fromJson(v)));
+      // Keep anything recorded while loading.
+      progress.assignAll({...map, ...progress});
+    }
+    final saved = prefs.getString(_recentsKey);
+    if (saved != null) {
+      try {
+        final loaded = [
+          for (final r in json.decode(saved) as List)
+            RecentEpisode.fromJson(Map<String, dynamic>.from(r))
+        ];
+        final newer = recents.map((r) => r.episode.id).toSet();
+        recents.addAll(loaded.where((r) => !newer.contains(r.episode.id)));
+      } catch (_) {
+        // A bad list just means an empty "Continue listening".
+      }
+    }
   }
 
   Future<void> _save() async {
@@ -159,8 +195,37 @@ class EpisodeProgressController extends GetxController {
     runOutsideBuild(() {
       progress[id] = value;
       _save();
+      _remember(id);
     });
   }
+
+  /// Puts the playing episode first in [recents].
+  void _remember(String id) {
+    if (recents.isNotEmpty && recents.first.episode.id == id) return;
+    if (!Get.isRegistered<PodcastEpisodeController>()) return;
+    final queue = Get.find<PodcastEpisodeController>();
+    final episode = queue.queued(id);
+    if (episode == null) return;
+    recents
+      ..removeWhere((r) => r.episode.id == id)
+      ..insert(0, RecentEpisode(episode, queue.queueShowTitle));
+    if (recents.length > _maxRecents) {
+      recents.removeRange(_maxRecents, recents.length);
+    }
+    SharedPreferences.getInstance().then((prefs) => prefs.setString(
+        _recentsKey, json.encode([for (final r in recents) r.toJson()])));
+  }
+
+  /// Part-listened episodes, most recent first.
+  List<RecentEpisode> get continueListening => [
+        for (final r in recents)
+          if (_inProgress(of(r.episode.id))) r
+      ];
+
+  static bool _inProgress(EpisodeProgress p) =>
+      !p.played &&
+      p.position >= const Duration(seconds: 10) &&
+      p.fraction < 1;
 
   EpisodeProgress of(String id) => progress[id] ?? const EpisodeProgress();
 

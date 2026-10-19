@@ -116,10 +116,12 @@ class _PresenterPageState extends State<PresenterPage> {
               playLabel: AppConstants.playLatest,
               onPlay: newestFirst.isEmpty
                   ? null
-                  : () => EpisodePlayback.play(newestFirst, 0),
+                  : () => EpisodePlayback.play(newestFirst, 0,
+                      showTitle: p.name),
               onShuffle: all.isEmpty
                   ? null
-                  : () => EpisodePlayback.play(List.of(all)..shuffle(), 0),
+                  : () => EpisodePlayback.play(List.of(all)..shuffle(), 0,
+                      showTitle: p.name),
               saved: SavedItem(
                 id: p.id,
                 type: 'presenter',

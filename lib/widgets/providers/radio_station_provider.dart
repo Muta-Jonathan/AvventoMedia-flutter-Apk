@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import '../../apis/azuracast_api.dart';
 import '../../models/radiomodel/radio_station_model.dart';
@@ -8,6 +9,10 @@ class RadioStationProvider extends ChangeNotifier {
   RadioStation? _radioStation;
 
   RadioStation? get radioStation => _radioStation;
+
+  /// A fixed station and no connection, for tests.
+  @visibleForTesting
+  RadioStationProvider.fixed(RadioStation? station) : _radioStation = station;
 
   RadioStationProvider() {
     establishWebSocketConnection();

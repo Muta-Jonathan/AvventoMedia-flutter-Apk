@@ -64,8 +64,10 @@ class FeedEpisodeRow extends StatelessWidget {
         available: !offline || downloaded,
         overlineLead: overlineLead,
         horizontalMargin: horizontalMargin,
-        onTap: () => EpisodePlayback.open(queue, index),
-        onPlayTap: () => EpisodePlayback.toggle(queue, index),
+        onTap: () =>
+            EpisodePlayback.open(queue, index, showTitle: showTitle),
+        onPlayTap: () =>
+            EpisodePlayback.toggle(queue, index, showTitle: showTitle),
         onMore: more,
         downloadLabel: EpisodeDownloadLabel(episodeId: episode.id),
         download: EpisodeDownloadButton(

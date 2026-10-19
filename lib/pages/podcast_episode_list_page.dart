@@ -303,13 +303,16 @@ class _PodcastEpisodeListPageState extends State<PodcastEpisodeListPage> {
                             ? null
                             : () => currentIndex < 0
                                 ? EpisodePlayback.play(
-                                    episodes, resumeIndex ?? 0)
+                                    episodes, resumeIndex ?? 0,
+                                    showTitle: show.title)
                                 : EpisodePlayback.toggle(
-                                    episodes, currentIndex),
+                                    episodes, currentIndex,
+                                    showTitle: show.title),
                         onShuffle: episodes.isEmpty
                             ? null
                             : () => EpisodePlayback.play(
-                                List.of(episodes)..shuffle(), 0),
+                                List.of(episodes)..shuffle(), 0,
+                                showTitle: show.title),
                         downloadAll: episodes.isEmpty
                             ? null
                             : DownloadAllButton(

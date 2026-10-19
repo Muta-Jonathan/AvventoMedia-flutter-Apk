@@ -88,4 +88,27 @@ void main() {
     expect(defaultSort(FeedKind.series), EpisodeSort.inOrder);
     expect(defaultSort(FeedKind.show), EpisodeSort.newest);
   });
+
+  test('the Listen home splits the real shows by title', () {
+    const inOrder = [
+      'Old Testament KJV Dramatized',
+      'New Testament KJV Dramatized',
+      'Psalms KJV Dramatized',
+      'Proverbs KJV Dramatized',
+      'The Desire of Ages (Dramatized)',
+      'Patriarchs and Prophets (Dramatized)',
+      "Children's Bible Journey",
+      'Manya Baibuli',
+    ];
+    const daily = [
+      'Amazing Facts Daily Devotional',
+      'Devotions by Denis Mukaisa',
+      "Eriiso Ly'Obunnabbi",
+      'Maranatha – Daily Readings',
+      'Wellness Voice',
+      'Rendezvous – Stories of Faith',
+    ];
+    expect(inOrder.where((t) => !playsInOrderByTitle(t)), isEmpty);
+    expect(daily.where(playsInOrderByTitle), isEmpty);
+  });
 }

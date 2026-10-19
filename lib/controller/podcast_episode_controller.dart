@@ -14,7 +14,16 @@ class PodcastEpisodeController extends GetxController {
     selectedEpisode.value = episode;
   }
 
-  void setQueue(List<PodcastEpisode> episodes) => _queue = List.of(episodes);
+  /// The show the queue came from, for "Continue listening".
+  String queueShowTitle = '';
+
+  void setQueue(List<PodcastEpisode> episodes, {String showTitle = ''}) {
+    _queue = List.of(episodes);
+    queueShowTitle = showTitle;
+  }
+
+  PodcastEpisode? queued(String id) =>
+      _queue.firstWhereOrNull((e) => e.id == id);
 
   @override
   void onInit() {
