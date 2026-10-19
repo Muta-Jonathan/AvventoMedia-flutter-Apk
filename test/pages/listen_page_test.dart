@@ -1,3 +1,4 @@
+
 import 'package:avvento_media/apis/mock_presenter_repository.dart';
 import 'package:avvento_media/apis/schedule_repository.dart';
 import 'package:avvento_media/components/app_constants.dart';
@@ -13,6 +14,7 @@ import 'package:avvento_media/controller/presenters_controller.dart';
 import 'package:avvento_media/controller/schedule_controller.dart';
 import 'package:avvento_media/models/presenter_model.dart';
 import 'package:avvento_media/models/radiomodel/downloaded_episode_model.dart';
+import 'package:avvento_media/models/radiomodel/podcast_episode_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_station_model.dart';
 import 'package:avvento_media/models/schedule_slot.dart';
@@ -24,12 +26,14 @@ import 'package:avvento_media/widgets/providers/radio_podcast_provider.dart';
 import 'package:avvento_media/widgets/providers/radio_station_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/a11y.dart';
 import '../helpers/fake_audio_player.dart';
 
 /// Presenters that never load.
@@ -39,6 +43,27 @@ class _FailingPresenters implements PresenterRepository {
   @override
   Future<Presenter> fetchPresenter(String id) async =>
       throw Exception('offline');
+}
+
+/// The mock presenters without photos, so no image is fetched.
+class _NoPhotos implements PresenterRepository {
+  final _mock = MockPresenterRepository();
+
+  Presenter _plain(Presenter p) => Presenter(
+      id: p.id,
+      name: p.name,
+      image: '',
+      genre: p.genre,
+      sermonCount: p.sermonCount,
+      seriesCount: p.seriesCount,
+      latestAt: p.latestAt);
+
+  @override
+  Future<List<Presenter>> fetchPresenters() async =>
+      [for (final p in await _mock.fetchPresenters()) _plain(p)];
+  @override
+  Future<Presenter> fetchPresenter(String id) async =>
+      _plain(await _mock.fetchPresenter(id));
 }
 
 class _Schedule implements ScheduleRepository {
@@ -111,6 +136,7 @@ void main() {
     bool presentersFail = false,
     bool podcastsFail = false,
     bool downloadFirst = false,
+    bool noPhotos = false,
   }) async {
     connection = offline ? ConnectivityResult.none : ConnectivityResult.wifi;
     tester.view.physicalSize = Size(width * 3, 1800 * 3);
@@ -126,8 +152,11 @@ void main() {
     Get.put(ConnectivityController(
         changes: const Stream.empty(), check: () async => [connection]));
     Get.put(PresentersController(
-        repository:
-            presentersFail ? _FailingPresenters() : MockPresenterRepository()));
+        repository: presentersFail
+            ? _FailingPresenters()
+            : noPhotos
+                ? _NoPhotos()
+                : MockPresenterRepository()));
     Get.put(ScheduleController(
         repository: _Schedule(),
         clock: () => DateTime.utc(2026, 10, 20, 9, 30)));
@@ -135,10 +164,14 @@ void main() {
     await progress.ready;
 
     if (continueListening) {
-      final genesis =
+      final first =
           (await MockPresenterRepository().fetchPresenter('denis-mukaisa'))
               .singles
               .first;
+      // Without a cover, so no image is fetched.
+      final genesis = noPhotos
+          ? PodcastEpisode.fromJson({...first.toJson(), 'art': ''})
+          : first;
       queue.setQueue([genesis], showTitle: 'Devotions');
       progress.progress[genesis.id] = const EpisodeProgress(
           position: Duration(minutes: 6), duration: Duration(minutes: 20));
@@ -374,6 +407,23 @@ void main() {
       await pump(tester, presentersFail: true);
       expect(find.text(AppConstants.presentersLoadFailed), findsOneWidget);
       expect(find.text(AppConstants.retry), findsWidgets);
+    });
+  });
+
+  group('accessibility', () {
+    setUp(mockPluginChannels);
+
+    for (final (name, theme) in [('dark', darkTheme), ('light', lightTheme)]) {
+      listenTest('meets the tap target, label and contrast guidelines ($name)',
+          (tester) async {
+        await pump(tester, theme: theme, width: 360, noPhotos: true);
+        await expectAccessible(tester);
+      });
+    }
+
+    listenTest('offline meets them too', (tester) async {
+      await pump(tester, offline: true, width: 360, noPhotos: true);
+      await expectAccessible(tester);
     });
   });
 }

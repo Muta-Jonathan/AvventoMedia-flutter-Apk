@@ -18,6 +18,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/a11y.dart';
 import '../helpers/fake_audio_player.dart';
 import '../helpers/fake_push_notifications.dart';
 
@@ -201,5 +202,21 @@ void main() {
     Get.reset();
     await pump(tester, theme: lightTheme);
     expect(tester.takeException(), isNull);
+  });
+
+  group('accessibility', () {
+    setUp(mockPluginChannels);
+
+    for (final (name, theme) in [('dark', darkTheme), ('light', lightTheme)]) {
+      testWidgets('the episode player meets the guidelines ($name)',
+          (tester) async {
+        tester.view.physicalSize = const Size(360 * 3, 800 * 3);
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+
+        await pump(tester, theme: theme);
+        await expectAccessible(tester);
+      });
+    }
   });
 }

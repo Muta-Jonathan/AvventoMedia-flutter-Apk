@@ -1,6 +1,8 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/audio_player_controller.dart';
+import 'package:avvento_media/themes/dark_theme.dart';
+import 'package:avvento_media/themes/light_theme.dart';
 import 'package:avvento_media/widgets/audio_players/mini_player_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../helpers/a11y.dart';
 import '../helpers/fake_audio_player.dart';
 
 void main() {
@@ -24,11 +27,12 @@ void main() {
 
   // No artUri: keeps CachedNetworkImage (and its plugins) out of the test.
   Future<void> pumpBar(WidgetTester tester,
-      {String title = 'Episode 1', bool live = false}) async {
+      {String title = 'Episode 1', bool live = false, ThemeData? theme}) async {
     controller.isLive.value = live;
     controller.currentMediaItem = MediaItem(id: title, title: title);
-    await tester.pumpWidget(const MaterialApp(
-      home: Scaffold(
+    await tester.pumpWidget(MaterialApp(
+      theme: theme,
+      home: const Scaffold(
         body: Align(
           alignment: Alignment.bottomCenter,
           child: SizedBox(height: 72, child: MiniPlayerWidget()),
@@ -148,5 +152,27 @@ void main() {
 
     expect(controller.isPlayerActive.value, isFalse);
     expect(player.calls, contains('stop'));
+  });
+
+  group('accessibility', () {
+    setUp(mockPluginChannels);
+
+    for (final (name, theme) in [('dark', darkTheme), ('light', lightTheme)]) {
+      for (final live in [false, true]) {
+        testWidgets(
+            '${live ? 'radio' : 'podcast'} bar meets the guidelines ($name)',
+            (tester) async {
+          player
+            ..fakeHasNext = true
+            ..fakeHasPrevious = true;
+          await pumpBar(tester, live: live, theme: theme);
+          controller
+            ..hasNext.value = true
+            ..hasPrevious.value = true;
+          await tester.pump();
+          await expectAccessible(tester);
+        });
+      }
+    }
   });
 }

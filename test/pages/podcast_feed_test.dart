@@ -29,6 +29,7 @@ import 'package:http/testing.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/a11y.dart';
 import '../helpers/fake_audio_player.dart';
 
 final _now = DateTime.now();
@@ -424,8 +425,8 @@ void main() {
             fetchEpisodes: (_) async => bibleEpisodes(genesis: 20, exodus: 15)),
         podcast: podcastNamed('Old Testament KJV Dramatized', 35));
 
-    await tester
-        .tap(find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis').first);
+    await tester.tap(
+        find.bySemanticsLabel('${AppConstants.jumpToBook}, Genesis').first);
     await tester.pumpAndSettle();
     expect(find.text(AppConstants.jumpToBook), findsOneWidget);
     // One testament only: no toggle.
@@ -440,8 +441,8 @@ void main() {
     expect(find.text('Genesis 1'), findsNothing);
 
     // Mid-scroll, the pinned header opens the book jump too.
-    await tester.tap(
-        find.bySemanticsLabel('${AppConstants.jumpToBook}, Exodus').first);
+    await tester
+        .tap(find.bySemanticsLabel('${AppConstants.jumpToBook}, Exodus').first);
     await tester.pumpAndSettle();
     expect(find.text(AppConstants.jumpToBook), findsOneWidget);
     await tester.tap(find.text('Genesis').last);
@@ -578,5 +579,39 @@ void main() {
     expect(episodeDateLabel(ts(now), now: now), 'TODAY');
     expect(episodeDateLabel(ts(DateTime(2026, 10, 4)), now: now), 'OCT 4');
     expect(episodeDateLabel(ts(DateTime(2024, 3, 1)), now: now), 'MAR 1, 2024');
+  });
+
+  group('accessibility', () {
+    setUp(mockPluginChannels);
+
+    for (final (name, theme) in [('dark', darkTheme), ('light', lightTheme)]) {
+      testWidgets('the feed meets the guidelines ($name)', (tester) async {
+        tester.view.physicalSize = const Size(360 * 3, 1400 * 3);
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+
+        await pump(tester, page(), theme: theme);
+        await expectAccessible(tester);
+      });
+
+      testWidgets('empty Downloads meets the guidelines ($name)',
+          (tester) async {
+        tester.view.physicalSize = const Size(360 * 3, 1400 * 3);
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+
+        await pump(tester, const DownloadsPage(), theme: theme);
+        await expectAccessible(tester);
+      });
+    }
+
+    testWidgets('the offline feed meets the guidelines', (tester) async {
+      tester.view.physicalSize = const Size(360 * 3, 1400 * 3);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+
+      await pump(tester, page(), offline: true);
+      await expectAccessible(tester);
+    });
   });
 }

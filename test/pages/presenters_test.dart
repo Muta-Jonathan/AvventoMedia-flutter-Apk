@@ -24,6 +24,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/a11y.dart';
 import '../helpers/fake_audio_player.dart';
 
 void main() {
@@ -254,5 +255,27 @@ void main() {
       await Future<void>.delayed(Duration.zero);
       expect(next.hasNew(fresh), isFalse);
     });
+  });
+
+  group('accessibility', () {
+    setUp(mockPluginChannels);
+
+    for (final (name, theme) in [('dark', darkTheme), ('light', lightTheme)]) {
+      testWidgets('presenters list and page meet the guidelines ($name)',
+          (tester) async {
+        tester.view.physicalSize = const Size(360 * 3, 1400 * 3);
+        tester.view.devicePixelRatio = 3;
+        addTearDown(tester.view.reset);
+
+        await pump(tester, const PresentersPage(), theme: theme);
+        await expectAccessible(tester);
+
+        Get.reset();
+        await pump(
+            tester, const PresenterPage(presenterId: 'kiiza-samuel-akiki'),
+            theme: theme);
+        await expectAccessible(tester);
+      });
+    }
   });
 }

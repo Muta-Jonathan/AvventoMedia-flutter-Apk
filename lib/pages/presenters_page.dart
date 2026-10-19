@@ -170,7 +170,6 @@ class _PresentersPageState extends State<PresentersPage> {
   Widget _searchField(AvventoColors c) {
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-      constraints: const BoxConstraints(minHeight: 48),
       decoration: BoxDecoration(
         color: c.surface,
         borderRadius: BorderRadius.circular(14),
@@ -182,18 +181,25 @@ class _PresentersPageState extends State<PresentersPage> {
           Icon(Icons.search_rounded, size: 20, color: c.text3),
           const SizedBox(width: 10),
           Expanded(
-            child: TextField(
-              controller: _search,
-              onChanged: (_) => setState(() {}),
-              textInputAction: TextInputAction.search,
-              style: TextStyle(
-                  color: c.text, fontSize: 15, fontWeight: FontWeight.w500),
-              decoration: InputDecoration(
-                isDense: true,
-                border: InputBorder.none,
-                hintText: AppConstants.searchPresenters,
-                hintStyle: TextStyle(
-                    color: c.text3, fontSize: 15, fontWeight: FontWeight.w500),
+            // The whole 48dp bar is the tap target.
+            child: SizedBox(
+              height: 48,
+              child: TextField(
+                controller: _search,
+                onChanged: (_) => setState(() {}),
+                textInputAction: TextInputAction.search,
+                textAlignVertical: TextAlignVertical.center,
+                style: TextStyle(
+                    color: c.text, fontSize: 15, fontWeight: FontWeight.w500),
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: InputBorder.none,
+                  hintText: AppConstants.searchPresenters,
+                  hintStyle: TextStyle(
+                      color: c.text3,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500),
+                ),
               ),
             ),
           ),
