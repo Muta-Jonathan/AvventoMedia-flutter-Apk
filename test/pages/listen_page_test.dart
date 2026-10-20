@@ -1,4 +1,3 @@
-
 import 'package:avvento_media/apis/mock_presenter_repository.dart';
 import 'package:avvento_media/apis/schedule_repository.dart';
 import 'package:avvento_media/components/app_constants.dart';
@@ -313,6 +312,17 @@ void main() {
     await tester.pump();
     // The radio has no pause: it stops.
     expect(player.calls.last, 'stop');
+  });
+
+  listenTest('tapping the live card opens the radio player', (tester) async {
+    await pump(tester);
+    final audio = Get.find<AudioPlayerController>();
+
+    await tester.tap(find.text(AppConstants.liveBadge));
+    await tester.pump();
+
+    expect(audio.isLive.value, isTrue);
+    expect(audio.isPlayerActive.value, isTrue);
   });
 
   listenTest('waits for the station before offering play', (tester) async {
