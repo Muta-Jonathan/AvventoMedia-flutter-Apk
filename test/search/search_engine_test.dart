@@ -220,6 +220,33 @@ void main() {
     });
   });
 
+  test('a channel on air comes before one that is off air', () {
+    final r = SearchEngine.search([
+      SearchEntry(
+          kind: SearchKind.live,
+          id: 'off',
+          title: 'Avvento TV Two',
+          live: false,
+          payload: 'off'),
+      SearchEntry(
+          kind: SearchKind.live,
+          id: 'on',
+          title: 'Avvento TV One',
+          live: true,
+          payload: 'on'),
+    ], 'avvento', tab: SearchTab.live);
+    expect(r.hits.map((h) => h.entry.id), ['on', 'off']);
+  });
+
+  test('an off-air channel is labelled as such', () {
+    final off = SearchEntry(
+        kind: SearchKind.live, id: 'x', title: 'X', live: false, payload: 'x');
+    final on = SearchEntry(
+        kind: SearchKind.live, id: 'y', title: 'Y', live: true, payload: 'y');
+    expect(SearchEngine.typeLabel(off), 'Live · Off air');
+    expect(SearchEngine.typeLabel(on), 'Live');
+  });
+
   group('top result', () {
     test('an exact entity match wins', () {
       final r = SearchEngine.search([

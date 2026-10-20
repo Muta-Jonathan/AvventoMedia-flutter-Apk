@@ -167,6 +167,8 @@ class AppConstants {
   static const String offline = 'Offline';
   static const String showingDownloadsOnly = 'Showing downloads only.';
   static const String openDownloads = 'Open downloads';
+  static const String liveNowLabel = 'Live now';
+  static const String offAir = 'Off air';
   static const String loading = 'Loading';
   static const String searchTitle = 'Search';
   static const String searchHint = 'Presenters, podcasts, sermons, videos';

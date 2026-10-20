@@ -1,7 +1,10 @@
 import 'package:avvento_media/apis/mock_presenter_repository.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/controller/search_index_controller.dart';
+import 'package:avvento_media/models/livetvmodel/livetv_model.dart';
+import 'package:avvento_media/models/radiomodel/radio_model.dart';
 import 'package:avvento_media/models/radiomodel/radio_podcast_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' show Timestamp;
 import 'package:avvento_media/search/search_models.dart';
 import 'package:avvento_media/search/search_source.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -88,6 +91,32 @@ void main() {
       expect(SearchEntries.parseIsoDuration('01:12:40'),
           const Duration(hours: 1, minutes: 12, seconds: 40));
       expect(SearchEntries.parseIsoDuration('live'), isNull);
+    });
+
+    test('a channel is live only while its status says so', () {
+      LiveTvModel tv(String status) => LiveTvModel(
+          name: '3ABN Uganda',
+          imageUrl: '',
+          status: status,
+          description: '',
+          streamUrl: '',
+          webUrl: '',
+          publishedAt: Timestamp.now());
+
+      final onAir = SearchEntries.fromLiveTv(tv(AppConstants.liveNow));
+      expect(onAir.live, isTrue);
+      expect(onAir.subtitle, AppConstants.liveNowLabel);
+
+      final off = SearchEntries.fromLiveTv(tv('COMING SOON'));
+      expect(off.live, isFalse);
+      expect(off.subtitle, AppConstants.offAir);
+
+      final radio = SearchEntries.fromRadio(RadioModel(
+          name: 'AvventoRadio',
+          imageUrl: '',
+          status: 'OFFLINE',
+          publishedAt: Timestamp.now()));
+      expect(radio.live, isFalse);
     });
 
     test('YouTube lengths', () {
