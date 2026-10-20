@@ -1,4 +1,4 @@
-import 'package:avvento_media/widgets/search/group_search.dart';
+import 'package:avvento_media/widgets/search/list_search.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
@@ -14,14 +14,6 @@ class LiveTvListPage extends StatefulWidget {
 }
 
 class _LiveTvListPageState extends State<LiveTvListPage> {
-  final ValueNotifier<String> _query = ValueNotifier<String>('');
-
-  @override
-  void dispose() {
-    _query.dispose();
-    super.dispose();
-  }
-
 
   @override
   void initState() {
@@ -30,13 +22,21 @@ class _LiveTvListPageState extends State<LiveTvListPage> {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return ListSearchScope(
+      builder: (context, search) => Scaffold(
       backgroundColor:   Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
+        controller: search.scroll,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: <Widget>[
+          if (search.controller.searching)
+            ...listSearchTop(context, search,
+                hint: AppConstants.searchLive, unit: 'channels', showLength: false),
+          if (!search.controller.searching) ...<Widget>[
           SliverAppBar(
             backgroundColor:   Theme.of(context).colorScheme.surface,
             iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+            actions: [ListSearchButton(search: search)],
             expandedHeight: Utils.calculateHeight(context, 0.12),
             floating: false,
             pinned: true,
@@ -56,14 +56,11 @@ class _LiveTvListPageState extends State<LiveTvListPage> {
               titlePadding: const EdgeInsets.only(left: 48,bottom: 14),
             ),
           ),
-          SliverToBoxAdapter(
-            child: GroupSearchField(
-                query: _query, hint: AppConstants.searchLive),
-          ),
-          LiveTvVerticalWidget(query: _query),
+          ],
+          LiveTvVerticalWidget(search: search),
         ],
       ),
-    );
+    ));
   }
 }
 

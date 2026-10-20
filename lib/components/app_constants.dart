@@ -184,6 +184,10 @@ class AppConstants {
   static const String checkSpelling = 'Check the spelling or try another word.';
   static const String removeRecent = 'Remove from recent searches';
   static const String bible = 'Bible';
+  static const String sortBy = 'Sort';
+  static const String length = 'Length';
+  static const String clearSearchButton = 'Clear search';
+  static const String searchAllOfAvvento = 'Search all of Avvento';
   static String nothingHere(String q) => 'Nothing for “$q” in this list. Try another word.';
   static const String searchPlaylists = 'Search playlists';
   static const String searchThisPlaylist = 'Search this playlist';

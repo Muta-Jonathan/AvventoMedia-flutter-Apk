@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:avvento_media/search/search_source.dart';
-import 'package:avvento_media/widgets/search/group_search.dart';
+import 'package:avvento_media/widgets/search/list_search.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/liveTv/vertical/live_tv_details_vertical_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,13 +14,12 @@ import '../../../controller/live_tv_controller.dart';
 import '../../../models/livetvmodel/livetv_model.dart';
 
 class LiveTvVerticalWidget extends StatefulWidget {
-  const LiveTvVerticalWidget({super.key, this.query});
+  const LiveTvVerticalWidget({super.key, required this.search});
 
-  /// Narrows the list; set by the page's search field.
-  final ValueListenable<String>? query;
+  final ListSearchHandle search;
 
   @override
-  State<LiveTvVerticalWidget>  createState() => _LiveTvVerticalWidgetState();
+  State<LiveTvVerticalWidget> createState() => _LiveTvVerticalWidgetState();
 }
 
 class _LiveTvVerticalWidgetState extends State<LiveTvVerticalWidget> {
@@ -50,25 +47,25 @@ class _LiveTvVerticalWidgetState extends State<LiveTvVerticalWidget> {
           List liveTvList = snapshot.data!.docs;
           // Keep LIVE NOW channels first; push non-live ones to the end.
           final sorted = [...liveTvList]..sort((a, b) {
-            final aLive = LiveTvModel.fromSnapShot(a as DocumentSnapshot).status == AppConstants.liveNow;
-            final bLive = LiveTvModel.fromSnapShot(b as DocumentSnapshot).status == AppConstants.liveNow;
-            if (aLive == bLive) return 0;
-            return aLive ? -1 : 1;
-          });
+              final aLive =
+                  LiveTvModel.fromSnapShot(a as DocumentSnapshot).status ==
+                      AppConstants.liveNow;
+              final bLive =
+                  LiveTvModel.fromSnapShot(b as DocumentSnapshot).status ==
+                      AppConstants.liveNow;
+              if (aLive == bLive) return 0;
+              return aLive ? -1 : 1;
+            });
           final channels = [
-            for (final doc in sorted) LiveTvModel.fromSnapShot(doc as DocumentSnapshot)
+            for (final doc in sorted)
+              LiveTvModel.fromSnapShot(doc as DocumentSnapshot)
           ];
-          return GroupSearchList<LiveTvModel>(
+          return ListSearchList<LiveTvModel>(
             items: channels,
-            query: widget.query,
-            entryOf: SearchEntries.fromLiveTv,
-            builder: (context, shown) => SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) =>
-                    buildLiveTvDetailsScreen(shown[index]),
-                childCount: shown.length,
-              ),
-            ),
+            search: widget.search,
+            titleOf: (t) => t.name,
+            itemBuilder: (context, channel, query) =>
+                buildLiveTvDetailsScreen(channel),
           );
         }
       },
@@ -91,4 +88,3 @@ class _LiveTvVerticalWidgetState extends State<LiveTvVerticalWidget> {
     );
   }
 }
-

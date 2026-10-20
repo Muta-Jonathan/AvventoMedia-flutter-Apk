@@ -24,6 +24,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/a11y.dart';
 import '../helpers/fake_audio_player.dart';
+import '../helpers/spans.dart';
 
 /// Hands the index a fixed list, with no covers so nothing is fetched.
 class _Source implements SearchSource {
@@ -81,6 +82,15 @@ Future<List<SearchEntry>> entries() async {
         publishedAt: DateTime.now().subtract(const Duration(days: 3)),
         duration: const Duration(minutes: 72),
         payload: 'video'),
+    SearchEntry(
+        kind: SearchKind.playlist,
+        id: 'pl1',
+        title: 'Prophecy Seminar 2026',
+        subtitle: SearchSources.main,
+        source: SearchSources.main,
+        count: 24,
+        publishedAt: DateTime(2026, 3, 9),
+        payload: 'playlist'),
     SearchEntry(
         kind: SearchKind.live,
         id: 'radio',
@@ -277,6 +287,33 @@ void main() {
     expect(find.text(AppConstants.noResultsTitle), findsOneWidget);
     expect(find.text(AppConstants.noMatchFor('zzzz')), findsOneWidget);
     expect(find.text(AppConstants.clearFilters), findsNothing);
+    await leave(tester);
+  });
+
+  testWidgets('a playlist result is a stacked row marking the words',
+      (tester) async {
+    await pump(tester);
+    await submit(tester, 'prophecy');
+    await tapTab(tester, 'Videos, 1');
+
+    expect(find.textContaining('24 videos'), findsOneWidget);
+    // The 4dp bar peeking above a playlist's thumbnail.
+    expect(
+        find.byWidgetPredicate(
+            (w) => w is Container && w.constraints?.maxHeight == 4),
+        findsOneWidget);
+    expect(markedWords(tester), contains('Prophecy'));
+    await leave(tester);
+  });
+
+  testWidgets('a query handed over from a list runs here', (tester) async {
+    await pump(tester);
+    Get.find<SearchIndexController>().pendingQuery.value = 'final';
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppConstants.topResult), findsOneWidget);
+    expect(Get.find<SearchIndexController>().pendingQuery.value, isNull);
+    expect(Get.find<SearchIndexController>().recent.first, 'final');
     await leave(tester);
   });
 
