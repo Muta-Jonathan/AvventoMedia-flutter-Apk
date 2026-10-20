@@ -10,17 +10,19 @@ AvventoMedia is dedicated to spreading the gospel globally. Its content is brand
 
 ## 📱 Features
 
-- **AvventoRadio**: Listen to uplifting music, sermons, and live broadcasts 24/7.
-- **Streaming TV**: Access live programs, shows, and music from AvventoMedia and 3ABN Uganda Television.
-- **Podcasts & Audio Player**: Premium background-capable audio player with dynamic queues, drag-and-drop reordering, and speed controls.
-- **YouTube Integration (Kids, Music, Main)**: Watch high-quality video content synced directly from the AvventoProductions YouTube channels.
-- **Global Search**: Instantly search across Playlists, Videos, Live TV, and Radio with persistent local search history and fluid inline filters.
+- **Listen**: Home for audio with a live AvventoRadio card, an "Up next" schedule, Continue listening, a presenters rail, and podcast rails.
+- **Presenters & Series**: Presenter pages with tabs for series and single sermons, series pages, and a ring on presenters with new sermons.
+- **Podcasts & Audio Player**: Background audio with lock-screen and notification controls, queue reordering, playback speed, and a floating mini player (previous/next, swipe to close).
+- **Streaming TV**: Live programs and shows from AvventoMedia and 3ABN Uganda Television. Off-air channels are labelled as such.
+- **YouTube Integration (Kids, Music, Main)**: Video content synced from the AvventoProductions YouTube channels, with length badges on thumbnails.
+- **Search**: One search across playlists, videos, live TV and radio. It runs on a local index with tabs, filters (date, length, source, sort, downloaded), recent searches and a Browse view.
+- **In-list Search**: Long lists (playlists, series, downloads, favorites) get their own pinned search field with sorting and length filters.
+- **Offline & Downloads**: Download episodes and videos for offline play. An offline banner links to Downloads and the app shows only what is available.
+- **Polish**: Shimmer loading skeletons, the system font with Newsreader for titles, light and dark themes, and accessibility checks (tap targets, labels, contrast).
 
 ---
 
 ## 🏗 Infrastructure & Tech Stack
-
-This project is built with modern, scalable architecture to ensure a seamless media streaming experience.
 
 ```mermaid
 graph TD
@@ -28,42 +30,45 @@ graph TD
 
     subgraph Firebase
         Firestore[(Cloud Firestore)]
-        FCM[Cloud Messaging]
     end
 
     subgraph APIs & Servers
         YT[YouTube API v3]
-        Radio[AvventoRadio / Azuracast]
-        Cache[🖥 avvento-cache-server<br>Node.js]
+        Radio[AvventoRadio / AzuraCast]
+        Cache[🖥 avvento-cache-server<br>Node.js, hourly sync]
     end
 
-    Client -->|Fetches Cached Data| Firestore
-    Client -->|Streams Live Audio| Radio
-    Client -->|Receives Alerts| FCM
-    Cache -->|Fetches Videos| YT
-    Cache -->|Caches to| Firestore
+    OS[OneSignal]
+
+    Client -->|Reads videos, presenters, podcasts| Firestore
+    Client -->|Streams live audio, schedule| Radio
+    Client -->|Receives alerts| OS
+    Cache -->|Fetches videos| YT
+    Cache -->|Fetches podcasts, presenters| Radio
+    Cache -->|Syncs to| Firestore
 ```
 
-- **Frontend**: Flutter & Dart (Cross-platform iOS and Android)
+- **Frontend**: Flutter & Dart (iOS and Android)
 - **State Management**: GetX & Provider
-- **Audio/Video Playback**: `just_audio` (with background play support), `better_player`, and `youtube_player_flutter`.
-- **Backend & Database**: Firebase Cloud Firestore.
-- **Content Synchronization**: A custom Node.js `avvento-cache-server` syncs YouTube API data to Firestore to prevent API quota limits and ensure fast load times.
+- **Audio**: `just_audio`, `audio_service` and `audio_session` for background play and lock-screen controls
+- **Video**: `better_player` and `youtube_player_flutter`
+- **Backend & Database**: Cloud Firestore
+- **Content Sync**: [avvento-cache-server](https://github.com/AvventoMedia/avvento-cache-server) (Node.js, run hourly by GitHub Actions) copies YouTube data, AzuraCast podcasts and presenters into Firestore. This avoids API quota limits and keeps loading fast.
+- **Connectivity**: `connectivity_plus` drives offline mode
 - **Push Notifications**: OneSignal
 
 ---
 
 ## 🚀 CI/CD & Deployment
 
-This repository uses **GitHub Actions** for professional Continuous Integration and Continuous Deployment (CI/CD). 
+This repository uses **GitHub Actions**.
 
-Deployments are triggered **manually** via the GitHub Actions `workflow_dispatch`.
+- **CI** runs on every pull request and push to `main`: analyze and unit tests, a debug Android build, and an end-to-end smoke test on an Android emulator.
+- **Deployment** is triggered **manually** via `workflow_dispatch`:
+  1. **Android**: decodes the keystore, builds the signed `.aab`, and uploads it to the Google Play Console.
+  2. **iOS**: sets up the keychain, decodes the `.p12` certificate and provisioning profile, builds the signed `.ipa`, and uploads it to TestFlight with `altool`.
 
-### Automated Pipeline Capabilities:
-1. **Android Deployment**: Decodes Keystores on-the-fly, builds the signed `.aab`, and uploads directly to the Google Play Console internal/production tracks.
-2. **iOS Deployment**: Sets up macOS keychains, decodes `.p12` certificates and provisioning profiles, builds the signed `.ipa`, and uploads directly to App Store Connect (TestFlight) using `altool`.
-
-*(Note: Never commit your Keystores or Certificates. They must be stored as Base64 strings in your GitHub Repository Secrets).*
+*(Never commit keystores or certificates. Store them as Base64 strings in the repository secrets.)*
 
 ---
 
@@ -79,6 +84,11 @@ To run this project locally, you will need the following prerequisites:
    flutter pub get
    flutter run
    ```
+5. **Tests**:
+   ```bash
+   flutter test                                    # unit, widget and accessibility tests
+   flutter test integration_test/app_test.dart     # E2E smoke test (needs a device or emulator)
+   ```
 
 ---
 
@@ -90,15 +100,9 @@ Download the AvventoMedia app today:
 
 ---
 
-## 📝 Recent Changelog
+## 📌 Notes
 
-### Version 1.4.0 (May 2026)
-- **Major UI Redesign**: Introduced premium frosted-glass cards, edge-to-edge thumbnails, and fluid animations.
-- **Queue & Speed Bottom Sheets**: Replaced the clunky podcast player layout with sleek modal bottom sheets.
-- **Search Overhaul**: Added persistent local search history and inline sub-category filtering chips.
-- **Playlist Continuity**: Fixed audio looping; the player now smoothly auto-plays the next item in the queue.
-- **CI/CD Integration**: Added professional GitHub Actions for automated store deployments.
-
-### Version 1.3.0
-- Refactoring explore to Carousel design.
-- Complete UI/UX aesthetic upgrade.
+- `.env` holds the AzuraCast API key and the EmailJS keys for the prayer request form. It is gitignored but bundled as an asset, so builds fail without it. On fork PRs CI uses an empty one.
+- Podcasts and presenters are read from Firestore, not AzuraCast directly. If they look stale, check the cache server's hourly sync.
+- Playback notifications on Android 13+ and the iOS lock screen need a real device to verify. Simulators and emulators don't show them reliably.
+- Fonts: the system font is used everywhere. Newsreader (serif) is only for titles.
