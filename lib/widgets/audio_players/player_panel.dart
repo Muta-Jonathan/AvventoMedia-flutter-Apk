@@ -61,6 +61,10 @@ class _PlayerPanelState extends State<PlayerPanel>
   /// Above this fling speed (px/s) the direction decides the snap.
   static const _flingVelocity = 700.0;
 
+  /// How far open the panel is fully opaque (the mini bar has faded out by
+  /// then).
+  static const _solidBy = 0.25;
+
   late final AnimationController _progress =
       AnimationController(vsync: this, duration: widget.duration)
         ..addListener(() => widget.onChanged?.call(_progress.value));
@@ -150,6 +154,10 @@ class _PlayerPanelState extends State<PlayerPanel>
       animation: _progress,
       builder: (context, _) {
         final percentage = _progress.value;
+        // Collapsed, the mini bar floats on the page with nothing behind it
+        // (no bar, no shadow); the panel only turns solid as it opens.
+        final solid = (percentage / _solidBy).clamp(0.0, 1.0);
+        final background = canvas.withValues(alpha: solid);
         final height = widget.minHeight + _range * percentage;
 
         // Both children always present: inserting the barrier mid-drag would
@@ -182,13 +190,14 @@ class _PlayerPanelState extends State<PlayerPanel>
                 onVerticalDragEnd: _onDragEnd,
                 onTap: percentage == 0 ? () => _animateTo(1) : null,
                 child: Material(
-                  color: canvas,
+                  color: background,
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: canvas,
+                      color: background,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black45,
+                          color: Colors.black45
+                              .withValues(alpha: Colors.black45.a * solid),
                           blurRadius: widget.elevation,
                           offset: const Offset(0, 4),
                         ),

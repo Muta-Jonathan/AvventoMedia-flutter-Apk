@@ -38,6 +38,45 @@ void main() {
     expect(panelHeight(tester), minHeight);
   });
 
+  /// The panel's own background and the shadow it casts.
+  (double background, double shadow) panelPaint(WidgetTester tester) {
+    final material = tester.widget<Material>(find.byType(Material).last);
+    final box = tester.widget<DecoratedBox>(find.descendant(
+        of: find.byType(Material).last, matching: find.byType(DecoratedBox)));
+    final shadows = (box.decoration as BoxDecoration).boxShadow!;
+    return (material.color!.a, shadows.first.color.a);
+  }
+
+  testWidgets('collapsed, nothing is painted behind the bar', (tester) async {
+    await pumpPanel(tester);
+
+    final (background, shadow) = panelPaint(tester);
+    expect(background, 0);
+    expect(shadow, 0);
+  });
+
+  testWidgets('opened, the panel is solid and casts its shadow',
+      (tester) async {
+    await pumpPanel(tester);
+    controller.expand();
+    await tester.pumpAndSettle();
+
+    final (background, shadow) = panelPaint(tester);
+    expect(background, 1);
+    expect(shadow, greaterThan(0));
+  });
+
+  testWidgets('it turns solid as it opens, not all at once', (tester) async {
+    await pumpPanel(tester);
+    controller.expand();
+    await tester.pump(); // The first frame starts the clock.
+    await tester.pump(const Duration(milliseconds: 40));
+
+    final (background, _) = panelPaint(tester);
+    expect(background, inExclusiveRange(0, 1));
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('expand() and collapse() animate and report progress',
       (tester) async {
     await pumpPanel(tester);
