@@ -86,9 +86,11 @@ class _Page extends StatelessWidget {
 
 void main() {
   Future<void> pump(WidgetTester tester,
-      {List<_Video> items = videos, ThemeData? theme}) async {
+      {List<_Video> items = videos,
+      ThemeData? theme,
+      double width = 600}) async {
     // Wider than a phone: the test font is far wider than a real one.
-    tester.view.physicalSize = const Size(600 * 3, 844 * 3);
+    tester.view.physicalSize = Size(width * 3, 844 * 3);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
     SharedPreferences.setMockInitialValues({});
@@ -135,6 +137,23 @@ void main() {
     expect(find.text('Prophecy Seminar'), findsNothing);
     expect(find.byType(TextField), findsOneWidget);
     expect(find.text('12 videos'), findsOneWidget);
+    await leave(tester);
+  });
+
+  testWidgets('the count and both chips fit the row, none cut off',
+      (tester) async {
+    // The count and the chips used to share the row half and half, which cut
+    // the Sort chip in two. 480 wide fits them in the (wide) test font.
+    await pump(tester, width: 480);
+    await open(tester);
+
+    final count = tester.getRect(find.text('12 videos'));
+    final sort = tester.getRect(find.text('Relevance'));
+    final length = tester.getRect(find.text(AppConstants.length));
+    expect(count.left, greaterThanOrEqualTo(20));
+    expect(sort.left, greaterThan(count.right));
+    expect(length.left, greaterThan(sort.right));
+    expect(length.right, lessThanOrEqualTo(480 - 20));
     await leave(tester);
   });
 

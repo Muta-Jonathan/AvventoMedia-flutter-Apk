@@ -384,7 +384,7 @@ class PresenterResultRow extends StatelessWidget {
   }
 }
 
-/// Show and series covers, 128 square: a rail on All, a wrapped grid on the
+/// Shows' and series' covers, 128 square: a rail on All, a wrapped grid on the
 /// Podcasts tab.
 class PodcastResults extends StatelessWidget {
   const PodcastResults({

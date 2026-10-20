@@ -29,7 +29,7 @@ class MediaListRow extends StatelessWidget {
   final String cover;
   final String title;
 
-  /// "24 videos · Oct 18", "1:12:40 · Mar 2".
+  /// "24 videos · Oct 18" for a playlist, "Mar 2" for a video.
   final String details;
 
   /// Words to mark in [title].

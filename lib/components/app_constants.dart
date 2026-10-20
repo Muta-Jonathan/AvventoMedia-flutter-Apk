@@ -9,7 +9,6 @@ class AppConstants {
   static const String radioName = "AvventoRadio";
   static const String nowPlaying = "Now Playing";
   static const String avventoSlogan = "Flying the Gospel to the Whole World!";
-  static const String missNot = "Programs You shouldn't miss";
   static const String liveTv = "LIVE TV";
   static const String live = "LIVE";
   static const String liveSpoken = "Live";
@@ -29,9 +28,6 @@ class AppConstants {
   static const String from = "from";
   static const String share = "Share";
   static const String cancel = "Cancel";
-  static const String searchContent = "Search Content";
-  static const String noResults = "No results found.";
-  static const String noSearchResults = "No search history yet";
 
 
   /// ***************** API ****************
@@ -183,7 +179,6 @@ class AppConstants {
   static const String liveSection = 'Live';
   static const String noResultsTitle = 'No results';
   static const String clearFilters = 'Clear filters';
-  static const String checkSpelling = 'Check the spelling or try another word.';
   static const String removeRecent = 'Remove from recent searches';
   static const String bible = 'Bible';
   static const String sortBy = 'Sort';
@@ -200,7 +195,6 @@ class AppConstants {
   static String sermonsMatch(int n) => n == 1 ? '1 sermon matches' : '$n sermons match';
   static String filtersCount(int n) => n == 0 ? 'Filters' : 'Filters, $n active';
   static String removeFilter(String label) => 'Remove filter $label';
-  static String searchResultsFor(String q) => 'Results for $q';
   static const String navWatch = 'Watch';
   static const String navListen = 'Listen';
   static const String navSearch = 'Search';
@@ -218,12 +212,9 @@ class AppConstants {
   static const double rightMain = 20;
 
   /// ***************** HEIGHT ****************
-  static const double height30 = 30;
-  static const double height40 = 40;
   static const double height250 = 250;
 
   /// ***************** WIDTH ****************
-  static const double width40 = 40;
 
   /// ***************** FONT SIZE ****************
   static const double fontSize18 = 18;

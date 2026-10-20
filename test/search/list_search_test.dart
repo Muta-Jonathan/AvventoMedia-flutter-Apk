@@ -1,4 +1,4 @@
-import 'package:avvento_media/search/group_search.dart';
+import 'package:avvento_media/search/list_ranker.dart';
 import 'package:avvento_media/search/highlight.dart';
 import 'package:avvento_media/search/list_search_controller.dart';
 import 'package:avvento_media/search/search_filters.dart';

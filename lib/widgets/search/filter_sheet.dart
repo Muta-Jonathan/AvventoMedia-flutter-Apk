@@ -7,8 +7,8 @@ import '../../themes/avvento_colors.dart';
 import '../../themes/avvento_theme.dart';
 
 /// Opens the filter sheet for [tab]. [onChanged] runs on every choice so the
-/// results behind it follow; [countFor] says how many results [Show] would
-/// give with a set of filters.
+/// results behind it follow; [countFor] says how many results the Show
+/// button would give with a set of filters.
 Future<void> showSearchFilterSheet(
   BuildContext context, {
   required SearchTab tab,

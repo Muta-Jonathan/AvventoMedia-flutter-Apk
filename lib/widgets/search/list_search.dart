@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 
 import '../../components/app_constants.dart';
 import '../../controller/search_index_controller.dart';
-import '../../search/group_search.dart';
+import '../../search/list_ranker.dart';
 import '../../search/list_search_controller.dart';
 import '../../search/search_filters.dart';
 import '../../themes/avvento_colors.dart';
@@ -215,56 +215,63 @@ class _ControlRow extends StatelessWidget {
         ? '${s.shown} of ${s.total}'
         : '${s.total} $unit';
 
-    return Row(
-      children: [
-        Expanded(
-          child: Semantics(
-            liveRegion: true,
-            child: Text(count,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    color: c.text2,
-                    fontSize: 13,
-                    height: 18 / 13,
-                    fontWeight: FontWeight.w600,
-                    fontFeatures: const [FontFeature.tabularFigures()])),
-          ),
-        ),
-        // The chips scroll sideways rather than overflow at large text sizes.
-        Flexible(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            reverse: true,
-            child: Row(children: [
-              _Menu<ListSort>(
-                label: s.sort.label,
-                tooltip: '${AppConstants.sortBy}: ${s.sort.label}',
-                values: ListSort.values,
-                selected: s.sort,
-                labelOf: (v) => v.label,
-                onSelected: s.setSort,
-              ),
-              if (showLength) ...[
+    return LayoutBuilder(
+        builder: (context, box) => Row(
+              children: [
+                // The count is as wide as its text, up to a third of the row. (Two
+                // flexible children would split the row half and half.)
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: box.maxWidth / 3),
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(count,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: c.text2,
+                            fontSize: 13,
+                            height: 18 / 13,
+                            fontWeight: FontWeight.w600,
+                            fontFeatures: const [
+                              FontFeature.tabularFigures()
+                            ])),
+                  ),
+                ),
                 const SizedBox(width: 8),
-                s.length == LengthFilter.any
-                    ? _Menu<LengthFilter>(
-                        label: AppConstants.length,
-                        tooltip: AppConstants.length,
-                        values: LengthFilter.values,
-                        selected: s.length,
+                // The chips scroll sideways rather than overflow at large text sizes.
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    reverse: true,
+                    child: Row(children: [
+                      _Menu<ListSort>(
+                        label: s.sort.label,
+                        tooltip: '${AppConstants.sortBy}: ${s.sort.label}',
+                        values: ListSort.values,
+                        selected: s.sort,
                         labelOf: (v) => v.label,
-                        onSelected: s.setLength,
-                      )
-                    : _SetLength(
-                        label: s.length.label,
-                        onClear: () => s.setLength(LengthFilter.any)),
+                        onSelected: s.setSort,
+                      ),
+                      if (showLength) ...[
+                        const SizedBox(width: 8),
+                        s.length == LengthFilter.any
+                            ? _Menu<LengthFilter>(
+                                label: AppConstants.length,
+                                tooltip: AppConstants.length,
+                                values: LengthFilter.values,
+                                selected: s.length,
+                                labelOf: (v) => v.label,
+                                onSelected: s.setLength,
+                              )
+                            : _SetLength(
+                                label: s.length.label,
+                                onClear: () => s.setLength(LengthFilter.any)),
+                      ],
+                    ]),
+                  ),
+                ),
               ],
-            ]),
-          ),
-        ),
-      ],
-    );
+            ));
   }
 }
 
