@@ -5,6 +5,7 @@ import '../apis/podcast_repository.dart';
 import '../models/presenter_model.dart';
 import '../search/search_models.dart';
 import '../search/search_source.dart';
+import 'nav_bar_controller.dart';
 import 'presenters_controller.dart';
 
 /// The local search index and the Recent searches. The index fills in
@@ -24,6 +25,10 @@ class SearchIndexController extends GetxController {
   final RxList<SearchEntry> entries = <SearchEntry>[].obs;
   final RxBool loading = false.obs;
   final RxList<String> recent = <String>[].obs;
+
+  /// A search handed over by another page ("Search all of Avvento"); the
+  /// Search page takes it and clears it.
+  final RxnString pendingQuery = RxnString();
 
   bool _started = false;
 
@@ -79,6 +84,15 @@ class SearchIndexController extends GetxController {
       ..insert(0, t);
     if (recent.length > maxRecent) recent.removeRange(maxRecent, recent.length);
     await _saveRecent();
+  }
+
+  /// Takes [query] to the Search tab and runs it there.
+  void searchAll(String query) {
+    pendingQuery.value = query;
+    Get.until((route) => route.isFirst);
+    if (Get.isRegistered<NavBarController>()) {
+      Get.find<NavBarController>().changeTabIndex(2);
+    }
   }
 
   Future<void> removeRecent(String term) async {

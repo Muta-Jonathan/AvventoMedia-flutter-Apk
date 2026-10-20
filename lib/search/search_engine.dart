@@ -37,11 +37,6 @@ class SearchResults {
         for (final h in hits)
           if (h.entry.kind == kind) h
       ];
-
-  List<SearchHit> ofTab(SearchTab tab) => [
-        for (final h in hits)
-          if (h.entry.kind.tab == tab) h
-      ];
 }
 
 /// A row in the suggestions list.
@@ -70,7 +65,7 @@ class SearchEngine {
   static final _titlePrefix =
       RegExp('^(${_titles.join('|')})\\.?\\s+', caseSensitive: false);
 
-  /// Words that find an entry even when its title doesn't have them.
+  /// Letters typed before suggestions appear.
   static const minQuery = 2;
 
   /// Lower case, one space between words, accents and punctuation gone.

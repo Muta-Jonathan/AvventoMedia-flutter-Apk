@@ -1,79 +1,47 @@
-import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:avvento_media/search/search_source.dart';
-import 'package:avvento_media/widgets/search/group_search.dart';
-import 'package:avvento_media/components/app_constants.dart';
-import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
-import 'package:avvento_media/widgets/common/loading_widget.dart';
-import 'package:avvento_media/widgets/youtube/items/youtube_playlist_item_details_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../apis/firestore_service_api.dart';
+import '../../../components/app_constants.dart';
 import '../../../controller/youtube_playlist_controller.dart';
-import '../../../controller/youtube_playlist_item_controller.dart';
-import '../../../routes/routes.dart';
+import '../../../models/youtubemodels/youtube_playlist_item_model.dart';
+import '../../common/loading_widget.dart';
+import '../../search/list_search.dart';
+import '../media_rows.dart';
 
+/// The videos of the selected Kids playlist.
 class YoutubeKidsPlaylistItemWidget extends StatelessWidget {
-  const YoutubeKidsPlaylistItemWidget({super.key, this.query});
+  const YoutubeKidsPlaylistItemWidget({super.key, required this.search});
 
-  /// Narrows the list; set by the page's search field.
-  final ValueListenable<String>? query;
+  final ListSearchHandle search;
 
   @override
   Widget build(BuildContext context) {
-    final youtubePlaylistItemController = Get.put(YoutubePlaylistItemController());
-    final youtubePlaylistController = Get.find<YoutubePlaylistController>();
-
-    // Get the selected playlist ID
-    final playlistId = youtubePlaylistController.selectedPlaylist.value?.id;
-
+    final playlistId =
+        Get.find<YoutubePlaylistController>().selectedPlaylist.value?.id;
     if (playlistId == null) {
-      return const SliverToBoxAdapter(child: Center(child: Text('No playlist selected')));
+      return const SliverToBoxAdapter(
+          child: Center(child: Text('No playlist selected')));
     }
 
     return StreamBuilder<List<YouTubePlaylistItemModel>>(
-      stream: FirestoreServiceAPI.instance.streamPlaylistItems(
-        AppConstants.kidsYoutubeChannel,
-        playlistId,
-      ),
+      stream: FirestoreServiceAPI.instance
+          .streamPlaylistItems(AppConstants.kidsYoutubeChannel, playlistId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SliverToBoxAdapter(child: Center(child: LoadingWidget()));
+          return const SliverToBoxAdapter(
+              child: Center(child: LoadingWidget()));
         }
-
         if (snapshot.hasError) {
-          return SliverToBoxAdapter(child: Center(child: Text('Error: ${snapshot.error}')));
+          return SliverToBoxAdapter(
+              child: Center(child: Text('Error: ${snapshot.error}')));
         }
-
         final items = snapshot.data ?? [];
-
         if (items.isEmpty) {
-          return const SliverToBoxAdapter(child: Center(child: Text('No items found')));
+          return const SliverToBoxAdapter(
+              child: Center(child: Text('No items found')));
         }
-
-        return GroupSearchList<YouTubePlaylistItemModel>(
-          items: items,
-          query: query,
-          entryOf: SearchEntries.fromVideo,
-          builder: (context, shown) => SliverList(
-          delegate: SliverChildBuilderDelegate(
-                (context, index) {
-              final item = shown[index];
-              return GestureDetector(
-                onTap: () {
-                  youtubePlaylistItemController.setSelectedEpisode(item);
-                  Get.toNamed(Routes.getWatchYoutubeRoute());
-                },
-                child: YoutubePlaylistItemDetailsWidget(
-                  youTubePlaylistItemModel: item,
-                ),
-              );
-            },
-            childCount: shown.length,
-          ),
-        ),
-        );
+        return PlaylistVideosList(items: items, search: search);
       },
     );
   }

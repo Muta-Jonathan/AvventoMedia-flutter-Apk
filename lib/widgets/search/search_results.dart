@@ -9,6 +9,7 @@ import '../../models/radiomodel/podcast_episode_model.dart';
 import '../../search/search_engine.dart';
 import '../../search/search_models.dart';
 import '../../themes/avvento_colors.dart';
+import '../common/media_list_row.dart';
 import '../listen/section_header.dart';
 import '../podcast/episode/feed_episode_row.dart';
 import '../podcast/player_state_builder.dart';
@@ -133,7 +134,8 @@ class SearchResultsSliver extends StatelessWidget {
       section(AppConstants.videosSection, SearchTab.videos, videos.length,
           shown.length);
       for (final h in shown) {
-        rows.add((_) => VideoResultRow(entry: h.entry, onOpen: onOpen));
+        rows.add((_) => VideoResultRow(
+            entry: h.entry, onOpen: onOpen, query: results.query));
       }
     }
 
@@ -382,7 +384,7 @@ class PresenterResultRow extends StatelessWidget {
   }
 }
 
-/// Show and series covers, 128 square: a rail on All, a wrapped grid on the
+/// Shows' and series' covers, 128 square: a rail on All, a wrapped grid on the
 /// Podcasts tab.
 class PodcastResults extends StatelessWidget {
   const PodcastResults({
@@ -475,104 +477,36 @@ class _PodcastCard extends StatelessWidget {
   }
 }
 
-/// A video or playlist: 16:9 thumbnail, title and where it's from.
+/// A video or playlist, as the shared [MediaListRow] (a playlist is stacked)
+/// with the searched words marked.
 class VideoResultRow extends StatelessWidget {
-  const VideoResultRow({super.key, required this.entry, required this.onOpen});
+  const VideoResultRow({
+    super.key,
+    required this.entry,
+    required this.onOpen,
+    this.query = '',
+  });
 
   final SearchEntry entry;
   final ValueChanged<SearchEntry> onOpen;
-
-  static String _length(Duration d) {
-    final h = d.inHours, m = d.inMinutes % 60, s = d.inSeconds % 60;
-    String two(int n) => n.toString().padLeft(2, '0');
-    return h > 0 ? '$h:${two(m)}:${two(s)}' : '$m:${two(s)}';
-  }
+  final String query;
 
   @override
   Widget build(BuildContext context) {
-    final c = Theme.of(context).avvento;
-    final sub = [
-      if (entry.source.isNotEmpty) entry.source,
-      if (entry.kind == SearchKind.playlist)
-        '${entry.count} videos'
-      else if (entry.duration != null)
-        _length(entry.duration!),
-    ].join(' · ');
-    return Semantics(
-      button: true,
-      label: '${entry.title}, $sub',
-      excludeSemantics: true,
-      child: InkWell(
-        onTap: () => onOpen(entry),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  width: 132,
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        entry.cover.isEmpty
-                            ? ColoredBox(color: c.surface2)
-                            : CachedNetworkImage(
-                                imageUrl: entry.cover,
-                                fit: BoxFit.cover,
-                                errorWidget: (_, __, ___) =>
-                                    ColoredBox(color: c.surface2),
-                              ),
-                        Center(
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: const BoxDecoration(
-                                color: Color(0x73000000),
-                                shape: BoxShape.circle),
-                            child: Icon(
-                                entry.kind == SearchKind.playlist
-                                    ? Icons.playlist_play_rounded
-                                    : Icons.play_arrow_rounded,
-                                size: 18,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(entry.title,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: c.text,
-                            fontSize: 14,
-                            height: 19 / 14,
-                            fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 4),
-                    Text(sub,
-                        style: TextStyle(
-                            color: c.text3,
-                            fontSize: 12,
-                            height: 16 / 12,
-                            fontWeight: FontWeight.w500)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    final playlist = entry.kind == SearchKind.playlist;
+    final at = entry.publishedAt;
+    return MediaListRow(
+      cover: entry.cover,
+      title: entry.title,
+      details: [
+        if (entry.source.isNotEmpty) entry.source,
+        if (playlist) '${entry.count} videos',
+        if (at != null) MediaListRow.date(at),
+      ].join(' · '),
+      badge: playlist ? null : entry.badge,
+      stacked: playlist,
+      query: query,
+      onTap: () => onOpen(entry),
     );
   }
 }

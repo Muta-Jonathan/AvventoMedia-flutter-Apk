@@ -1,31 +1,26 @@
-import 'package:flutter/foundation.dart' show ValueListenable;
-import 'package:avvento_media/search/search_source.dart';
-import 'package:avvento_media/widgets/search/group_search.dart';
-import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
-import 'package:avvento_media/widgets/common/loading_widget.dart';
-import 'package:avvento_media/widgets/youtube/items/youtube_playlist_item_details_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controller/youtube_playlist_controller.dart';
-import '../../../controller/youtube_playlist_item_controller.dart';
-import '../../../routes/routes.dart';
+import '../../common/loading_widget.dart';
 import '../../providers/youtube_provider.dart';
+import '../../search/list_search.dart';
+import '../media_rows.dart';
 
+/// The videos of the selected Main playlist.
 class YoutubeMainPlaylistItemWidget extends StatefulWidget {
-  const YoutubeMainPlaylistItemWidget({super.key, this.query});
+  const YoutubeMainPlaylistItemWidget({super.key, required this.search});
 
-  /// Narrows the list; set by the page's search field.
-  final ValueListenable<String>? query;
+  final ListSearchHandle search;
 
   @override
-  YoutubeMainPlaylistItemWidgetState createState() => YoutubeMainPlaylistItemWidgetState();
+  YoutubeMainPlaylistItemWidgetState createState() =>
+      YoutubeMainPlaylistItemWidgetState();
 }
 
-class YoutubeMainPlaylistItemWidgetState extends State<YoutubeMainPlaylistItemWidget> {
-  final youtubePlaylistItemController = Get.put(YoutubePlaylistItemController());
+class YoutubeMainPlaylistItemWidgetState
+    extends State<YoutubeMainPlaylistItemWidget> {
   final YoutubePlaylistController youtubePlaylistController = Get.find();
 
   @override
@@ -33,8 +28,11 @@ class YoutubeMainPlaylistItemWidgetState extends State<YoutubeMainPlaylistItemWi
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        // Fetch Main playlist item using the provider and listen to changes
-        Provider.of<YoutubeProvider>(context, listen: false).streamMainPlaylistItems(playlistId: youtubePlaylistController.selectedPlaylist.value!.id);
+        // Load the playlist's videos and follow changes.
+        Provider.of<YoutubeProvider>(context, listen: false)
+            .streamMainPlaylistItems(
+                playlistId:
+                    youtubePlaylistController.selectedPlaylist.value!.id);
       }
     });
   }
@@ -44,41 +42,16 @@ class YoutubeMainPlaylistItemWidgetState extends State<YoutubeMainPlaylistItemWi
     return Consumer<YoutubeProvider>(
       builder: (context, youtubeProvider, child) {
         if (youtubeProvider.isLoading) {
-          return const SliverToBoxAdapter(child: Center(child:LoadingWidget()));
+          return const SliverToBoxAdapter(
+              child: Center(child: LoadingWidget()));
         } else if (youtubeProvider.youtubeMainPlaylistItems.isEmpty) {
-          return const SliverToBoxAdapter(child: Center(child: Text('No items found')));
-        } else {
-          return buildSliverList(youtubeProvider);
+          return const SliverToBoxAdapter(
+              child: Center(child: Text('No items found')));
         }
+        return PlaylistVideosList(
+            items: youtubeProvider.youtubeMainPlaylistItems,
+            search: widget.search);
       },
-    );
-  }
-  Widget buildSliverList(YoutubeProvider youtubeProvider) {
-    return GroupSearchList<YouTubePlaylistItemModel>(
-          items: youtubeProvider.youtubeMainPlaylistItems,
-          query: widget.query,
-          entryOf: SearchEntries.fromVideo,
-          builder: (context, shown) => SliverList(
-      delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
-          final item = shown[index];
-          return buildYoutubePlaylistItemDetailsScreen(item);
-        },
-        childCount: shown.length,
-      ),
-    ),
-        );
-  }
-
-  Widget buildYoutubePlaylistItemDetailsScreen(YouTubePlaylistItemModel youtubePlaylistItem) {
-    return GestureDetector(
-      onTap: () {
-        // Set the selected youtube playlist using the controller
-        youtubePlaylistItemController.setSelectedEpisode(youtubePlaylistItem);
-        // Navigate to the "YoutubePlaylistPage"
-        Get.toNamed(Routes.getWatchYoutubeRoute());
-      },
-      child: YoutubePlaylistItemDetailsWidget(youTubePlaylistItemModel: youtubePlaylistItem,),
     );
   }
 }

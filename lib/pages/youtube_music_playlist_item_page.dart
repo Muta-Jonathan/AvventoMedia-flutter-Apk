@@ -1,4 +1,4 @@
-import 'package:avvento_media/widgets/search/group_search.dart';
+import 'package:avvento_media/widgets/search/list_search.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/youtube_playlist_controller.dart';
@@ -25,14 +25,6 @@ class YoutubeMusicPlaylistItemPage extends StatefulWidget {
 }
 
 class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemPage> {
-  final ValueNotifier<String> _query = ValueNotifier<String>('');
-
-  @override
-  void dispose() {
-    _query.dispose();
-    super.dispose();
-  }
-
   final YoutubePlaylistController youtubePlaylistController = Get.find();
 
   @override
@@ -55,17 +47,25 @@ class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemP
 
       await Future.delayed(const Duration(seconds: 2)); // Simulate data loading
     }
-    return Scaffold(
+    return ListSearchScope(
+      builder: (context, search) => Scaffold(
       backgroundColor:   Theme.of(context).colorScheme.surface,
       body: RefreshIndicator(
           backgroundColor: Colors.white,
           color: Colors.amber,
           onRefresh: refreshData,
           child: CustomScrollView(
+        controller: search.scroll,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: <Widget>[
+          if (search.controller.searching)
+            ...listSearchTop(context, search,
+                hint: AppConstants.searchThisPlaylist, unit: 'videos', showLength: true),
+          if (!search.controller.searching) ...<Widget>[
               SliverAppBar(
                 backgroundColor:   Theme.of(context).colorScheme.surface,
                 iconTheme: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+            actions: [ListSearchButton(search: search)],
                 expandedHeight: Utils.calculateHeight(context, 0.4),
                 floating: false,
                 pinned: true,
@@ -161,15 +161,12 @@ class _YoutubeMusicPlaylistItemPageState extends State<YoutubeMusicPlaylistItemP
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-            child: GroupSearchField(
-                query: _query, hint: AppConstants.searchThisPlaylist),
-          ),
-          YoutubeMusicPlaylistItemWidget(query: _query),
+          ],
+          YoutubeMusicPlaylistItemWidget(search: search),
             ],
           ),
       ),
-    );
+    ));
   }
 }
 

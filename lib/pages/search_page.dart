@@ -48,14 +48,27 @@ class _SearchPageState extends State<SearchPage> {
   SearchTab _tab = SearchTab.all;
   SearchFilters _filters = SearchFilters.none;
 
+  Worker? _handover;
+
   @override
   void initState() {
     super.initState();
     _index.ensureLoaded();
+    // "Search all of Avvento" on another page hands its query over.
+    _handover = ever<String?>(_index.pendingQuery, (_) => _takeHandover());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _takeHandover());
+  }
+
+  void _takeHandover() {
+    final query = _index.pendingQuery.value;
+    if (query == null || !mounted) return;
+    _index.pendingQuery.value = null;
+    _submit(query);
   }
 
   @override
   void dispose() {
+    _handover?.dispose();
     _timer?.cancel();
     _text.dispose();
     _focus.dispose();
