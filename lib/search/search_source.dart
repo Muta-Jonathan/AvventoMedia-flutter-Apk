@@ -137,11 +137,16 @@ abstract class SearchEntries {
         payload: v,
       );
 
+  /// Only a channel whose status says so is live; the rest are off air.
+  static bool isOnAir(String status) => status == AppConstants.liveNow;
+
   static SearchEntry fromLiveTv(LiveTvModel t) => SearchEntry(
         kind: SearchKind.live,
         id: 'tv-${t.name}',
         title: t.name,
-        subtitle: AppConstants.liveTv,
+        live: isOnAir(t.status),
+        subtitle:
+            isOnAir(t.status) ? AppConstants.liveNowLabel : AppConstants.offAir,
         source: SearchSources.main,
         cover: t.imageUrl,
         keywords: t.description,
@@ -152,7 +157,9 @@ abstract class SearchEntries {
         kind: SearchKind.live,
         id: 'radio-${r.name}',
         title: r.name,
-        subtitle: AppConstants.liveRadio,
+        live: isOnAir(r.status),
+        subtitle:
+            isOnAir(r.status) ? AppConstants.liveNowLabel : AppConstants.offAir,
         source: SearchSources.radio,
         cover: r.imageUrl,
         payload: r,

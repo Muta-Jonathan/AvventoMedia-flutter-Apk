@@ -616,7 +616,10 @@ class LiveResultRow extends StatelessWidget {
                             width: 6,
                             height: 6,
                             decoration: BoxDecoration(
-                                color: c.liveDot, shape: BoxShape.circle)),
+                                // Red only while it is on air.
+                                color:
+                                    entry.live == false ? c.text3 : c.liveDot,
+                                shape: BoxShape.circle)),
                         const SizedBox(width: 6),
                         Text(entry.subtitle,
                             style: TextStyle(
@@ -629,13 +632,15 @@ class LiveResultRow extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                width: 44,
-                height: 44,
-                decoration:
-                    BoxDecoration(color: c.surface2, shape: BoxShape.circle),
-                child: Icon(Icons.play_arrow_rounded, size: 20, color: c.text),
-              ),
+              if (entry.live != false)
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration:
+                      BoxDecoration(color: c.surface2, shape: BoxShape.circle),
+                  child:
+                      Icon(Icons.play_arrow_rounded, size: 20, color: c.text),
+                ),
             ],
           ),
         ),

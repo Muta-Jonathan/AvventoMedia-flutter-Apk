@@ -68,6 +68,7 @@ class SearchEntry {
     this.cover = '',
     this.keywords = '',
     this.count = 0,
+    this.live,
   });
 
   final SearchKind kind;
@@ -89,6 +90,9 @@ class SearchEntry {
 
   /// Sermons, parts or videos it holds.
   final int count;
+
+  /// For a channel: on air right now. Null for everything else.
+  final bool? live;
   final Object payload;
 
   // Normalized once: a search runs over thousands of these per keystroke.

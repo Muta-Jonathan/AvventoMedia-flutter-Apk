@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../components/app_constants.dart';
+import '../components/utils.dart';
 import '../controller/live_tv_controller.dart';
 import '../controller/podcast_controller.dart';
 import '../controller/radio_controller.dart';
@@ -44,7 +45,11 @@ abstract class SearchNavigation {
             .setSelectedEpisode(item as YouTubePlaylistItemModel);
         Get.toNamed(Routes.getWatchYoutubeRoute());
       case SearchKind.live:
-        if (item is LiveTvModel) {
+        if (entry.live == false) {
+          // Not on air: the same notice as the live list.
+          final context = Get.context;
+          if (context != null) Utils.showComingSoonDialog(context);
+        } else if (item is LiveTvModel) {
           Get.find<LiveTvController>().selectedTv(item);
           Get.toNamed(Routes.getLiveTvRoute());
         } else if (item is RadioModel) {
