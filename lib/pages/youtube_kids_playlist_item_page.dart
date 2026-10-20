@@ -1,3 +1,5 @@
+import 'package:avvento_media/search/search_source.dart';
+import 'package:avvento_media/widgets/search/group_search.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/youtube_playlist_controller.dart';
@@ -27,6 +29,14 @@ class YoutubeKidsPlaylistItemPage extends StatefulWidget {
 }
 
 class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
+  final ValueNotifier<String> _query = ValueNotifier<String>('');
+
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
+  }
+
   final YoutubePlaylistController youtubePlaylistController = Get.find();
 
   @override
@@ -163,6 +173,10 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
               ),
             ),
           ),
+          SliverToBoxAdapter(
+            child: GroupSearchField(
+                query: _query, hint: AppConstants.searchThisPlaylist),
+          ),
           // StreamBuilder for playlist items
           StreamBuilder<List<YouTubePlaylistItemModel>>(
             stream: FirestoreServiceAPI.instance.streamPlaylistItems(
@@ -190,10 +204,14 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
                 );
               }
 
-              return SliverList(
+              return GroupSearchList<YouTubePlaylistItemModel>(
+          items: items,
+          query: _query,
+          entryOf: SearchEntries.fromVideo,
+          builder: (context, shown) => SliverList(
                 delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                    final item = items[index];
+                    final item = shown[index];
                     return GestureDetector(
                       onTap: () {
                         final youtubePlaylistItemController =
@@ -206,9 +224,10 @@ class _YoutubePlaylistItemPageState extends State<YoutubeKidsPlaylistItemPage> {
                       ),
                     );
                   },
-                  childCount: items.length,
+                  childCount: shown.length,
                 ),
-              );
+              ),
+        );
             },
           ),
         ],

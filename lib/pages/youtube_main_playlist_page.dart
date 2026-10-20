@@ -1,3 +1,4 @@
+import 'package:avvento_media/widgets/search/group_search.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
@@ -13,6 +14,14 @@ class YoutubeMainPlaylistPage extends StatefulWidget {
 }
 
 class _YoutubeMainPlaylistPageState extends State<YoutubeMainPlaylistPage> {
+  final ValueNotifier<String> _query = ValueNotifier<String>('');
+
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +49,11 @@ class _YoutubeMainPlaylistPageState extends State<YoutubeMainPlaylistPage> {
             ),
           ),
           // Stream-based vertical playlist widget
-          const YoutubeMainPlaylistVerticalWidget(),
+          SliverToBoxAdapter(
+            child: GroupSearchField(
+                query: _query, hint: AppConstants.searchPlaylists),
+          ),
+          YoutubeMainPlaylistVerticalWidget(query: _query),
         ],
       ),
     );

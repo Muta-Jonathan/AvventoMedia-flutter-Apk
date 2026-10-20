@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:avvento_media/search/search_source.dart';
+import 'package:avvento_media/widgets/search/group_search.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/youtube/items/youtube_playlist_item_details_widget.dart';
@@ -12,7 +15,10 @@ import '../../../routes/routes.dart';
 import '../../providers/youtube_provider.dart';
 
 class YoutubeMusicPlaylistItemWidget extends StatefulWidget {
-  const YoutubeMusicPlaylistItemWidget({super.key,});
+  const YoutubeMusicPlaylistItemWidget({super.key, this.query});
+
+  /// Narrows the list; set by the page's search field.
+  final ValueListenable<String>? query;
 
   @override
   YoutubeMusicPlaylistItemWidgetState createState() => YoutubeMusicPlaylistItemWidgetState();
@@ -48,15 +54,20 @@ class YoutubeMusicPlaylistItemWidgetState extends State<YoutubeMusicPlaylistItem
     );
   }
   Widget buildSliverList(YoutubeProvider youtubeProvider) {
-    return SliverList(
+    return GroupSearchList<YouTubePlaylistItemModel>(
+          items: youtubeProvider.youtubeMusicPlaylistItems,
+          query: widget.query,
+          entryOf: SearchEntries.fromVideo,
+          builder: (context, shown) => SliverList(
       delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-          final item = youtubeProvider.youtubeMusicPlaylistItems[index];
+          final item = shown[index];
           return buildYoutubePlaylistItemDetailsScreen(item);
         },
-        childCount: youtubeProvider.youtubeMusicPlaylistItems.length,
+        childCount: shown.length,
       ),
-    );
+    ),
+        );
   }
 
   Widget buildYoutubePlaylistItemDetailsScreen(YouTubePlaylistItemModel youtubePlaylistItem) {

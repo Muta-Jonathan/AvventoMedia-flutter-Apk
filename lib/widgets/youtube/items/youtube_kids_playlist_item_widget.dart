@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:avvento_media/search/search_source.dart';
+import 'package:avvento_media/widgets/search/group_search.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/models/youtubemodels/youtube_playlist_item_model.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
@@ -12,7 +15,10 @@ import '../../../controller/youtube_playlist_item_controller.dart';
 import '../../../routes/routes.dart';
 
 class YoutubeKidsPlaylistItemWidget extends StatelessWidget {
-  const YoutubeKidsPlaylistItemWidget({super.key});
+  const YoutubeKidsPlaylistItemWidget({super.key, this.query});
+
+  /// Narrows the list; set by the page's search field.
+  final ValueListenable<String>? query;
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +52,14 @@ class YoutubeKidsPlaylistItemWidget extends StatelessWidget {
           return const SliverToBoxAdapter(child: Center(child: Text('No items found')));
         }
 
-        return SliverList(
+        return GroupSearchList<YouTubePlaylistItemModel>(
+          items: items,
+          query: query,
+          entryOf: SearchEntries.fromVideo,
+          builder: (context, shown) => SliverList(
           delegate: SliverChildBuilderDelegate(
                 (context, index) {
-              final item = items[index];
+              final item = shown[index];
               return GestureDetector(
                 onTap: () {
                   youtubePlaylistItemController.setSelectedEpisode(item);
@@ -60,8 +70,9 @@ class YoutubeKidsPlaylistItemWidget extends StatelessWidget {
                 ),
               );
             },
-            childCount: items.length,
+            childCount: shown.length,
           ),
+        ),
         );
       },
     );

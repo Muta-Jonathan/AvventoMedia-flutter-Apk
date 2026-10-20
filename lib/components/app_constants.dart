@@ -186,6 +186,10 @@ class AppConstants {
   static const String checkSpelling = 'Check the spelling or try another word.';
   static const String removeRecent = 'Remove from recent searches';
   static const String bible = 'Bible';
+  static String nothingHere(String q) => 'Nothing for “$q” in this list. Try another word.';
+  static const String searchPlaylists = 'Search playlists';
+  static const String searchThisPlaylist = 'Search this playlist';
+  static const String searchLive = 'Search live channels';
   static String nothingFor(String q) => 'Nothing for “$q” with these filters.';
   static String noMatchFor(String q) => 'Nothing for “$q”. Check the spelling or try another word.';
   static String showResults(int n) => n == 1 ? 'Show 1 result' : 'Show $n results';

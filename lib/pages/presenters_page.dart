@@ -10,6 +10,7 @@ import '../themes/avvento_colors.dart';
 import '../themes/avvento_theme.dart';
 import '../widgets/common/empty_state.dart';
 import '../widgets/presenters/presenter_portrait.dart';
+import '../widgets/search/search_field.dart' show searchFieldPadding, searchFieldStyle;
 
 /// Presenters · See all: search, genre chips and a list that keeps full
 /// names readable at any text size.
@@ -183,25 +184,18 @@ class _PresentersPageState extends State<PresentersPage> {
           Icon(Icons.search_rounded, size: 20, color: c.text3),
           const SizedBox(width: 10),
           Expanded(
-            // The whole 48dp bar is the tap target.
-            child: SizedBox(
-              height: 48,
-              child: TextField(
-                controller: _search,
-                onChanged: (_) => setState(() {}),
-                textInputAction: TextInputAction.search,
-                textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(
-                    color: c.text, fontSize: 15, fontWeight: FontWeight.w500),
-                decoration: InputDecoration(
-                  isDense: true,
-                  border: InputBorder.none,
-                  hintText: AppConstants.searchPresenters,
-                  hintStyle: TextStyle(
-                      color: c.text3,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500),
-                ),
+            child: TextField(
+              controller: _search,
+              onChanged: (_) => setState(() {}),
+              textInputAction: TextInputAction.search,
+              cursorColor: c.accent,
+              style: searchFieldStyle(c.text, 15),
+              decoration: InputDecoration(
+                isCollapsed: true,
+                contentPadding: searchFieldPadding(context, 15, height: 46),
+                border: InputBorder.none,
+                hintText: AppConstants.searchPresenters,
+                hintStyle: searchFieldStyle(c.text3, 15),
               ),
             ),
           ),

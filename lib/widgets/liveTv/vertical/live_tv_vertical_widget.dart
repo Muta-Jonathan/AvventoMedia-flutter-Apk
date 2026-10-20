@@ -1,3 +1,6 @@
+import 'package:flutter/foundation.dart' show ValueListenable;
+import 'package:avvento_media/search/search_source.dart';
+import 'package:avvento_media/widgets/search/group_search.dart';
 import 'package:avvento_media/widgets/common/loading_widget.dart';
 import 'package:avvento_media/widgets/liveTv/vertical/live_tv_details_vertical_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +16,10 @@ import '../../../controller/live_tv_controller.dart';
 import '../../../models/livetvmodel/livetv_model.dart';
 
 class LiveTvVerticalWidget extends StatefulWidget {
-  const LiveTvVerticalWidget({super.key});
+  const LiveTvVerticalWidget({super.key, this.query});
+
+  /// Narrows the list; set by the page's search field.
+  final ValueListenable<String>? query;
 
   @override
   State<LiveTvVerticalWidget>  createState() => _LiveTvVerticalWidgetState();
@@ -49,14 +55,19 @@ class _LiveTvVerticalWidgetState extends State<LiveTvVerticalWidget> {
             if (aLive == bLive) return 0;
             return aLive ? -1 : 1;
           });
-          return SliverList(
-            delegate: SliverChildBuilderDelegate(
-                  (BuildContext context, int index) {
-                DocumentSnapshot documentSnapshot = sorted[index] as DocumentSnapshot;
-                LiveTvModel liveTvModel = LiveTvModel.fromSnapShot(documentSnapshot);
-                return buildLiveTvDetailsScreen(liveTvModel);
-              },
-              childCount: sorted.length,
+          final channels = [
+            for (final doc in sorted) LiveTvModel.fromSnapShot(doc as DocumentSnapshot)
+          ];
+          return GroupSearchList<LiveTvModel>(
+            items: channels,
+            query: widget.query,
+            entryOf: SearchEntries.fromLiveTv,
+            builder: (context, shown) => SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) =>
+                    buildLiveTvDetailsScreen(shown[index]),
+                childCount: shown.length,
+              ),
             ),
           );
         }
