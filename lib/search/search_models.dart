@@ -66,6 +66,7 @@ class SearchEntry {
     this.publishedAt,
     this.duration,
     this.cover = '',
+    this.badge,
     this.keywords = '',
     this.count = 0,
   });
@@ -83,6 +84,9 @@ class SearchEntry {
   final DateTime? publishedAt;
   final Duration? duration;
   final String cover;
+
+  /// What shows on the corner of its picture: a video's length, or "Live".
+  final String? badge;
 
   /// Extra words that should find it.
   final String keywords;

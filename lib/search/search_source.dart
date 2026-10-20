@@ -1,6 +1,7 @@
 import '../apis/firestore_service_api.dart';
 import '../apis/podcast_repository.dart';
 import '../components/app_constants.dart';
+import '../components/utils.dart';
 import '../models/livetvmodel/livetv_model.dart';
 import '../models/presenter_model.dart';
 import '../models/radiomodel/podcast_episode_model.dart';
@@ -103,12 +104,21 @@ abstract class SearchEntries {
           ),
       ];
 
-  /// "PT1H12M40S" → 1:12:40.
-  static Duration? parseIsoDuration(String iso) {
-    final m = RegExp(r'^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$').firstMatch(iso);
-    if (m == null || iso == 'PT') return null;
-    int n(int i) => int.tryParse(m.group(i) ?? '') ?? 0;
-    return Duration(hours: n(1), minutes: n(2), seconds: n(3));
+  /// A video's length from either form it is stored in: "PT1H12M40S", or
+  /// already formatted, "1:12:40" / "12:40". Null when unknown.
+  static Duration? parseIsoDuration(String value) {
+    final iso =
+        RegExp(r'^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$').firstMatch(value);
+    if (iso != null && value != 'PT') {
+      int n(int i) => int.tryParse(iso.group(i) ?? '') ?? 0;
+      return Duration(hours: n(1), minutes: n(2), seconds: n(3));
+    }
+    final clock = RegExp(r'^(?:(\d+):)?(\d{1,2}):(\d{2})$').firstMatch(value);
+    if (clock != null) {
+      int n(int i) => int.tryParse(clock.group(i) ?? '') ?? 0;
+      return Duration(hours: n(1), minutes: n(2), seconds: n(3));
+    }
+    return null;
   }
 
   static SearchEntry fromPlaylist(YoutubePlaylistModel p) => SearchEntry(
@@ -124,6 +134,13 @@ abstract class SearchEntries {
         payload: p,
       );
 
+  /// The corner label for a video: its length, "Live" or "Premiere"; null
+  /// when there is none.
+  static String? videoBadge(YouTubePlaylistItemModel v) {
+    final label = Utils.formatDuration(v.duration, v.liveBroadcastContent);
+    return label.isEmpty ? null : label;
+  }
+
   static SearchEntry fromVideo(YouTubePlaylistItemModel v) => SearchEntry(
         kind: SearchKind.video,
         id: v.id,
@@ -134,6 +151,7 @@ abstract class SearchEntries {
         keywords: v.description,
         publishedAt: v.publishedAt,
         duration: parseIsoDuration(v.duration),
+        badge: videoBadge(v),
         payload: v,
       );
 

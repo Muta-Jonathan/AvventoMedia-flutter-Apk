@@ -48,6 +48,7 @@ SearchEntry blank(SearchEntry e) => SearchEntry(
       duration: e.duration,
       keywords: e.keywords,
       count: e.count,
+      badge: e.badge,
       payload: e.payload,
     );
 
@@ -81,6 +82,7 @@ Future<List<SearchEntry>> entries() async {
         source: SearchSources.main,
         publishedAt: DateTime.now().subtract(const Duration(days: 3)),
         duration: const Duration(minutes: 72),
+        badge: '01:12:00',
         payload: 'video'),
     SearchEntry(
         kind: SearchKind.playlist,
@@ -287,6 +289,15 @@ void main() {
     expect(find.text(AppConstants.noResultsTitle), findsOneWidget);
     expect(find.text(AppConstants.noMatchFor('zzzz')), findsOneWidget);
     expect(find.text(AppConstants.clearFilters), findsNothing);
+    await leave(tester);
+  });
+
+  testWidgets('a video result shows its length on the picture', (tester) async {
+    await pump(tester);
+    await submit(tester, 'final hour');
+    await tapTab(tester, 'Videos, 1');
+
+    expect(find.text('01:12:00'), findsOneWidget);
     await leave(tester);
   });
 

@@ -494,7 +494,6 @@ class VideoResultRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final playlist = entry.kind == SearchKind.playlist;
-    final length = entry.duration;
     final at = entry.publishedAt;
     return MediaListRow(
       cover: entry.cover,
@@ -504,7 +503,7 @@ class VideoResultRow extends StatelessWidget {
         if (playlist) '${entry.count} videos',
         if (at != null) MediaListRow.date(at),
       ].join(' · '),
-      badge: playlist || length == null ? null : MediaListRow.length(length),
+      badge: playlist ? null : entry.badge,
       stacked: playlist,
       query: query,
       onTap: () => onOpen(entry),

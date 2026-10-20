@@ -80,6 +80,16 @@ void main() {
       expect(SearchEntries.sourceOfChannel('other'), '');
     });
 
+    test('a length stored already formatted still counts', () {
+      expect(SearchEntries.parseIsoDuration('1:12:40'),
+          const Duration(hours: 1, minutes: 12, seconds: 40));
+      expect(SearchEntries.parseIsoDuration('12:40'),
+          const Duration(minutes: 12, seconds: 40));
+      expect(SearchEntries.parseIsoDuration('01:12:40'),
+          const Duration(hours: 1, minutes: 12, seconds: 40));
+      expect(SearchEntries.parseIsoDuration('live'), isNull);
+    });
+
     test('YouTube lengths', () {
       expect(SearchEntries.parseIsoDuration('PT1H12M40S'),
           const Duration(hours: 1, minutes: 12, seconds: 40));
