@@ -1,3 +1,4 @@
+import 'package:avvento_media/widgets/search/group_search.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/widgets/text/text_overlay_widget.dart';
@@ -15,6 +16,14 @@ class YoutubeMusicPlaylistPage extends StatefulWidget {
 }
 
 class _YoutubeMusicPlaylistPageState extends State<YoutubeMusicPlaylistPage> {
+  final ValueNotifier<String> _query = ValueNotifier<String>('');
+
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
+  }
+
 
   @override
   void initState() {
@@ -59,7 +68,11 @@ class _YoutubeMusicPlaylistPageState extends State<YoutubeMusicPlaylistPage> {
                   titlePadding: const EdgeInsets.only(left: 48,bottom: 14),
                 ),
               ),
-              const YoutubeMusicPlaylistVerticalWidget(),
+              SliverToBoxAdapter(
+            child: GroupSearchField(
+                query: _query, hint: AppConstants.searchPlaylists),
+          ),
+          YoutubeMusicPlaylistVerticalWidget(query: _query),
             ],
           ),
       ),

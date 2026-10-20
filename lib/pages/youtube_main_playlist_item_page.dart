@@ -1,3 +1,4 @@
+import 'package:avvento_media/widgets/search/group_search.dart';
 import 'package:avvento_media/components/app_constants.dart';
 import 'package:avvento_media/components/utils.dart';
 import 'package:avvento_media/controller/youtube_playlist_controller.dart';
@@ -24,6 +25,14 @@ class YoutubeMainPlaylistItemPage extends StatefulWidget {
 }
 
 class _YoutubePlaylistItemPageState extends State<YoutubeMainPlaylistItemPage> {
+  final ValueNotifier<String> _query = ValueNotifier<String>('');
+
+  @override
+  void dispose() {
+    _query.dispose();
+    super.dispose();
+  }
+
   final YoutubePlaylistController youtubePlaylistController = Get.find();
 
   @override
@@ -152,7 +161,11 @@ class _YoutubePlaylistItemPageState extends State<YoutubeMainPlaylistItemPage> {
                   ),
                 ),
               ),
-              const YoutubeMainPlaylistItemWidget(),
+              SliverToBoxAdapter(
+            child: GroupSearchField(
+                query: _query, hint: AppConstants.searchThisPlaylist),
+          ),
+          YoutubeMainPlaylistItemWidget(query: _query),
             ],
           ),
       ),
