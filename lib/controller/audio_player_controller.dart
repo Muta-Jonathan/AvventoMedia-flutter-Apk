@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart' show ScaffoldMessenger;
 import 'package:flutter/widgets.dart';
@@ -7,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../components/utils.dart';
 import '../models/radiomodel/radio_station_model.dart';
 import '../widgets/audio_players/player_panel.dart';
@@ -127,10 +125,6 @@ class AudioPlayerController extends GetxController {
   }
 
   Future<AudioHandler> _initAudioService() async {
-    // Android 13+ asks before a notification can show. iOS needs nothing for
-    // the lock screen and Now Playing, so don't wait on a prompt there.
-    if (Platform.isAndroid) await Permission.notification.request();
-
     // The playback category is what lets iOS keep playing in the background
     // and show the lock screen controls.
     final session = await AudioSession.instance;
