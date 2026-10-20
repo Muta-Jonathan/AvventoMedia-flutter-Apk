@@ -143,84 +143,95 @@ class MiniPlayerWidget extends StatelessWidget {
           ),
         );
 
-    final card = Material(
-      color: c.mini,
-      borderRadius: BorderRadius.circular(16),
-      clipBehavior: Clip.antiAlias,
-      child: DecoratedBox(
+    final card = DecoratedBox(
+        // It floats, so it casts its own soft shadow.
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: c.line),
-        ),
-        child: Stack(
-          children: [
-            InkWell(
-              onTap: controller.panelController.expand,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 2, 0),
-                child: Row(
-                  children: [
-                    ExcludeSemantics(child: art()),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(mediaItem.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: c.text,
-                                  fontSize: 14,
-                                  height: 19 / 14,
-                                  fontWeight: FontWeight.w700)),
-                          subtitle(),
-                        ],
-                      ),
-                    ),
-                    if (!isLive)
-                      skip(AppConstants.previous, CupertinoIcons.backward_fill,
-                          canPrevious ? controller.playPrevious : null),
-                    _PlayButton(
-                      controller: controller,
-                      isPlaying: isPlaying,
-                      isBuffering: isBuffering,
-                      isCompleted: isCompleted,
-                    ),
-                    if (!isLive)
-                      skip(AppConstants.next, CupertinoIcons.forward_fill,
-                          canNext ? controller.playNext : null)
-                    else
-                      Semantics(
-                        button: true,
-                        label: 'Close player',
-                        excludeSemantics: true,
-                        child: SizedBox.square(
-                          dimension: 44,
-                          child: IconButton(
-                            padding: EdgeInsets.zero,
-                            onPressed: controller.closeMiniPlayer,
-                            icon: Icon(CupertinoIcons.xmark,
-                                size: 14, color: c.text3),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            if (!isLive)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: _progressLine(controller, c),
-              ),
+          boxShadow: const [
+            BoxShadow(
+                color: Color(0x2E000000), blurRadius: 16, offset: Offset(0, 4)),
           ],
         ),
-      ),
-    );
+        child: Material(
+          color: c.mini,
+          borderRadius: BorderRadius.circular(16),
+          clipBehavior: Clip.antiAlias,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: c.line),
+            ),
+            child: Stack(
+              children: [
+                InkWell(
+                  onTap: controller.panelController.expand,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 2, 0),
+                    child: Row(
+                      children: [
+                        ExcludeSemantics(child: art()),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(mediaItem.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: c.text,
+                                      fontSize: 14,
+                                      height: 19 / 14,
+                                      fontWeight: FontWeight.w700)),
+                              subtitle(),
+                            ],
+                          ),
+                        ),
+                        if (!isLive)
+                          skip(
+                              AppConstants.previous,
+                              CupertinoIcons.backward_fill,
+                              canPrevious ? controller.playPrevious : null),
+                        _PlayButton(
+                          controller: controller,
+                          isPlaying: isPlaying,
+                          isBuffering: isBuffering,
+                          isCompleted: isCompleted,
+                        ),
+                        if (!isLive)
+                          skip(AppConstants.next, CupertinoIcons.forward_fill,
+                              canNext ? controller.playNext : null)
+                        else
+                          Semantics(
+                            button: true,
+                            label: 'Close player',
+                            excludeSemantics: true,
+                            child: SizedBox.square(
+                              dimension: 44,
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: controller.closeMiniPlayer,
+                                icon: Icon(CupertinoIcons.xmark,
+                                    size: 14, color: c.text3),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (!isLive)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: _progressLine(controller, c),
+                  ),
+              ],
+            ),
+          ),
+        ));
 
     // 64 tall, 8 from the sides and from whatever is below. Swipe it
     // sideways to close the player.
