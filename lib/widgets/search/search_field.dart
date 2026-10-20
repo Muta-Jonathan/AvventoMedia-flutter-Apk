@@ -3,6 +3,25 @@ import 'package:flutter/material.dart';
 import '../../components/app_constants.dart';
 import '../../themes/avvento_colors.dart';
 
+/// Text style for a search field's text and hint: an even line box, so the
+/// text sits in the middle of it.
+TextStyle searchFieldStyle(Color color, double size) => TextStyle(
+      color: color,
+      fontSize: size,
+      height: 1.25,
+      fontWeight: FontWeight.w500,
+      leadingDistribution: TextLeadingDistribution.even,
+    );
+
+/// Padding that makes a one-line field [height] tall with its text centred,
+/// at any text size. Being that tall, the field itself is the tap target.
+EdgeInsets searchFieldPadding(BuildContext context, double size,
+    {double height = 45}) {
+  final line = MediaQuery.textScalerOf(context).scale(size * 1.25);
+  final vertical = ((height - line) / 2).clamp(0.0, height);
+  return EdgeInsets.symmetric(vertical: vertical);
+}
+
 /// The 48dp search bar, with a clear button and, while it has focus, Cancel.
 class SearchField extends StatelessWidget {
   const SearchField({
@@ -52,31 +71,21 @@ class SearchField extends StatelessWidget {
                               size: 20, color: c.text3)),
                       const SizedBox(width: 10),
                       Expanded(
-                        // Nearly the whole bar is the tap target.
-                        child: SizedBox(
-                          height: 45,
-                          child: TextField(
-                            controller: controller,
-                            focusNode: focusNode,
-                            autofocus: autofocus,
-                            onChanged: onChanged,
-                            onSubmitted: onSubmitted,
-                            textInputAction: TextInputAction.search,
-                            textAlignVertical: TextAlignVertical.center,
-                            cursorColor: c.accent,
-                            style: TextStyle(
-                                color: c.text,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
-                            decoration: InputDecoration(
-                              isDense: true,
-                              border: InputBorder.none,
-                              hintText: hint,
-                              hintStyle: TextStyle(
-                                  color: c.text3,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
-                            ),
+                        child: TextField(
+                          controller: controller,
+                          focusNode: focusNode,
+                          autofocus: autofocus,
+                          onChanged: onChanged,
+                          onSubmitted: onSubmitted,
+                          textInputAction: TextInputAction.search,
+                          cursorColor: c.accent,
+                          style: searchFieldStyle(c.text, 16),
+                          decoration: InputDecoration(
+                            isCollapsed: true,
+                            contentPadding: searchFieldPadding(context, 16),
+                            border: InputBorder.none,
+                            hintText: hint,
+                            hintStyle: searchFieldStyle(c.text3, 16),
                           ),
                         ),
                       ),

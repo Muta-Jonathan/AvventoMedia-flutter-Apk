@@ -74,6 +74,16 @@ void main() {
       expect(find.text('37 sermons · Prophecy'), findsOneWidget);
     });
 
+    testWidgets('the search hint is centred on the icon and the bar',
+        (tester) async {
+      await pump(tester, const PresentersPage());
+
+      final icon = tester.getCenter(find.byIcon(Icons.search_rounded)).dy;
+      final hint =
+          tester.getCenter(find.text(AppConstants.searchPresenters)).dy;
+      expect(hint, closeTo(icon, 1));
+    });
+
     testWidgets('genre chips filter the list', (tester) async {
       await pump(tester, const PresentersPage());
 
