@@ -47,6 +47,7 @@ SearchEntry blank(SearchEntry e) => SearchEntry(
       duration: e.duration,
       keywords: e.keywords,
       count: e.count,
+      live: e.live,
       payload: e.payload,
     );
 
@@ -85,9 +86,18 @@ Future<List<SearchEntry>> entries() async {
         kind: SearchKind.live,
         id: 'radio',
         title: 'AvventoRadio',
-        subtitle: AppConstants.liveRadio,
+        subtitle: AppConstants.liveNowLabel,
         source: SearchSources.radio,
+        live: true,
         payload: 'live'),
+    SearchEntry(
+        kind: SearchKind.live,
+        id: 'tv3',
+        title: '3ABN Uganda',
+        subtitle: AppConstants.offAir,
+        source: SearchSources.main,
+        live: false,
+        payload: 'tv'),
   ]);
   return [for (final e in out) blank(e)];
 }
@@ -277,6 +287,29 @@ void main() {
     expect(find.text(AppConstants.noResultsTitle), findsOneWidget);
     expect(find.text(AppConstants.noMatchFor('zzzz')), findsOneWidget);
     expect(find.text(AppConstants.clearFilters), findsNothing);
+    await leave(tester);
+  });
+
+  testWidgets('an off-air channel says so and has no play button',
+      (tester) async {
+    await pump(tester);
+    await submit(tester, '3abn');
+    await tapTab(tester, 'Live, 1');
+
+    expect(find.text('3ABN Uganda'), findsOneWidget);
+    expect(find.text(AppConstants.offAir), findsOneWidget);
+    expect(find.text(AppConstants.liveNowLabel), findsNothing);
+    expect(find.byIcon(Icons.play_arrow_rounded), findsNothing);
+    await leave(tester);
+  });
+
+  testWidgets('a channel on air says so and can be played', (tester) async {
+    await pump(tester);
+    await submit(tester, 'avventoradio');
+    await tapTab(tester, 'Live, 1');
+
+    expect(find.text(AppConstants.liveNowLabel), findsOneWidget);
+    expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
     await leave(tester);
   });
 

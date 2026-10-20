@@ -253,6 +253,10 @@ class SearchEngine {
       }
       final c = b.score.compareTo(a.score);
       if (c != 0) return c;
+      // A channel on air before one that isn't.
+      final onAir =
+          (b.entry.live == true ? 1 : 0) - (a.entry.live == true ? 1 : 0);
+      if (onAir != 0) return onAir;
       final n = newer(a, b);
       return n != 0 ? n : a.entry.title.length.compareTo(b.entry.title.length);
     });
@@ -314,6 +318,7 @@ class SearchEngine {
   /// "Series · Pr. Okello Samuel".
   static String typeLabel(SearchEntry e) {
     final detail = switch (e.kind) {
+      SearchKind.live => e.live == false ? 'Off air' : '',
       SearchKind.series || SearchKind.sermon => e.presenter,
       SearchKind.video || SearchKind.playlist => e.source,
       SearchKind.presenter => e.count > 0 ? '${e.count} sermons' : '',
