@@ -18,6 +18,7 @@ class MediaListRow extends StatelessWidget {
     required this.title,
     required this.details,
     this.query = '',
+    this.badge,
     this.stacked = false,
     this.liveNow = false,
     this.downloaded = false,
@@ -33,6 +34,9 @@ class MediaListRow extends StatelessWidget {
 
   /// Words to mark in [title].
   final String query;
+
+  /// Shown on the thumbnail's corner: the video's length.
+  final String? badge;
 
   final bool stacked;
 
@@ -76,14 +80,40 @@ class MediaListRow extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: AspectRatio(
         aspectRatio: 16 / 9,
-        child: cover.isEmpty
-            ? placeholder
-            : CachedNetworkImage(
-                imageUrl: cover,
-                fit: BoxFit.cover,
-                placeholder: (_, __) => placeholder,
-                errorWidget: (_, __, ___) => placeholder,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            cover.isEmpty
+                ? placeholder
+                : CachedNetworkImage(
+                    imageUrl: cover,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => placeholder,
+                    errorWidget: (_, __, ___) => placeholder,
+                  ),
+            if (badge != null)
+              Positioned(
+                right: 6,
+                bottom: 6,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    // Over any picture, so a fixed dark pill and white text.
+                    color: const Color(0xCC000000),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(badge!,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          height: 14 / 11,
+                          fontWeight: FontWeight.w700,
+                          fontFeatures: [FontFeature.tabularFigures()])),
+                ),
               ),
+          ],
+        ),
       ),
     );
 
@@ -92,8 +122,9 @@ class MediaListRow extends StatelessWidget {
       label: [
         title,
         if (liveNow) AppConstants.liveNow,
+        if (badge != null) badge!,
         details,
-      ].join(', '),
+      ].where((e) => e.isNotEmpty).join(', '),
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,

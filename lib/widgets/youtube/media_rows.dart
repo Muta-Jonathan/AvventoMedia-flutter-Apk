@@ -24,17 +24,15 @@ Widget playlistRow(YoutubePlaylistModel p,
       onTap: onTap,
     );
 
-/// A video as a [MediaListRow]: its length and date.
+/// A video as a [MediaListRow]: its length on the thumbnail, then its date.
 Widget videoRow(YouTubePlaylistItemModel v,
     {String query = '', VoidCallback? onTap}) {
   final length = SearchEntries.parseIsoDuration(v.duration);
   return MediaListRow(
     cover: v.thumbnailUrl,
     title: v.title,
-    details: [
-      if (length != null) MediaListRow.length(length),
-      MediaListRow.date(v.publishedAt),
-    ].join(' · '),
+    details: MediaListRow.date(v.publishedAt),
+    badge: length == null ? null : MediaListRow.length(length),
     query: query,
     onTap: onTap,
   );

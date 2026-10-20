@@ -501,12 +501,10 @@ class VideoResultRow extends StatelessWidget {
       title: entry.title,
       details: [
         if (entry.source.isNotEmpty) entry.source,
-        if (playlist)
-          '${entry.count} videos'
-        else if (length != null)
-          MediaListRow.length(length),
+        if (playlist) '${entry.count} videos',
         if (at != null) MediaListRow.date(at),
       ].join(' · '),
+      badge: playlist || length == null ? null : MediaListRow.length(length),
       stacked: playlist,
       query: query,
       onTap: () => onOpen(entry),

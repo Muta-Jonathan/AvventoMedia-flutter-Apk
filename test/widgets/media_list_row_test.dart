@@ -36,6 +36,26 @@ void main() {
     expect(stackBar(), findsNothing);
   });
 
+  testWidgets('a video shows its length on the thumbnail', (tester) async {
+    final handle = tester.ensureSemantics();
+    await pump(
+        tester,
+        const MediaListRow(
+            cover: '', title: 'Night 1', details: 'Mar 2', badge: '1:12:40'));
+
+    expect(find.text('1:12:40'), findsOneWidget);
+    expect(find.text('Mar 2'), findsOneWidget);
+    // It is on the picture, and read out with the title.
+    expect(find.bySemanticsLabel('Night 1, 1:12:40, Mar 2'), findsOneWidget);
+    handle.dispose();
+  });
+
+  testWidgets('no length, no badge', (tester) async {
+    await pump(tester,
+        const MediaListRow(cover: '', title: 'Night 1', details: 'Mar 2'));
+    expect(find.text('1:12:40'), findsNothing);
+  });
+
   testWidgets('a playlist is stacked', (tester) async {
     await pump(
         tester,
