@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -280,14 +282,16 @@ class ProfilePage extends StatelessWidget {
             SettingsGroup(
               title: AppConstants.getTheApp,
               tiles: [
-                SettingsTile(
-                  icon: FontAwesomeIcons.googlePlay.data,
-                  color: _Tint.green,
-                  label: AppConstants.googlePlayStore,
-                  external: true,
-                  onTap: () => Utils.openBrowserURL(
-                      url: AppConstants.shareAppLinkAndroid, inApp: true),
-                ),
+                // App Store review rejects links to other stores.
+                if (!Platform.isIOS)
+                  SettingsTile(
+                    icon: FontAwesomeIcons.googlePlay.data,
+                    color: _Tint.green,
+                    label: AppConstants.googlePlayStore,
+                    external: true,
+                    onTap: () => Utils.openBrowserURL(
+                        url: AppConstants.shareAppLinkAndroid, inApp: true),
+                  ),
                 SettingsTile(
                   icon: FontAwesomeIcons.appStoreIos.data,
                   color: _Tint.grey,
