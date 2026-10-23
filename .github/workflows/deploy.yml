@@ -1,12 +1,17 @@
-name: Manual Deploy to App Stores
+name: Deploy to App Stores
 
+# Push a tag like v2.0.0 (must match `version:` in pubspec.yaml) to send the
+# build to Google Play production and TestFlight. Production waits for approval
+# on the `production` GitHub environment. Run manually to pick another track.
 on:
+  push:
+    tags: ['v*']
   workflow_dispatch:
     inputs:
       play_track:
         description: 'Google Play Track'
         required: true
-        default: 'internal'
+        default: 'production'
         type: choice
         options:
           - internal
@@ -24,25 +29,37 @@ on:
         type: boolean
         default: true
 
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: '3.47.5'
+  # Store build numbers must only go up. Offset keeps us above the manual
+  # uploads (pubspec build number) made before this workflow existed.
+  BUILD_NUMBER: ${{ 1000 + github.run_number }}
+
 jobs:
-  build_and_deploy_android:
-    name: Build & Deploy Android
-    if: ${{ github.event.inputs.deploy_android == 'true' }}
+  verify:
+    name: Verify (analyze, tests, version)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+      - name: Check tag matches pubspec version
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          PUBSPEC=$(grep -E '^version:' pubspec.yaml | sed -E 's/version:[[:space:]]*([^+[:space:]]+).*/\1/')
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "$PUBSPEC" != "$TAG" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $PUBSPEC"
+            exit 1
+          fi
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
           cache: true
 
       - name: Create .env
@@ -51,11 +68,47 @@ jobs:
         run: |
           if [ -n "$DOTENV" ]; then
             printf '%s\n' "$DOTENV" > .env
-            echo "Wrote .env from DOTENV secret"
           else
-            echo '# DOTENV secret not available' > .env
-            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
+            echo "::error::DOTENV secret is required to deploy"
+            exit 1
           fi
+
+      - run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Unit & widget tests
+        run: flutter test
+
+  build_and_deploy_android:
+    name: Build & Deploy Android
+    needs: verify
+    if: ${{ github.event_name == 'push' || github.event.inputs.deploy_android == 'true' }}
+    runs-on: ubuntu-latest
+    # `production` requires a reviewer (repo Settings > Environments).
+    environment: ${{ (github.event.inputs.play_track || 'production') == 'production' && 'production' || 'play-test' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+          cache: true
+
+      - name: Create .env
+        env:
+          DOTENV: ${{ secrets.DOTENV }}
+        run: printf '%s\n' "$DOTENV" > .env
 
       - name: Install dependencies
         run: flutter pub get
@@ -64,8 +117,9 @@ jobs:
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
-          echo $ANDROID_KEYSTORE_BASE64 | base64 --decode > android/app/keystore.jks
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/keystore.jks
 
+      # storeFile is resolved relative to the android/app module.
       - name: Create key.properties
         env:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -78,7 +132,7 @@ jobs:
           echo "storeFile=keystore.jks" >> android/key.properties
 
       - name: Build Android App Bundle
-        run: flutter build appbundle --release
+        run: flutter build appbundle --release --build-number=${{ env.BUILD_NUMBER }}
 
       - name: Upload to Google Play
         uses: r0adkll/upload-google-play@v1.1.3
@@ -86,12 +140,13 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_CONFIG_JSON }}
           packageName: tv.avventomedia.app
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          track: ${{ github.event.inputs.play_track }}
+          track: ${{ github.event.inputs.play_track || 'production' }}
           status: completed
 
   build_and_deploy_ios:
     name: Build & Deploy iOS
-    if: ${{ github.event.inputs.deploy_ios == 'true' }}
+    needs: verify
+    if: ${{ github.event_name == 'push' || github.event.inputs.deploy_ios == 'true' }}
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -100,20 +155,14 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: 'stable'
           cache: true
 
       - name: Create .env
         env:
           DOTENV: ${{ secrets.DOTENV }}
-        run: |
-          if [ -n "$DOTENV" ]; then
-            printf '%s\n' "$DOTENV" > .env
-            echo "Wrote .env from DOTENV secret"
-          else
-            echo '# DOTENV secret not available' > .env
-            echo "::warning::DOTENV secret not available (fork PR?), using placeholder .env"
-          fi
+        run: printf '%s\n' "$DOTENV" > .env
 
       - name: Install dependencies
         run: flutter pub get
@@ -125,30 +174,58 @@ jobs:
           BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
           KEYCHAIN_PASSWORD: "temp-keychain-password"
         run: |
-          # Create variables
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           PP_PATH=$RUNNER_TEMP/build_pp.mobileprovision
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
-          # Import certificate and provisioning profile from secrets
           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
           echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode -o $PP_PATH
 
-          # Create temporary keychain
           security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-
-          # Import certificate to keychain
           security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
 
-          # Apply provisioning profile
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
+          cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/
+
+          # Profile name + UUID are needed to sign and export by hand.
+          security cms -D -i $PP_PATH > $RUNNER_TEMP/pp.plist
+          PP_NAME=$(/usr/libexec/PlistBuddy -c 'Print :Name' $RUNNER_TEMP/pp.plist)
+          echo "PP_NAME=$PP_NAME" >> $GITHUB_ENV
+
+      # The project uses Automatic + Apple Development signing for local
+      # runs; CI has only the distribution cert and profile.
+      - name: Switch Runner to manual distribution signing
+        run: |
+          PBX=ios/Runner.xcodeproj/project.pbxproj
+          sed -i '' \
+            -e 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/' \
+            -e 's/CODE_SIGN_IDENTITY = "Apple Development";/CODE_SIGN_IDENTITY = "Apple Distribution";/' \
+            -e "s/PROVISIONING_PROFILE_SPECIFIER = \"\";/PROVISIONING_PROFILE_SPECIFIER = \"$PP_NAME\";/" \
+            $PBX
+
+          cat > $RUNNER_TEMP/ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>JCFVAVDU27</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>provisioningProfiles</key>
+            <dict><key>tv.avventomedia.org</key><string>$PP_NAME</string></dict>
+          </dict>
+          </plist>
+          EOF
 
       - name: Build iOS App
-        run: flutter build ipa --release
+        run: |
+          flutter build ipa --release \
+            --build-number=${{ env.BUILD_NUMBER }} \
+            --export-options-plist=$RUNNER_TEMP/ExportOptions.plist
 
       - name: Upload to App Store Connect
         env:
@@ -156,8 +233,10 @@ jobs:
           APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
           APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
         run: |
-          echo "$APPSTORE_API_PRIVATE_KEY" > AuthKey.p8
-          
+          # altool looks for AuthKey_<id>.p8 in this folder.
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "$APPSTORE_API_PRIVATE_KEY" > ~/.appstoreconnect/private_keys/AuthKey_$APPSTORE_API_KEY_ID.p8
+
           xcrun altool --upload-app -f build/ios/ipa/*.ipa \
             -t ios \
             --apiKey "$APPSTORE_API_KEY_ID" \
