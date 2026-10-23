@@ -51,6 +51,8 @@
 		<string>sms</string>
 		<string>tel</string>
 	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>AvventoMedia does not use your location. This message is required by a notification library bundled in the app.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIBackgroundModes</key>
